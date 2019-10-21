@@ -1,51 +1,119 @@
 <template>
   <div class="editor-area">
-    <div class="editor-controls" ref="controls">
+    <div
+      ref="controls"
+      class="editor-controls"
+    >
       <div class="editor-controls-group">
-        <editor-button :selected="buttons.paragraph" :active="editorHasFocus" :callback="simpleFormat" :format="'paragraph'"/>
-        <editor-button :active="isNoteButtonActive" :callback="newNoteChoiceOpen" :format="'note'"/>
-        <editor-button :selected="buttons.page" :active="editorHasFocus" :callback="simpleFormat" :format="'page'"/>
-        <editor-button :selected="buttons.link" :active="editorHasFocus" :callback="simpleFormat" :format="'link'"/>
+        <editor-button
+          :selected="buttons.paragraph"
+          :active="editorHasFocus"
+          :callback="simpleFormat"
+          :format="'paragraph'"
+        />
+        <editor-button
+          :active="isNoteButtonActive"
+          :callback="newNoteChoiceOpen"
+          :format="'note'"
+        />
+        <editor-button
+          :selected="buttons.page"
+          :active="editorHasFocus"
+          :callback="simpleFormat"
+          :format="'page'"
+        />
+        <editor-button
+          :selected="buttons.link"
+          :active="editorHasFocus"
+          :callback="simpleFormat"
+          :format="'link'"
+        />
       </div>
       <div class="editor-controls-group">
-        <editor-button :selected="buttons.bold" :active="editorHasFocus" :callback="simpleFormat" :format="'bold'"/>
-        <editor-button :selected="buttons.italic" :active="editorHasFocus" :callback="simpleFormat" :format="'italic'"/>
-        <editor-button :selected="buttons.superscript" :active="editorHasFocus" :callback="simpleFormat" :format="'superscript'"/>
-        <editor-button :selected="buttons.underline" :active="editorHasFocus" :callback="simpleFormat" :format="'underline'"/>
+        <editor-button
+          :selected="buttons.bold"
+          :active="editorHasFocus"
+          :callback="simpleFormat"
+          :format="'bold'"
+        />
+        <editor-button
+          :selected="buttons.italic"
+          :active="editorHasFocus"
+          :callback="simpleFormat"
+          :format="'italic'"
+        />
+        <editor-button
+          :selected="buttons.superscript"
+          :active="editorHasFocus"
+          :callback="simpleFormat"
+          :format="'superscript'"
+        />
+        <editor-button
+          :selected="buttons.underline"
+          :active="editorHasFocus"
+          :callback="simpleFormat"
+          :format="'underline'"
+        />
       </div>
       <div class="editor-controls-group">
-        <editor-button :selected="buttons.del" :active="editorHasFocus" :callback="simpleFormat" :format="'del'"/>
-        <editor-button :selected="buttons.person" :active="editorHasFocus" :callback="displayPersonForm" :format="'person'"/>
-        <editor-button :selected="buttons.location" :active="editorHasFocus" :callback="displayLocationForm" :format="'location'"/>
-        <editor-button :selected="buttons.cite" :active="editorHasFocus" :callback="simpleFormat" :format="'cite'"/>
+        <editor-button
+          :selected="buttons.del"
+          :active="editorHasFocus"
+          :callback="simpleFormat"
+          :format="'del'"
+        />
+        <editor-button
+          :selected="buttons.person"
+          :active="editorHasFocus"
+          :callback="displayPersonForm"
+          :format="'person'"
+        />
+        <editor-button
+          :selected="buttons.location"
+          :active="editorHasFocus"
+          :callback="displayLocationForm"
+          :format="'location'"
+        />
+        <editor-button
+          :selected="buttons.cite"
+          :active="editorHasFocus"
+          :callback="simpleFormat"
+          :format="'cite'"
+        />
       </div>
     </div>
     <div class="editor-container">
-      <div class="quill-editor" id="transcription-editor" ref="editor" spellcheck="false"></div>
+      <div
+        id="transcription-editor"
+        ref="editor"
+        class="quill-editor"
+        spellcheck="false"
+      />
       <note-actions
-              v-show="selectedNoteId && this.editor.hasFocus()"
-              refs="noteActions"
-              :style="actionsPosition"
-              :newNote="setNoteEditModeNew"
-              :edit="setNoteEditModeEdit"
-              :updateLink="setNoteEditModeList"
-              :unlink="unlinkNote"
-              :delete="setNoteEditModeDelete"/>
+        v-show="selectedNoteId && this.editor.hasFocus()"
+        refs="noteActions"
+        :style="actionsPosition"
+        :new-note="setNoteEditModeNew"
+        :edit="setNoteEditModeEdit"
+        :update-link="setNoteEditModeList"
+        :unlink="unlinkNote"
+        :delete="setNoteEditModeDelete"
+      />
       <new-note-actions
-              v-if="defineNewNote"
-              :modeNew="setNoteEditModeNew"
-              :modeLink="setNoteEditModeList"
-              :cancel="newNoteChoiceClose"
+        v-if="defineNewNote"
+        :mode-new="setNoteEditModeNew"
+        :mode-link="setNoteEditModeList"
+        :cancel="newNoteChoiceClose"
       />
     </div>
     <textfield-form
-            v-if="formTextfield"
-            :title="formTextfield.title"
-            :label="formTextfield.label"
-            :value="formTextfield.value"
-            :submit="submitTextfieldForm"
-            :cancel="cancelTextfieldForm"/>
-
+      v-if="formTextfield"
+      :title="formTextfield.title"
+      :label="formTextfield.label"
+      :value="formTextfield.value"
+      :submit="submitTextfieldForm"
+      :cancel="cancelTextfieldForm"
+    />
   </div>
 </template>
 
@@ -60,15 +128,15 @@
   import NewNoteActions from '../editor/NewNoteActions';
 
   export default {
-    name: "transcription-editor",
-    props: {initialContent: { type: String }},
-    mixins: [EditorMixins, EditorNotesMixins],
+    name: "TranscriptionEditor",
     components: {
       NewNoteActions,
       NoteActions,
       TextfieldForm,
       EditorButton,
     },
+    mixins: [EditorMixins, EditorNotesMixins],
+    props: {initialContent: { type: String }},
     data() {
       return {
         storeActions: {

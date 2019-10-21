@@ -1,14 +1,17 @@
 <template>
-    <a href="#" @click.prevent="clickHandler">
-        <span v-show="visible"><i class="fas fa-eye"></i></span>
-        <span v-show="!visible"><i class="fas fa-eye-slash"></i></span>
-        <slot></slot>
-    </a>
+  <a
+    href="#"
+    @click.prevent="clickHandler"
+  >
+    <span v-show="visible"><i class="fas fa-eye" /></span>
+    <span v-show="!visible"><i class="fas fa-eye-slash" /></span>
+    <slot />
+  </a>
 </template>
 
 <script>
   export default {
-    name: "visibility-toggle",
+    name: "VisibilityToggle",
     props: ['visible', 'action', 'param'],
     methods: {
       clickHandler () {

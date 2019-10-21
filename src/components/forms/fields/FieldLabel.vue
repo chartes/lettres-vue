@@ -1,5 +1,5 @@
 <template>
-  <p><label>{{ label }} {{ addColons ? ':' : ''}}</label></p>
+  <p><label>{{ label }} {{ addColons ? ':' : '' }}</label></p>
 </template>
 
 <script>

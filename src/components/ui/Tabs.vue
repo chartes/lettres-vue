@@ -1,12 +1,26 @@
 <template>
   <div>
-
-    <div class="tabs" :class="tabsStyle">
+    <div
+      class="tabs"
+      :class="tabsStyle"
+    >
       <ul>
-        <li v-for="tab in tabs" :class="{ 'is-active': tab.isActive }">
-          <div v-if="tab.spacer" class="spacer"></div>
-          <a v-else @click="selectTab(tab)">
-            <i v-if="tab.iconClass" :class="`icon ${tab.iconClass}`"></i>
+        <li
+          v-for="tab in tabs"
+          :class="{ 'is-active': tab.isActive }"
+        >
+          <div
+            v-if="tab.spacer"
+            class="spacer"
+          />
+          <a
+            v-else
+            @click="selectTab(tab)"
+          >
+            <i
+              v-if="tab.iconClass"
+              :class="`icon ${tab.iconClass}`"
+            />
             {{ tab.name }}
           </a>
         </li>
@@ -14,11 +28,8 @@
     </div>
 
     <div class="tabs-content is-flex-fill">
-
-      <slot></slot>
-
+      <slot />
     </div>
-
   </div>
 </template>
 
@@ -28,7 +39,9 @@
 
   export default {
 
-    name: "tabs",
+    name: "Tabs",
+
+    components: { tab },
 
     props: {
       tabsStyle: {
@@ -40,8 +53,6 @@
         default: null
       }
     },
-
-    components: { tab },
 
     data() {
       return {

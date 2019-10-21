@@ -1,15 +1,21 @@
 <template>
-    <transition name="fade">
-        <div class="loading__overlay" v-if="active" :class="myClasses">
-            <div class="loading__background"></div>
-            <div class="loading__icon"><span>loading</span></div>
-        </div>
-    </transition>
+  <transition name="fade">
+    <div
+      v-if="active"
+      class="loading__overlay"
+      :class="myClasses"
+    >
+      <div class="loading__background" />
+      <div class="loading__icon">
+        <span>loading</span>
+      </div>
+    </div>
+  </transition>
 </template>
 
 <script>
   export default {
-    name: "loading-indicator",
+    name: "LoadingIndicator",
     props: {
       active: {
         type: Boolean,

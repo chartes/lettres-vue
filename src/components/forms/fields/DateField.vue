@@ -1,37 +1,55 @@
 <template>
   <div class="field-date">
-    <field-label :label="label"/>
+    <field-label :label="label" />
 
 
-    <div class="field field-date__field" v-if="editable && editMode" ref="hover">
+    <div
+      v-if="editable && editMode"
+      ref="hover"
+      class="field field-date__field"
+    >
       <div class="control">
-        <input ref="input" class="field-date__input" type="text" v-model="value"
-           @change="inputChanged"
-           @keyup="maskCheck"
-           @keyup.enter="checkAndExitEditMode"
-           @blur="checkAndExitEditMode"
-           @keyup.esc="cancelInput"
-           v-mask="{mask: '(9999)|(9999-99)|(9999-99-99)', placeholder: 'AAAA-MM-JJ', greedy: false}"
-        />
+        <input
+          ref="input"
+          v-model="value"
+          v-mask="{mask: '(9999)|(9999-99)|(9999-99-99)', placeholder: 'AAAA-MM-JJ', greedy: false}"
+          class="field-date__input"
+          type="text"
+          @change="inputChanged"
+          @keyup="maskCheck"
+          @keyup.enter="checkAndExitEditMode"
+          @blur="checkAndExitEditMode"
+          @keyup.esc="cancelInput"
+        >
       </div>
     </div>
 
-    <div v-else-if="editable && !editMode"  class="field" ref="hover"
-         :tabindex="tabulationIndex"
-         @click="enterEditMode"
-         @focus="enterEditMode"
-         @mouseover="overField"
-         @mouseout="outField">
+    <div
+      v-else-if="editable && !editMode"
+      ref="hover"
+      class="field"
+      :tabindex="tabulationIndex"
+      @click="enterEditMode"
+      @focus="enterEditMode"
+      @mouseover="overField"
+      @mouseout="outField"
+    >
       <div class="control">
-        <span class="field-date__input field-date__input--fake" :class="fieldClasses" v-html="value || notSet"/>
+        <span
+          class="field-date__input field-date__input--fake"
+          :class="fieldClasses"
+          v-html="value || notSet"
+        />
         <icon-pen-edit class="field-date__icon" />
       </div>
     </div>
 
     <div v-else>
-      <span :class="unknownClass" v-html="value || notSet"></span>
+      <span
+        :class="unknownClass"
+        v-html="value || notSet"
+      />
     </div>
-
   </div>
 </template>
 
@@ -48,15 +66,6 @@
         isValid: true
       }
     },
-    methods: {
-      maskCheck: function (field){
-        const isValidDate = !!Date.parse(this.value)
-        this.isValid = !this.value || (field.target.inputmask.isComplete() && isValidDate)
-      },
-      checkAndExitEditMode () {
-        this.exitEditMode(!this.isValid)
-      }
-    },
     computed: {
 
       fieldClasses () {
@@ -64,6 +73,15 @@
           ...this.unknownClass,
           'field-text--invalid': !this.isValid
         }
+      }
+    },
+    methods: {
+      maskCheck: function (field){
+        const isValidDate = !!Date.parse(this.value)
+        this.isValid = !this.value || (field.target.inputmask.isComplete() && isValidDate)
+      },
+      checkAndExitEditMode () {
+        this.exitEditMode(!this.isValid)
       }
     }
   }

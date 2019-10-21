@@ -1,19 +1,29 @@
 <template>
-    <span class="badge" :class="myclasses" @click="toggle">
-        <span v-if="isActive">
-            <slot id="active" name="active"></slot>
-            <label for="active"><slot name="activeLabel"></slot></label>
-        </span>
-        <span v-else>
-            <slot id="inactive" name="inactive"></slot>
-            <label for="inactive"><slot name="inactiveLabel"></slot></label>
-        </span>
+  <span
+    class="badge"
+    :class="myclasses"
+    @click="toggle"
+  >
+    <span v-if="isActive">
+      <slot
+        id="active"
+        name="active"
+      />
+      <label for="active"><slot name="activeLabel" /></label>
     </span>
+    <span v-else>
+      <slot
+        id="inactive"
+        name="inactive"
+      />
+      <label for="inactive"><slot name="inactiveLabel" /></label>
+    </span>
+  </span>
 </template>
 
 <script>
   export default {
-    name: "badge",
+    name: "Badge",
     props: {
         classesActive: {},
         classesInactive: {},
@@ -26,8 +36,6 @@
           isActive : this.startsOn
         }
     },
-    created(){
-    },
     computed: {
         myclasses() {return this.isActive ? this.classesActive: this.classesInactive},
     },
@@ -35,6 +43,8 @@
         startsOn: function(){
             this.isActive = this.startsOn;
         }
+    },
+    created(){
     },
     methods: {
         toggle() {

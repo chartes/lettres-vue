@@ -1,16 +1,12 @@
 <template>
-
   <div class="box is-info">
-
-    <slot></slot>
-
+    <slot />
   </div>
-
 </template>
 
 <script>
     export default {
-        name: "message"
+        name: "Message"
     }
 </script>
 

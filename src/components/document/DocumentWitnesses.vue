@@ -4,38 +4,44 @@
       <header class="panel-heading">
         <h2 class="witness-list__title subtitle">
           Témoins
-          <a v-if="editable" class="tag" href="#" @click="openNewWitnessEdit">
-            <icon-add/>
+          <a
+            v-if="editable"
+            class="tag"
+            href="#"
+            @click="openNewWitnessEdit"
+          >
+            <icon-add />
           </a>
         </h2>
- 
       </header>
      
-      <div class="witness-list__content panel-block " style="display: inline-block; width: 100%">
+      <div
+        class="witness-list__content panel-block "
+        style="display: inline-block; width: 100%"
+      >
         <witness-item
-            v-for="(witness, index) in list"
-            :editable="editable"
-            :can-be-removed="list.length > 1"
-            :list-index="index"
-            :list-length="list.length"
-            :witness="witness"
-            :edit-action="openWitnessEdit"
-            :reorder-action="reorderWitness"
-            :delete-action="removeWitness"
-            :key="index"
+          v-for="(witness, index) in list"
+          :key="index"
+          :editable="editable"
+          :can-be-removed="list.length > 1"
+          :list-index="index"
+          :list-length="list.length"
+          :witness="witness"
+          :edit-action="openWitnessEdit"
+          :reorder-action="reorderWitness"
+          :delete-action="removeWitness"
         />
-        <error-message :error="error"/>
-
+        <error-message :error="error" />
       </div>
     </div>
    
     <witness-form
-            v-if="editMode === 'new' || editMode === 'edit'"
-            :title="editMode === 'new' ? 'Nouveau témoin' : 'Décrire le témoin'"
-            :witness="selectedWitness"
-            :witnessId="selectedWitnessId"
-            :submit="editMode === 'new' ? addWitness : updateWitness"
-            :cancel="closeWitnessEdit"
+      v-if="editMode === 'new' || editMode === 'edit'"
+      :title="editMode === 'new' ? 'Nouveau témoin' : 'Décrire le témoin'"
+      :witness="selectedWitness"
+      :witness-id="selectedWitnessId"
+      :submit="editMode === 'new' ? addWitness : updateWitness"
+      :cancel="closeWitnessEdit"
     />
   </section>
 </template>

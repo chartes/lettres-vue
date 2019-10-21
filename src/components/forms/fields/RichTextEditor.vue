@@ -1,67 +1,84 @@
 <template>
-  
-  <div class="field rich-text-editor" style="width: 100%">
-    
-    <field-label v-if="!!label" :label="label"/>
+  <div
+    class="field rich-text-editor"
+    style="width: 100%"
+  >
+    <field-label
+      v-if="!!label"
+      :label="label"
+    />
     
     <div class="editor-area">
-      <div class="editor-controls" ref="controls">
-        
-        <div v-for="(group, gindex) in formats" :key="gindex" class="editor-controls-group field has-addons">
+      <div
+        ref="controls"
+        class="editor-controls"
+      >
+        <div
+          v-for="(group, gindex) in formats"
+          :key="gindex"
+          class="editor-controls-group field has-addons"
+        >
           <editor-button
-              v-for="format in group"
-              :active="formatCallbacks[format].active"
-              :callback="formatCallbacks[format].cb"
-              :selected="buttons[format]"
-              :format="format"
-              :key="format"
+            v-for="format in group"
+            :key="format"
+            :active="formatCallbacks[format].active"
+            :callback="formatCallbacks[format].cb"
+            :selected="buttons[format]"
+            :format="format"
           />
         </div>
-        <div class="editor-controls-group is-additional" v-if="slotNotEmpty">
-          <slot></slot>
+        <div
+          v-if="slotNotEmpty"
+          class="editor-controls-group is-additional"
+        >
+          <slot />
         </div>
-      
       </div>
       
       <div class="editor-container">
-        <div class="quill-editor" :class="{ 'single-line': !multiline }" ref="editor" spellcheck="false"></div>
+        <div
+          ref="editor"
+          class="quill-editor"
+          :class="{ 'single-line': !multiline }"
+          spellcheck="false"
+        />
       </div>
       <note-form
-              v-if="formNote"
-              title="Nouvelle note"
-              :submit="submitNoteForm"
-              :cancel="closeNoteForm"
+        v-if="formNote"
+        title="Nouvelle note"
+        :submit="submitNoteForm"
+        :cancel="closeNoteForm"
       />
       <textfield-form
-              v-if="formTextfield"
-              :title="formTextfield.title"
-              :label="formTextfield.label"
-              :value="formTextfield.value"
-              :submit="customSubmitTextfieldForm || submitTextfieldForm"
-              :cancel="closeTextfieldForm"
-              :remove="removeTextfieldForm"
+        v-if="formTextfield"
+        :title="formTextfield.title"
+        :label="formTextfield.label"
+        :value="formTextfield.value"
+        :submit="customSubmitTextfieldForm || submitTextfieldForm"
+        :cancel="closeTextfieldForm"
+        :remove="removeTextfieldForm"
       />
       <person-list-form
-          v-if="formPerson"
-          title="Sélectionner une personne"
-          :submit="submitPersonForm"
-          :cancel="closePersonForm"
-          :remove="removePersonForm"
+        v-if="formPerson"
+        title="Sélectionner une personne"
+        :submit="submitPersonForm"
+        :cancel="closePersonForm"
+        :remove="removePersonForm"
       />
       <placename-list-form
-          v-if="formLocation"
-          title="Sélectionner un lieu"
-          :submit="submitLocationForm"
-          :cancel="closeLocationForm"
-          :remove="removeLocationForm"
+        v-if="formLocation"
+        title="Sélectionner un lieu"
+        :submit="submitLocationForm"
+        :cancel="closeLocationForm"
+        :remove="removeLocationForm"
       />
       
-      <pre v-if="debug" style="white-space: normal">{{value}}</pre>
-
+      <pre
+        v-if="debug"
+        style="white-space: normal"
+      >{{ value }}</pre>
     </div>
-  
   </div>
-
 </template>
 
 <script>
@@ -84,14 +101,6 @@
 
   export default {
     name: "RichTextEditor",
-    props: {
-      label: { type: String, default: null },
-      value: { type: String, default: '' }, // v-model support
-      multiline: { type: Boolean, default: true },
-      enabled: { type: Boolean, default: true },
-      formats: { type: Array, default: () => [['note','page','link'],['bold','italic','superscript','underline','del'],['person','location','cite']] },
-      options: { type: Object, default: () => {}},
-    },
     //mixins: [EditorNotesMixins],
     components: {
       PlacenameListForm,
@@ -103,6 +112,14 @@
     },
     directives: {
       ClickOutside
+    },
+    props: {
+      label: { type: String, default: null },
+      value: { type: String, default: '' }, // v-model support
+      multiline: { type: Boolean, default: true },
+      enabled: { type: Boolean, default: true },
+      formats: { type: Array, default: () => [['note','page','link'],['bold','italic','superscript','underline','del'],['person','location','cite']] },
+      options: { type: Object, default: () => {}},
     },
     data() {
       return {
@@ -123,6 +140,57 @@
         delta: null,
         customSubmitTextfieldForm: null,
         buttons: {}
+      }
+    },
+
+    computed: {
+      formatCallbacks() {
+        return {
+          note: { cb: this.displayNoteForm, active: this.isNoteButtonActive },
+          page: { cb: this.displayPageBreakForm, active: this.editorHasFocus },
+          link: { cb: this.displayLinkForm, active: this.editorHasFocus },
+          bold: { cb: this.simpleFormat, active: this.editorHasFocus },
+          italic: { cb: this.simpleFormat, active: this.editorHasFocus },
+          superscript: { cb: this.simpleFormat, active: this.editorHasFocus },
+          underline: { cb: this.simpleFormat, active: this.editorHasFocus },
+          del: { cb: this.simpleFormat, active: this.editorHasFocus },
+          person: { cb: this.displayPersonForm, active: this.editorHasFocus },
+          location: { cb: this.displayLocationForm, active: this.editorHasFocus },
+          cite: { cb: this.simpleFormat, active: this.editorHasFocus },
+        }
+      },
+      actionsPosition () {
+        /** get the actions bar position **/
+        let top = this.actionsPositions.bottom + 5;
+        let left = (this.actionsPositions.left+this.actionsPositions.right)/2;
+        return `top:${top}px;left:${left}px`;
+      },
+      isNoteButtonActive () {
+        if (!this.editor) return;
+        const selection = this.editor.getSelection();
+        const cond = this.editorHasFocus
+          //&& this.buttons.note
+          && !selection.length;
+        return cond;
+      },
+      slotNotEmpty () {
+        return !!this.$slots.default;
+      },
+    },
+
+    watch: {
+      value (val) {
+        const range = this.editor.getSelection();
+        this.editorContentElement.innerHTML = this.sanitize(val);
+        Vue.nextTick(() => {
+          if (range) {
+            //console.log('setSelection', range.index)
+            this.editor.setSelection(range.index, range.length, Quill.sources.SILENT);
+          }
+        })
+      },
+      enabled (val) {
+        this.editor.enable(val);
       }
     },
     mounted () {
@@ -464,57 +532,6 @@
         });
       },
 
-    },
-
-    watch: {
-      value (val) {
-        const range = this.editor.getSelection();
-        this.editorContentElement.innerHTML = this.sanitize(val);
-        Vue.nextTick(() => {
-          if (range) {
-            //console.log('setSelection', range.index)
-            this.editor.setSelection(range.index, range.length, Quill.sources.SILENT);
-          }
-        })
-      },
-      enabled (val) {
-        this.editor.enable(val);
-      }
-    },
-
-    computed: {
-      formatCallbacks() {
-        return {
-          note: { cb: this.displayNoteForm, active: this.isNoteButtonActive },
-          page: { cb: this.displayPageBreakForm, active: this.editorHasFocus },
-          link: { cb: this.displayLinkForm, active: this.editorHasFocus },
-          bold: { cb: this.simpleFormat, active: this.editorHasFocus },
-          italic: { cb: this.simpleFormat, active: this.editorHasFocus },
-          superscript: { cb: this.simpleFormat, active: this.editorHasFocus },
-          underline: { cb: this.simpleFormat, active: this.editorHasFocus },
-          del: { cb: this.simpleFormat, active: this.editorHasFocus },
-          person: { cb: this.displayPersonForm, active: this.editorHasFocus },
-          location: { cb: this.displayLocationForm, active: this.editorHasFocus },
-          cite: { cb: this.simpleFormat, active: this.editorHasFocus },
-        }
-      },
-      actionsPosition () {
-        /** get the actions bar position **/
-        let top = this.actionsPositions.bottom + 5;
-        let left = (this.actionsPositions.left+this.actionsPositions.right)/2;
-        return `top:${top}px;left:${left}px`;
-      },
-      isNoteButtonActive () {
-        if (!this.editor) return;
-        const selection = this.editor.getSelection();
-        const cond = this.editorHasFocus
-          //&& this.buttons.note
-          && !selection.length;
-        return cond;
-      },
-      slotNotEmpty () {
-        return !!this.$slots.default;
-      },
     },
   }
 </script>

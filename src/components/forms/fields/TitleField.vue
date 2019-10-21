@@ -1,27 +1,42 @@
 <template>
   <div class="field-title">
-    <field-label :label="label"/>
+    <field-label :label="label" />
 
-    <div class="field" v-if="editable && editMode" ref="hover">
+    <div
+      v-if="editable && editMode"
+      ref="hover"
+      class="field"
+    >
       <div class="control">
-        <input ref="input" class="input" type="text" v-model="value"
-           :tabindex="tabulationIndex"
-           @change="inputChanged"
-           @keyup.enter="exitEditMode(false)"
-           @blur="exitEditMode(false)"
-           @keyup.esc="cancelInput"
-        />
+        <input
+          ref="input"
+          v-model="value"
+          class="input"
+          type="text"
+          :tabindex="tabulationIndex"
+          @change="inputChanged"
+          @keyup.enter="exitEditMode(false)"
+          @blur="exitEditMode(false)"
+          @keyup.esc="cancelInput"
+        >
       </div>
     </div>
 
-    <div v-else-if="editable && !editMode"  class="field" ref="hover"
-         :tabindex="tabulationIndex"
-         @click="enterEditMode"
-         @focus="enterEditMode"
-         @mouseover="overField"
-         @mouseout="outField">
+    <div
+      v-else-if="editable && !editMode"
+      ref="hover"
+      class="field"
+      :tabindex="tabulationIndex"
+      @click="enterEditMode"
+      @focus="enterEditMode"
+      @mouseover="overField"
+      @mouseout="outField"
+    >
       <div class="control">
-        <span class="input fake-input" v-html="value || notSet"/>
+        <span
+          class="input fake-input"
+          v-html="value || notSet"
+        />
         <icon-pen-edit />
       </div>
     </div>
@@ -29,7 +44,6 @@
     <div v-else>
       <span :class="{ unknown: !value}">{{ value || notSet }}</span>
     </div>
-
   </div>
 </template>
 

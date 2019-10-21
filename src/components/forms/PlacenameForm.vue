@@ -1,20 +1,23 @@
 <template>
-
-  <modal-form class="person-form__add-new__form"
-          :title="title"
-          :cancel="cancelAction"
-          :submit="submitAction"
-          :remove="remove"
-          :valid="validForm"
-          :submitting="false"
+  <modal-form
+    class="person-form__add-new__form"
+    :title="title"
+    :cancel="cancelAction"
+    :submit="submitAction"
+    :remove="remove"
+    :valid="validForm"
+    :submitting="false"
   >
     <div class="person-form">
       <form @submit.prevent="">
-        <error-message v-if="error" :error="error"/>
+        <error-message
+          v-if="error"
+          :error="error"
+        />
         <field-text
-                label="Étiquette *"
-                placeholder="ex : Troyes"
-                v-model="form.label"
+          v-model="form.label"
+          label="Étiquette *"
+          placeholder="ex : Troyes"
         />
         <!--
         <field-text
@@ -38,14 +41,14 @@
           <div class="columns">
             <div class="column is-5">
               <select-autocomplete-field
-                  class="person-form__search-ref"
-                  label="Lier le lieu via un référentiel"
-                  v-model="form.ref"
-                  :items="placenamesWikidataSearchResults"
-                  :is-async="true"
-                  @search="searchPlacenameOnWikidata"
-                  label-key="label"
-                  not-set="Rechercher sur wikidata"
+                v-model="form.ref"
+                class="person-form__search-ref"
+                label="Lier le lieu via un référentiel"
+                :items="placenamesWikidataSearchResults"
+                :is-async="true"
+                label-key="label"
+                not-set="Rechercher sur wikidata"
+                @search="searchPlacenameOnWikidata"
               />
             </div>
             <div class="column is-1 person-form__separator">
@@ -53,9 +56,9 @@
             </div>
             <div class="column is-5 person-form__input-ref">
               <field-text
-                  label="Lier le lieu à un identifiant de référence"
-                  :placeholder="form.ref ? form.ref.label : 'ex: https://data.bnf.fr/ark:/12148/cb123351707'"
-                  v-model="model"
+                v-model="model"
+                label="Lier le lieu à un identifiant de référence"
+                :placeholder="form.ref ? form.ref.label : 'ex: https://data.bnf.fr/ark:/12148/cb123351707'"
               />
             </div>
           </div>
@@ -63,7 +66,6 @@
       </form>
     </div>
   </modal-form>
-
 </template>
 
 <script>
@@ -76,7 +78,7 @@
   import SelectAutocompleteField from "./fields/SelectAutocompleteField";
 
   export default {
-    name: "placename-form",
+    name: "PlacenameForm",
     components: {
       ErrorMessage,
       FieldText,

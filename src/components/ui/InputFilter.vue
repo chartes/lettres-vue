@@ -1,18 +1,22 @@
 <template>
-    <span>
-        <button class="button is-white" @click="toggle">{{label}}<i class="fas fa-filter"></i></button>
-        <input class="input is-small"
-               v-if="isActive"
-               v-model="filterValue"
-               :placeholder="placeHolder"
-               @change="action(filterValue)"
-        />
-    </span>
+  <span>
+    <button
+      class="button is-white"
+      @click="toggle"
+    >{{ label }}<i class="fas fa-filter" /></button>
+    <input
+      v-if="isActive"
+      v-model="filterValue"
+      class="input is-small"
+      :placeholder="placeHolder"
+      @change="action(filterValue)"
+    >
+  </span>
 </template>
 
 <script>
   export default {
-    name: "input-filter",
+    name: "InputFilter",
     props: {
         label: {required: true},
         placeHolder: {default: ''},

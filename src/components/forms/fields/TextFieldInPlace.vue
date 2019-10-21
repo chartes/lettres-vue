@@ -1,14 +1,20 @@
 <template>
   <div class="field-title">
-    <field-label v-if="!!label"
-:label="label" />
+    <field-label
+      v-if="!!label"
+      :label="label"
+    />
 
-    <div v-if="editable && editMode" class="field field-text__field" ref="hover">
+    <div
+      v-if="editable && editMode"
+      ref="hover"
+      class="field field-text__field"
+    >
       <div class="control">
         <rich-text-editor
           ref="input"
           v-model="value"
-                :multiline="false"
+          :multiline="false"
           :formats="[['italic','superscript','note']]"
           :tabindex="tabulationIndex"
           @change="inputChanged"
@@ -28,24 +34,34 @@
     </div>
 
     <div
-v-else-if="editable && !editMode" ref="hover" class="field"
-         :tabindex="tabulationIndex"
-         @click="enterEditMode"
-         @mouseover="overField"
-         @mouseout="outField"
->
+      v-else-if="editable && !editMode"
+      ref="hover"
+      class="field"
+      :tabindex="tabulationIndex"
+      @click="enterEditMode"
+      @mouseover="overField"
+      @mouseout="outField"
+    >
       <div class="field-text__control control">
-        <span class="field-text__input field-text__input--fake"
-:class="unknownClass" v-html="value || notSet" />
-        <component :is="editButtonIcon" class="field-text__icon" />
+        <span
+          class="field-text__input field-text__input--fake"
+          :class="unknownClass"
+          v-html="value || notSet"
+        />
+        <component
+          :is="editButtonIcon"
+          class="field-text__icon"
+        />
       </div>
     </div>
 
     <div v-else>
-      <span :class="unknownClass"
-v-html="value || notSet"/>
+      <span
+        :class="unknownClass"
+        v-html="value || notSet"
+      />
     </div>
-</div>
+  </div>
 </template>
 
 <script>
@@ -99,12 +115,6 @@ v-html="value || notSet"/>
         }
       },
     },
-    methods: {
-      clickSave () {
-        if (this.status === 'error' || this.status === 'success') return;
-        this.$emit('changed', { value: this.value, name: this.name, oldValue: this.initialValue })
-      },
-    },
     watch: {
       initialValue (val, oldVal) {
         this.value = val
@@ -114,6 +124,12 @@ v-html="value || notSet"/>
           this.exitEditMode(true)
         }
       }
+    },
+    methods: {
+      clickSave () {
+        if (this.status === 'error' || this.status === 'success') return;
+        this.$emit('changed', { value: this.value, name: this.name, oldValue: this.initialValue })
+      },
     }
   }
 </script>

@@ -1,32 +1,34 @@
 <template>
   <div class="document__attributes">
-
     <header class="document__attributes--title subtitle">
       <title-field-in-place
-              :tabulation-index="0"
-              label="Titre"
-              name="title"
-              not-set="Non renseigné"
-              :initial-value="document.title"
-              :editable="editable"
-              :status="titleStatus"
-              specific-class="field-title__input"
-              v-on:changed="titleChanged"
+        :tabulation-index="0"
+        label="Titre"
+        name="title"
+        not-set="Non renseigné"
+        :initial-value="document.title"
+        :editable="editable"
+        :status="titleStatus"
+        specific-class="field-title__input"
+        @changed="titleChanged"
       />
     </header>
 
-    <div class="columns is-multiline subtitle" v-if="editAttributes">
+    <div
+      v-if="editAttributes"
+      class="columns is-multiline subtitle"
+    >
       <div class="column">
         <multiselect-field
-                :editable="editable"
-                label="Langues"
-                :add-colons="false"
-                :optionsList="allLanguages"
-                :selectedItems="languages"
-                :onChange="languagesChanged"/>
+          :editable="editable"
+          label="Langues"
+          :add-colons="false"
+          :options-list="allLanguages"
+          :selected-items="languages"
+          :on-change="languagesChanged"
+        />
       </div>
     </div>
-
   </div>
 </template>
 <script>
