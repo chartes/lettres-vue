@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueRouter, {Location, Route, RouteConfig} from 'vue-router'
 import LandingPage from "@/pages/LandingPage.vue"
+import LoginPage from "@/pages/LoginPage.vue"
 import DocumentPage from "@/pages/DocumentPage.vue"
 
 Vue.use(VueRouter)
@@ -15,6 +16,11 @@ export default new VueRouter({
       path: '/',
       component: LandingPage,
       name: 'landing'
+    },
+    {
+        path: '/login',
+        component: LoginPage,
+        name: 'login'
     },
     {
       path: '/documents/:docId',

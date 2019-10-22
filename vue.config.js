@@ -5,12 +5,4 @@ module.exports = {
     "vuetify"
   ],
 
-  pluginOptions: {
-    'style-resources-loader': {
-      preProcessor: 'scss',
-      patterns: [path.resolve(__dirname, "./src/styles/styles.scss")]
-    }
-  },
-
-
 }

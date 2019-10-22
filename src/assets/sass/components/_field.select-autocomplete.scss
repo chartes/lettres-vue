@@ -43,13 +43,13 @@
 
   &__value {
 
-    @include input;
+    //@include input;
     cursor: pointer;
     padding-right: 2.5em;
 
     &::after {
-      @extend %arrow;
-      border-color: $input-arrow;
+      //@extend %arrow;
+      //border-color: $input-arrow;
       right: 1.125em;
       z-index: 4;
     }
