@@ -13,6 +13,13 @@ export const http = axios.create({
   headers: {}
 });
 
+
+function addTokenToHeaders(token) {
+  axios.defaults.headers.common['Authorization'] = `Bearer ${
+    token
+  }`   
+}
+
 function http_with_csrf_token() {
   return axios.create({
     baseURL: _baseApiURL,
@@ -22,6 +29,7 @@ function http_with_csrf_token() {
   });
 }
 
+/*
 http.interceptors.response.use(function (response) {
   return response
 }, function (error) {
@@ -41,6 +49,8 @@ http.interceptors.response.use(function (response) {
   }
   return Promise.reject(error)
 });
+
+*/
 
 export default http_with_csrf_token;
 

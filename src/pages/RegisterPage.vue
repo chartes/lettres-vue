@@ -1,6 +1,16 @@
 <template>
   <div>
-    <form @submit.prevent="login">
+    <form @submit.prevent="register">
+      <label for="name">
+        Name:
+      </label>
+      <input
+        v-model="name"
+        type="text"
+        name="name"
+        value
+      >
+    
       <label for="email">
         Email:
       </label>
@@ -10,52 +20,47 @@
         name="email"
         value
       >
-          
+    
       <label for="password">
         Password:
       </label>
       <input
         v-model="password"
         type="password"
-        name="password"
+        name
         value
       >
-      
+    
       <button
         type="submit"
         name="button"
       >
-        Login
+        Register
       </button>
     </form>
   </div>
 </template>
 
 <script>
-
-
 export default {
-    name: "LoginPage",
-    components: {
-        
-    },
-    data () {
-        return {
-          email: '',
-          password: ''
-        }
-    },
-    methods: {
-        login () {
+  name: 'RegisterPage',  
+  data () {
+    return {
+        name: '',
+        email: '',
+        password: ''
+    }
+  },
+  methods: {
+        register () {
           this.$store
-            .dispatch('user/login', {
+            .dispatch('user/register', {
+              name: this.name,
               email: this.email,
               password: this.password
             })
-           // .then(() => { this.$router.push({ name: 'landing' }) })
         }
       }
-
 }
 </script>
 

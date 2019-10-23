@@ -15,6 +15,14 @@
       </v-toolbar-title>
 
       <v-spacer /> 
+
+      <v-btn
+        text
+        dark
+        @click="$router.push('/login')"
+      >
+        Connexion
+      </v-btn>
     </v-app-bar>  
     <v-content>
       <v-container>
@@ -28,7 +36,7 @@
 export default {
     name: "LayoutDefault",
     created() {
-       this.$store.dispatch('user/fetchCurrent');
+       //this.$store.dispatch('user/fetchCurrent');
     }
 }
 </script>

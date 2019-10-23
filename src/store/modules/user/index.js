@@ -1,4 +1,5 @@
-import http_with_csrf_token, {http} from '../../../modules/http-common';
+import http_with_csrf_token,  {http} from '../../../modules/http-common';
+import addTokenToHeaders from '../../../modules/http-common';
 import {baseApiURL} from '../../../modules/http-common';
 
 import {getRoles, getUserRoles} from '../../../modules/user-helpers';
@@ -16,7 +17,7 @@ const mutations = {
     if (!data) {
       state.current_user = null;
     } else {
-      const roles = getRoles(included);
+      const roles = getRoles({included});
       state.current_user = {
         id: data.id,
         ...data.attributes,
@@ -25,6 +26,16 @@ const mutations = {
       };
     }
     state.isUserLoaded = true;
+  },
+
+  SET_USER_DATA (state, userData) {
+    //const roles = getRoles({});
+    state.current_user = {
+      ...userData,
+      isAdmin: userData.roles.indexOf("admin") > -1
+    }
+    localStorage.setItem('user', JSON.stringify(state.current_user))
+    addTokenToHeaders(userData.token) 
   },
 
   RESET_USER(state) {
@@ -63,6 +74,21 @@ const actions = {
         console.warn(error);
         commit('UPDATE_USER', {data: null});
       });
+  },
+
+  login ({ commit }, credentials) {
+    return http
+      .post('login', credentials)
+      .then(({ data }) => {
+        console.log("LOGIN user data is:", data)
+        commit('SET_USER_DATA', data)
+      }).catch(({error}) => {
+        console.log("LOGIN ERROR", error)
+      })
+  },
+
+  register({commit}) {
+    console.log("Register: not yet implemented")
   },
 
   search({commit}, what) {

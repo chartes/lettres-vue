@@ -3,8 +3,9 @@
 /* Uncomment to import the entire Bulma framework */
 // @import '~bulma/bulma';
 
-/* Import selected Bulma Sass */
+/* Import selected Bulma Sass
 /* Remove these if you import the entire Bulma framework above */
+/*
 @import "~bulma/sass/utilities/_all.sass";
 @import "~bulma/sass/base/_all.sass";
 @import "~bulma/sass/grid/_all.sass";
@@ -13,8 +14,7 @@
 @import "~bulma/sass/elements/title.sass";
 @import "~bulma/sass/layout/section.sass";
 @import "~bulma/sass/components/card.sass";
-
-
+*/
 
 
 @import 'settings/colors';
@@ -45,7 +45,7 @@
 
 // Objects – class-based selectors which define undecorated design patterns,
 // for example media object known from OOCSS
-
+/*
 @import "objects/document-subsection";
 @import "objects/quill.lettres";
 @import "objects/quill.core";
@@ -87,3 +87,4 @@
 
 @import "utilities/modifiers";
 
+*/
