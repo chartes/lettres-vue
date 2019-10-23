@@ -402,41 +402,7 @@ describe('Persons helpers', () => {
 
     expect(getInstitution(incIn)).toEqual({ "id": 11, "name": "Marriage parent share.", "ref": "https://kelley.biz/posts/wp-content/author.html" })
   })
-
-  test('getTradition', () => {
-
-    const incIn = [
-      {
-        "type": "tradition",
-        "id": 1,
-        "attributes": {
-          "label": "south",
-          "description": "Pm interview everything sound."
-        },
-        "meta": {},
-        "links": {
-          "self": "http://0.0.0.0:5004/lettres/api/1.0/traditions/1"
-        },
-        "relationships": {
-          "documents": {
-            "links": {
-              "self": "http://0.0.0.0:5004/lettres/api/1.0/traditions/1/relationships/documents",
-              "related": "http://0.0.0.0:5004/lettres/api/1.0/traditions/1/documents"
-            },
-            "data": [
-              {
-                "id": 9,
-                "type": "document"
-              }
-            ]
-          }
-        }
-      }
-    ]
-
-    expect(getTradition(incIn)).toEqual({ "id": 1, "label": "south", "description": "Pm interview everything sound." })
-  })
-
+  
   test('getLanguages', () => {
 
     const incIn = [
