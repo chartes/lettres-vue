@@ -1,4 +1,5 @@
-import http_with_csrf_token from '../../../modules/http-common';
+import http_with_csrf_token, {http} from '../../../modules/http-common';
+
 import {
   getPersons, getLanguages, getWitnesses,
   getNotes, getCollections, getCurrentLock,  getPlacenames,
@@ -182,7 +183,7 @@ const actions = {
 
     this.dispatch('languages/fetch');
 
-    const http = http_with_csrf_token();
+    
     return http.get(`documents/${id}?include=${incs.join(',')}`).then( response => {
       commit('UPDATE_DOCUMENT', {
         data: response.data.data,
@@ -198,7 +199,7 @@ const actions = {
       'witnesses', 'current-lock'
     ];
 
-    const http = http_with_csrf_token();
+    
     return http.get(`documents/${id}?include=${incs.join(',')}&without-relationships`).then( response => {
       commit('UPDATE_DOCUMENT_PREVIEW', response.data);
       commit('LOADING_STATUS', false)
@@ -206,7 +207,7 @@ const actions = {
   },
   fetchAll ({ commit }, {pageId, pageSize, filters}) {
     commit('LOADING_STATUS', true);
-    const http = http_with_csrf_token();
+    
     return http.get(`/documents?${filters}&page[size]=${pageSize}&page[number]=${pageId}&without-relationships`)
       .then( (response) => {
       commit('UPDATE_ALL', response.data);
@@ -218,7 +219,7 @@ const actions = {
 
     const index = `lettres__${process.env.NODE_ENV}__documents`;
     const incs = ['collections', 'persons', 'persons-having-roles', 'roles', 'witnesses', 'languages'];
-    const http = http_with_csrf_token();
+    
     if (filters)
       filters = '&' + filters;
     else {
@@ -236,7 +237,8 @@ const actions = {
     console.log('document/save', data)
     data.type = 'document';
     removeContentEditableAttributesFromObject(data.attributes)
-    const http = http_with_csrf_token();
+    //
+    console.log("axios http headers", http.defaults.headers.common);
     return http.patch(`/documents/${data.id}`, { data })
       .then(response => {
         commit('UPDATE_DOCUMENT_DATA', response.data.data);
@@ -282,7 +284,7 @@ const actions = {
     };
 
     console.warn('posting', newDocument);
-    const http = http_with_csrf_token();
+    
     return http.post(`/documents`, newDocument)
         .then(response => {
           commit('UPDATE_DOCUMENT_DATA', response.data.data);
@@ -319,7 +321,7 @@ const actions = {
     });
   },
   removeWitnessInstitution({commit}, witnessId) {
-    const http = http_with_csrf_token();
+    
     return http.patch(`/witnesses/${witnessId}/relationships/institution`, {data: null});
   },
   addWitness ({commit, state}, witness) {
@@ -353,7 +355,7 @@ const actions = {
         relationships
     };
 
-    const http = http_with_csrf_token();
+    
     return http.post(`/witnesses?without-relationships`, {data})
       .then(response => {
         witness.id = response.data.data.id;
@@ -389,7 +391,7 @@ const actions = {
         attributes: attributes,
         relationships
     }
-    const http = http_with_csrf_token();
+    
     return http.patch(`witnesses/${witness.id}?without-relationships`, {data})
       .then(response => {
         commit('UPDATE_WITNESS', witness);
@@ -400,7 +402,7 @@ const actions = {
     const data = { data: { id : witness.id, type: "witness" } }
     console.log('document store removeWitness', data, state.document.id)
 
-    const http = http_with_csrf_token();
+    
     return http.delete(`/witnesses/${witness.id}`, {data})
       .then(response => {
         console.log('response', response)
@@ -420,7 +422,7 @@ const actions = {
       return state.witnesses[index].id !== w.id
     })
 
-    const http = http_with_csrf_token();
+    
     Promise.all(changed.map(w => {
       return http.patch(`/witnesses/${w.id}`, { data: {
         type: "witness",
@@ -456,7 +458,7 @@ const actions = {
 
     const data = { data: [ { id : collection.id, type: "collection" }, ] }
 
-    const http = http_with_csrf_token();
+    
     return http.post(`/documents/${state.document.id}/relationships/collections?without-relationships`, data)
       .then(response => {
         commit('ADD_COLLECTION', collection);
@@ -465,7 +467,7 @@ const actions = {
   },
   removeCollection ({commit, state}, collection) {
     const data = { data: { id : collection.id, type: "collection" } };
-    const http = http_with_csrf_token();
+    
     return http.delete(`/documents/${state.document.id}/relationships/collections?without-relationships`, {data})
       .then(response => {
         commit('REMOVE_COLLECTION', collection);
@@ -484,7 +486,7 @@ const actions = {
         }
       }
     }
-    const http = http_with_csrf_token();
+    
     return http.post(`notes?without-relationships`, {data})
       .then(response => {
         console.log('response', response.data)
@@ -500,7 +502,7 @@ const actions = {
       type: 'note',
       attributes: { content: note.content }
     }
-    const http = http_with_csrf_token();
+    
     return http.patch(`notes/${note.id}?without-relationships`, {data})
       .then(response => {
         console.log('response', note.content)
@@ -510,7 +512,7 @@ const actions = {
   },
   removeNote ({commit, state}, noteId) {
 
-    const http = http_with_csrf_token();
+    
     return http.delete(`notes/${noteId}?without-relationships`)
       .then(response => {
         console.log('response', response)
@@ -520,7 +522,7 @@ const actions = {
   },
 
   initializeDummyDocument({commit, state, rootState}, defaultData) {
-    const http = http_with_csrf_token();
+    
     const collId = defaultData.relationships.collections.data[0].id;
     return http.get(`collections/${collId}`).then(r => {
       const collection = r.data.data;

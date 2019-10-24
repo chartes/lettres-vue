@@ -56,7 +56,7 @@ const testNotes = [
 ]
 
 
-describe('MarkupUtils', () => {
+describe.skip('MarkupUtils', () => {
 
   test('convertLinebreakTEIToQuill', () => {
     let input = '<lb></lb> <lb/>'

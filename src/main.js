@@ -13,6 +13,16 @@ new Vue({
   store,
   router,
   vuetify,
+  created () {
+    const userString = localStorage.getItem('user') // grab user data from local storage
+
+    if (userString) { // check to see if there is indeed a user
+      let userData = JSON.parse(userString) // parse user data into JSON
+      userData.refresh_token = localStorage.getItem('refresh_token');
+      userData.access_token = localStorage.getItem('user');
+      this.$store.commit('user/SET_USER_DATA', userData) // restore user data with Vuex
+    }
+  },
   render(h) {
     return h(App, {})
   }

@@ -4,12 +4,12 @@
     class="document"
   >
     <document-tag-bar
-      v-if="isUserLoaded"
+      v-if="current_user"
       :doc-id="docId"
     />
     
     <article
-      v-if="document && documentsPreview[docId]"
+      v-if="document"
       class="document__content"
     >
       <!-- titre et langue -->
@@ -113,16 +113,13 @@
         },
         mounted () {
             this.isLoading = true;
-            this.$store.dispatch('user/fetchCurrent').then(response => {
                 this.$store.dispatch('document/fetch', this.docId).then(r => {
-                    
                     this.computeCanEdit();
                     this.isLoading = false;
                 }).catch(e => {
                     console.warn("ERROR", e);
                     //window.location.replace(baseAppURL);
                 });
-            });
         },
         computed: {
             ...mapState('document', [

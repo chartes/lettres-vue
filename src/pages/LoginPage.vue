@@ -1,6 +1,12 @@
 <template>
   <div>
-    <form @submit.prevent="login">
+    <div v-if="current_user">
+      Bienvenue {{ current_user.username }}
+    </div>
+    <form
+      v-else
+      @submit.prevent="login"
+    >
       <label for="email">
         Email:
       </label>
@@ -23,7 +29,7 @@
       
       <button
         type="submit"
-        name="button"
+        name="login"
       >
         Login
       </button>
@@ -33,6 +39,7 @@
 
 <script>
 
+import {mapState} from 'vuex'
 
 export default {
     name: "LoginPage",
@@ -45,6 +52,9 @@ export default {
           password: ''
         }
     },
+    computed: {
+      ...mapState("user", ["current_user"])
+    },
     methods: {
         login () {
           this.$store
@@ -52,7 +62,7 @@ export default {
               email: this.email,
               password: this.password
             })
-           // .then(() => { this.$router.push({ name: 'landing' }) })
+            .then(() => { this.$router.go(-1) })
         }
       }
 

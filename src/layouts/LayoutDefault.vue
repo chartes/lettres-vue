@@ -17,6 +17,14 @@
       <v-spacer /> 
 
       <v-btn
+        v-if="current_user"
+        text
+        dark
+      >
+        {{ current_user.username }}
+      </v-btn>
+      <v-btn
+        v-else
         text
         dark
         @click="$router.push('/login')"
@@ -33,8 +41,17 @@
 </template>
 
 <script>
+
+import {mapState} from 'vuex'
+ 
+
 export default {
     name: "LayoutDefault",
+    
+    computed: {
+      ...mapState("user", ["current_user"])
+    },
+
     created() {
        //this.$store.dispatch('user/fetchCurrent');
     }

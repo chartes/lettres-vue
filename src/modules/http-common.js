@@ -1,5 +1,6 @@
 import axios from 'axios';
-import { getCookie } from './cookies-helpers'
+//import { getCookie } from './cookies-helpers'
+import createAuthRefreshInterceptor from 'axios-auth-refresh';
 
 const _baseApiURL = `${process.env.VUE_APP_API_URL}/api/1.0`;
 const _baseAppURL = `/lettres`;
@@ -13,23 +14,36 @@ export const http = axios.create({
   headers: {}
 });
 
-
-export function addTokenToHeaders(token) {
-  axios.defaults.headers.common['Authorization'] = `Bearer ${
-    token
-  }`   
-}
-
 function http_with_csrf_token() {
-  return axios.create({
+  return http; /*axios.create({
     baseURL: _baseApiURL,
     headers: {
      'X-CSRF-Token': getCookie('csrf_access_token'),
     }
   });
+  */
 }
 
+
+// Function that will be called to refresh authorization
+const refreshAuthLogic = failedRequest => http.post('refresh', {
+  headers: {
+    "refresh" : localStorage.getItem('refresh_token')
+  }
+}).then(tokenRefreshResponse => {
+    console.log("refresh response", tokenRefreshResponse)
+    //localStorage.setItem('access_token', tokenRefreshResponse.data.access_token);
+    //localStorage.setItem('refresh_token', tokenRefreshResponse.data.refresh_token);
+    failedRequest.response.config.headers['Authentication'] = 'Bearer ' + tokenRefreshResponse.data.access_token;
+    return Promise.resolve();
+});
+
+createAuthRefreshInterceptor(http, refreshAuthLogic);
+
+
+
 /*
+
 http.interceptors.response.use(function (response) {
   return response
 }, function (error) {
@@ -37,6 +51,7 @@ http.interceptors.response.use(function (response) {
   const originalRequest = config;
 
   if (status === 401) {
+    console.log("WTF")
     return  new Promise((resolve) => {
       console.warn("MAJ HEADERS");
       console.warn("from ", originalRequest.headers['X-CSRF-Token']);
