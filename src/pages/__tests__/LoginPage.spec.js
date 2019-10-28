@@ -34,7 +34,7 @@ describe("User login", () => {
             password: 'Lettres2019!'
         }
         await authenticator.connect(realUser);
-        await browser.page.screenshot({ path: './image.jpg', type: 'jpeg' });
+        //await browser.page.screenshot({ path: './image.jpg', type: 'jpeg' });
         const cookies = await browser.page.cookies();
         console.log("cookies after login", cookies);
      }, 16000);

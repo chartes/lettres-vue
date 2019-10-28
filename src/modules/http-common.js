@@ -1,5 +1,5 @@
 import axios from 'axios';
-//import { getCookie } from './cookies-helpers'
+import { getCookie } from './cookies-helpers'
 import createAuthRefreshInterceptor from 'axios-auth-refresh';
 
 const _baseApiURL = `${process.env.VUE_APP_API_URL}/api/1.0`;
@@ -11,7 +11,8 @@ export const baseAppURL = _baseAppURL;
 
 export const http = axios.create({
   baseURL: _baseApiURL,
-  headers: {}
+  headers: {},
+  withCredentials: true
 });
 
 function http_with_csrf_token() {
@@ -26,15 +27,15 @@ function http_with_csrf_token() {
 
 
 // Function that will be called to refresh authorization
-const refreshAuthLogic = failedRequest => http.post('refresh', {
+const refreshAuthLogic = failedRequest => http.post('refresh', {}, {
   headers: {
-    "refresh" : localStorage.getItem('refresh_token')
+    'X-CSRF-TOKEN': getCookie('csrf_refresh_token')
   }
 }).then(tokenRefreshResponse => {
-    console.log("refresh response", tokenRefreshResponse)
-    //localStorage.setItem('access_token', tokenRefreshResponse.data.access_token);
-    //localStorage.setItem('refresh_token', tokenRefreshResponse.data.refresh_token);
-    failedRequest.response.config.headers['Authentication'] = 'Bearer ' + tokenRefreshResponse.data.access_token;
+    const token = getCookie('csrf_access_token') 
+    failedRequest.response.config.headers['Authorization'] = 'Bearer ' + token;
+    failedRequest.response.config.headers['X-CSRF-Token'] = token;
+    console.log("I GOT A REFRESHED TOKEN", tokenRefreshResponse.config.headers)
     return Promise.resolve();
 });
 

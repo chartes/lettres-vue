@@ -18,8 +18,6 @@ new Vue({
 
     if (userString) { // check to see if there is indeed a user
       let userData = JSON.parse(userString) // parse user data into JSON
-      userData.refresh_token = localStorage.getItem('refresh_token');
-      userData.access_token = localStorage.getItem('user');
       this.$store.commit('user/SET_USER_DATA', userData) // restore user data with Vuex
     }
   },

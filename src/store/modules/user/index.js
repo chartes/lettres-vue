@@ -1,6 +1,6 @@
 import http_with_csrf_token,  {http} from '../../../modules/http-common';
 import {baseApiURL} from '../../../modules/http-common';
-
+import getCookie from '../../../modules/cookies-helpers';
 import {getRoles, getUserRoles} from '../../../modules/user-helpers';
 
 const state = {
@@ -31,22 +31,15 @@ const mutations = {
 
   SET_USER_DATA (state, userData) {
     //const roles = getRoles({});
-    const refresh_token = userData.refresh_token;
-    const access_token = userData.access_token;
-    delete userData.access_token;
-    delete userData.refresh_token;
-
     state.current_user = {
       ...userData,
       isAdmin: userData.roles.indexOf("admin") > -1
     }
-    localStorage.setItem('access_token', access_token)
-    localStorage.setItem('refresh_token', refresh_token)
     localStorage.setItem('user', JSON.stringify(state.current_user))
-
-    http.defaults.headers.common['Authorization'] = `Bearer ${
-      access_token
-    }`
+    console.log("cookies", document.cookie);
+    //const access_token =  getCookie('csrf_access_token');
+    //console.log("saving csrf_access_token", access_token)
+    //http.defaults.headers.common['Authorization'] = `Bearer ${access_token}`
   },
 
   /*
@@ -91,7 +84,7 @@ const actions = {
       */
   },
 
-  login ({ commit }, credentials) {
+  login ({ commit }, credentials) { 
     return http
       .post('login', credentials)
       .then(({ data }) => {
