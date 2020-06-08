@@ -35,7 +35,6 @@ const refreshAuthLogic = failedRequest => http.post('refresh', {}, {
     const token = getCookie('csrf_access_token') 
     failedRequest.response.config.headers['Authorization'] = 'Bearer ' + token;
     failedRequest.response.config.headers['X-CSRF-Token'] = token;
-    console.log("I GOT A REFRESHED TOKEN", tokenRefreshResponse.config.headers)
     return Promise.resolve();
 });
 

@@ -27,6 +27,26 @@ class Browser {
             await this.browser.close();
         }
     }
+
+    async find  (selector)  {
+        await this.page.waitForSelector(selector);
+        return this.page.$(selector);
+      }
+      
+    async findAll(selector)  {
+        await this.page.waitForSelector(selector);
+        return this.page.$$(selector);
+    }
+
+    async containsText(text, wrapperSelector) {
+        const textSelector = `//text()[contains(.,'${text}')]`;
+        const wrapper = wrapperSelector ? await find(wrapperSelector) : this.page;
+      
+        await this.page.waitForXPath(textSelector);
+        const matches = await wrapper.$x(textSelector);
+      
+        return matches.length > 0;
+    }
 }
 
 

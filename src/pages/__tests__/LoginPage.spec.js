@@ -1,6 +1,7 @@
 import Authenticator from '../../modules/helpers/authenticator';
 import Browser from '../../modules/helpers/browser';
 
+
 let browser;
 
 beforeAll(async () => {
@@ -12,7 +13,7 @@ afterAll(async () => {
     await browser.close();
 });
  
-describe("User login", () => {
+describe("User login page", () => {
     let authenticator;
 
     beforeEach(async () => {
@@ -20,23 +21,29 @@ describe("User login", () => {
       await authenticator.logout();
     })
 
-    test("should not have any cookies at first", async () => {
+    test("It should not have any cookies at first", async () => {
        expect.assertions(1);
        expect(browser.page.cookies()).resolves.toEqual([]);
     }, 16000);
 
- 
-    test("should not have any cookies at first", async () => {
-        //expect.assertions(1);
-        //expect(browser.page.cookies()).resolves.toEqual([]);
-        const realUser = {
-            email: 'julien.pilla@chartes.psl.eu',
-            password: 'Lettres2019!'
+    test("Then after login it should have access and refresh cookies", async () => {
+        expect.assertions(2);
+        expect(browser.page.cookies()).resolves.toEqual([]);
+        /*
+        const fakeUser = {
+            email: 'testuser@chartes.test',
+            password: `wrongPass`
         }
-        await authenticator.connect(realUser);
-        //await browser.page.screenshot({ path: './image.jpg', type: 'jpeg' });
+        */
+        await authenticator.connect(authenticator.admin);
+    
+        const welcomeText = await browser.find('.welcome')
+        console.log( welcomeText);
+
         const cookies = await browser.page.cookies();
         console.log("cookies after login", cookies);
+
+        expect(cookies.length).toEqual(4);
      }, 16000);
 
     // reset to the default connection

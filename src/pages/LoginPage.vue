@@ -1,6 +1,9 @@
 <template>
   <div>
-    <div v-if="current_user">
+    <div
+      v-if="current_user"
+      class="welcome"
+    >
       Bienvenue {{ current_user.username }}
     </div>
     <form
@@ -29,7 +32,7 @@
       
       <button
         type="submit"
-        name="login"
+        name="login-btn"
       >
         Login
       </button>
@@ -62,7 +65,9 @@ export default {
               email: this.email,
               password: this.password
             })
-            .then(() => { this.$router.go(-1) })
+            .then(() => { 
+              this.$router.go(-1)
+            })
         }
       }
 
