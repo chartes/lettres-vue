@@ -13,15 +13,20 @@ const getPersons = function (included) {
           relationId: inc.id,
           roleId: inc.relationships['person-role'].data.id,
           personId: inc.relationships.person.data.id,
+          ...inc.attributes
         }
       }
     });
-    return Object.values(hasRoleById).map(hasRole => { return {
-      ...hasRole, person: personsById[hasRole.personId],
-      role: rolesById[hasRole.roleId],
-      relationId: hasRole.relationId
-    }})
-
+    return Object.values(hasRoleById).map(hasRole => {
+      personsById[hasRole.personId].function = hasRole.function;
+      return {
+        personId: hasRole.personId,
+        roleId: hasRole.roleId,
+        person: personsById[hasRole.personId],
+        role: rolesById[hasRole.roleId],
+        relationId: hasRole.relationId
+      }
+    })
   },
 
   getPlacenames = function (included) {
@@ -38,12 +43,15 @@ const getPersons = function (included) {
                   relationId: inc.id,
                   roleId: inc.relationships['placename-role'].data.id,
                   placenameId: inc.relationships.placename.data.id,
+                  ...inc.attributes
               }
           }
       });
       return Object.values(hasRoleById).map(hasRole => {
           return {
-              ...hasRole, placename: placenamesById[hasRole.placenameId],
+              placenameId: hasRole.personId,
+              roleId: hasRole.roleId,
+              placename: placenamesById[hasRole.placenameId],
               role: rolesById[hasRole.roleId],
               relationId: hasRole.relationId
           }

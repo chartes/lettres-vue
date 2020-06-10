@@ -32,13 +32,13 @@
                 :href="c.person.ref"
                 target="_blank"
               >
-                {{ !!c.person.func ? `${c.person.label}, ${c.person.func}` : c.person.label }}
+                {{ !!c.person.function ? `${c.person.label}, ${c.person.function}` : c.person.label }}
               </a>
             </span>
             <a
               v-if="editable"
               class="tag is-delete"
-              @click.prevent="unlinkPersonFromDoc(c)" 
+              @click.prevent="unlinkPersonFromDoc(c)"
             />
           </div>
         </div>
@@ -63,7 +63,7 @@
             <icon-add />
           </a>
         </div>
-        <div v-if="documentRecipients.length > 0"> 
+        <div v-if="documentRecipients.length > 0">
           <div
             v-for="c in documentRecipients"
             :key="c.person.id"
@@ -74,13 +74,13 @@
                 :href="c.person.ref"
                 target="_blank"
               >
-                {{ !!c.person.func ? `${c.person.label}, ${c.person.func}` : c.person.label }}
+                {{ !!c.person.function ? `${c.person.label}, ${c.person.function}` : c.person.label }}
               </a>
             </span>
             <a
               v-if="editable"
               class="tag is-delete"
-              @click.prevent="unlinkPersonFromDoc(c)" 
+              @click.prevent="unlinkPersonFromDoc(c)"
             />
           </div>
         </div>
@@ -140,7 +140,7 @@
         this.$store.dispatch('persons/linkToDocument', {
           personId,
           roleId,
-          func: person.func
+          func: person.function
         })
           .then(personHasRole => {
             const corrData = {

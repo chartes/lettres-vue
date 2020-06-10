@@ -130,7 +130,7 @@
 	        if ((val.length !== oldValue.length) || (val.length === 0)) {
 		        this.results = val;
 		        this.isLoading = false;
-		        this.isOpen = true;
+		        // this.isOpen = true;
 	        }
         }
       },

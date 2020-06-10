@@ -42,7 +42,7 @@
       
       <div class="mt-4">
         <field-text
-          v-model="form.func"
+          v-model="form.function"
           label="Description du lieu"
           placeholder="ex : Depuis le camp militaire aux abords de la ville"
           :disabled="!validForm"
@@ -101,6 +101,9 @@
         //this.submitAction()
       },
     },
+	  mounted() {
+		  this.searchPlacename('*')
+	  },
     methods: {
 
       searchPlacename (search) {
@@ -110,6 +113,7 @@
       submitAction () {
         console.log('submitAction', this.form)
         this.$props.submit(this.form);
+        this.closeNewPlacenameForm();
       },
       cancelAction () {
         if (this.placenameForm) return;
@@ -128,10 +132,11 @@
       createNewPlacename (placename) {
         this.$store.dispatch('placenames/addOne', placename)
           .then(corr => {
-            this.$props.submit({
+            this.form = {
               id: corr.id,
               ...corr.attributes
-            });
+            };
+            this.closeNewPlacenameForm();
           })
           .catch(error => {
             this.newPlacenameError = error.toString()

@@ -39,10 +39,10 @@
           </a>
         </template>
       </select-autocomplete-field>
-       
+      
       <div class="mt-4">
         <field-text
-          v-model="form.func"
+          v-model="form.function"
           label="Fonction occupée à ce moment"
           placeholder="ex : Duc d'Anjou, prince marchand, etc."
           :disabled="!validForm"
@@ -101,6 +101,9 @@
         //this.submitAction()
       },
     },
+	  mounted() {
+		  this.searchPerson('*')
+	  },
     methods: {
 
       searchPerson (search) {

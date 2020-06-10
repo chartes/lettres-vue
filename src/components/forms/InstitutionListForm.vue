@@ -18,7 +18,7 @@
             <a
               class="witness-item__delete"
               style="vertical-align: bottom;"
-              href="#" 
+              href="#"
               @click="openNewInstitutionForm"
             >
               <icon-add />
@@ -71,6 +71,9 @@
         institutionError: null,
       }
     },
+	  mounted() {
+		  this.searchInstitution('*')
+	  },
     methods: {
       createNewInstitution(institution) {
         this.$store.dispatch('institutions/addOne', institution)

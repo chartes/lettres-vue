@@ -28,7 +28,7 @@
                 :href="c.placename.ref"
                 target="_blank"
               >
-                {{ !!c.placename.func ? `${c.placename.label}, ${c.placename.func}` : c.placename.label }}
+                {{ !!c.placename.function ? `${c.placename.label}, ${c.placename.function}` : c.placename.label }}
               </a>
             </span>
             <a
@@ -69,13 +69,13 @@
                 :href="c.placename.ref"
                 target="_blank"
               >
-                {{ !!c.placename.func ? `${c.placename.label}, ${c.placename.func}` : c.placename.label }}
+                {{ !!c.placename.function ? `${c.placename.label}, ${c.placename.function}` : c.placename.label }}
               </a>
             </span>
             <a
               v-if="editable"
               class="tag is-delete"
-              @click.prevent="unlinkPlacenameFromDoc(c)" 
+              @click.prevent="unlinkPlacenameFromDoc(c)"
             />
           </div>
         </div>
@@ -135,7 +135,7 @@
                 this.$store.dispatch('placenames/linkToDocument', {
                     placenameId,
                     roleId,
-		                func: placename.func
+		                func: placename.function
                 })
                     .then(placenameHasRole => {
                         if (placenameHasRole) {
@@ -147,8 +147,8 @@
                                 roleId
                             };
                             this.$store.dispatch('document/addPlacename', corrData);
+	                          this.closePlacenameChoice()
                         }
-                        this.closePlacenameChoice()
                     })
             },
             unlinkPlacenameFromDoc(placename) {
