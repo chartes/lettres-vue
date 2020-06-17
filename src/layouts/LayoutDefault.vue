@@ -1,52 +1,23 @@
 <template>
-  <v-app>
-    <v-app-bar
-      app
-      text
-      color="red darken-4"
-    >
-      <v-toolbar-title @click="$router.push('/')">
-        <v-btn
-          text
-          dark
-        >
-          projet lettres
-        </v-btn>
-      </v-toolbar-title>
-
-      <v-spacer /> 
-
-      <v-btn
-        v-if="current_user"
-        text
-        dark
-      >
-        {{ current_user.username }}
-      </v-btn>
-      <v-btn
-        v-else
-        text
-        dark
-        @click="$router.push('/login')"
-      >
-        Connexion
-      </v-btn>
-    </v-app-bar>  
-    <v-content>
-      <v-container>
+  <section>
+    <nav-bar />
+    <section class="section">
+      <div class="container">
         <slot />
-      </v-container>
-    </v-content>
-  </v-app>
+      </div>
+    </section>
+  </section>
 </template>
 
 <script>
 
 import {mapState} from 'vuex'
- 
+import NavBar from '@/components/NavBar.vue'
+
 
 export default {
     name: "LayoutDefault",
+    components: {NavBar},
     
     computed: {
       ...mapState("user", ["current_user"])

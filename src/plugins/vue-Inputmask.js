@@ -1,13 +1,13 @@
 import Vue from 'vue'
-import Vuetify from 'vuetify/lib'
+//import Vuetify from 'vuetify/lib'
 //import 'vuetify/src/stylus/app.styl'
 //import 'vuetify/dist/vuetify.min.css' // Ensure you are using css-loader
 
-Vue.use(Vuetify);
+//Vue.use(Vuetify);
 
-const VueInputMask = require('vue-inputmask').default;
-Vue.use(VueInputMask);
-
+const VueInputmask = require('vue-inputmask').default;
+Vue.use(VueInputmask);
+/*
 export default new Vuetify({
   iconfont: 'md',
   icons: {
@@ -31,3 +31,4 @@ export default new Vuetify({
     'hide': 'fas fa-eye-slash',
   }
 })
+ */

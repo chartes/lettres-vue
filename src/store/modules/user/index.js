@@ -1,7 +1,7 @@
 import http_with_csrf_token,  {http} from '../../../modules/http-common';
 import {baseApiURL} from '../../../modules/http-common';
-import getCookie from '../../../modules/cookies-helpers';
 import {getRoles, getUserRoles} from '../../../modules/user-helpers';
+import { deleteCookie, getCookie } from '../../../modules/cookies-helpers';
 
 const state = {
   current_user: null,
@@ -28,7 +28,12 @@ const mutations = {
     state.isUserLoaded = true;
   },
   */
-
+  CLEAR_USER_DATA(state) {
+    localStorage.removeItem('user')
+    deleteCookie('csrf_access_token')
+    deleteCookie('csrf_refresh_token')
+    location.reload()
+  },
   SET_USER_DATA (state, userData) {
     //const roles = getRoles({});
     state.current_user = {
@@ -92,11 +97,11 @@ const actions = {
         commit('SET_USER_DATA', data)
       }).catch(({error}) => {
         console.log("LOGIN ERROR", error)
+        return error
       })
   },
-
   logout({commit}) {
-    console.log("logout: not yet implemented")
+    commit('CLEAR_USER_DATA')
   },
 
   register({commit}) {
@@ -126,10 +131,10 @@ const actions = {
 };
 
 const getters = {
-
-
+  loggedIn(state) {
+    return !!state.current_user
+  }
 };
-
 const userModule = {
   namespaced: true,
   state,

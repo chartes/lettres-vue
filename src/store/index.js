@@ -13,6 +13,7 @@ import locks from './modules/locks';
 import witnesses from './modules/witnesses';
 import bookmarks from './modules/bookmarks';
 import notes from './modules/notes';
+import search from './modules/search';
 
 Vue.use(Vuex);
 
@@ -30,5 +31,6 @@ export default new Vuex.Store({
       witnesses,
       bookmarks,
       notes,
+      search
     }
 });
