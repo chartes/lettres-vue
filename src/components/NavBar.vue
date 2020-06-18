@@ -88,16 +88,6 @@ export default {
     logout() {
       this.$store.dispatch("user/logout");
     },
-
-    goToDocPage(num) {
-      this.currentPage = num;
-      if (this.searchedTerm && this.searchedTerm.length > 1) {
-        this.performSearch(this.searchedTerm, this.currentPage);
-      } else {
-        this.fetchAll();
-      }
-    },
-   
   }
 };
 </script>
