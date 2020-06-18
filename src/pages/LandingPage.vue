@@ -14,7 +14,7 @@ import DocumentList from '../components/sections/DocumentList'
 export default {
     name: "LandingPage",
     components: {
-        DocumentList
+      DocumentList
     },
     methods: {
     }

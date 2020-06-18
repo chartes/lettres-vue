@@ -31,13 +31,13 @@
               v-if="!loggedIn"
               :to="{ name: 'login' }"
             >
-              <a class="button is-primary">
+              <a class="button  is-light  is-outlined">
                 Connexion
               </a>
             </router-link>
             <span
               v-else
-              class="button is-light"
+              class="button  is-light is-outlined"
               @click="logout"
             >
               Déconnexion

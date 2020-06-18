@@ -1,7 +1,8 @@
 import Vue from "vue";
+import { getUrlParameter } from "@/modules/utils";
 
 const state = {
-  searchTerm: [],
+  searchTerm: null,
   numPage: 1,
   pageSize: 25
 };
@@ -19,17 +20,16 @@ const mutations = {
 const actions = {
   setSearchTerm({commit}, term) {
     commit('SET_SEARCH_TERM', term);
-    commit("SET_NUM_PAGE", 1);
   },
-  clearSearchTerm({commit}, term) {
+  clearSearchTerm({commit}) {
     commit('SET_SEARCH_TERM', null)
   },
   setNumPage({commit}, num) {
     commit('SET_NUM_PAGE', num)
   },
-  performSearch({commit, state, dispatch}, term) {
+  performSearch({state, dispatch}) {
     //commit("SET_SEARCH_TERM", term);
-    if (state.searchTerm.length > 1) {
+    if (state.searchTerm && state.searchTerm.length > 1) {
       dispatch("document/fetchSearch", {
         pageId: state.numPage,
         pageSize: state.pageSize,
@@ -47,7 +47,13 @@ const actions = {
 };
 
 const getters = {
-
+  totalPageNum: (state, getters, rootState) => {
+      return parseInt(
+        rootState.document.links && rootState.document.links.last
+          ? getUrlParameter(rootState.document.links.last, "page%5Bnumber%5D")
+          : 1
+      );
+  }
 
 };
 

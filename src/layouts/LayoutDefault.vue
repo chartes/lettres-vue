@@ -4,7 +4,7 @@
     <section class="section">
       <div class="">
         <div class="columns">
-          <div class="column is-one-fifth sidebar-column">
+          <div class="column is-2 sidebar-column">
             <side-bar />
           </div>
           <div class="column main-column">
@@ -40,15 +40,13 @@ export default {
 
 .main {
   background-color: $white-ter;
-  height: 100%;
+  min-height: 100%;
 }
 .main-column {
-    background-color: $white;
-}
-.sidebar-column {
-  
+  background-color: $white;
 }
 .section {
   padding-top: 0;
+  padding-bottom: 0;
 }
 </style>

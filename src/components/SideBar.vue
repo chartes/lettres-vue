@@ -2,11 +2,11 @@
   <aside class="menu">
     <search-box class="mt-5 mb-5" />
     <p class="menu-label">
-      General
+      Général
     </p>
     <ul class="menu-list">
-      <li><a>Dashboard</a></li>
-      <li><a>Customers</a></li>
+      <li><a>Mon historique</a></li>
+      <li><a>Mes favoris</a></li>
     </ul>
     <p class="menu-label">
       Administration
@@ -21,17 +21,6 @@
           <li><a>Add a member</a></li>
         </ul>
       </li>
-      <li><a>Invitations</a></li>
-      <li><a>Cloud Storage Environment Settings</a></li>
-      <li><a>Authentication</a></li>
-    </ul>
-    <p class="menu-label">
-      Transactions
-    </p>
-    <ul class="menu-list">
-      <li><a>Payments</a></li>
-      <li><a>Transfers</a></li>
-      <li><a>Balance</a></li>
     </ul>
   </aside>
 </template>

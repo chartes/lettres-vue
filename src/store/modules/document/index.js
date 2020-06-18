@@ -205,26 +205,29 @@ const actions = {
       commit('LOADING_STATUS', false)
     })
   },
-  fetchAll ({ commit }, {pageId, pageSize, filters}) {
+  fetchAll ({ commit, rootState }, {pageId, pageSize}) {
     commit('LOADING_STATUS', true);
-    
-    return http.get(`/documents?${filters}&page[size]=${pageSize}&page[number]=${pageId}&without-relationships`)
+    let filters = ''
+    if (!rootState.user.current_user){
+      filters = 'filter[is-published]=TRUE&'
+    }
+    return http.get(`/documents?${filters}page[size]=${pageSize}&page[number]=${pageId}&without-relationships`)
       .then( (response) => {
       commit('UPDATE_ALL', response.data);
       commit('LOADING_STATUS', false);
     })
   },
-  fetchSearch ({ commit }, {pageId, pageSize, query, filters}) {
+  fetchSearch ({ commit, rootState }, {pageId, pageSize, query}) {
     commit('LOADING_STATUS', true);
 
     const index = `lettres__${process.env.NODE_ENV}__documents`;
     const incs = ['collections', 'persons', 'persons-having-roles', 'roles', 'witnesses', 'languages'];
     
-    if (filters)
-      filters = '&' + filters;
-    else {
-      filters = '';
+    let filters = ''
+    if (!rootState.user.current_user){
+      filters = 'filter[is-published]=TRUE&'
     }
+
     return http.get(`/search?query=${query}&index=${index}&include=${incs.join(',')}&without-relationships&page[size]=${pageSize}&page[number]=${pageId}${filters}`)
       .then( (response) => {
       commit('UPDATE_ALL', response.data);
