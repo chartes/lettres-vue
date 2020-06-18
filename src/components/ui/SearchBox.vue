@@ -1,19 +1,5 @@
 <template>
   <div class="search-container">
-    <!--
-    <v-text-field
-      v-model="currentValue"
-      flat
-      solo-inverted
-      hide-details
-      prepend-inner-icon="search"
-      label="Search"
-      class="hidden-sm-and-down"
-      type="text"
-      placeholder="Catherine de Medicis"
-      @keyup.enter="action(currentValue)"
-    />
-    -->
     <div class="field has-addons">
       <div class="control">
         <input
@@ -26,7 +12,7 @@
       </div>
       <div class="control">
         <a
-          class="button is-info"
+          class="button pl-5 pr-5"
           @click="search"
         >
           <span class="icon">
@@ -79,6 +65,7 @@ export default {
       if (!this.documentLoading) {
         this.setSearchTerm(this.inputTerm)
         this.performSearch()
+        this.$router.push({'name': 'landing'})
       }
     }
   }
@@ -86,7 +73,7 @@ export default {
 </script>
 
 <style scoped>
-.search-container {
-  width: 400px;
+.search-container input {
+  width: 260px;
 }
 </style>

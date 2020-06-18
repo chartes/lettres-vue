@@ -1,7 +1,7 @@
 
 
 /* Uncomment to import the entire Bulma framework */
-// @import '~bulma/bulma';
+@import '~bulma/bulma';
 
 /* Import selected Bulma Sass
 /* Remove these if you import the entire Bulma framework above */
@@ -15,7 +15,6 @@
 @import "~bulma/sass/layout/section.sass";
 @import "~bulma/sass/components/card.sass";
 */
-
 
 @import 'settings/colors';
 @import 'settings/vars';

@@ -1,46 +1,29 @@
 <template>
   <nav
-    class="navbar is-light"
+    class="navbar"
     role="navigation"
     aria-label="main navigation"
   >
-    <div class="navbar-brand">
-      <span class="navbar-item title is-4 navbar-title">Projet LETTRES</span>
-      <a
-        role="button"
-        class="navbar-burger burger"
-        aria-label="menu"
-        aria-expanded="false"
+    <div class="navbar-brand pl-2">
+      <router-link
+        :to="{ name: 'landing' }"
+        class="navbar-item title is-4 navbar-title"
       >
-        <span aria-hidden="true" />
-        <span aria-hidden="true" />
-        <span aria-hidden="true" />
-      </a>
+        LETTRES
+      </router-link>
     </div>
 
     <div
-      id="navbarBasicExample"
       class="navbar-menu"
     >
-      <div class="navbar-start">
-        <router-link
-          :to="{ name: 'landing' }"
-          class="navbar-item"
-        >
-          Accueil
-        </router-link>
-        <search-box
-          id="search-box"
-          class="navbar-item"
-        />
-      </div>
+      <div class="navbar-start" />
 
       <div class="navbar-end">
         <div class="navbar-item">
           <div class="buttons">
             <span
               v-if="loggedIn"
-              class="button is-light is-uppercase is-info m-r-sm"
+              class="button is-light  is-outlined is-uppercase m-r-sm "
             >
               {{ current_user.username }}
             </span>
@@ -57,7 +40,7 @@
               class="button is-light"
               @click="logout"
             >
-              Se déconnecter
+              Déconnexion
             </span>
           </div>
         </div>
@@ -69,15 +52,12 @@
 
 <script>
 import { mapState, mapGetters } from "vuex";
-import SearchBox from "./ui/SearchBox";
 
 export default {
   name: "NavBar",
-  components: { SearchBox },
   data() {
     return {
-      currentPage: 1,
-      displayedDocId: null
+ 
     };
   },
   computed: {
@@ -91,3 +71,15 @@ export default {
   }
 };
 </script>
+
+
+<style scoped lang="scss">
+@import '@/assets/sass/main.scss';
+
+.navbar {
+  background-color: $primary !important;
+}
+.navbar-brand a {
+  color: $white !important;
+}
+</style>
