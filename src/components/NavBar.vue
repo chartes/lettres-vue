@@ -97,21 +97,7 @@ export default {
         this.fetchAll();
       }
     },
-    performSearch(searchedValue, numPage = 1) {
-      const term = searchedValue ? searchedValue : "";
-      if (searchedValue.length > 1) {
-        this.displayedDocId = null;
-
-        this.$store.dispatch("document/fetchSearch", {
-          pageId: numPage,
-          pageSize: this.pageSize,
-          query: term
-        });
-        this.currentPage = numPage;
-      } else {
-        this.goToDocPage(1);
-      }
-    }
+   
   }
 };
 </script>

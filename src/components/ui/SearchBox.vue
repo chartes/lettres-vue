@@ -14,20 +14,41 @@
       @keyup.enter="action(currentValue)"
     />
     -->
-    <div class="control  has-icons-left">
-      <input
-        class="input"
-        type="text"
-        placeholder="Catherine de Medicis"
-      >
-      <span class="icon is-left">
-        <i class="fas fa-search" />
-      </span>
+    <div class="field has-addons">
+      <div class="control">
+        <input
+          v-model="inputTerm"
+          class="input"
+          type="text"
+          placeholder="Catherine de Medicis"
+          @keyup.enter="search"
+        >
+      </div>
+      <div class="control">
+        <a
+          class="button is-info"
+          @click="search"
+        >
+          <span class="icon">
+            <i
+              v-if="documentLoading"
+              class="fas fa-spinner fa-pulse"
+            />
+            <i
+              v-else
+              class="fas fa-search"
+            />
+          </span>
+        </a>
+      </div>
     </div>
   </div>
 </template>
 
+
 <script>
+import { mapState, mapGetters, mapActions } from "vuex";
+
 export default {
   name: "SearchBox",
   components: {},
@@ -36,10 +57,31 @@ export default {
   },
   data() {
     return {
-      currentValue: null
+      currentValue: null,
+      inputTerm: null
     };
   },
-  created() {}
+  computed: {
+    ...mapState('search', ['searchTerm']),
+    ...mapState('document', ['documentLoading'])
+  },
+  watch: {
+    inputTerm() {
+      this.setSearchTerm(this.inputTerm)
+    }
+  },
+  created() {
+    this.inputTerm = this.searchTerm
+  },
+  methods: {
+    ...mapActions('search', ['performSearch', 'setSearchTerm']),
+    search() {
+      if (!this.documentLoading) {
+        this.setSearchTerm(this.inputTerm)
+        this.performSearch()
+      }
+    }
+  }
 };
 </script>
 
