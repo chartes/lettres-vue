@@ -65,8 +65,12 @@ export default {
       if (!this.documentLoading) {
         this.setSearchTerm(this.inputTerm)
         this.setNumPage(1)
-        this.performSearch()
-        this.$router.push({'name': 'landing'})
+        //this.performSearch()
+        if (this.$route.name !== 'search') {
+          this.$router.push({'name': 'search'})
+        } else {
+          this.performSearch()
+        }
       }
     }
   }

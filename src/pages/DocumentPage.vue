@@ -12,7 +12,7 @@
 import Document from '../components/sections/Document'
 
 export default {
-    name: "Landing",
+    name: "DocumentPage",
     components: {
         Document
     },

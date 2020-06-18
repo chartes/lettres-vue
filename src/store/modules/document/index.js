@@ -209,9 +209,9 @@ const actions = {
     commit('LOADING_STATUS', true);
     let filters = ''
     if (!rootState.user.current_user){
-      filters = 'filter[is-published]=TRUE&'
+      filters = '&filter[is-published]=TRUE'
     }
-    return http.get(`/documents?${filters}page[size]=${pageSize}&page[number]=${pageId}&without-relationships`)
+    return http.get(`/documents?page[size]=${pageSize}&page[number]=${pageId}&without-relationships${filters}`)
       .then( (response) => {
       commit('UPDATE_ALL', response.data);
       commit('LOADING_STATUS', false);
@@ -225,7 +225,7 @@ const actions = {
     
     let filters = ''
     if (!rootState.user.current_user){
-      filters = 'filter[is-published]=TRUE&'
+      filters = '&filter[is-published]=TRUE'
     }
 
     return http.get(`/search?query=${query}&index=${index}&include=${incs.join(',')}&without-relationships&page[size]=${pageSize}&page[number]=${pageId}${filters}`)

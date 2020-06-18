@@ -6,7 +6,7 @@
   >
     <div class="navbar-brand pl-2">
       <router-link
-        :to="{ name: 'landing' }"
+        :to="{ name: 'search' }"
         class="navbar-item title is-4 navbar-title"
       >
         LETTRES

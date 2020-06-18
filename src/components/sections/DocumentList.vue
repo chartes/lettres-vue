@@ -34,14 +34,10 @@
       }
     },
     computed: {
-      ...mapState('document', ['documents', 'links', 'documentLoading']),
+      ...mapState('document', ['documents', 'documentLoading']),
       ...mapState('user', ['current_user']),
     },
-    created() {
-              this.performSearch()
-    },
     methods: {
-      ...mapActions('search', ['performSearch']),
     }
   }
 </script>

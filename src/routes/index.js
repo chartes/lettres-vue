@@ -1,6 +1,6 @@
 import Vue from 'vue'
-import VueRouter, {Location, Route, RouteConfig} from 'vue-router'
-import LandingPage from "@/pages/LandingPage.vue"
+import VueRouter from 'vue-router'
+import SearchPage from "@/pages/SearchPage.vue"
 import LoginPage from "@/pages/LoginPage.vue"
 import RegisterPage from "@/pages/RegisterPage.vue"
 import DocumentPage from "@/pages/DocumentPage.vue"
@@ -16,8 +16,8 @@ const router = new VueRouter({
   routes: [
     {
       path: '/',
-      component: LandingPage,
-      name: 'landing'
+      component: SearchPage,
+      name: 'search'
     },
     {
       path: '/register',
@@ -40,7 +40,7 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
   if (to.fullPath.indexOf("/edit") > -1) {
-    if (!store.state.user.currentUser) {
+    if (!store.state.user.current_user) {
       next('/login');
     }
   }
