@@ -28,21 +28,11 @@ const actions = {
     commit('SET_NUM_PAGE', num)
   },
   performSearch({state, dispatch}) {
-    //commit("SET_SEARCH_TERM", term);
-    if (state.searchTerm && state.searchTerm.length > 1) {
-      dispatch("document/fetchSearch", {
-        pageId: state.numPage,
-        pageSize: state.pageSize,
-        query: state.searchTerm
-      }, {root: true});
-    } else {
-      //commit("SET_NUM_PAGE", 1);
-      dispatch("document/fetchAll", {
-        pageId: state.numPage,
-        pageSize: state.pageSize
-      }, {root: true});
-      //this.goToDocPage(1);
-    }
+    dispatch("document/fetchSearch", {
+      pageId: state.numPage,
+      pageSize: state.pageSize,
+      query: state.searchTerm
+    }, {root: true});
   }
 };
 

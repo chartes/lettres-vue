@@ -52,5 +52,6 @@ export default {
     position: relative;
     float: left;
     display: block;
+    width: 90%;
   }
 </style>
