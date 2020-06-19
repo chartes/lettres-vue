@@ -6,78 +6,91 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex'
-import Mirador from 'mirador'
+import { mapActions, mapState } from "vuex";
+import Mirador from "mirador";
+import axios from "axios";
 
 export default {
-  name: 'MiradorViewer',
+  name: "MiradorViewer",
   components: {},
   props: {
     manifestUrl: { type: String, required: true },
     canvasIndex: { type: Number, default: 0 }
   },
-  data () {
+  data() {
     return {
       viewer: null
-    }
+    };
   },
   computed: {},
   watch: {},
-  created () {
+  created() {},
+  async mounted() {
+    const manifests = {};
 
-  },
-  mounted () {
-    const manifests = {}
+    try {
+      const collection = await axios.get(this.manifestUrl);
+      // waiting for mirador 3 support of collections ?
+      this.manifestUrl = collection.data.manifests[0]["@id"];
+    } catch (e) {
+      console.error(e);
+    }
+
     manifests[this.manifestUrl] = {
       // metadata:
       // 'provider': ''
-    }
+    };
     // instantiate the viewer with a single manifest & window for simplicity
     try {
       this.viewer = Mirador.viewer({
-        'id': 'vue-mirador-container',
-        'manifests': manifests,
-        'windows': [
+        id: "vue-mirador-container",
+        manifests: manifests,
+        windows: [
           {
-            'loadedManifest': this.manifestUrl,
-            'canvasIndex': this.canvasIndex
+            loadedManifest: this.manifestUrl,
+            canvasIndex: this.canvasIndex
           }
         ],
-        'window': {
-          'allowClose': false,
-          'allowMaximize': false,
-          'defaultSideBarPanel': 'info',
-          'sideBarOpenByDefault': false,
-          'maximizedByDefault': true
+        window: {
+          allowClose: false,
+          allowMaximize: false,
+          defaultSideBarPanel: "info",
+          sideBarOpenByDefault: false,
+          hideWindowTitle: true,
+          maximizedByDefault: true
         },
-        'workspaceControlPanel': {
-          'enabled': false
+        workspace: {
+          showZoomControls: true,
+          type: "mosaic" // Which workspace type to load by default. Other possible values are "elastic"
+        },
+        workspaceControlPanel: {
+          enabled: false
         }
-      })
+      });
     } catch (e) {
-      console.warn('Mirrador viewer: ', e)
+      console.warn("Mirrador viewer: ", e);
     }
   },
-  methods: {
-  }
-}
+  methods: {}
+};
 </script>
 
 <style>
-  #vue-mirador-container {
-    min-height: calc(100vh - 56px);
-    position: relative;
-  }
-  .mosaic-root {
-    top: 0;
-    bottom: 0;
-    right: 0;
-    left: 0;
-  }
-  .mosaic-tile {
-    margin: 0px;
-  }
-  .Connect\(WithPlugins\(WindowTopBar\)\)-windowTopBarStyle-16.Connect\(WithPlugins\(WindowTopBar\)\)-focused-15 {
-    border-top: none;
-  }
+#vue-mirador-container {
+  min-height: calc(100% - 225px);
+  min-width: calc(100vw * (6 / 12));
+  position: fixed;
+}
+.mosaic-root {
+  top: 0 !important;
+  bottom: 0 !important;
+  right: 0 !important;
+  left: 0 !important;
+}
+.mosaic-tile {
+  margin: 0 !important;
+}
+.Connect\(WithPlugins\(WindowTopBar\)\)-windowTopBarStyle-16.Connect\(WithPlugins\(WindowTopBar\)\)-focused-15 {
+  border-top: none !important;
+}
 </style>

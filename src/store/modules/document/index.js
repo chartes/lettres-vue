@@ -216,7 +216,7 @@ const actions = {
       query = `${query} AND (is-published:true)`
     }
 
-    return http.get(`/search?query=${query}&include=${incs.join(',')}&without-relationships&page[size]=${pageSize}&page[number]=${pageId}${filters}`)
+    return http.get(`/search?query=${query}&sort=id&include=${incs.join(',')}&without-relationships&page[size]=${pageSize}&page[number]=${pageId}${filters}`)
       .then( (response) => {
       commit('UPDATE_ALL', response.data);
       commit('LOADING_STATUS', false);

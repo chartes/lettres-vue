@@ -29,20 +29,21 @@
               <slot />
             </div>
             <div
-              class="tile  hide-button"
+              v-show="iiifManifestUrl"
+              class="tile hide-button"
               @click="toggleRightSideBar"
             />
           </div>
         </div>
         <div
           v-show="showRightSideBar"
-          class="column is-5"
+          class="column is-6"
+          style="background-color: #F6F6F6"
         >
           <mirador-viewer
+            v-if="iiifManifestUrl"
             class="mirador-container"
-            :manifest-url="
-              `https://gallica.bnf.fr/iiif/ark:/12148/btv1b550076223/manifest.json`
-            "
+            :manifest-url="iiifManifestUrl"
           />
         </div>
       </div>
@@ -76,13 +77,32 @@ export default {
 
   computed: {
     ...mapState("user", ["current_user"]),
-    ...mapState("layout", ["showLeftSideBar", "showRightSideBar"])
+    ...mapState("layout", ["showLeftSideBar", "showRightSideBar"]),
+    ...mapState("document", ["document"]),
+
+    iiifManifestUrl() {
+      let url;
+      if (this.$route.name === "document" && this.document) {
+        url = this.document['iiif-collection-url'];
+      } else {
+        //url = 'https://gallica.bnf.fr/iiif/ark:/12148/btv1b550076223/manifest.json';
+      }
+
+      return url;
+    }
+  },
+  watch: {
+    iiifManifestUrl() {
+      if (!this.iiifManifestUrl) {
+        this.hideRightSideBar()
+      }
+    }
   },
   created() {
     //this.$store.dispatch('user/fetchCurrent');
   },
   methods: {
-    ...mapActions("layout", ["toggleLeftSideBar", "toggleRightSideBar"])
+    ...mapActions("layout", ["toggleLeftSideBar", "toggleRightSideBar", "hideRightSideBar"])
   }
 };
 </script>
@@ -99,7 +119,7 @@ export default {
 .column {
   margin-top: 0;
   padding-top: 0;
-  &.is-2, &.is-5 {
+  &.is-2, &.is-6 {
     padding-left: 0;
     padding-right: 0;
   }
@@ -123,10 +143,6 @@ export default {
     background-color: lightgrey;
     cursor: pointer;
   }
-}
-.mirador-container {
-  min-height: 800px;
-  max-height: 1200px;
 }
 .section {
   padding: 0;

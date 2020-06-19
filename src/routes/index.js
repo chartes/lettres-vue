@@ -2,12 +2,10 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 
 
-const SearchPage = () => import(/* webpackChunkName: "home-pages" */ '@/pages/SearchPage.vue')
-const LoginPage = () => import(/* webpackChunkName: "home-pages" */ '@/pages/LoginPage.vue')
-const RegisterPage = () => import(/* webpackChunkName: "home-pages" */ '@/pages/RegisterPage.vue')
-
-const DocumentPage = () => import(/* webpackChunkName: "document-pages" */ '@/pages/DocumentPage.vue')
-
+const SearchPage = () => import( '@/pages/SearchPage.vue')
+const LoginPage = () => import( '@/pages/LoginPage.vue')
+const RegisterPage = () => import( '@/pages/RegisterPage.vue')
+const DocumentPage = () => import('@/pages/DocumentPage.vue')
 
 import store from '@/store/index';
 
