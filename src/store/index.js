@@ -14,6 +14,7 @@ import witnesses from './modules/witnesses';
 import bookmarks from './modules/bookmarks';
 import notes from './modules/notes';
 import search from './modules/search';
+import layout from './modules/layout';
 
 Vue.use(Vuex);
 
@@ -31,6 +32,7 @@ export default new Vuex.Store({
       witnesses,
       bookmarks,
       notes,
-      search
+      search,
+      layout
     }
 });

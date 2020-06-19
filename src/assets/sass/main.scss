@@ -32,6 +32,9 @@
 
 //
 
+// Animations
+@import "animations/animations.slide";
+
 
 // Elements – styling for bare HTML elements (like H1, A, etc.).
 // These come with default styling from the browser so we can redefine them here.
@@ -44,7 +47,7 @@
 
 // Objects – class-based selectors which define undecorated design patterns,
 // for example media object known from OOCSS
-/*
+
 @import "objects/document-subsection";
 @import "objects/quill.lettres";
 @import "objects/quill.core";
@@ -86,4 +89,3 @@
 
 @import "utilities/modifiers";
 
-*/

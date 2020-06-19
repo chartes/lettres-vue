@@ -27,31 +27,30 @@
 
 
 <script>
-import { mapState, mapGetters } from "vuex";
+import { mapState, mapGetters, mapActions } from "vuex";
 import SearchBox from "./ui/SearchBox";
 
 export default {
   name: "NavBar",
   components: { SearchBox },
   data() {
-    return {
-
-    };
+    return {};
   },
-  computed: {
- 
-  },
+  computed: {},
   methods: {
-   
   }
 };
 </script>
 
-<style scoped>
-  aside {
-    position: relative;
-    float: left;
-    display: block;
-    width: 90%;
-  }
+<style scoped lang="scss">
+aside {
+  position: relative;
+  float: left;
+  display: block;
+  width: 100%;
+  height: 100%;
+  margin-bottom: 0;
+  padding-bottom: 0;
+  padding-left: 30px;
+}
 </style>

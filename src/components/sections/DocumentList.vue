@@ -17,14 +17,16 @@
 </template>
 
 <script>
-  import DocumentPreviewCard from '../document/DocumentPreviewCard';
-  import Pagination from '../ui/Pagination';
-
   import { mapState, mapActions } from 'vuex';
+  
+  import Pagination from '../ui/Pagination';
 
   export default {
     name: "DocumentList",
-    components: {DocumentPreviewCard, Pagination},
+    components: {
+      'DocumentPreviewCard': () => import(/* webpackChunkName: "home-pages" */ '../document/DocumentPreviewCard'),  
+      Pagination
+    },
     props: {
 
     },

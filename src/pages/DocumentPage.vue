@@ -1,10 +1,7 @@
 <template>
-  <div>
-    <document
-      :doc-id="parseInt(this.$route.params.docId)"
-    />
-    <div id="uv-layout" />
-  </div>
+  <document
+    :doc-id="parseInt(this.$route.params.docId)"
+  />
 </template>
 
 <script>
