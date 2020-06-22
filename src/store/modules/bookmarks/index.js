@@ -1,4 +1,5 @@
 import http_with_csrf_token from '../../../modules/http-common';
+import {debounce} from 'lodash';
 
 const state = {
 
@@ -36,7 +37,7 @@ const mutations = {
 };
 
 const actions = {
-  fetchUserBookmarks ({ commit }, {userId, pageId, pageSize, filters}) {
+  fetchUserBookmarks: debounce(({ commit }, {userId, pageId, pageSize, filters}) => {
     const http = http_with_csrf_token();
     return http.get(`users/${userId}/bookmarks?without-relationships&page[size]=${pageSize}&page[number]=${pageId}${filters ? '&'+filters : ''}`).then( response => {
       response.data.data.sort((d1, d2) => {return d1.attributes["title"] - d2.attributes["title"]});
@@ -59,7 +60,7 @@ const actions = {
 
    });
 
-  },
+  }, 250),
 
   deleteUserBookmark({ commit }, {userId, docId}) {
     const http = http_with_csrf_token();

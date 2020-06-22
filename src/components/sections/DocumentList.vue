@@ -7,7 +7,16 @@
       <div class="has-text-centered">
         <pagination />
       </div>
+
+      <progress
+        v-show="documentLoading" 
+        class="progress is-small is-warning"
+        max="100"
+      >
+        15%
+      </progress>
       <ul
+        v-show="!documentLoading"
         id="preview-cards"
         class="pb-5 pt-5"
       >
@@ -59,5 +68,8 @@ export default {
 
 .section {
   width: 100%;
+}
+progress {
+  margin-top: 30px;
 }
 </style>

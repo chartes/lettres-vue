@@ -10,7 +10,7 @@
     <span
       class="icon button"
       :disabled="documentLoading"
-      @click="performAction(numPage-1)"
+      @click="performAction(parseInt(numPage)-1)"
     >
       <i class="fas fa-angle-left" />
     </span>
@@ -18,15 +18,14 @@
       <input
         v-model="currentInput"
         class="input"
-        style="width: 60px; height: 24px"
         :disabled="documentLoading"
       >
-      <span>/ {{ totalPageNum }}</span>
+      <span> / {{ totalPageNum }}</span>
     </span>
     <span
       class="icon button"
       :disabled="documentLoading"
-      @click="performAction(numPage+1)"
+      @click="performAction(parseInt(numPage)+1)"
     >
       <i class="fas fa-angle-right" />
     </span>
@@ -60,7 +59,7 @@ export default {
     numPage: function() {
       this.currentInput = this.numPage;
     },
-    currentInput: function() {
+    currentInput:  function() {
       this.performAction(this.currentInput);
     }
   },
@@ -74,7 +73,7 @@ export default {
         this.performSearch();
       }
     },
-    performAction(num) {
+    performAction(num){
       if (!parseInt(num)) {
         num = 1;
       }
@@ -90,25 +89,21 @@ export default {
 };
 </script>
 
-<style scoped>
-.pagination {
-  width: unset;
-}
-.pagination,
-.icon,
-input {
-  justify-content: center;
-  color: #4a4a4a;
+<style scoped lang="scss">
+
+span.button {
+  height: 16px;
+  width: 40px;
+  margin: 4px;
 }
 .pagination__button__input-box {
-  margin-right: 10px;
-}
-.{
-  min-width: 28px;
-  margin-bottom: 0px;
-}
-.pagination__button:hover {
-  background: #962d3e;
-  color: white;
+  margin-right: 16px;
+  margin-left: 16px;
+  line-height: 2.15;
+  input {
+    margin: 4px;
+    width: 50px;
+    height: 26px;
+  }
 }
 </style>

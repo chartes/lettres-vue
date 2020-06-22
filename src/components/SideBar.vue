@@ -5,8 +5,8 @@
       Général
     </p>
     <ul class="menu-list">
+      <li><a><i class="fas fa-list" />Collections</a></li>
       <li><a><i class="fas fa-question-circle" />À propos</a></li>
-      <li><a><i class="fas fa-info-circle" />Documentation</a></li>
     </ul>
     <p class="menu-label">
       Mes travaux
@@ -20,6 +20,7 @@
       Administration
     </p>
     <ul class="menu-list">
+      <li><a><i class="fas fa-info-circle" />Documentation</a></li>
       <li>
         <a class="">Gestion des référentiels</a>
         <ul>
@@ -56,13 +57,7 @@ export default {
 
 <style scoped lang="scss">
 aside {
-  position: relative;
-  float: left;
-  display: block;
-  width: 100%;
-  height: 100%;
-  margin-bottom: 0;
-  padding-bottom: 0;
+
   padding-left: 30px;
 }
 i {

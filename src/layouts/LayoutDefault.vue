@@ -19,25 +19,24 @@
               (showRightSideBar ? 'padding-right: 0;' : '')
           "
         >
-          <div class="tile">
+          <div style="display: flex">
             <div
-              class="tile hide-button"
+              class=" hide-button  is-vertical divider-left"
               @click="toggleLeftSideBar"
             />
-
-            <div class="tile main-column-content">
+            <div class=" main-column-content">
               <slot />
             </div>
             <div
               v-show="iiifManifestUrl"
-              class="tile hide-button"
+              class=" hide-button  is-vertical divider-right"
               @click="toggleRightSideBar"
             />
           </div>
         </div>
         <div
           v-show="showRightSideBar"
-          class="column is-6"
+          class="column is-5"
           style="background-color: #F6F6F6"
         >
           <mirador-viewer
@@ -51,14 +50,8 @@
     <footer class="footer">
       <div class="content has-text-centered">
         <p>
-          <strong>Bulma</strong> by
-          <a href="https://jgthms.com">Jeremy Thomas</a>. The source code is
-          licensed
-          <a href="http://opensource.org/licenses/mit-license.php">MIT</a>. The
-          website content is licensed
-          <a
-            href="http://creativecommons.org/licenses/by-nc-sa/4.0/"
-          >CC BY NC SA 4.0</a>.
+          <strong>Projet LETTRES</strong> by
+          ENC
         </p>
       </div>
     </footer>
@@ -131,7 +124,7 @@ export default {
   margin-top: 0;
   padding-top: 0;
   &.is-2,
-  &.is-6 {
+  &.is-5 {
     padding-left: 0;
     padding-right: 0;
   }
@@ -146,21 +139,37 @@ export default {
 }
 .main-column-content {
   padding: 30px;
+  width: 100%;
 }
 .hide-button {
-  max-width: 25px;
+  width: 15px;
   min-height: 100vh;
   background-color: $white-ter;
+  border: 1px solid;
+  border-top: none;
+  border-bottom: none;
   &:hover {
     background-color: lightgrey;
     cursor: pointer;
   }
+  &.divider-left {
+    padding-left: 25px;
+    border-right-color:  $nice-grey;
+    border-left: none;
+  }
+  &.divider-right {
+    padding-right: 25px;
+    border-left-color:  $nice-grey;
+    border-right: none;
+  }
 }
+
 .section {
   padding: 0;
 }
-.footer {
-  background-color: lightgrey;
+footer {
+  background-color: $nice-grey  !important;
   margin-top: 12px;
+  padding: 25px 0px 50px !important;
 }
 </style>

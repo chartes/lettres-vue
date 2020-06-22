@@ -77,8 +77,8 @@ export default {
 
 <style>
 #vue-mirador-container {
-  min-height: calc(100% - 225px);
-  min-width: calc(100vw * (6 / 12));
+  min-height: calc(100% - 155px);
+  min-width: calc(100vw * (5 / 12));
   position: fixed;
 }
 .mosaic-root {

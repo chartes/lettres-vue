@@ -8,7 +8,7 @@
         <img
           v-if="documentPreview.attributes['iiif-thumbnail-url']"
           :src="documentPreview.attributes['iiif-thumbnail-url']"
-          @error="imageLoadingError=True"
+          @error="imageLoadingError=true"
         >
         <div
           v-if="imageLoadingError || !documentPreview.attributes['iiif-thumbnail-url']"

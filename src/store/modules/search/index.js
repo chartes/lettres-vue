@@ -1,10 +1,10 @@
-import Vue from "vue";
 import { getUrlParameter } from "@/modules/utils";
+import {debounce} from 'lodash';
 
 const state = {
   searchTerm: null,
   numPage: 1,
-  pageSize: 25
+  pageSize: 15
 };
 
 
@@ -27,13 +27,13 @@ const actions = {
   setNumPage({commit}, num) {
     commit('SET_NUM_PAGE', num)
   },
-  performSearch({state, dispatch}) {
+  performSearch: debounce(({state, dispatch}) => {
     dispatch("document/fetchSearch", {
       pageId: state.numPage,
       pageSize: state.pageSize,
       query: state.searchTerm
     }, {root: true});
-  }
+  }, 500)
 };
 
 const getters = {
