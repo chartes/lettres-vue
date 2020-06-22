@@ -61,7 +61,7 @@ export default {
         },
         workspace: {
           showZoomControls: true,
-          type: "mosaic" // Which workspace type to load by default. Other possible values are "elastic"
+          type: "mosaic", // Which workspace type to load by default. Other possible values are "elastic"
         },
         workspaceControlPanel: {
           enabled: false

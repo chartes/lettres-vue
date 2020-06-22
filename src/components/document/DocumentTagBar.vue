@@ -5,7 +5,7 @@
   >
     <router-link
       :to="{name: 'document', params: {docId}}"
-      active-class="tag document-preview-card__doc-tag"
+      class="tag document-preview-card__doc-tag"
     >
       <span>Document {{ docId }}</span>
     </router-link>
@@ -22,10 +22,10 @@
       :starts-on="isPublished"
     >
       <template #active>
-        <v-icon size="14">$vuetify.icons.active_check_circle</v-icon>
+        <a><i class="fas fa-check-circle" /></a>
       </template>
       <template #inactive>
-        <v-icon size="14">$vuetify.icons.inactive_check_circle</v-icon>
+        <a><i class="far fa-check-circle" /></a>
       </template>
     </badge>
   
@@ -42,10 +42,10 @@
       :starts-on="isBookmarked"
     >
       <template #active>
-        <v-icon size="14">$vuetify.icons.active_bookmark</v-icon>
+        <a><i class="fas fa-bookmark" /></a>
       </template>
       <template #inactive>
-        <v-icon size="14">$vuetify.icons.inactive_bookmark</v-icon>
+        <a><i class="far fa-bookmark" /></a>
       </template>
     </badge>
   
@@ -61,7 +61,7 @@
       :starts-on="lockOwner[docId]"
     >
       <template #active>
-        <v-icon size="14">$vuetify.icons.lock</v-icon>
+        <a><i class="fas fa-lock" /></a>
       </template>
       <template #activeLabel>
         <span
@@ -70,7 +70,7 @@
         >{{ lockOwner[docId].attributes.username }}</span>
       </template>
       <template #inactive>
-        <v-icon size="14">$vuetify.icons.unlock</v-icon>
+        <a><i class="fas fa-unlock" /></a>
       </template>
     </badge>
   

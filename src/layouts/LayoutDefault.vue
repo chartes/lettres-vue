@@ -69,11 +69,18 @@
 import { mapState, mapActions } from "vuex";
 import NavBar from "@/components/NavBar.vue";
 import SideBar from "@/components/SideBar.vue";
-import MiradorViewer from "@/components/MiradorViewer";
+//import MiradorViewer from "@/components/MiradorViewer";
 
 export default {
   name: "LayoutDefault",
-  components: { NavBar, SideBar, MiradorViewer },
+  components: {
+    NavBar,
+    SideBar,
+    MiradorViewer: () =>
+      import(
+        /* webpackChunkName: "mirador" */ "@/components/MiradorViewer"
+      )
+  },
 
   computed: {
     ...mapState("user", ["current_user"]),
@@ -83,7 +90,7 @@ export default {
     iiifManifestUrl() {
       let url;
       if (this.$route.name === "document" && this.document) {
-        url = this.document['iiif-collection-url'];
+        url = this.document["iiif-collection-url"];
       } else {
         //url = 'https://gallica.bnf.fr/iiif/ark:/12148/btv1b550076223/manifest.json';
       }
@@ -94,7 +101,7 @@ export default {
   watch: {
     iiifManifestUrl() {
       if (!this.iiifManifestUrl) {
-        this.hideRightSideBar()
+        this.hideRightSideBar();
       }
     }
   },
@@ -102,7 +109,11 @@ export default {
     //this.$store.dispatch('user/fetchCurrent');
   },
   methods: {
-    ...mapActions("layout", ["toggleLeftSideBar", "toggleRightSideBar", "hideRightSideBar"])
+    ...mapActions("layout", [
+      "toggleLeftSideBar",
+      "toggleRightSideBar",
+      "hideRightSideBar"
+    ])
   }
 };
 </script>
@@ -119,7 +130,8 @@ export default {
 .column {
   margin-top: 0;
   padding-top: 0;
-  &.is-2, &.is-6 {
+  &.is-2,
+  &.is-6 {
     padding-left: 0;
     padding-right: 0;
   }

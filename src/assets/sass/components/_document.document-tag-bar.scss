@@ -4,34 +4,39 @@
     font-weight: 400 !important;
 
     i {
-        color: inherit !important;
+       width: 12px;
+       font-size: 14px;
+       color: $almost-black;
+       margin-right: 4px;
     }
 
-    .is-bookmarked {
-        color: #9C1A1C;
+    .is-bookmarked  i {
+        color: $red-bookmark;
     }
     
-    .is-bookmarked::after {
+    .is-bookmarked::after{
         padding-left: 4px;
         content: "favoris";
-        color: unset;
+        color: $red-bookmark;
     }
     
-    .is-published {
-        color: #0066cc;
+    .is-published i{
+        color: $blue-published;
     }
     
     .is-published::after {
         padding-left: 4px;
         content: "publié";
+        color: $blue-published;
     }
     
-    .is-locked {
-        color: #D39C00;
+    .is-locked i, .is-locked span {
+        color: $gold-lock;
     }
     
     .is-locked::after {
         padding-left: 4px;
+        color: $gold-lock;
     }
     
     .badge-label {

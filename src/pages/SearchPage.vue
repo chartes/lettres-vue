@@ -1,7 +1,5 @@
 <template>
-  <div>
-    <document-list />
-  </div>
+  <document-list />
 </template>
 
 <script>

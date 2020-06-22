@@ -5,20 +5,32 @@
       Général
     </p>
     <ul class="menu-list">
-      <li><a>Mon historique</a></li>
-      <li><a>Mes favoris</a></li>
+      <li><a><i class="fas fa-question-circle" />À propos</a></li>
+      <li><a><i class="fas fa-info-circle" />Documentation</a></li>
+    </ul>
+    <p class="menu-label">
+      Mes travaux
+    </p>
+    <ul class="menu-list">
+      <li><a><i class="fas fa-bookmark" />Mes favoris</a></li>
+      <li><a><i class="fas fa-lock" />Mes verrous</a></li>
+      <li><a><i class="fas fa-history" />Mon historique</a></li>
     </ul>
     <p class="menu-label">
       Administration
     </p>
     <ul class="menu-list">
-      <li><a>Team Settings</a></li>
       <li>
-        <a class="is-active">Manage Your Team</a>
+        <a class="">Gestion des référentiels</a>
         <ul>
-          <li><a>Members</a></li>
-          <li><a>Plugins</a></li>
-          <li><a>Add a member</a></li>
+          <li><a><i class="fas fa-users" />Personnes identifiées</a></li>
+          <li><a><i class="fas fa-map-marker-alt" />Lieux identifiés</a></li>
+        </ul>
+      </li>
+      <li>
+        <a class="">Gestion des collaborateurs</a>
+        <ul>
+          <li><a><i class="fas fa-users-cog" />Collaborateurs</a></li>
         </ul>
       </li>
     </ul>
@@ -52,5 +64,9 @@ aside {
   margin-bottom: 0;
   padding-bottom: 0;
   padding-left: 30px;
+}
+i {
+  margin-right: 0px;
+  width: 30px;
 }
 </style>
