@@ -58,15 +58,23 @@ export default {
     computed: {
       ...mapState("user", ["current_user"])
     },
+    watch: {
+      current_user() {
+        if (this.current_user) {
+            this.$router.replace(this.$route.query.from);
+        }
+      }
+    },
+    mounted() {
+        if (this.current_user) {
+            this.$router.replace(this.$route.query.from);
+        }
+    },
     methods: {
         login () {
-          this.$store
-            .dispatch('user/login', {
+          this.$store.dispatch('user/login', {
               email: this.email,
               password: this.password
-            })
-            .then(() => { 
-              this.$router.go(-1)
             })
         }
       }

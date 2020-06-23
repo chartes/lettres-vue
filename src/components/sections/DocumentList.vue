@@ -24,7 +24,10 @@
         </li>
       </ul>
       
-      <div v-if="documentLoading">
+      <div
+        v-if="documentLoading"
+        class="mt-5"
+      >
         <document-preview-card-skeleton
           v-for="i in 5"
           :key="i"

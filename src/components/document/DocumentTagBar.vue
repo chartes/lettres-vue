@@ -104,7 +104,7 @@
             ...mapState('locks', ['lockOwner'])
         },
         watch: {},
-        mounted() {
+        created() {
             this.fetchPreviewCard();
         },
         data() {

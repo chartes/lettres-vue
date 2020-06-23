@@ -34,6 +34,11 @@ const router = new VueRouter({
   mode: 'history',
   routes: [
     {
+      path: '/',
+      component: SearchPage,
+      name: 'home'
+    },
+    {
       path: '/search',
       component: SearchPage,
       name: 'search'
@@ -109,11 +114,13 @@ const router = new VueRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  if (to.fullPath.indexOf("/edit") > -1) {
-    if (!store.state.user.current_user) {
-      next('/login');
-    }
+  
+  if (to.fullPath.indexOf("/edit") > -1 || ['history', 'bookmarks', 'locks', 'persons', 'places', 'users'].indexOf(to.name) > -1) {
+      if (!store.state.user.current_user) {
+        next({ name: 'login', query: { from: window.location.pathname } });
+      }
   }
+ 
   next();
 });
 

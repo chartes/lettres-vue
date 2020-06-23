@@ -4,13 +4,16 @@ import {debounce} from 'lodash';
 const state = {
 
   userBookmarks: {},
-  links: []
+  links: [],
+  totalCount: 0,
+  isLoading: false
 };
 
 const mutations = {
-  UPDATE_USER_BOOKMARKS (state, {documents, links}) {
+  UPDATE_USER_BOOKMARKS (state, {documents, meta, links}) {
     console.log("UPDATE_USER_BOOKMARKS", documents);
     state.links = links;
+    state.totalCount = meta['total-count'];
     state.userBookmarks = documents.map(document => {
       return {
         id: document.id,
@@ -25,6 +28,9 @@ const mutations = {
       }
     });
   },
+  SET_LOADING(state, status) {
+    state.isLoading = status
+  },
   UPDATE_USER_BOOKMARK (state, {docId, witnesses}) {
     console.log("UPDATE_USER_BOOKMARK", docId, witnesses);
     state.userBookmarks = state.userBookmarks.map(bookmark => {
@@ -37,28 +43,35 @@ const mutations = {
 };
 
 const actions = {
-  fetchUserBookmarks: debounce(({ commit }, {userId, pageId, pageSize, filters}) => {
+  fetchUserBookmarks:  debounce(async({ commit }, {userId, pageId, pageSize, filters}) => {
+    commit('SET_LOADING', true)
+    
     const http = http_with_csrf_token();
-    return http.get(`users/${userId}/bookmarks?without-relationships&page[size]=${pageSize}&page[number]=${pageId}${filters ? '&'+filters : ''}`).then( response => {
-      response.data.data.sort((d1, d2) => {return d1.attributes["title"] - d2.attributes["title"]});
-      return response.data;
-    }).then (docs =>{
-      commit('UPDATE_USER_BOOKMARKS', {
+    const response = await  http.get(`users/${userId}/bookmarks?without-relationships&page[size]=${pageSize}&page[number]=${pageId}${filters ? '&'+filters : ''}`)
+    
+    response.data.data.sort((d1, d2) => {return d1.attributes["title"] - d2.attributes["title"]})
+    const docs = response.data;
+ 
+    commit('UPDATE_USER_BOOKMARKS', {
           documents: docs.data,
-          links: docs.links
-      });
+          links: docs.links,
+          meta: docs.meta
+    });
 
-      for (let doc of docs.data) {
-        http.get(`documents/${doc.id}/witnesses?without-relationships`).then(witnesses => {
-          commit('UPDATE_USER_BOOKMARK', {
-            docId: doc.id,
-            witnesses: witnesses.data.data,
-            //persons: getPersons(docs.included)
-          });
-        });
-      }
-
-   });
+    let promises = []
+    for (let doc of docs.data) {
+        promises.push(
+          http.get(`documents/${doc.id}/witnesses?without-relationships`).then(witnesses => {
+            commit('UPDATE_USER_BOOKMARK', {
+              docId: doc.id,
+              witnesses: witnesses.data.data,
+              //persons: getPersons(docs.included)
+            })
+          })
+        )
+    }
+    await Promise.all(promises);
+    commit('SET_LOADING', false);
 
   }, 250),
 

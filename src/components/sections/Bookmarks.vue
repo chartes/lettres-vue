@@ -57,6 +57,15 @@
                   v-for="witness in bookmark.witnesses"
                   :key="witness.id"
                 >
+                  {{ witness }}
+                  <span
+                    v-if="witness.status && witness.status.length > 0"
+                    class="tag"
+                  >{{ witness.status }}</span>
+                  <span
+                    v-if="witness.tradition && witness.tradition.length > 0"
+                    class="tag"
+                  >{{ witness.tradition }}</span>
                   <span
                     style="font-size: 0.8em"
                     v-html="witness.attributes.content"
