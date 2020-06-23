@@ -28,6 +28,12 @@
         </a>
       </div>
     </div>
+    <router-link
+      class="advanced-search black-link mb-5"
+      :to="{ name: 'advanced-search' }"
+    >
+      Recherche avancée
+    </router-link>
   </div>
 </template>
 
@@ -77,8 +83,14 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+@import "@/assets/sass/main.scss";
+
 .search-container input {
   width: 100%;
+}
+.advanced-search {
+  width: 100%;
+  text-align: right;
 }
 </style>

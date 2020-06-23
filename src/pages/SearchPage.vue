@@ -12,6 +12,9 @@ export default {
     components: {
       DocumentList
     },
+    computed: {
+
+    },
     created() {
       this.performSearch()
     },

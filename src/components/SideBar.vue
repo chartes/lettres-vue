@@ -5,33 +5,96 @@
       Général
     </p>
     <ul class="menu-list">
-      <li><a><i class="fas fa-list" />Collections</a></li>
-      <li><a><i class="fas fa-question-circle" />À propos</a></li>
+      <li>
+        <router-link
+          :to="{name: 'collections'}"
+          active-class="is-active"
+        >
+          <i class="fas fa-list" />Collections
+        </router-link>
+      </li>
+      <li>
+        <router-link
+          :to="{name: 'about'}"
+          active-class="is-active"
+        >
+          <i class="fas fa-question-circle" />À propos
+        </router-link>
+      </li>
     </ul>
     <p class="menu-label">
       Mes travaux
     </p>
     <ul class="menu-list">
-      <li><a><i class="fas fa-bookmark" />Mes favoris</a></li>
-      <li><a><i class="fas fa-lock" />Mes verrous</a></li>
-      <li><a><i class="fas fa-history" />Mon historique</a></li>
+      <li>
+        <router-link
+          :to="{name: 'bookmarks'}"
+          active-class="is-active"
+        >
+          <i class="fas fa-bookmark" />Mes favoris
+        </router-link>
+      </li>
+      <li>
+        <router-link
+          :to="{name: 'locks'}"
+          active-class="is-active"
+        >
+          <i class="fas fa-lock" />Mes verrous
+        </router-link>
+      </li>
+      <li>
+        <router-link
+          :to="{name: 'history'}"
+          active-class="is-active"
+        >
+          <i class="fas fa-history" />Mon historique
+        </router-link>
+      </li>
     </ul>
     <p class="menu-label">
       Administration
     </p>
     <ul class="menu-list">
-      <li><a><i class="fas fa-info-circle" />Documentation</a></li>
+      <li>
+        <router-link
+          :to="{name: 'documentation'}"
+          active-class="is-active"
+        >
+          <i class="fas fa-info-circle" />Documentation
+        </router-link>
+      </li>
       <li>
         <a class="">Gestion des référentiels</a>
         <ul>
-          <li><a><i class="fas fa-users" />Personnes identifiées</a></li>
-          <li><a><i class="fas fa-map-marker-alt" />Lieux identifiés</a></li>
+          <li>
+            <router-link
+              :to="{name: 'persons'}"
+              active-class="is-active"
+            >
+              <i class="fas fa-users" />Personnes identifiées
+            </router-link>
+          </li>
+          <li>
+            <router-link
+              :to="{name: 'places'}"
+              active-class="is-active"
+            >
+              <i class="fas fa-map-marker-alt" />Lieux identifiés
+            </router-link>
+          </li>
         </ul>
       </li>
       <li>
         <a class="">Gestion des collaborateurs</a>
         <ul>
-          <li><a><i class="fas fa-users-cog" />Collaborateurs</a></li>
+          <li>
+            <router-link
+              :to="{name: 'users'}"
+              active-class="is-active"
+            >
+              <i class="fas fa-users-cog" />Collaborateurs
+            </router-link>
+          </li>
         </ul>
       </li>
     </ul>
@@ -56,6 +119,8 @@ export default {
 </script>
 
 <style scoped lang="scss">
+@import "@/assets/sass/main.scss";
+
 aside {
 
   padding-left: 30px;
@@ -63,5 +128,9 @@ aside {
 i {
   margin-right: 0px;
   width: 30px;
+}
+a.is-active {
+  color: white !important;
+  background-color: $purple !important;
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="documents && documents.length > 0"
+   
     class="section"
   >
     <div class="container">
@@ -8,14 +8,7 @@
         <pagination />
       </div>
 
-      <progress
-        v-show="documentLoading" 
-        class="progress is-small is-warning"
-        max="100"
-      >
-        15%
-      </progress>
-      <ul
+      <ul 
         v-show="!documentLoading"
         id="preview-cards"
         class="pb-5 pt-5"
@@ -30,6 +23,14 @@
           />
         </li>
       </ul>
+      
+      <div v-if="documentLoading">
+        <document-preview-card-skeleton
+          v-for="i in 5"
+          :key="i"
+        />
+      </div>
+
       <div class="has-text-centered">
         <pagination />
       </div>
@@ -49,7 +50,11 @@ export default {
       import(
         /* webpackChunkName: "home-pages" */ "../document/DocumentPreviewCard"
       ),
-    Pagination
+    DocumentPreviewCardSkeleton: () =>
+      import(
+        /* webpackChunkName: "home-pages" */ "../ui/DocumentPreviewCardSkeleton"
+      ),
+    Pagination,
   },
   props: {},
   data() {

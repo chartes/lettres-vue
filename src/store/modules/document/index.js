@@ -21,7 +21,7 @@ const TRANSLATION_MAPPING = {
 
 const state = {
 
-  documentLoading: true,
+  documentLoading: false,
   document: null,
   persons: [],
   placenames: [],

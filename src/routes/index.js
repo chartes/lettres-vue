@@ -2,10 +2,25 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 
 
-const SearchPage = () => import( '@/pages/SearchPage.vue')
-const LoginPage = () => import( '@/pages/LoginPage.vue')
-const RegisterPage = () => import( '@/pages/RegisterPage.vue')
+const SearchPage = () => import('@/pages/SearchPage.vue')
+const AdvancedSearchPage = () => import('@/pages/AdvancedSearchPage.vue')
+
+const LoginPage = () => import('@/pages/LoginPage.vue')
+const RegisterPage = () => import('@/pages/RegisterPage.vue')
+
 const DocumentPage = () => import('@/pages/DocumentPage.vue')
+
+const CollectionListPage = () => import('@/pages/CollectionListPage.vue')
+const LocksPage = () => import('@/pages/LocksPage.vue')
+const BookmarksPage = () => import('@/pages/BookmarksPage.vue')
+const HistoryPage = () => import('@/pages/HistoryPage.vue')
+
+const DocumentationPage = () => import('@/pages/DocumentationPage.vue')
+const AboutPage = () => import('@/pages/AboutPage.vue')
+const PersonsPage = () => import('@/pages/PersonsPage.vue')
+const PlacesPage = () => import('@/pages/PlacesPage.vue')
+const UsersPage = () => import('@/pages/UsersPage.vue')
+
 
 import store from '@/store/index';
 
@@ -19,9 +34,14 @@ const router = new VueRouter({
   mode: 'history',
   routes: [
     {
-      path: '/',
+      path: '/search',
       component: SearchPage,
       name: 'search'
+    },
+    {
+      path: '/advanced-search',
+      component: AdvancedSearchPage,
+      name: 'advanced-search'
     },
     {
       path: '/register',
@@ -38,6 +58,52 @@ const router = new VueRouter({
       component: DocumentPage,
       name: 'document',
       props: true
+    },
+    {
+      path: '/collections',
+      component: CollectionListPage,
+      name: 'collections',
+      props: true
+    },
+    {
+      path: '/locks',
+      component: LocksPage,
+      name: 'locks'
+    },
+    {
+      path: '/bookmarks',
+      component: BookmarksPage,
+      name: 'bookmarks'
+    },
+    {
+      path: '/history',
+      component: HistoryPage,
+      name: 'history'
+    },
+    {
+      path: '/persons',
+      component: PersonsPage,
+      name: 'persons'
+    },
+    {
+      path: '/places',
+      component: PlacesPage,
+      name: 'places'
+    },
+    {
+      path: '/about',
+      component: AboutPage,
+      name: 'about'
+    },
+    {
+      path: '/documentation',
+      component: DocumentationPage,
+      name: 'documentation'
+    },
+    {
+      path: '/users',
+      component: UsersPage,
+      name: 'users'
     },
   ]
 })
