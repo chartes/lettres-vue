@@ -6,7 +6,7 @@
   >
     <div class="navbar-brand pl-2">
       <router-link
-        :to="{ name: 'search' }"
+        :to="{ name: 'home' }"
         class="navbar-item title is-4 navbar-title"
       >
         LETTRES
@@ -29,7 +29,7 @@
             </span>
             <router-link
               v-if="!loggedIn"
-              :to="{ name: 'login' }"
+              :to="{ name: 'login', query: {from: $route.name}}"
             >
               <a class="button  is-light  is-outlined">
                 Connexion
@@ -57,7 +57,6 @@ export default {
   name: "NavBar",
   data() {
     return {
- 
     };
   },
   computed: {

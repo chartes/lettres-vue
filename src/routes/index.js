@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
+const HomePage = () => import('@/pages/HomePage.vue')
 
 const SearchPage = () => import('@/pages/SearchPage.vue')
 const AdvancedSearchPage = () => import('@/pages/AdvancedSearchPage.vue')
@@ -35,7 +36,7 @@ const router = new VueRouter({
   routes: [
     {
       path: '/',
-      component: SearchPage,
+      component: HomePage,
       name: 'home'
     },
     {

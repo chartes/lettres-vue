@@ -7,6 +7,14 @@
     <ul class="menu-list">
       <li>
         <router-link
+          :to="{name: 'home'}"
+          exact-active-class="is-active"
+        >
+          <i class="fas fa-home" />Accueil
+        </router-link>
+      </li>
+      <li>
+        <router-link
           :to="{name: 'collections'}"
           active-class="is-active"
         >
@@ -22,10 +30,16 @@
         </router-link>
       </li>
     </ul>
-    <p class="menu-label">
+    <p
+      v-if="current_user"
+      class="menu-label"
+    >
       Mes travaux
     </p>
-    <ul class="menu-list">
+    <ul
+      v-if="current_user"
+      class="menu-list"
+    >
       <li>
         <router-link
           :to="{name: 'bookmarks'}"
@@ -51,10 +65,16 @@
         </router-link>
       </li>
     </ul>
-    <p class="menu-label">
+    <p
+      v-if="current_user"
+      class="menu-label"
+    >
       Administration
     </p>
-    <ul class="menu-list">
+    <ul
+      v-if="current_user"
+      class="menu-list"
+    >
       <li>
         <router-link
           :to="{name: 'documentation'}"
@@ -112,7 +132,9 @@ export default {
   data() {
     return {};
   },
-  computed: {},
+  computed: {
+    ...mapState('user', ['current_user'])
+  },
   methods: {
   }
 };

@@ -47,7 +47,7 @@ const actions = {
     commit('SET_LOADING', true)
     
     const http = http_with_csrf_token();
-    const response = await  http.get(`users/${userId}/bookmarks?without-relationships&page[size]=${pageSize}&page[number]=${pageId}${filters ? '&'+filters : ''}`)
+    const response = await  http.get(`users/${userId}/bookmarks?without-relationships&sort=title&page[size]=${pageSize}&page[number]=${pageId}${filters ? '&'+filters : ''}`)
     
     response.data.data.sort((d1, d2) => {return d1.attributes["title"] - d2.attributes["title"]})
     const docs = response.data;

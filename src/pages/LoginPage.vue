@@ -60,25 +60,29 @@ export default {
     },
     watch: {
       current_user() {
-        if (this.current_user) {
-            this.$router.replace(this.$route.query.from);
-        }
+        this.redirect()
       }
     },
     mounted() {
-        if (this.current_user) {
-            this.$router.replace(this.$route.query.from);
-        }
+        this.redirect()
     },
     methods: {
-        login () {
+      redirect() {
+        if (this.current_user) {
+          if (!this.$route.query.from) {
+            this.$router.replace('/');
+          } else {
+            this.$router.replace(this.$route.query.from);
+          }
+        }
+      },
+      login () {
           this.$store.dispatch('user/login', {
               email: this.email,
               password: this.password
             })
-        }
       }
-
+    }
 }
 </script>
 

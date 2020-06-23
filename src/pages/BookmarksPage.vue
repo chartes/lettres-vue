@@ -84,7 +84,7 @@ export default {
             return {
                 data: [
                 ],
-                sortField: 'title',
+                sortField: 'id',
                 sortOrder: 'desc',
                 defaultSortOrder: 'desc',
                 page: 1,
