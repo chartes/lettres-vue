@@ -15,14 +15,6 @@
       </li>
       <li>
         <router-link
-          :to="{name: 'collections'}"
-          active-class="is-active"
-        >
-          <i class="fas fa-list" />Collections
-        </router-link>
-      </li>
-      <li>
-        <router-link
           :to="{name: 'about'}"
           active-class="is-active"
         >
@@ -81,6 +73,14 @@
           active-class="is-active"
         >
           <i class="fas fa-info-circle" />Documentation
+        </router-link>
+      </li>
+      <li>
+        <router-link
+          :to="{name: 'collections'}"
+          active-class="is-active"
+        >
+          <i class="fas fa-list" />Collections
         </router-link>
       </li>
       <li>

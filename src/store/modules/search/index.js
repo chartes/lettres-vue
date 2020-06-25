@@ -4,7 +4,9 @@ import {debounce} from 'lodash';
 const state = {
   searchTerm: null,
   numPage: 1,
-  pageSize: 15
+  pageSize: 15,
+
+  selectedCollectionId: 1
 };
 
 
@@ -14,7 +16,10 @@ const mutations = {
   },
   SET_NUM_PAGE(state, num) {
     state.numPage = num;
-  }
+  },
+  SET_SELECTED_COLLECTION_ID(state, id) {
+    state.selectedCollectionId = id > 0 ? id : 1;
+  },
 };
 
 const actions = {
@@ -27,11 +32,18 @@ const actions = {
   setNumPage({commit}, num) {
     commit('SET_NUM_PAGE', num)
   },
+  setSelectedCollectionId({commit}, id) {
+    commit('SET_SELECTED_COLLECTION_ID', id)
+  },
   performSearch: debounce(({state, dispatch}) => {
+    let query = `collections.id:${state.selectedCollectionId}`
+    if (state.searchTerm && state.searchTerm.length > 0) {
+      query = `(${query} AND ${state.searchTerm})`
+    }
     dispatch("document/fetchSearch", {
       pageId: state.numPage,
       pageSize: state.pageSize,
-      query: state.searchTerm
+      query:  query
     }, {root: true});
   }, 500)
 };

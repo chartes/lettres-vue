@@ -6,7 +6,9 @@ const state = {
   collectionsSearchResults: [],
 
   allCollectionsWithParents: [],
-  fullHierarchy: []
+  fullHierarchy: [],
+
+  isLoading: false
 };
 
 function buildTree(collections, parent, depth) {
@@ -52,9 +54,12 @@ const mutations = {
 
   RESET(state) {
     state.collectionsWithParents = {};
+    state.isLoading = false;
   },
 
   FETCH_ALL(state, {data, included}) {
+    state.isLoading = true;
+
     let countPromises = [];
     let collections = data.map( c => {
       countPromises.push(countDocuments(c.id));
@@ -77,6 +82,8 @@ const mutations = {
       state.allCollectionsWithParents = collections;
       state.fullHierarchy = [];
       state.fullHierarchy = buildTree(collections, null, 0);
+
+      state.isLoading = false;
     });
 
   },
@@ -97,15 +104,19 @@ const actions = {
       commit('FETCH_ALL', {data: response.data.data, included: response.data.included})
     });
   },
-
+  /*
   search ({ commit }, what) {
+    state.isLoading = true;
+
     console.log('collection search', what)
     commit('SEARCH_RESULTS', [])
     http.get(`/search?query=*${what}*&index=lettres__${process.env.NODE_ENV}__collections&include=parents&without-relationships`).then( response => {
       const collections = response.data.data.map(coll => { return { id: coll.id, ...coll.attributes}});
-      commit('SEARCH_RESULTS', collections)
+      commit('SEARCH_RESULTS', collections);
+      state.isLoading = false;
     });
   }
+  */
 
 };
 

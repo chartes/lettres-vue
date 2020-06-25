@@ -9,7 +9,7 @@
 import { mapState, mapActions } from "vuex";
 
 export default {
-    name: "CollectionListPage",
+    name: "CollectionsPage",
     components: {
     },
     methods: {
