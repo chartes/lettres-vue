@@ -15,6 +15,14 @@
       </li>
       <li>
         <router-link
+          :to="{name: 'search'}"
+          exact-active-class="is-active"
+        >
+          <i class="fas fa-search" />Documents
+        </router-link>
+      </li>
+      <li>
+        <router-link
           :to="{name: 'about'}"
           active-class="is-active"
         >

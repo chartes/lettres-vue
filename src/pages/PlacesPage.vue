@@ -12,6 +12,9 @@ export default {
     name: "PlacesPage",
     components: {
     },
+    mounted() {
+      this.hideRightSideBar();
+    },
     methods: {
     }
 }

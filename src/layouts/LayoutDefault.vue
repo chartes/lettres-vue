@@ -16,7 +16,7 @@
           class="column main-column"
           :style="
             (showLeftSideBar ? 'padding-left: 0;' : '') +
-              (showRightSideBar ? 'padding-right: 0;' : '')
+              (rightSideBarIsVisible ? 'padding-right: 0;' : '')
           "
         >
           <div style="display: flex">
@@ -35,7 +35,7 @@
           </div>
         </div>
         <div
-          v-show="showRightSideBar"
+          v-show="rightSideBarIsVisible"
           class="column is-5"
           style="background-color: #F6F6F6"
         >
@@ -89,17 +89,21 @@ export default {
       }
 
       return url;
+    },
+
+    rightSideBarIsVisible() {
+     return this.showRightSideBar && ['document'].indexOf(this.$route.name) > -1 
     }
   },
   watch: {
     iiifManifestUrl() {
       if (!this.iiifManifestUrl) {
-        this.hideRightSideBar();
+        //this.hideRightSideBar();
       }
     }
   },
   created() {
-    //this.$store.dispatch('user/fetchCurrent');
+   
   },
   methods: {
     ...mapActions("layout", [

@@ -51,6 +51,9 @@ export default {
         password: ''
     }
   },
+      mounted() {
+      this.hideRightSideBar();
+    },
   methods: {
         register () {
           this.$store
