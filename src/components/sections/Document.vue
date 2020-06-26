@@ -68,7 +68,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapActions } from "vuex";
 import LoadingIndicator from "../ui/LoadingIndicator";
 import Changelog from "@/components/sections/Changelog";
 import DocumentPersons from "../document/DocumentPersons";
@@ -117,6 +117,7 @@ export default {
       .then(r => {
         this.computeCanEdit();
         this.isLoading = false;
+        this.setLastSeen(this.docId);
       })
       .catch(e => {
         console.warn("ERROR", e);
@@ -153,6 +154,8 @@ export default {
     }
   },
   methods: {
+    ...mapActions('document', ['setLastSeen']),
+
     computeCanEdit() {
       /*
        * Can edit if 1) You are connected 2) You are an admin or there is no active lock or the active lock is yours

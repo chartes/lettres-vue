@@ -21,6 +21,14 @@
           <i class="fas fa-search" />Documents
         </router-link>
       </li>
+      <li v-if="lastSeenDocId">
+        <router-link
+          :to="{name: 'document', params: {docId: lastSeenDocId}}"
+          active-class="is-active"
+        >
+          <i class="fas fa-file" />Dernière consultation
+        </router-link>
+      </li>
       <li>
         <router-link
           :to="{name: 'about'}"
@@ -141,7 +149,8 @@ export default {
     return {};
   },
   computed: {
-    ...mapState('user', ['current_user'])
+    ...mapState('user', ['current_user']),
+    ...mapState('document', ['lastSeenDocId'])
   },
   methods: {
   }

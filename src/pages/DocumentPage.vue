@@ -1,5 +1,6 @@
 <template>
   <document
+    class="document-page"
     :doc-id="parseInt(this.$route.params.docId)"
   />
 </template>
@@ -18,6 +19,8 @@ export default {
 }
 </script>
 
-<style>
-
+<style scoped lang="scss">
+  .document-page {
+    min-height: 100%
+  }
 </style>

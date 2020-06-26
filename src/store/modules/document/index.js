@@ -32,6 +32,7 @@ const state = {
 
   documents: [],
   documentsPreview: {},
+  lastSeenDocId: null,
   links: [],
   totalCount: 0,
 };
@@ -81,6 +82,9 @@ const mutations = {
   UPDATE_DOCUMENT_DATA (state, data) {
     console.log('UPDATE_DOCUMENT_DATA', data);
     state.document = { ...data.attributes, id: data.id};
+  },
+  SET_LAT_SEEN_DOC_ID(state, id) {
+    state.lastSeenDocId = id;
   },
   UPDATE_DOCUMENT_PREVIEW (state, {data, included}) {
     //console.log('UPDATE_DOCUMENT_PREVIEW');
@@ -170,7 +174,9 @@ const mutations = {
 };
 
 const actions = {
-
+  setLastSeen({commit}, docId) {
+    commit('SET_LAT_SEEN_DOC_ID', docId)
+  },
   fetch ({ commit, rootState }, id) {
     commit('LOADING_STATUS', true);
 
