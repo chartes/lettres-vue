@@ -1,7 +1,6 @@
 <template>
   <div
-    v-if="!isLoading"
-    class="document "
+    class="document"
   >
     <document-tag-bar
       v-if="current_user"
@@ -9,7 +8,7 @@
     />
 
     <article
-      v-if="document"
+      v-if="document && !documentLoading"
       class="document__content"
     >
       <!-- titre et langue -->
@@ -43,26 +42,27 @@
       <!-- dates de lieux et de temps -->
       <document-transcription :editable="canEdit" />
 
-      <!-- collections -->
+      <!-- collections 
       <document-collections :editable="canEdit" />
-
+      -->
       <div
         class="mt-5"
         style="margin-left: 0;"
       >
+        <header class="subtitle mb-3">
+          Historique des modifications
+        </header>
         <changelog
           v-if="current_user"
-          :compact="true"
           :doc-id="docId"
-          :current-user-only="false"
-          page-size="10"
+          :per-page="10"
         />
       </div>
     </article>
-
-    <loading-indicator
-      :active="documentLoading"
-      :full-page="true"
+   
+    <document-skeleton
+      v-if="documentLoading"
+      class="mt-5"
     />
   </div>
 </template>
@@ -70,7 +70,7 @@
 <script>
 import { mapState } from "vuex";
 import LoadingIndicator from "../ui/LoadingIndicator";
-import Changelog from "./Changelog";
+import Changelog from "@/components/sections/Changelog";
 import DocumentPersons from "../document/DocumentPersons";
 import DocumentTranscription from "../document/DocumentTranscription";
 import DocumentTagBar from "../document/DocumentTagBar";
@@ -78,21 +78,22 @@ import DocumentPlacenames from "../document/DocumentPlacenames";
 import { baseApiURL, baseAppURL } from "../../modules/http-common";
 import DocumentArgument from "../document/DocumentArgument";
 import DocumentWitnesses from "../document/DocumentWitnesses";
-import DocumentCollections from "../document/DocumentCollections";
+//import DocumentCollections from "../document/DocumentCollections";
 import DocumentAttributes from "../document/DocumentAttributes";
 import DocumentDateAttributes from "../document/DocumentDateAttributes";
+import DocumentSkeleton from "@/components/ui/DocumentSkeleton";
 
 export default {
   name: "Document",
   components: {
     Changelog,
+    DocumentSkeleton,
     DocumentPersons,
     DocumentPlacenames,
     DocumentArgument,
     DocumentTranscription,
-    LoadingIndicator,
     DocumentTagBar,
-    DocumentCollections,
+   // DocumentCollections,
     DocumentWitnesses,
     DocumentAttributes,
     DocumentDateAttributes

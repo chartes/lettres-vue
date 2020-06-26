@@ -1,194 +1,155 @@
 <template>
-  <section v-if="current_user">
-    <header>
-      <h2 class="section__title subtitle">
-        Historique des modifications
-      </h2>
-    </header>
-
-    <pagination
-      :current="currentPage"
-      :end="nbPages"
-      :size="pageSize"
-      :action="goToChangelogPage"
-      :bottom-widget="!compact"
+  <div>
+    <b-table
+      :data="data"
+      :loading="isLoading"
+      striped
+      paginated
+      backend-pagination
+      :total="totalCount"
+      :per-page="perPage"
+      aria-next-label="Next page"
+      aria-previous-label="Previous page"
+      aria-page-label="Page"
+      aria-current-label="Current page"
+      backend-sorting
+      :default-sort-direction="defaultSortOrder"
+      :default-sort="[sortField, sortOrder]"
+      @page-change="onPageChange"
+      @sort="onSort"
     >
-      <table
-        class="table is-narrow"
-        :class="!compact ? 'is-bordered is-striped is-hoverable container' : ''"
-      >
-        <thead>
-          <tr>
-            <th style="min-width: 180px;">
-              <button
-                class="button is-white "
-                disabled
-              >
-                Date
-              </button>
-            </th>
-            <th v-if="!compact">
-              <input-filter
-                label="Objet"
-                place-holder="Numéro de document"
-                :action="filterDoc"
-              />
-            </th>
-            <th>
-              <button
-                class="button is-white "
-                disabled
-              >
-                Description
-              </button>
-            </th>
-            <th style="min-width: 130px;">
-              <input-filter
-                v-if="current_user.isAdmin"
-                label="Utilisateur"
-                place-holder="nom d'utilisateur"
-                :action="filterUsername"
-              />
-              <button
-                v-else
-                class="button is-white "
-                disabled
-              >
-                Utilisateur
-              </button>
-            </th>
-          </tr>
-        </thead>
+      <template slot="empty">
+        <section class="section">
+          <div class="content has-text-grey has-text-centered">
+            <p>Aucun historique de modification pour ce document</p>
+          </div>
+        </section>
+      </template>
 
-        <tbody
-          v-for="change in fullChangelog"
-          :key="change.id"
+      <template slot-scope="props">
+        <b-table-column
+          field="docId"
+          label="Document"
+          sortable
+          width="100"
         >
-          <tr>
-            <td>{{ change.data.attributes["event-date"] }}</td>
-            <td v-if="!compact">
-              <a :href="url(change.data)">
-                <span class="tag">
-                  {{ change.data.attributes["object-type"] }} {{ change.data.attributes["object-id"] }}
-                </span>
-              </a>
-            </td>
-            <td>{{ change.data.attributes["description"] }}</td>
-            <td><span class="tag">{{ change.user.username }}</span></td>
-          </tr>
-        </tbody>
-      </table>
-    </pagination>
-  </section>
+          <router-link
+            :to="{name: 'document', params: {docId: props.row.docId}}"
+            class="tag document-preview-card__doc-tag"
+          >
+            <span>Document {{ props.row.docId }}</span>
+          </router-link>
+        </b-table-column>
+        <b-table-column
+          field="date"
+          label="Date"
+          width="200"
+          sortable
+        >
+          <span v-html="props.row.date" />
+        </b-table-column>
+        <b-table-column
+          field="user"
+          label="Utilisateur"
+          width="200"
+          sortable
+        >
+          <span v-html="props.row.user" />
+        </b-table-column>
+
+        <b-table-column
+          field="description"
+          label="Description"
+        >
+          <span>{{ props.row.description }}
+          </span>
+        </b-table-column>
+      </template>
+    </b-table>
+  </div>
 </template>
 
 <script>
-  import { mapState } from 'vuex';
 
-  import InputFilter from '../ui/InputFilter';
-  import Pagination from '../ui/Pagination';
+import { mapState, mapActions, mapGetters } from "vuex";
 
-  import http_with_csrf_token from "../../modules/http-common";
-  import {getUrlParameter} from "../../modules/utils";
-
-  export default {
+export default {
     name: "Changelog",
-    components : {InputFilter, Pagination},
+    components: {
+      
+    },
     props: {
-      docId: {required: false},
-      currentUserOnly: {required: false, default: false},
-
-      compact: {default: false},
-      pageSize : {required: true},
+      perPage: {type: Number, default: 25},
+      docId: {type: Number, default: null},
     },
     data() {
       return {
-        filteredDocId: null,
-        filteredUsername: null,
-
-        currentPage: 1
+        data: [
+        ],
+        sortField: 'date',
+        sortOrder: 'desc',
+        defaultSortOrder: 'desc',
+        page: 1,
       }
-    },
-    created() {
-      this.$store.dispatch('user/fetchCurrent').then(resp => {
-          if (this.docId !== undefined) {
-              this.filterDoc(this.docId);
-          }
-          if (this.currentUserOnly && !this.current_user.isAdmin) {
-              this.filterUsername(this.current_user.username);
-          }
-          this.applyFilters();
-      });
     },
     computed: {
       ...mapState('user', ['current_user']),
-      ...mapState('changelog', ['fullChangelog', 'links']),
-      nbPages() {
-        return parseInt(this.links.last ? getUrlParameter(this.links.last, "page%5Bnumber%5D") : 1);
+      ...mapState('changelog', ['fullChangelog', 'isLoading', 'totalCount']),
+
+    },
+    watch: {
+      fullChangelog() {
+        this.data = this.fullChangelog.map( c => {
+          return {
+            docId: c.data.attributes['object-id'],
+            date: c.data.attributes['event-date'],
+            user: c.user.username,
+            description: c.data.attributes.description
+          }
+        })
       }
     },
+    mounted() {
+      this.loadAsyncData()
+    },
+    created() {
+    },
     methods: {
-       url: (entry) => `documents/${entry.attributes["object-id"]}`,
-       computeFilters() {
-           let _f = [];
-           /* compute the document filter */
-           if (this.docId || this.filteredDocId) {
-               const objectId = this.docId ? this.docId : this.filteredDocId;
-              _f.push(`filter[object-type]=document&filter[object-id]=${objectId}`);
-           }
-           /* compute the user filter by fetching the user id from a username */
-           if (this.filteredUsername) {
-             const http = http_with_csrf_token();
-             return http.get(`users?filter[username]=${this.filteredUsername}&without-relationships`).then( response => {
-                try {
-                   const userId = response.data.data[0].id;
-                   _f.push(`filter[user_id]=${userId}`);
-                } catch(err) {
-                  console.warn(`username '${this.filteredUsername}' unknown`);
-                }
-                return _f.join('&');
-             });
-           }
-           return new Promise((resolve) => {resolve(_f.join('&'))});
-       },
-       applyFilters() {
-           this.computeFilters().then(filters => {
-             this.$store.dispatch('changelog/fetchFullChangelog', {
-               pageId: this.currentPage,
-               pageSize: this.pageSize,
-               filters :filters
-             });
-           });
-       },
-       filterDoc(docId) {
-           this.filteredDocId = parseInt(docId);
-           this.currentPage = 1;
-           this.applyFilters();
-       },
-       filterUsername(username) {
-           this.filteredUsername = username;
-           this.currentPage = 1;
-           this.applyFilters();
-       },
-       goToChangelogPage(num) {
-           this.currentPage = num;
-           this.applyFilters();
-       }
+      ...mapActions('changelog', ['fetchFullChangelog']),
+       /*
+        * Load async data
+        */
+      loadAsyncData() {
+        let filters = ''
+        if (this.docId) {
+          filters = `filter[object-type]=document&filter[object-id]=${this.docId}`
+        }
+        this.fetchFullChangelog({
+          pageId: this.page,
+          pageSize: this.perPage,
+          filters : filters
+        });
+      },
+      /*
+       * Handle page-change event
+       */
+      onPageChange(page) {
+        this.page = page
+        this.loadAsyncData()
+      },
+      /*
+       * Handle sort event
+       */
+      onSort(field, order) {
+        this.sortField = field
+        this.sortOrder = order
+        this.loadAsyncData()
+      }
+           
     }
-  }
+}
 </script>
 
-<style scoped>
-  table {
-    min-width: 75%;
-  }
-  .section__title {
-    margin-bottom: 20px;
-  }
-  td {
-    color: #962D3E;
-  }
-  td a:hover span{
-    color: #348899 ;
-  }
+<style scoped lang="scss">
+@import "@/assets/sass/main.scss";
 </style>

@@ -38,7 +38,7 @@ export default {
   },
  
   created() {
-    this.currentInput = this.numPage;
+    
   },
   methods: {
    

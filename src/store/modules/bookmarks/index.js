@@ -4,15 +4,13 @@ import {debounce} from 'lodash';
 const state = {
 
   userBookmarks: {},
-  links: [],
   totalCount: 0,
   isLoading: false
 };
 
 const mutations = {
-  UPDATE_USER_BOOKMARKS (state, {documents, meta, links}) {
+  UPDATE_USER_BOOKMARKS (state, {documents, meta}) {
     console.log("UPDATE_USER_BOOKMARKS", documents);
-    state.links = links;
     state.totalCount = meta['total-count'];
     state.userBookmarks = documents.map(document => {
       return {
@@ -54,7 +52,6 @@ const actions = {
  
     commit('UPDATE_USER_BOOKMARKS', {
           documents: docs.data,
-          links: docs.links,
           meta: docs.meta
     });
 

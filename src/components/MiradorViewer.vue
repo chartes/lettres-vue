@@ -27,16 +27,16 @@ export default {
   created() {},
   async mounted() {
     const manifests = {};
-
+    let url = this.manifestUrl
     try {
       const collection = await axios.get(this.manifestUrl);
       // waiting for mirador 3 support of collections ?
-      this.manifestUrl = collection.data.manifests[0]["@id"];
+      url = collection.data.manifests[0]["@id"];
     } catch (e) {
       console.error(e);
     }
 
-    manifests[this.manifestUrl] = {
+    manifests[url] = {
       // metadata:
       // 'provider': ''
     };
@@ -47,7 +47,7 @@ export default {
         manifests: manifests,
         windows: [
           {
-            loadedManifest: this.manifestUrl,
+            loadedManifest: url,
             canvasIndex: this.canvasIndex
           }
         ],

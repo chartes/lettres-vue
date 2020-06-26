@@ -3,6 +3,7 @@
     <b-table
       :data="data"
       :loading="isLoading"
+      striped
       paginated
       backend-pagination
       :total="totalCount"
@@ -17,6 +18,13 @@
       @page-change="onPageChange"
       @sort="onSort"
     >
+      <template slot="empty">
+        <section class="section">
+          <div class="content has-text-grey has-text-centered">
+            <p>Vous n'avez aucun favori pour le moment.</p>
+          </div>
+        </section>
+      </template>
       <template slot-scope="props">
         <b-table-column
           field="id"

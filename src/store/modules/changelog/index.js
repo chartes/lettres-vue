@@ -3,9 +3,9 @@ import {getUser} from "../../../modules/change-helpers";
 
 const state = {
   fullChangelog: [],
-  links: [],
-  pageId: null,
-  pageSize: null
+
+  totalCount: 0,
+  isLoading: false,
 };
 
 function addUserToData(data, included) {
@@ -21,12 +21,13 @@ function addUserToData(data, included) {
 }
 
 const mutations = {
-  UPDATE_FULL_CHANGELOG (state, {changes, included, links, pageId, pageSize}) {
+  UPDATE_FULL_CHANGELOG (state, {changes, included, meta}) {
     state.fullChangelog = addUserToData(changes, included);
-    state.links = links;
-    state.pageId = pageId;
-    state.pageSize = pageSize;
-  }
+    state.totalCount = meta['total-count'];
+  },
+  SET_LOADING(state, status) {
+    state.isLoading = status
+  },
 };
 
 const actions = {
@@ -55,22 +56,18 @@ const actions = {
     });
   },
   fetchFullChangelog ({ commit }, {pageId, pageSize, filters}) {
+    commit('SET_LOADING', true)
+
     const http = http_with_csrf_token();
-    if (pageId === undefined) {
-      pageId = this.state.changelog.pageId ? this.state.changelog.pageId : 1;
-    }
-    if (pageSize === undefined) {
-      pageSize = this.state.changelog.pageSize ? this.state.changelog.pageSize: 10;
-    }
+
     return http.get(`changes?include=user&sort=-event-date&page[size]=${pageSize}&page[number]=${pageId}${filters ? '&'+filters : ''}`)
       .then( response => {
         commit('UPDATE_FULL_CHANGELOG', {
           changes: response.data.data,
           included: response.data.included,
-          links:response.data.links,
-          pageId: pageId,
-          pageSize: pageSize
+          meta: response.data.meta
         });
+        commit('SET_LOADING', false);
     });
   }
 };
