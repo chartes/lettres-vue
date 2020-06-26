@@ -39,15 +39,17 @@
         >
           <icon-pen-edit />
         </a>
+        <!--
         <a
           :href="editManifest"
           target="_blank"
         >
-          <v-img
+          <img
             src="/lettres/static/images/logo-iiif-34x30.png"
             class="witness-item__iiif-logo"
-          />
+          >
         </a>
+        -->
         <a
           v-if="canBeRemoved"
           class="witness-item__delete"
