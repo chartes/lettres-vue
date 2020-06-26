@@ -15,10 +15,10 @@
       </li>
       <li>
         <router-link
-          :to="{name: 'search'}"
-          exact-active-class="is-active"
+          :to="{name: 'about'}"
+          active-class="is-active"
         >
-          <i class="fas fa-search" />Documents
+          <i class="fas fa-question-circle" />À propos
         </router-link>
       </li>
       <li v-if="lastSeenDocId">
@@ -29,12 +29,21 @@
           <i class="fas fa-file" />Dernière consultation
         </router-link>
       </li>
+
       <li>
         <router-link
-          :to="{name: 'about'}"
+          :to="{name: 'documentation'}"
           active-class="is-active"
         >
-          <i class="fas fa-question-circle" />À propos
+          <i class="fas fa-info-circle" />Documentation
+        </router-link>
+      </li>
+      <li>
+        <router-link
+          :to="{name: 'search'}"
+          exact-active-class="is-active"
+        >
+          <i class="fas fa-search" />Documents
         </router-link>
       </li>
     </ul>
@@ -58,18 +67,18 @@
       </li>
       <li>
         <router-link
-          :to="{name: 'locks'}"
-          active-class="is-active"
-        >
-          <i class="fas fa-lock" />Mes verrous
-        </router-link>
-      </li>
-      <li>
-        <router-link
           :to="{name: 'history'}"
           active-class="is-active"
         >
           <i class="fas fa-history" />Mon historique
+        </router-link>
+      </li>
+      <li>
+        <router-link
+          :to="{name: 'locks'}"
+          active-class="is-active"
+        >
+          <i class="fas fa-lock" />Mes verrous
         </router-link>
       </li>
     </ul>
@@ -85,14 +94,6 @@
     >
       <li>
         <router-link
-          :to="{name: 'documentation'}"
-          active-class="is-active"
-        >
-          <i class="fas fa-info-circle" />Documentation
-        </router-link>
-      </li>
-      <li>
-        <router-link
           :to="{name: 'collections'}"
           active-class="is-active"
         >
@@ -104,18 +105,18 @@
         <ul>
           <li>
             <router-link
-              :to="{name: 'persons'}"
-              active-class="is-active"
-            >
-              <i class="fas fa-users" />Personnes identifiées
-            </router-link>
-          </li>
-          <li>
-            <router-link
               :to="{name: 'places'}"
               active-class="is-active"
             >
               <i class="fas fa-map-marker-alt" />Lieux identifiés
+            </router-link>
+          </li>
+          <li>
+            <router-link
+              :to="{name: 'persons'}"
+              active-class="is-active"
+            >
+              <i class="fas fa-users" />Personnes identifiées
             </router-link>
           </li>
         </ul>
