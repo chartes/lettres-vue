@@ -51,11 +51,11 @@ export default {
   components: {
     DocumentPreviewCard: () =>
       import(
-        /* webpackChunkName: "home-pages" */ "../document/DocumentPreviewCard"
+        "../document/DocumentPreviewCard"
       ),
     DocumentPreviewCardSkeleton: () =>
       import(
-        /* webpackChunkName: "home-pages" */ "../ui/DocumentPreviewCardSkeleton"
+        "../ui/DocumentPreviewCardSkeleton"
       ),
     Pagination,
   },

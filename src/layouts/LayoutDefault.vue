@@ -71,7 +71,7 @@ export default {
     SideBar,
     MiradorViewer: () =>
       import(
-        /* webpackChunkName: "mirador" */ "@/components/MiradorViewer"
+        "@/components/MiradorViewer"
       )
   },
 
