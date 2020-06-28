@@ -16,9 +16,11 @@
 
       <!-- dates de lieux et de temps -->
       <div class="panel mt-5">
-        <p class="panel-heading">
-          Dates
-        </p>
+        <header class="panel-heading">
+          <h2 class="subtitle">
+            Dates
+          </h2>
+        </header>
         <div class="panel-block">
           <document-date-attributes :editable="canEdit" />
         </div>
@@ -46,14 +48,14 @@
       <document-collections :editable="canEdit" />
       -->
       <div
-        class="mt-5"
-        style="margin-left: 0;"
+        v-if="current_user"
+        class=""
+        style="margin-left: 0; margin-top: 50px;"
       >
         <header class="subtitle mb-3">
           Historique des modifications
         </header>
         <changelog
-          v-if="current_user"
           :doc-id="docId"
           :per-page="10"
         />
@@ -179,8 +181,12 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .document {
   width: 100%;
+}
+.panel {
+  -webkit-box-shadow: none;
+  box-shadow: none;
 }
 </style>

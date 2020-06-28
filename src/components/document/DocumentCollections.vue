@@ -2,6 +2,10 @@
   <section class="document__collections">
     <div class="panel mt-4">
       <header class="panel-heading">
+        <span 
+          class="svg-icon"
+          v-html="require('@/assets/images/icons/document-collections.svg')"
+        />
         <h2 class="collection-list__title subtitle">
           Collections
           <a

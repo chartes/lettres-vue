@@ -21,7 +21,7 @@
       <div class="column">
         <multiselect-field
           :editable="editable"
-          label="Langues"
+          label=""
           :add-colons="false"
           :options-list="allLanguages"
           :selected-items="languages"

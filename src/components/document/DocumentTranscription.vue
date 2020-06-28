@@ -1,7 +1,11 @@
 <template>
-  <div class="">
-    <div class="panel document__transcription">
+  <div class="document__transcription">
+    <div class="panel ">
       <header class="panel-heading">
+        <span 
+          class="svg-icon"
+          v-html="require('@/assets/images/icons/document-transcription.svg')"
+        />
         <h2 class="document__transcription--title subtitle">
           Transcription
         </h2>

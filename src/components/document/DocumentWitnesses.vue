@@ -2,6 +2,10 @@
   <section class="witness-list">
     <div class="panel mt-4">
       <header class="panel-heading">
+        <span 
+          class="svg-icon"
+          v-html="require('@/assets/images/icons/document-witnesses.svg')"
+        />
         <h2 class="witness-list__title subtitle">
           Témoins
           <a

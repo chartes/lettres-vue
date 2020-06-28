@@ -7,14 +7,18 @@
     height: 1em;
     width: 1em;
     margin-right: .5em;
-    background: url(#{$image-path}/icons/document-transcription.svg) no-repeat 50% 50%;
+    //background: url(#{$image-path}/icons/document-transcription.svg) no-repeat 50% 50%;
     vertical-align: top;
 
   }
 }
 
 .document__transcription {
-
+  .panel {
+    -webkit-box-shadow: none;
+    box-shadow: none;
+  }
+  
   &--tr-content {
     .ql-editor  {
       counter-reset: paragraph;

@@ -175,5 +175,6 @@ footer {
   background-color: $nice-grey  !important;
   margin-top: 12px;
   padding: 25px 0px 50px !important;
+  z-index: 10000;
 }
 </style>

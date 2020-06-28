@@ -67,8 +67,9 @@ const actions = {
           included: response.data.included,
           meta: response.data.meta
         });
-        commit('SET_LOADING', false);
-    });
+    }).finally(() => {
+      commit('SET_LOADING', false);
+    })
   }
 };
 

@@ -4,6 +4,10 @@
     class="panel mt-5"
   >
     <header class="panel-heading argument__header">
+      <span 
+        class="svg-icon"
+        v-html="require('@/assets/images/icons/document-argument.svg')"
+      />
       <h2 class="argument__title subtitle">
         Analyse de la lettre
       </h2>
@@ -36,6 +40,7 @@
   import { mapState } from 'vuex'
   import RichTextEditor from '../forms/fields/RichTextEditor';
   import EditorSaveButton from '../forms/fields/EditorSaveButton';
+
   export default {
     name: 'DocumentArgument',
     components: {EditorSaveButton, RichTextEditor},
@@ -60,7 +65,8 @@
   }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+
   .notes {
     margin-top: 40px;
     margin-bottom: 40px;

@@ -8,7 +8,8 @@ module.exports = {
       rules: [
         {
           test: /\.(svg)(\?.*)?$/,
-          use: [
+          use: 
+          [
             {
               loader: 'svg-inline-loader',
               options: {
