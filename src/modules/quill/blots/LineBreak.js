@@ -1,7 +1,9 @@
 //import Embed from 'quill/blots/embed';
-import Parchment from 'parchment';
+import Quill from 'quill';
 
-class LineBreak extends Parchment.Embed {
+const Embed  = Quill.import('blots/embed')
+
+class LineBreak extends Embed {
   static create(value) {
     let node = super.create(value);
     return node;
@@ -10,7 +12,7 @@ class LineBreak extends Parchment.Embed {
     return 1
   }
   insertInto(parent, ref) {
-    Parchment.Embed.prototype.insertInto.call(this, parent, ref)
+    Embed.prototype.insertInto.call(this, parent, ref)
   }
 }
 LineBreak.blotName = 'linebreak';

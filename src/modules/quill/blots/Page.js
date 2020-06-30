@@ -1,7 +1,7 @@
 
 
-import Parchment from 'parchment';
-import Quill from 'quill/quill';
+//import Parchment from 'parchment';
+import Quill from 'quill';
 
 const Embed  = Quill.import('blots/embed')
 const ATTRIBUTES = [
@@ -14,7 +14,7 @@ const getPageNum = txt => {
   return ''
 }
 
-class PageBlot extends Parchment.Embed {
+export default class PageBlot extends Embed {
 
   static create(value) {
     if (typeof value !== 'object') return;
@@ -64,6 +64,3 @@ class PageBlot extends Parchment.Embed {
 PageBlot.blotName = 'page';
 PageBlot.tagName = 'a';
 PageBlot.className = 'pb';
-
-
-export default PageBlot;

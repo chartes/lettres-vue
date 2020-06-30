@@ -4,8 +4,8 @@
  Utilisation : Appel de note
 */
 
-import Parchment from 'parchment';
-import Quill from 'quill/quill';
+//import Parchment from 'parchment';
+import Quill from 'quill';
 
 const Embed  = Quill.import('blots/embed')
 
@@ -20,7 +20,7 @@ const getNoteId = domNode => { //domNode.getAttribute('href')//.substring(1)
   //return ''
 }
 
-class NoteBlot extends Parchment.Embed {
+export default class NoteBlot extends Embed {
 
   static create(value) {
     let node = super.create();
@@ -44,7 +44,6 @@ class NoteBlot extends Parchment.Embed {
   }
 
   format(name, value) {
-    //return;
     if (ATTRIBUTES.indexOf(name) > -1) {
       if (value) {
         this.domNode.setAttribute(name, value);
@@ -60,5 +59,3 @@ class NoteBlot extends Parchment.Embed {
 NoteBlot.blotName = 'note';
 NoteBlot.tagName = 'a';
 NoteBlot.className = 'note';
-
-export default NoteBlot;
