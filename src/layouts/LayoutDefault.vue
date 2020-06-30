@@ -48,12 +48,18 @@
       </div>
     </section>
     <footer class="footer">
-      <div class="content has-text-centered">
-        <p>
-          <strong>Projet LETTRES</strong> by
-          ENC
-        </p>
-      </div>
+      <nav class="level">
+        <div class="level-item has-text-centered">
+          <span 
+            class="cths-logo mr-5 pt-3"
+            v-html="require('@/assets/images/logos/Comité_des_travaux_historiques_et_scientifiques_logo.svg')"
+          />
+          <img 
+            class="enc-logo ml-5 pt-3"
+            src="@/assets/images/logos/logo-ecole-nationale-des-chartes-header.png"
+          >
+        </div>
+      </nav>
     </footer>
   </section>
 </template>
@@ -117,6 +123,7 @@ export default {
 
 <style scoped lang="scss">
 @import "@/assets/sass/main.scss";
+
 .columns {
   display: flex;
   height: 100%;
@@ -174,7 +181,16 @@ export default {
 footer {
   background-color: $nice-grey  !important;
   margin-top: 12px;
-  padding: 25px 0px 50px !important;
+  padding: 15px 0px 25px !important;
   z-index: 10000;
+
+
+  .enc-logo {
+    height: 55px;
+  }
+  .cths-logo {
+    width: 80px;
+  }
+
 }
 </style>

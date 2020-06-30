@@ -77,7 +77,7 @@ export default {
 
 <style>
 #vue-mirador-container {
-  min-height: calc(100% - 155px);
+  min-height: calc(100% - 170px);
   min-width: calc(100vw * (5 / 12));
   position: fixed;
 }
