@@ -21,7 +21,7 @@
       <template slot="empty">
         <section class="section">
           <div class="content has-text-grey has-text-centered">
-            <p>Aucun historique de modification</p>
+            <p>Aucun historique des modifications</p>
           </div>
         </section>
       </template>
