@@ -8,7 +8,7 @@
     />
 
     <article
-      v-if="document && !documentLoading"
+      v-if="document && !documentLoading && !isLoading"
       class="document__content"
     >
       <!-- titre et langue -->
@@ -63,7 +63,7 @@
     </article>
    
     <document-skeleton
-      v-if="documentLoading"
+      v-if="isLoading"
       class="mt-5"
     />
   </div>

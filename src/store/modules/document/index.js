@@ -70,7 +70,7 @@ const mutations = {
 
   UPDATE_DOCUMENT (state, {data, included}) {
     console.log('UPDATE_DOCUMENT', data, included);
-    state.document = { ...data.attributes, id: data.id};
+    state.document = Object.assign({}, state.document, { ...data.attributes, id: data.id});
     state.persons = getPersons(included);
     state.placenames = getPlacenames(included);
     state.collections = getCollections(included);
@@ -81,9 +81,9 @@ const mutations = {
   },
   UPDATE_DOCUMENT_DATA (state, data) {
     console.log('UPDATE_DOCUMENT_DATA', data);
-    state.document = { ...data.attributes, id: data.id};
+    state.document = Object.assign({}, { ...data.attributes, id: data.id});
   },
-  SET_LAT_SEEN_DOC_ID(state, id) {
+  SET_LAST_SEEN_DOC_ID(state, id) {
     state.lastSeenDocId = id;
   },
   UPDATE_DOCUMENT_PREVIEW (state, {data, included}) {
@@ -157,16 +157,22 @@ const mutations = {
     state.witnesses = [ ...payload ]
   },
   REMOVE_COLLECTION (state, payload) {
-    state.collections = state.collections.filter(coll => coll.id !== payload.id)
+    if (state.collections) {
+      state.collections = state.collections.filter(coll => coll.id !== payload.id)
+    }
   },
   REMOVE_PERSON (state, payload) {
-    state.persons = state.persons.filter(corr => corr.relationId !== payload)
+    if (state.persons) {
+      state.persons = state.persons.filter(corr => corr.relationId !== payload)
+    }
   },
   ADD_PERSON (state, payload) {
     state.persons = [ ...state.persons, payload ]
   },
   REMOVE_PLACENAME(state, payload) {
-    state.placenames = state.placenames.filter(corr => corr.relationId !== payload)
+    if (state.placenames) {
+      state.placenames = state.placenames.filter(corr => corr.relationId !== payload)
+    }
   },
   ADD_PLACENAME(state, payload) {
     state.placenames = [...state.placenames, payload]
@@ -175,7 +181,7 @@ const mutations = {
 
 const actions = {
   setLastSeen({commit}, docId) {
-    commit('SET_LAT_SEEN_DOC_ID', docId)
+    commit('SET_LAST_SEEN_DOC_ID', docId)
   },
   fetch ({ commit, rootState }, id) {
     commit('LOADING_STATUS', true);
@@ -533,30 +539,30 @@ const actions = {
 const getters = {
 
   documentSender (state) {
-    return state.persons.filter( corr => {
+    return state.persons ? state.persons.filter( corr => {
       if (!corr.role) return false;
       return corr.role.label === 'sender'
-    })
+    }) : false
   },
   documentRecipients (state) {
-    return state.persons.filter( corr => {
+    return state.persons ? state.persons.filter( corr => {
       if (!corr.role) return false;
       return corr.role.label === 'recipient'
-    })
+    }) : false
   },
 
   locationDateFrom(state) {
-    return state.placenames.filter(corr => {
+    return state.placenames ? state.placenames.filter(corr => {
       if (!corr.role) return false;
       console.warn(corr.role.label);
       return corr.role.label === 'location-date-from'
-    })
+    }) : false
   },
   locationDateTo(state) {
-    return state.placenames.filter(corr => {
+    return state.placenames ? state.placenames.filter(corr => {
       if (!corr.role) return false;
       return corr.role.label === 'location-date-to'
-    })
+    }) : false
   },
   getDummyDocument: (state) => (data) => {
     // this dummy document is used as a base when creating a new document

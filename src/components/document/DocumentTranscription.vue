@@ -90,6 +90,7 @@
       }
     },
     mounted() {
+      console.log("@@ init transcription content", this.document.id)
       this.transcriptionContent = this.document.transcription || '';
       this.addressContent = this.document.address || ''
     },
