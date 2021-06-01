@@ -38,7 +38,7 @@ const actions = {
   performSearch: debounce(({state, dispatch}) => {
     let query = `collections.id:${state.selectedCollectionId}`
     if (state.searchTerm && state.searchTerm.length > 0) {
-      query = `(${query} AND ${state.searchTerm})`
+      query = `(${query} AND (${state.searchTerm}))`
     }
     dispatch("document/fetchSearch", {
       pageId: state.numPage,
