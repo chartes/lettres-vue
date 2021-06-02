@@ -24,7 +24,7 @@
           v-if="selectedCollection"
           class="collection-description"
         >
-          {{ selectedCollection.description }}
+          {{ selectedCollection.description }} (paragraphe descriptif de la collection)
         </p>
         <document-list />
       </div>

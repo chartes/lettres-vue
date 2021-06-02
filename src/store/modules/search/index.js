@@ -4,7 +4,7 @@ import {http} from "@/modules/http-common";
 const state = {
   searchTerm: null,
   numPage: 1,
-  pageSize: 15,
+  pageSize: 50,
 
   links: [],
   totalCount: 0,
@@ -48,6 +48,7 @@ const actions = {
   },
   setSelectedCollectionId({commit}, id) {
     commit('SET_SELECTED_COLLECTION_ID', id)
+    commit('SET_NUM_PAGE', 1)
   },
   performSearch: debounce(async ({commit, state, rootState}) => {
     let query = `collections.id:${state.selectedCollectionId}`
