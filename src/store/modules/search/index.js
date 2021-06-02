@@ -1,11 +1,10 @@
-import { getUrlParameter } from "@/modules/utils";
 import {debounce} from 'lodash';
 import {http} from "@/modules/http-common";
 
 const state = {
   searchTerm: null,
   numPage: 1,
-  pageSize: 20,
+  pageSize: 15,
 
   links: [],
   totalCount: 0,
@@ -83,6 +82,7 @@ const actions = {
 
 const getters = {
   totalPageNum: (state) => {
+      console.log("total", state.documents.length, state.totalCount, state.pageSize,  parseInt(Math.ceil(state.totalCount / state.pageSize)))
       return state.documents.length === 0 ? 1 : parseInt(Math.ceil(state.totalCount / state.pageSize))
   }
 

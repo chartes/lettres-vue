@@ -25,44 +25,46 @@
           </div>
         </section>
       </template>
-      <template slot-scope="props">
-        <b-table-column
-          field="id"
-          label="Document"
-          sortable
-          width="400"
-        >
-          <document-tag-bar
-            :key="props.row.id"
-            :doc-id="props.row.id"
-          />
-        </b-table-column>
-        <b-table-column
-          field="title"
-          label="Titre"
-          width="500"
-          sortable
-        >
-          <span v-html="props.row.title" />
-        </b-table-column>
+      <b-table-column
+        v-slot="props"
+        field="id"
+        label="Document"
+        sortable
+        width="400"
+      >
+        <document-tag-bar
+          :key="props.row.id"
+          :doc-id="props.row.id"
+          :preview-data="props.row.preview"
+        />
+      </b-table-column>
+      <b-table-column
+        v-slot="props"
+        field="title"
+        label="Titre"
+        width="500"
+        sortable
+      >
+        <span v-html="props.row.title" />
+      </b-table-column>
 
-        <b-table-column
-          field="witnesses"
-          label="Témoins"
-        >
-          <ul>
-            <li
-              v-for="witness in props.row.witnesses"
-              :key="witness.id"
-            >
-              <span
-                style="font-size: 0.8em"
-                v-html="witness.attributes.content"
-              />
-            </li>
-          </ul>
-        </b-table-column>
-      </template>
+      <b-table-column
+        v-slot="props"
+        field="witnesses"
+        label="Témoins"
+      >
+        <ul>
+          <li
+            v-for="witness in props.row.witnesses"
+            :key="witness.id"
+          >
+            <span
+              style="font-size: 0.8em"
+              v-html="witness.attributes.content"
+            />
+          </li>
+        </ul>
+      </b-table-column>
     </b-table>
   </div>
 </template>
@@ -90,8 +92,7 @@ export default {
     ,
      data() {
             return {
-                data: [
-                ],
+                data: [],
                 sortField: 'id',
                 sortOrder: 'desc',
                 defaultSortOrder: 'desc',
@@ -101,24 +102,24 @@ export default {
         },
     computed: {
       ...mapState('user', ['current_user']),
-      ...mapState('bookmarks', ['userBookmarks', 'totalCount', 'isLoading'])
+      ...mapState('bookmarks', ['userBookmarks', 'totalCount', 'isLoading']),
+      ...mapGetters('document', ['getPreview'])
  
     },
     watch: {
-      userBookmarks() {
-        this.data = this.userBookmarks.map( b => {
+      async userBookmarks() {
+        this.data = await Promise.all(this.userBookmarks.map(async b => {
                   return {
                     id: b.id,
+                    preview: await this.getPreview(b.id),
                     title: b.attributes.title,
                     witnesses: b.witnesses
                   }
-                })
+                }))
       }
     },
     mounted() {
       this.loadAsyncData()
-    },
-    created() {
     },
     methods: {
       ...mapActions('bookmarks', ['fetchUserBookmarks']),

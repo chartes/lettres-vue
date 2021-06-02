@@ -26,8 +26,9 @@
         </section>
       </template>
 
-      <template slot-scope="props">
+      <template>
         <b-table-column
+          v-slot="props"
           field="docId"
           label="Document"
           sortable
@@ -41,6 +42,7 @@
           </router-link>
         </b-table-column>
         <b-table-column
+          v-slot="props"
           field="date"
           label="Date"
           width="200"
@@ -49,6 +51,7 @@
           <span v-html="props.row.date" />
         </b-table-column>
         <b-table-column
+          v-slot="props"
           field="user"
           label="Utilisateur"
           width="200"
@@ -58,6 +61,7 @@
         </b-table-column>
 
         <b-table-column
+          v-slot="props"
           field="description"
           label="Description"
         >

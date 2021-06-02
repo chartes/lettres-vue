@@ -3,8 +3,9 @@
     class="document"
   >
     <document-tag-bar
-      v-if="current_user"
+      v-if="current_user && preview"
       :doc-id="docId"
+      :preview-data="preview"
     />
 
     <article
@@ -63,21 +64,20 @@
     </article>
    
     <document-skeleton
-      v-if="isLoading"
+      v-if="isLoading || !preview"
       class="mt-5"
     />
   </div>
 </template>
 
 <script>
-import { mapState, mapActions } from "vuex";
-import LoadingIndicator from "../ui/LoadingIndicator";
+import { mapState, mapActions, mapGetters } from "vuex";
 import Changelog from "@/components/sections/Changelog";
 import DocumentPersons from "../document/DocumentPersons";
 import DocumentTranscription from "../document/DocumentTranscription";
 import DocumentTagBar from "../document/DocumentTagBar";
 import DocumentPlacenames from "../document/DocumentPlacenames";
-import { baseApiURL, baseAppURL } from "../../modules/http-common";
+import { baseApiURL } from "../../modules/http-common";
 import DocumentArgument from "../document/DocumentArgument";
 import DocumentWitnesses from "../document/DocumentWitnesses";
 //import DocumentCollections from "../document/DocumentCollections";
@@ -106,11 +106,38 @@ export default {
   data() {
     return {
       canEdit: false,
-      isLoading: true
+      isLoading: true,
+      preview: null,
     };
   },
-  created() {
-   
+   computed: {
+    ...mapState("document", [
+      "document",
+      "documentLoading",
+      "collections",
+      "witnesses",
+      "currentLock"
+    ]),
+    ...mapState("user", ["current_user", "isUserLoaded"]),
+    ...mapState("locks", ["lockOwner"]),
+    ...mapGetters('document', ['getPreview']),
+
+    collectionURL() {
+      const baseUrl = window.location.origin
+        ? window.location.origin + "/"
+        : window.location.protocol + "/" + window.location.host;
+      return `${baseUrl}${baseApiURL.substr(1)}/iiif/documents/${
+        this.docId
+      }/collection/default`;
+    }
+  },
+  watch: {
+    lockOwner() {
+      this.computeCanEdit();
+    }
+  },
+  async created() {
+    this.preview = await this.getPreview(this.docId);
   },
   mounted() {
     this.isLoading = true;
@@ -126,35 +153,7 @@ export default {
         //window.location.replace(baseAppURL);
       });
   },
-  computed: {
-    ...mapState("document", [
-      "document",
-      "documentLoading",
-      "documentsPreview",
-      "collections",
-      "witnesses",
-      "currentLock"
-    ]),
-    ...mapState("user", ["current_user", "isUserLoaded"]),
-    ...mapState("locks", ["lockOwner"]),
 
-    collectionURL() {
-      const baseUrl = window.location.origin
-        ? window.location.origin + "/"
-        : window.location.protocol + "/" + window.location.host;
-      return `${baseUrl}${baseApiURL.substr(1)}/iiif/documents/${
-        this.docId
-      }/collection/default`;
-    }
-  },
-  watch: {
-    lockOwner() {
-      this.computeCanEdit();
-    },
-    documentsPreview() {
-      this.computeCanEdit();
-    }
-  },
   methods: {
     ...mapActions('layout', ['setLastSeen']),
 
@@ -172,8 +171,7 @@ export default {
         return;
       }
       this.canEdit =
-        (this.documentsPreview[this.docId] &&
-          this.documentsPreview[this.docId].currentLock.id === null) ||
+        (this.preview && this.preview.currentLock.id === null) ||
         (this.lockOwner[this.docId] &&
           this.lockOwner[this.docId].id === this.current_user.id);
     }

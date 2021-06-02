@@ -1,6 +1,5 @@
 <template>
   <span
-    v-if="documentsPreview[docId]"
     class="tags has-addons document-tag-bar"
   >
     <router-link
@@ -14,12 +13,12 @@
       Published
     -->
     <badge
-      v-if="current_user && isPublished !== null"
+      v-if="current_user && preview.attributes['is-published'] !== null"
       classes-active="is-published tag"
       classes-inactive="tag"
       :action-when-on="publishDocument"
       :action-when-off="unpublishDocument"
-      :starts-on="isPublished"
+      :starts-on="preview.attributes['is-published']"
     >
       <template #active>
         <a><i class="fas fa-check-circle" /></a>
@@ -34,12 +33,12 @@
       Bookmark
     -->
     <badge
-      v-if="current_user && isBookmarked !== null"
+      v-if="current_user && preview.isBookmarked !== null"
       classes-active="is-bookmarked tag"
       classes-inactive="tag"
       :action-when-on="addBookmark"
       :action-when-off="removeBookmark"
-      :starts-on="isBookmarked"
+      :starts-on="preview.isBookmarked"
     >
       <template #active>
         <a><i class="fas fa-bookmark" /></a>
@@ -75,9 +74,9 @@
     </badge>
   
     <lock-form
-      v-if="documentsPreview[docId] && lockEditMode"
+      v-if="lockEditMode"
       :doc-id="docId"
-      :current-lock="documentsPreview[docId].currentLock"
+      :current-lock="preview.currentLock"
       :cancel="stopLockEditor"
       :submit="stopLockEditor"
     />
@@ -87,9 +86,8 @@
 </template>
 
 <script>
-    import {mapState} from 'vuex'
+    import {mapState, mapGetters} from 'vuex'
     import Badge from "../ui/Badge";
-    import http_with_csrf_token from "../../modules/http-common";
     import LockForm from "../forms/LockForm";
 
     export default {
@@ -97,33 +95,28 @@
         components: {Badge, LockForm},
         props: {
             docId: {required: true, type: Number},
-        },
-        computed: {
-            ...mapState('user', ['current_user']),
-            ...mapState('document', ['documentsPreview']),
-            ...mapState('locks', ['lockOwner'])
-        },
-        watch: {},
-        created() {
-            this.fetchPreviewCard();
+            previewData : {required: true, type: Object}
         },
         data() {
             return {
                 baseUrl: `${process.env.VUE_APP_APP_ROOT_URL}`,
-
-                isBookmarked: null,
-                isPublished: null,
-
                 lockEditMode: false,
+                preview: this.$props.previewData
             }
         },
+        computed: {
+            ...mapState('user', ['current_user']),
+            ...mapState('locks', ['lockOwner']),
+            ...mapGetters('document', ['getPreview'])
+        },
+        watch: {},
         methods: {
             addBookmark() {
                 return this.$store.dispatch('bookmarks/postUserBookmark', {
                     userId: this.current_user.id,
                     docId: this.docId,
                 }).then(resp => {
-                    this.isBookmarked = true;
+                    this.preview.isBookmarked = true;
                     return Promise.resolve(true);
                 })
             },
@@ -132,37 +125,37 @@
                     userId: this.current_user.id,
                     docId: this.docId,
                 }).then(resp => {
-                    this.isBookmarked = false;
+                    this.preview.isBookmarked = false;
                     return Promise.resolve(false);
                 })
             },
             publishDocument() {
                 return this.$store.dispatch('document/publish', this.docId,
                 ).then(resp => {
-                    this.isPublished = true;
+                    this.preview.attributes['is-published'] = true;
                     return Promise.resolve(true);
                 })
             },
             unpublishDocument() {
                 return this.$store.dispatch('document/unpublish', this.docId,
                 ).then(resp => {
-                    this.isPublished = false;
+                    this.preview.attributes['is-published'] = false;
                     return Promise.resolve(false);
                 })
             },
+            /*
             fetchPreviewCard() {
                 this.$store.dispatch('document/fetchPreview', this.docId).then(() => {
-                    /* fetch lock user info*/
+                     //fetch lock user info
                     if (this.current_user) {
-                        /* isBookmarked */
-                        const http = http_with_csrf_token();
+                        //  isBookmarked 
                         http.get(`/users/${this.current_user.id}/relationships/bookmarks`).then(response => {
                             this.isBookmarked = response.data.data.filter(d => d.id === this.docId).length > 0;
                         });
-                        /* isPublished */
-                        this.isPublished = this.documentsPreview[this.docId].attributes['is-published'];
+                        // isPublished 
+                        this.isPublished = this.preview.attributes['is-published'];
 
-                        const lockId = this.documentsPreview[this.docId].currentLock.id;
+                        const lockId = this.preview.currentLock.id;
                         if (lockId) {
                             this.fetchLockOwner(lockId);
                         }
@@ -172,13 +165,14 @@
             fetchLockOwner(lockId) {
                 return this.$store.dispatch('locks/fetchLockOwner', {docId: this.docId, lockId: lockId});
             },
+            */
             startLockEditor() {
                 this.lockEditMode = true;
                 return Promise.resolve(!!this.lockOwner[this.docId]);
             },
-            stopLockEditor() {
+            async stopLockEditor() {
                 this.lockEditMode = false;
-                this.fetchPreviewCard();
+                this.preview = await this.getPreview(this.docId);
                 return Promise.resolve(!!this.lockOwner[this.docId]);
             }
         },

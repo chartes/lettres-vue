@@ -1,5 +1,5 @@
-import http_with_csrf_token from '../../../modules/http-common';
-import {getUser} from "../../../modules/change-helpers";
+import {http} from '@/modules/http-common';
+import {getUser} from "@/modules/change-helpers";
 
 const state = {
   fullChangelog: [],
@@ -48,17 +48,14 @@ const actions = {
         }
       }
     };
-    const http = http_with_csrf_token();
     return http.post(`changes`, {data}).then(response => {
       this.dispatch('changelog/fetchFullChangelog', {
         filters: `filter[object-id]=${objId}&filter[object-type]=${objType}`
       }, {root: true});
     });
   },
-  fetchFullChangelog ({ commit }, {pageId, pageSize, filters}) {
+  fetchFullChangelog ({ commit }, {pageId=1, pageSize=15, filters}) {
     commit('SET_LOADING', true)
-
-    const http = http_with_csrf_token();
 
     return http.get(`changes?include=user&sort=-event-date&page[size]=${pageSize}&page[number]=${pageId}${filters ? '&'+filters : ''}`)
       .then( response => {

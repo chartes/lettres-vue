@@ -1,11 +1,12 @@
 import {http} from '@/modules/http-common';
+import store from "@/store/index"
 
 import {
   getPersons, getLanguages, getWitnesses,
   getNotes, getCollections, getCurrentLock,  getPlacenames,
   removeContentEditableAttributesFromObject
 } from '@/modules/document-helpers';
-import Vue from 'vue';
+
 import {getInstitution} from '../witnesses'
 
 const TRANSLATION_MAPPING = {
@@ -28,9 +29,7 @@ const state = {
   witnesses: [],
   languages: [],
   collections: [],
-  notes: [],
-
-  documentsPreview: {},
+  notes: []
 };
 
 
@@ -78,19 +77,6 @@ const mutations = {
   UPDATE_DOCUMENT_DATA (state, data) {
     console.log('UPDATE_DOCUMENT_DATA', data);
     state.document = Object.assign({}, { ...data.attributes, id: data.id});
-  },
-
-  UPDATE_DOCUMENT_PREVIEW (state, {data, included}) {
-    //console.log('UPDATE_DOCUMENT_PREVIEW');
-    const newPreviewCard = {
-      id: data.id,
-      attributes: data.attributes,
-      //persons: getPersons(included),
-      //languages: getLanguages(included),
-      //collections: getCollections(included),
-      currentLock: getCurrentLock(included)
-    };
-    Vue.set(state.documentsPreview, data.id, newPreviewCard);
   },
 
   LOADING_STATUS (state, payload) {
@@ -188,19 +174,6 @@ const actions = {
       commit('LOADING_STATUS', false)
     })
   },
-  fetchPreview ({ commit }, id) {
-    commit('LOADING_STATUS', true);
-    const incs = [
-      //'collections',
-      'witnesses', 'current-lock'
-    ];
-
-    return http.get(`documents/${id}?include=${incs.join(',')}&without-relationships`).then( response => {
-      commit('UPDATE_DOCUMENT_PREVIEW', response.data);
-      commit('LOADING_STATUS', false)
-    })
-  },
-
 
   save ({ commit, rootState }, data) {
     const modifiedData = data.attributes || data.relationships;
@@ -531,6 +504,45 @@ const getters = {
   getDummyDocument: (state) => (data) => {
     // this dummy document is used as a base when creating a new document
     return makeDummyDocument(data);
+  },
+  getPreview: (state,  getters, rootState,  rootGetters  ) => async (id) => {
+
+    const incs = [
+      //'collections',
+      'witnesses', 'current-lock'
+    ];
+
+    const response = await http.get(`documents/${id}?include=${incs.join(',')}&without-relationships`)
+    const {data, included} = response.data
+
+    let preview = {
+      id,
+      attributes: data.attributes,
+      //persons: getPersons(included),
+      //languages: getLanguages(included),
+      //collections: getCollections(included),
+      currentLock: getCurrentLock(included)
+    }
+
+    /* fetch lock user info*/
+    if (rootState.user.current_user) {
+      /* isBookmarked */
+      const response = await http.get(`/users/${rootState.user.current_user.id}/relationships/bookmarks`);
+      try {
+        preview.isBookmarked = response.data.data.filter(d => d.id === id).length > 0;
+      } catch (reason) {
+        console.warn(reason)
+      }
+      
+      /* isPublished */
+      //preview.isPublished = this.preview.attributes['is-published'];
+      if (preview.currentLock.id) {
+        store.dispatch('locks/fetchLockOwner', {docId: id, lockId: preview.currentLock.id}, {root: true});
+      }
+    }
+
+    return preview;
+
   }
 };
 

@@ -53,10 +53,8 @@ export default {
         })
       }
     },
-    mounted() {
-      this.loadAsyncData()
-    },
     created() {
+       this.loadAsyncData()
     },
     methods: {
       ...mapActions('changelog', ['fetchFullChangelog']),

@@ -1,17 +1,17 @@
 <template>
   <div class="document-preview-card">
     <aside
-      v-if="documentPreview"
+      v-if="preview"
       class="document-preview-card__thumbnail"
     >
       <router-link :to="{ name: 'document', params: { docId } }">
         <img
-          v-if="documentPreview.attributes['iiif-thumbnail-url']"
-          :src="documentPreview.attributes['iiif-thumbnail-url']"
+          v-if="preview.attributes['iiif-thumbnail-url']"
+          :src="preview.attributes['iiif-thumbnail-url']"
           @error="imageLoadingError=true"
         >
         <div
-          v-if="imageLoadingError || !documentPreview.attributes['iiif-thumbnail-url']"
+          v-if="imageLoadingError || !preview.attributes['iiif-thumbnail-url']"
           class="document-preview-card__alt-thumbnail"
         >
           <div style="width:100%; height: 100%; margin: auto">
@@ -20,13 +20,16 @@
         </div>
       </router-link>
     </aside>
-    <article>
+    <article v-if="preview">
       <header class="document-preview-card__header">
-        <document-tag-bar :doc-id="docId" />
+        <document-tag-bar
+          :doc-id="docId"
+          :preview-data="preview"
+        />
       </header>
 
       <div
-        v-if="documentPreview"
+        v-if="preview"
         class=""
       >
         <router-link :to="{ name: 'document', params: { docId } }">
@@ -45,9 +48,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
-import LoadingIndicator from "../ui/LoadingIndicator";
-import DocumentAttributes from "./DocumentAttributes";
+import { mapGetters } from 'vuex';
 import { baseAppURL } from "../../modules/http-common";
 import DocumentTagBar from "./DocumentTagBar";
 
@@ -59,38 +60,28 @@ export default {
   },
   data() {
     return {
-      documentPreview: null,
       baseUrl: baseAppURL,
       imageLoadingError: false,
 
+      preview: null,
       titleContent: null,
       previewContent: null
     };
-  },
-  mounted() {
-    this.updateCurrentDocumentPreviewCard();
-  },
+  }, 
   computed: {
-    ...mapState("document", ["documentsPreview", "documentLoading"])
+    ...mapGetters('document', ['getPreview'])
   },
-  watch: {
-    documentsPreview() {
-      this.updateCurrentDocumentPreviewCard();
-    }
-  },
-  methods: {
-    updateCurrentDocumentPreviewCard: function() {
-      this.titleContent = "";
-      this.previewContent = "";
+  async created() {
+    this.preview = await this.getPreview(this.docId);
+    
+    this.titleContent = "";
+    this.previewContent = "";
 
-      if (this.documentsPreview[this.docId]) {
-        this.documentPreview = this.documentsPreview[this.docId];
-
-        this.titleContent = this.documentPreview.attributes.title;
-        this.previewContent = this.documentPreview.attributes.transcription
-          ? this.documentPreview.attributes.transcription
-          : this.documentPreview.attributes.argument;
-      }
+    if (this.preview) {
+      this.titleContent = this.preview.attributes.title;
+      this.previewContent = this.preview.attributes.transcription
+          ? this.preview.attributes.transcription
+          : this.preview.attributes.argument;
     }
   }
 };
