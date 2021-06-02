@@ -29,7 +29,6 @@ const mutations = {
     state.selectedCollectionId = id > 0 ? id : 1;
   },
   UPDATE_ALL (state, payload) {
-    console.log('UPDATE_ALL', payload);
     state.documents = payload.data;
     state.links = payload.links;
     state.totalCount = payload.meta["total-count"];
@@ -58,7 +57,7 @@ const actions = {
  
     commit('SET_LOADING_STATUS', true);
   
-    const incs = ['collections', 'persons', 'persons-having-roles', 'roles', 'witnesses', 'languages'];
+    const incs = []; //['collections', 'persons', 'persons-having-roles', 'roles', 'witnesses', 'languages'];
       
     let filters = ''
     if (!query || query.length === 0) {

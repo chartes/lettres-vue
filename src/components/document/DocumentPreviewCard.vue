@@ -1,5 +1,11 @@
 <template>
-  <div class="document-preview-card">
+  <div v-if="loading">
+    <document-preview-card-skeleton />
+  </div>
+  <div
+    v-else
+    class="document-preview-card"
+  >
     <aside
       v-if="preview"
       class="document-preview-card__thumbnail"
@@ -49,12 +55,14 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import { baseAppURL } from "../../modules/http-common";
-import DocumentTagBar from "./DocumentTagBar";
+import { baseAppURL } from "@/modules/http-common";
 
 export default {
   name: "DocumentPreviewCard",
-  components: { DocumentTagBar },
+  components: { 
+    DocumentTagBar: () => import("@/components/document/DocumentTagBar"),
+    DocumentPreviewCardSkeleton: () => import("@/components/ui/DocumentPreviewCardSkeleton"),
+  },
   props: {
     docId: { required: true, type: Number }
   },
@@ -65,13 +73,17 @@ export default {
 
       preview: null,
       titleContent: null,
-      previewContent: null
+      previewContent: null,
+      loading: false,
     };
   }, 
   computed: {
     ...mapGetters('document', ['getPreview'])
   },
-  async created() {
+  created () {
+    this.loading = true;
+  },
+  async mounted() {
     this.preview = await this.getPreview(this.docId);
     
     this.titleContent = "";
@@ -83,6 +95,8 @@ export default {
           ? this.preview.attributes.transcription
           : this.preview.attributes.argument;
     }
+
+    this.loading = false;
   }
 };
 </script>
