@@ -50,8 +50,7 @@ export default {
         'collectionTree': 'fullHierarchy',
         'isCollectionLoading': 'isLoading'
       }),
-      ...mapState('search', ['selectedCollectionId']),
-      ...mapState('document', ['documents', 'documentLoading']),
+      ...mapState('search', ['selectedCollectionId', 'documents', 'loadingStatus']),
       ...mapGetters('collections', ['searchWithinTree']),
 
       selectedCollection() {

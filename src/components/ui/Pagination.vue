@@ -2,15 +2,15 @@
   <div v-show="totalPageNum > 1">
     <span
       class="icon button"
-      :disabled="documentLoading"
+      :disabled="loadingStatus"
       @click="performAction(1)"
     >
       <i class="fas fa-angle-double-left" />
     </span>
     <span
       class="icon button"
-      :disabled="documentLoading"
-      @click="performAction(parseInt(numPage)-1)"
+      :disabled="loadingStatus"
+      @click="performAction(parseInt(numPage) - 1)"
     >
       <i class="fas fa-angle-left" />
     </span>
@@ -18,20 +18,20 @@
       <input
         v-model="currentInput"
         class="input"
-        :disabled="documentLoading"
+        :disabled="loadingStatus"
       >
       <span> / {{ totalPageNum }}</span>
     </span>
     <span
       class="icon button"
-      :disabled="documentLoading"
-      @click="performAction(parseInt(numPage)+1)"
+      :disabled="loadingStatus"
+      @click="performAction(parseInt(numPage) + 1)"
     >
       <i class="fas fa-angle-right" />
     </span>
     <span
       class="icon button"
-      :disabled="documentLoading"
+      :disabled="loadingStatus"
       @click="performAction(totalPageNum)"
     >
       <i class="fas fa-angle-double-right" />
@@ -47,21 +47,20 @@ export default {
   props: {},
   data() {
     return {
-      currentInput: 1
+      currentInput: 1,
     };
   },
   computed: {
-    ...mapState("document", ["documents", "links", "documentLoading"]),
-    ...mapState("search", ["numPage", "pageSize"]),
-    ...mapGetters('search', ["totalPageNum"])
+    ...mapState("search", ["numPage", "pageSize", "documents", "links", "loadingStatus"]),
+    ...mapGetters("search", ["totalPageNum"]),
   },
   watch: {
-    numPage: function() {
+    numPage: function () {
       this.currentInput = this.numPage;
     },
-    currentInput:  function() {
+    currentInput: function () {
       this.performAction(this.currentInput);
-    }
+    },
   },
   created() {
     this.currentInput = this.numPage;
@@ -73,7 +72,7 @@ export default {
         this.performSearch();
       }
     },
-    performAction(num){
+    performAction(num) {
       if (!parseInt(num)) {
         num = 1;
       }
@@ -84,13 +83,12 @@ export default {
       }
       this.setNumPage(num);
       this.search();
-    }
-  }
+    },
+  },
 };
 </script>
 
 <style scoped lang="scss">
-
 span.button {
   height: 16px;
   width: 40px;

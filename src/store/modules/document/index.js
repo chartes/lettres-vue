@@ -30,11 +30,8 @@ const state = {
   collections: [],
   notes: [],
 
-  documents: [],
   documentsPreview: {},
   lastSeenDocId: null,
-  links: [],
-  totalCount: 0,
 };
 
 
@@ -97,12 +94,6 @@ const mutations = {
       currentLock: getCurrentLock(included)
     };
     Vue.set(state.documentsPreview, data.id, newPreviewCard);
-  },
-  UPDATE_ALL (state, payload) {
-    console.log('UPDATE_ALL', payload);
-    state.documents = payload.data;
-    state.links = payload.links;
-    state.totalCount = payload.meta["total-count"];
   },
 
   LOADING_STATUS (state, payload) {
@@ -183,7 +174,7 @@ const actions = {
   setLastSeen({commit}, docId) {
     commit('SET_LAST_SEEN_DOC_ID', docId)
   },
-  fetch ({ commit, rootState }, id) {
+  fetch ({ commit }, id) {
     commit('LOADING_STATUS', true);
 
     let incs = [
@@ -215,27 +206,9 @@ const actions = {
       commit('LOADING_STATUS', false)
     })
   },
-  fetchSearch ({ commit, rootState }, {pageId, pageSize, query}) {
-    commit('LOADING_STATUS', true);
 
-    const incs = ['collections', 'persons', 'persons-having-roles', 'roles', 'witnesses', 'languages'];
-    
-    let filters = ''
-    if (!query || query.length === 0) {
-      query = '*'
-    }
-    if (!rootState.user.current_user){
-      query = `${query} AND (is-published:true)`
-    }
 
-    return http.get(`/search?query=${query}&sort=id&include=${incs.join(',')}&without-relationships&page[size]=${pageSize}&page[number]=${pageId}${filters}`)
-      .then( (response) => {
-      commit('UPDATE_ALL', response.data);
-      commit('LOADING_STATUS', false);
-    })
-  },
-
-  save ({ commit, rootGetters, rootState, dispatch }, data) {
+  save ({ commit, rootState }, data) {
     const modifiedData = data.attributes || data.relationships;
     console.log('document/save', data)
     data.type = 'document';
@@ -315,7 +288,6 @@ const actions = {
     });
   },
   fetchWitnessInstitution ({ commit }, witnessId) {
-    const http = http_with_csrf_token()
     return http.get(`/witnesses/${witnessId}?include=institution`).then( response => {
       const institution = getInstitution(response.data.included)
       if (institution.id === null) return null;
@@ -324,7 +296,6 @@ const actions = {
     });
   },
   removeWitnessInstitution({commit}, witnessId) {
-    
     return http.patch(`/witnesses/${witnessId}/relationships/institution`, {data: null});
   },
   addWitness ({commit, state}, witness) {
@@ -425,7 +396,6 @@ const actions = {
       return state.witnesses[index].id !== w.id
     })
 
-    
     Promise.all(changed.map(w => {
       return http.patch(`/witnesses/${w.id}`, { data: {
         type: "witness",

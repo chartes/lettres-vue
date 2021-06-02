@@ -1,37 +1,21 @@
 <template>
-  <div
-   
-    class="section"
-  >
+  <div class="section">
     <div class="container">
       <div class="has-text-centered">
         <pagination />
       </div>
 
-      <ul 
-        v-show="!documentLoading"
-        id="preview-cards"
-        class="pb-5 pt-5"
-      >
-        <li
-          v-for="doc in documents"
-          :key="doc.id"
-        >
+      <ul v-show="!loadingStatus" id="preview-cards" class="pb-5 pt-5">
+        <li v-for="doc in documents" :key="doc.id">
           <document-preview-card
             v-if="!!doc.attributes['is-published'] || current_user"
             :doc-id="doc.id"
           />
         </li>
       </ul>
-      
-      <div
-        v-if="documentLoading"
-        class="mt-5"
-      >
-        <document-preview-card-skeleton
-          v-for="i in 5"
-          :key="i"
-        />
+
+      <div v-if="loadingStatus" class="mt-5">
+        <document-preview-card-skeleton v-for="i in 5" :key="i" />
       </div>
 
       <div class="has-text-centered">
@@ -49,14 +33,8 @@ import Pagination from "../ui/Pagination";
 export default {
   name: "DocumentList",
   components: {
-    DocumentPreviewCard: () =>
-      import(
-        "../document/DocumentPreviewCard"
-      ),
-    DocumentPreviewCardSkeleton: () =>
-      import(
-        "../ui/DocumentPreviewCardSkeleton"
-      ),
+    DocumentPreviewCard: () => import("../document/DocumentPreviewCard"),
+    DocumentPreviewCardSkeleton: () => import("../ui/DocumentPreviewCardSkeleton"),
     Pagination,
   },
   props: {},
@@ -64,10 +42,10 @@ export default {
     return {};
   },
   computed: {
-    ...mapState("document", ["documents", "documentLoading"]),
-    ...mapState("user", ["current_user"])
+    ...mapState("search", ["documents", "loadingStatus"]),
+    ...mapState("user", ["current_user"]),
   },
-  methods: {}
+  methods: {},
 };
 </script>
 

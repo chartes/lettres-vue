@@ -60,7 +60,6 @@ const actions = {
   },
 
   addOne ({ commit }, person) {
-    const http = http_with_csrf_token();
     const data = { type: 'person', attributes: { ...person }}
     return http.post(`persons`, {data})
       .then(response => {
@@ -95,7 +94,6 @@ const actions = {
           }
         }
       }}
-    const http = http_with_csrf_token()
     return http.post(`/persons-having-roles`, data).then( response => {
         return response.data.data
       })

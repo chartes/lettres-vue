@@ -62,7 +62,6 @@ const actions = {
     },
 
     addOne({commit}, placename) {
-        const http = http_with_csrf_token();
         const data = {type: 'placename', attributes: {...placename}}
         return http.post(`placenames`, {data})
             .then(response => {
@@ -99,14 +98,12 @@ const actions = {
                 }
             }
         }
-        const http = http_with_csrf_token()
         return http.post(`/placenames-having-roles`, data).then(response => {
             return response.data.data
         })
             .catch(error => console.log(error))
     },
-    unlinkFromDocument({commit, rootState}, {relationId, placenameId, roleId}) {
-        const http = http_with_csrf_token()
+    unlinkFromDocument({commit, rootState}, {relationId}) {
         return http.delete(`/placenames-having-roles/${relationId}`)
             .then(() => this.dispatch('document/removePlacename', relationId))
             .catch(error => console.log(error))
