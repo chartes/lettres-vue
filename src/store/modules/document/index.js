@@ -1,10 +1,10 @@
-import http_with_csrf_token, {http} from '../../../modules/http-common';
+import {http} from '@/modules/http-common';
 
 import {
   getPersons, getLanguages, getWitnesses,
   getNotes, getCollections, getCurrentLock,  getPlacenames,
   removeContentEditableAttributesFromObject
-} from '../../../modules/document-helpers';
+} from '@/modules/document-helpers';
 import Vue from 'vue';
 import {getInstitution} from '../witnesses'
 

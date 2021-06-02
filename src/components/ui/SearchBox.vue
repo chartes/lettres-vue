@@ -17,7 +17,7 @@
         >
           <span class="icon">
             <i
-              v-if="documentLoading"
+              v-if="loadingStatus"
               class="fas fa-spinner fa-pulse"
             />
             <i
@@ -54,8 +54,7 @@ export default {
     };
   },
   computed: {
-    ...mapState('search', ['searchTerm']),
-    ...mapState('document', ['documentLoading'])
+    ...mapState('search', ['searchTerm', 'loadingStatus']),
   },
   watch: {
     inputTerm() {
