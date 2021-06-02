@@ -151,7 +151,7 @@ export default {
   },
   computed: {
     ...mapState('user', ['current_user']),
-    ...mapState('document', ['lastSeenDocId'])
+    ...mapState('layout', ['lastSeenDocId'])
   },
   methods: {
   }

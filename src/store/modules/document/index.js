@@ -31,7 +31,6 @@ const state = {
   notes: [],
 
   documentsPreview: {},
-  lastSeenDocId: null,
 };
 
 
@@ -80,9 +79,7 @@ const mutations = {
     console.log('UPDATE_DOCUMENT_DATA', data);
     state.document = Object.assign({}, { ...data.attributes, id: data.id});
   },
-  SET_LAST_SEEN_DOC_ID(state, id) {
-    state.lastSeenDocId = id;
-  },
+
   UPDATE_DOCUMENT_PREVIEW (state, {data, included}) {
     //console.log('UPDATE_DOCUMENT_PREVIEW');
     const newPreviewCard = {
@@ -171,9 +168,6 @@ const mutations = {
 };
 
 const actions = {
-  setLastSeen({commit}, docId) {
-    commit('SET_LAST_SEEN_DOC_ID', docId)
-  },
   fetch ({ commit }, id) {
     commit('LOADING_STATUS', true);
 

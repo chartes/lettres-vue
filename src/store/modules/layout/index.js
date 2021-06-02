@@ -2,6 +2,7 @@
 const state = {
   showLeftSideBar: true,
   showRightSideBar: false,
+  lastSeenDocId: null,
 };
 
 
@@ -11,6 +12,9 @@ const mutations = {
   },
   SET_RIGHT_SIDEBAR(state, v) {
     state.showRightSideBar = v;
+  },
+  SET_LAST_SEEN_DOC_ID(state, id) {
+    state.lastSeenDocId = id;
   }
 };
 
@@ -33,7 +37,10 @@ const actions = {
   },
   toggleRightSideBar({commit, state}) {
     commit('SET_RIGHT_SIDEBAR', !state.showRightSideBar);
-  }
+  },
+  setLastSeen({commit}, docId) {
+    commit('SET_LAST_SEEN_DOC_ID', docId)
+  },
 };
 
 const getters = {

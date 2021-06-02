@@ -156,7 +156,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('document', ['setLastSeen']),
+    ...mapActions('layout', ['setLastSeen']),
 
     computeCanEdit() {
       /*
