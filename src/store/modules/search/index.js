@@ -5,6 +5,8 @@ import {
 } from '@/modules/document-helpers';
 const state = {
   searchTerm: null,
+  sorts: [{field: 'creation', order: 'desc'}],
+
   numPage: 1,
   pageSize: 30,
 
@@ -25,6 +27,9 @@ const mutations = {
   },
   SET_NUM_PAGE(state, num) {
     state.numPage = num;
+  },
+  SET_SORTS(state, sorts) {
+    state.sorts = sorts;
   },
   SET_LOADING_STATUS(state, s) {
     state.loadingStatus = s;
@@ -50,6 +55,9 @@ const actions = {
   setNumPage({commit}, num) {
     commit('SET_NUM_PAGE', num)
   },
+  setSorts({commit}, sorting) {
+    commit('SET_SORTS', sorting)
+  },
   setSelectedCollectionId({commit}, id) {
     commit('SET_SELECTED_COLLECTION_ID', id)
     commit('SET_NUM_PAGE', 1)
@@ -71,9 +79,12 @@ const actions = {
     if (!rootState.user.current_user){
       query = `${query} AND (is-published:true)`
     }
+
+    let sorts = state.sorts.map(s => `${s.order === 'desc' ? '' : '-'}${s.field}`)
+    sorts = sorts.length ? sorts.join(',') : 'creation'
   
     try {
-      const response = await http.get(`/search?query=${query}&sort=id&include=${incs.join(',')}&without-relationships&page[size]=${state.pageSize}&page[number]=${state.numPage}${filters}`);
+      const response = await http.get(`/search?query=${query}&sort=${sorts}&include=${incs.join(',')}&without-relationships&page[size]=${state.pageSize}&page[number]=${state.numPage}${filters}`);
       const {data, included, links, meta} = response.data
 
       let documents = []

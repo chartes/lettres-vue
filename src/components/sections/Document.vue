@@ -3,9 +3,10 @@
     class="document"
   >
     <document-tag-bar
-      v-if="current_user && preview"
+      v-if="current_user && tagData"
       :doc-id="docId"
-      :preview-data="preview"
+      :preview-data="tagData"
+      :with-status="true"
     />
 
     <article
@@ -64,7 +65,7 @@
     </article>
    
     <document-skeleton
-      v-if="isLoading || !preview"
+      v-if="isLoading || !tagData"
       class="mt-5"
     />
   </div>
@@ -84,6 +85,9 @@ import DocumentWitnesses from "../document/DocumentWitnesses";
 import DocumentAttributes from "../document/DocumentAttributes";
 import DocumentDateAttributes from "../document/DocumentDateAttributes";
 import DocumentSkeleton from "@/components/ui/DocumentSkeleton";
+
+import {http} from "@/modules/http-common";
+import {getCurrentLock} from "@/modules/document-helpers"
 
 export default {
   name: "Document",
@@ -107,7 +111,7 @@ export default {
     return {
       canEdit: false,
       isLoading: true,
-      preview: null,
+      tagData: null,
     };
   },
    computed: {
@@ -137,21 +141,21 @@ export default {
     }
   },
   async created() {
-    this.preview = await this.getPreview(this.docId);
-  },
-  mounted() {
     this.isLoading = true;
     this.$store
       .dispatch("document/fetch", this.docId)
-      .then(r => {
+      .then(async r => {
         this.computeCanEdit();
         this.isLoading = false;
         this.setLastSeen(this.docId);
+        this.tagData = {
+            currentLock: this.document.currentLock,
+            isBookmarked: await http.get(`/users/${this.current_user.id}/relationships/bookmarks`).then(
+              response => response.data.data.filter(d => d.id === this.docId).length > 0
+            )
+        }
+        console.log("this is tagData", this.tagData)
       })
-      .catch(e => {
-        console.warn("ERROR", e);
-        //window.location.replace(baseAppURL);
-      });
   },
 
   methods: {
