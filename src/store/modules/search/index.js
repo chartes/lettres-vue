@@ -5,12 +5,12 @@ import {
 } from '@/modules/document-helpers';
 const state = {
   searchTerm: null,
-  sorts: [{field: 'creation', order: 'desc'}],
+  sorts: [{field: 'creation', order: 'asc'}],
 
   numPage: 1,
   pageSize: 30,
 
-  withStatus: false,
+  withStatus: true,
 
   links: [],
   totalCount: 0,
@@ -80,7 +80,7 @@ const actions = {
       query = `${query} AND (is-published:true)`
     }
 
-    let sorts = state.sorts.map(s => `${s.order === 'desc' ? '' : '-'}${s.field}`)
+    let sorts = state.sorts.map(s => `${s.order === 'desc' ? '-' : ''}${s.field}`)
     sorts = sorts.length ? sorts.join(',') : 'creation'
   
     try {

@@ -1,6 +1,9 @@
 <template>
   <div class="document__attributes">
-    <header class="document__attributes--title subtitle">
+    <header
+      v-if="!preview"
+      class="document__attributes--title subtitle"
+    >
       <title-field-in-place
         :tabulation-index="0"
         label="Titre"
@@ -21,7 +24,7 @@
       <div class="column">
         <multiselect-field
           :editable="editable"
-          label=""
+          label="Langues"
           :add-colons="false"
           :options-list="allLanguages"
           :selected-items="languages"
@@ -46,6 +49,9 @@
       },
       editAttributes: {
           type: Boolean, default: true
+      },
+      preview: {
+        type: Boolean, default: false
       }
     },
     data() {

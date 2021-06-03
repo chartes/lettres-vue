@@ -37,6 +37,13 @@
         v-html="previewContent"
       />
     </article>
+    <section v-if="previewData">
+      <!-- témoins -->
+      <document-witnesses
+        :editable="false"
+        :list="previewData.witnesses"
+      />
+    </section>
   </div>
 </template>
 
@@ -44,11 +51,13 @@
 import { mapGetters } from "vuex";
 import { baseAppURL } from "@/modules/http-common";
 import DocumentPreviewCardSkeleton from '../ui/DocumentPreviewCardSkeleton.vue';
+import DocumentWitnesses from '@/components/document/DocumentWitnesses';
 
 export default {
   name: "DocumentPreviewCard",
   components: { 
-    DocumentPreviewCardSkeleton
+    DocumentPreviewCardSkeleton,
+    DocumentWitnesses
   },
   props: {
     docId: { required: true, type: Number },

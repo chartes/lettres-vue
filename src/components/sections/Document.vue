@@ -3,18 +3,21 @@
     class="document"
   >
     <document-tag-bar
-      v-if="current_user && tagData"
+      v-if="!preview && current_user && tagData"
       :doc-id="docId"
       :preview-data="tagData"
       :with-status="true"
     />
 
     <article
-      v-if="document && !documentLoading && !isLoading"
+      v-if="document && !isLoading"
       class="document__content"
     >
       <!-- titre et langue -->
-      <document-attributes :editable="canEdit" />
+      <document-attributes
+        :editable="canEdit"
+        :preview="preview"
+      />
 
       <!-- dates de lieux et de temps -->
       <div class="panel mt-5">
@@ -44,13 +47,16 @@
       <document-argument :editable="canEdit" />
 
       <!-- dates de lieux et de temps -->
-      <document-transcription :editable="canEdit" />
+      <document-transcription 
+        v-if="!preview"
+        :editable="canEdit"
+      />
 
       <!-- collections 
       <document-collections :editable="canEdit" />
       -->
       <div
-        v-if="current_user"
+        v-if="!preview && current_user"
         class=""
         style="margin-left: 0; margin-top: 50px;"
       >
@@ -65,7 +71,7 @@
     </article>
    
     <document-skeleton
-      v-if="isLoading || !tagData"
+      v-if="isLoading"
       class="mt-5"
     />
   </div>
@@ -105,13 +111,13 @@ export default {
     DocumentDateAttributes
   },
   props: {
-    docId: { required: true, type: Number }
+    docId: { required: true, type: Number },
+    preview: {type: Boolean, default: false}
   },
   data() {
     return {
       canEdit: false,
-      isLoading: true,
-      tagData: null,
+      isLoading: true
     };
   },
    computed: {
@@ -133,6 +139,18 @@ export default {
       return `${baseUrl}${baseApiURL.substr(1)}/iiif/documents/${
         this.docId
       }/collection/default`;
+    },
+    tagData() {
+      if (!this.current_user || !this.document) {
+        return null
+      }
+      return {
+        currentLock: this.document.currentLock,
+        isPublished: this.document['is-published'],
+        isBookmarked: http.get(`/users/${this.current_user.id}/relationships/bookmarks`).then(
+              response => response.data.data.filter(d => d.id === this.docId).length > 0
+        )
+      }
     }
   },
   watch: {
@@ -145,16 +163,9 @@ export default {
     this.$store
       .dispatch("document/fetch", this.docId)
       .then(async r => {
-        this.computeCanEdit();
         this.isLoading = false;
+        this.computeCanEdit();
         this.setLastSeen(this.docId);
-        this.tagData = {
-            currentLock: this.document.currentLock,
-            isBookmarked: await http.get(`/users/${this.current_user.id}/relationships/bookmarks`).then(
-              response => response.data.data.filter(d => d.id === this.docId).length > 0
-            )
-        }
-        console.log("this is tagData", this.tagData)
       })
   },
 
@@ -162,6 +173,10 @@ export default {
     ...mapActions('layout', ['setLastSeen']),
 
     computeCanEdit() {
+      if (this.preview) {
+        this.canEdit = false
+        return
+      }
       /*
        * Can edit if 1) You are connected 2) You are an admin or there is no active lock or the active lock is yours
        * */

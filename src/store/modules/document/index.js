@@ -181,14 +181,13 @@ const actions = {
     data.type = 'document';
     removeContentEditableAttributesFromObject(data.attributes)
     //
-    console.log("axios http headers", http.defaults.headers.common);
+    //console.log("axios http headers", http.defaults.headers.common);
     return http.patch(`/documents/${data.id}`, { data })
       .then(response => {
         commit('UPDATE_DOCUMENT_DATA', response.data.data);
         return response.data.data
       })
       .then( doc => {
-
         if (doc.id !== makeDummyDocument().data.id) {
           let msg = null;
           if (doc.attributes) {
@@ -196,14 +195,14 @@ const actions = {
                 d => `'${TRANSLATION_MAPPING[d] ? TRANSLATION_MAPPING[d] : d}'`
             ).join(', ')}`;
           }
-          return this.dispatch('changelog/trackChanges', {
+          this.dispatch('changelog/trackChanges', {
             objId: doc.id,
             objType: 'document',
             userId: rootState.user.current_user.id,
             msg: msg
           });
         }
-
+        return doc
       })
   },
 

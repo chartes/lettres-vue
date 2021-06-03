@@ -79,9 +79,10 @@
         </template>
 
         <template #detail="props">
-          <document-preview-card
+          <document
+            class="document-page"
             :doc-id="props.row.id"
-            :preview-data="props.row.previewData"
+            :preview="true"
           />
         </template>
       </b-table>
@@ -96,7 +97,7 @@ export default {
   name: "DocumentList",
   components: {
     DocumentTagBar: () => import("@/components/document/DocumentTagBar"),
-    DocumentPreviewCard: () => import("../document/DocumentPreviewCard")
+    Document: () => import("@/components/sections/Document")
   },
   props: {},
   data() {

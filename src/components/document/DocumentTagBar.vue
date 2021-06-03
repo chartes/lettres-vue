@@ -133,14 +133,14 @@
             publishDocument() {
                 return this.$store.dispatch('document/publish', this.docId,
                 ).then(resp => {
-                    this.preview.isPublished = true;
+                    this.preview.isPublished = resp.attributes['is-published'];
                     return Promise.resolve(true);
                 })
             },
             unpublishDocument() {
                 return this.$store.dispatch('document/unpublish', this.docId,
                 ).then(resp => {
-                    this.preview.isPublished = false;
+                    this.preview.isPublished = resp.attributes['is-published'];
                     return Promise.resolve(false);
                 })
             },
