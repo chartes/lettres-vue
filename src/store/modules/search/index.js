@@ -1,10 +1,14 @@
 import {debounce} from 'lodash';
 import {http} from "@/modules/http-common";
-
+import {
+ getCurrentLock
+} from '@/modules/document-helpers';
 const state = {
   searchTerm: null,
   numPage: 1,
-  pageSize: 50,
+  pageSize: 30,
+
+  withStatus: false,
 
   links: [],
   totalCount: 0,
@@ -28,10 +32,10 @@ const mutations = {
   SET_SELECTED_COLLECTION_ID(state, id) {
     state.selectedCollectionId = id > 0 ? id : 1;
   },
-  UPDATE_ALL (state, payload) {
-    state.documents = payload.data;
-    state.links = payload.links;
-    state.totalCount = payload.meta["total-count"];
+  UPDATE_ALL (state, {documents, totalCount, links}) {
+    state.documents = documents;
+    state.links = links;
+    state.totalCount = totalCount;
   },
 
 };
@@ -50,7 +54,7 @@ const actions = {
     commit('SET_SELECTED_COLLECTION_ID', id)
     commit('SET_NUM_PAGE', 1)
   },
-  performSearch: debounce(async ({commit, state, rootState}) => {
+  performSearch: debounce(async ({commit, state, rootState, dispatch}) => {
     let query = `collections.id:${state.selectedCollectionId}`
     if (state.searchTerm && state.searchTerm.length > 0) {
       query = `(${query} AND (${state.searchTerm}))`
@@ -58,7 +62,7 @@ const actions = {
  
     commit('SET_LOADING_STATUS', true);
   
-    const incs = []; //['collections', 'persons', 'persons-having-roles', 'roles', 'witnesses', 'languages'];
+    const incs = state.withStatus ? ['current-lock', 'witnesses'] : []; //['collections', 'persons', 'persons-having-roles', 'roles', 'witnesses', 'languages'];
       
     let filters = ''
     if (!query || query.length === 0) {
@@ -70,7 +74,36 @@ const actions = {
   
     try {
       const response = await http.get(`/search?query=${query}&sort=id&include=${incs.join(',')}&without-relationships&page[size]=${state.pageSize}&page[number]=${state.numPage}${filters}`);
-      commit('UPDATE_ALL', response.data);
+      const {data, included, links, meta} = response.data
+
+      let documents = []
+      data.forEach(async doc => {
+
+        let document = {
+          data: doc,
+        }
+
+        if (state.withStatus) {
+          document.currentLock =  getCurrentLock(included)
+          /* fetch lock user info*/
+          if (rootState.user.current_user) {
+            /* isBookmarked */
+            document.data.attributes['is-bookmarked'] = http.get(`/users/${rootState.user.current_user.id}/relationships/bookmarks`).then(
+              response => response.data.data.filter(d => d.id === doc.id).length > 0
+            );
+           
+            /* isPublished */
+            if (document.currentLock.id) {
+              dispatch('locks/fetchLockOwner', {docId: doc.id, lockId: document.currentLock.id}, {root: true});
+            }
+          } 
+        }
+
+        documents.push(document)
+      })
+        
+     
+      commit('UPDATE_ALL', {documents, totalCount: meta['total-count'] , links});
       commit('SET_LOADING_STATUS', false);
     } catch (reason) {
       console.warn('cant search:', reason);

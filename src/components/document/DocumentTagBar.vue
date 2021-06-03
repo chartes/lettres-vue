@@ -1,7 +1,7 @@
 <template>
   <span
     class="tags has-addons document-tag-bar"
-  >
+  > 
     <router-link
       :to="{name: 'document', params: {docId}}"
       class="tag document-preview-card__doc-tag"
@@ -13,12 +13,12 @@
       Published
     -->
     <badge
-      v-if="current_user && preview.attributes['is-published'] !== null"
+      v-if="withStatus && current_user && preview.isPublished !== null"
       classes-active="is-published tag"
       classes-inactive="tag"
       :action-when-on="publishDocument"
       :action-when-off="unpublishDocument"
-      :starts-on="preview.attributes['is-published']"
+      :starts-on="preview.isPublished"
     >
       <template #active>
         <a><i class="fas fa-check-circle" /></a>
@@ -33,7 +33,7 @@
       Bookmark
     -->
     <badge
-      v-if="current_user && preview.isBookmarked !== null"
+      v-if="withStatus && current_user && preview.isBookmarked !== null"
       classes-active="is-bookmarked tag"
       classes-inactive="tag"
       :action-when-on="addBookmark"
@@ -52,7 +52,7 @@
       Lock
     -->
     <badge
-      v-if="current_user"
+      v-if="withStatus && current_user"
       classes-active="is-locked tag"
       classes-inactive="tag"
       :action-when-on="startLockEditor"
@@ -74,7 +74,7 @@
     </badge>
   
     <lock-form
-      v-if="lockEditMode"
+      v-if="withStatus && lockEditMode"
       :doc-id="docId"
       :current-lock="preview.currentLock"
       :cancel="stopLockEditor"
@@ -86,7 +86,7 @@
 </template>
 
 <script>
-    import {mapState, mapGetters} from 'vuex'
+    import {mapState} from 'vuex'
     import Badge from "../ui/Badge";
     import LockForm from "../forms/LockForm";
 
@@ -95,6 +95,7 @@
         components: {Badge, LockForm},
         props: {
             docId: {required: true, type: Number},
+            withStatus: {required: true, type:Boolean, default: false},
             previewData : {required: true, type: Object}
         },
         data() {
@@ -107,7 +108,7 @@
         computed: {
             ...mapState('user', ['current_user']),
             ...mapState('locks', ['lockOwner']),
-            ...mapGetters('document', ['getPreview'])
+            //...mapGetters('document', ['getPreview'])
         },
         watch: {},
         methods: {
@@ -132,47 +133,26 @@
             publishDocument() {
                 return this.$store.dispatch('document/publish', this.docId,
                 ).then(resp => {
-                    this.preview.attributes['is-published'] = true;
+                    this.preview.isPublished = true;
                     return Promise.resolve(true);
                 })
             },
             unpublishDocument() {
                 return this.$store.dispatch('document/unpublish', this.docId,
                 ).then(resp => {
-                    this.preview.attributes['is-published'] = false;
+                    this.preview.isPublished = false;
                     return Promise.resolve(false);
                 })
             },
-            /*
-            fetchPreviewCard() {
-                this.$store.dispatch('document/fetchPreview', this.docId).then(() => {
-                     //fetch lock user info
-                    if (this.current_user) {
-                        //  isBookmarked 
-                        http.get(`/users/${this.current_user.id}/relationships/bookmarks`).then(response => {
-                            this.isBookmarked = response.data.data.filter(d => d.id === this.docId).length > 0;
-                        });
-                        // isPublished 
-                        this.isPublished = this.preview.attributes['is-published'];
-
-                        const lockId = this.preview.currentLock.id;
-                        if (lockId) {
-                            this.fetchLockOwner(lockId);
-                        }
-                    }
-                });
-            },
-            fetchLockOwner(lockId) {
-                return this.$store.dispatch('locks/fetchLockOwner', {docId: this.docId, lockId: lockId});
-            },
-            */
             startLockEditor() {
                 this.lockEditMode = true;
                 return Promise.resolve(!!this.lockOwner[this.docId]);
             },
             async stopLockEditor() {
                 this.lockEditMode = false;
-                this.preview = await this.getPreview(this.docId);
+                //this.preview = await this.getPreview(this.docId);
+                // TODO: mettre à jour l'affichage du lock
+                console.warn('DocumentTagBar (lock): affichage du lock non mis à jour')
                 return Promise.resolve(!!this.lockOwner[this.docId]);
             }
         },

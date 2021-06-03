@@ -1,5 +1,5 @@
 <template>
-  <div v-if="loading">
+  <div v-if="!previewData">
     <document-preview-card-skeleton />
   </div>
   <div
@@ -7,17 +7,16 @@
     class="document-preview-card"
   >
     <aside
-      v-if="preview"
       class="document-preview-card__thumbnail"
     >
       <router-link :to="{ name: 'document', params: { docId } }">
         <img
-          v-if="preview.attributes['iiif-thumbnail-url']"
-          :src="preview.attributes['iiif-thumbnail-url']"
+          v-if="previewData.attributes['iiif-thumbnail-url']"
+          :src="previewData.attributes['iiif-thumbnail-url']"
           @error="imageLoadingError=true"
         >
         <div
-          v-if="imageLoadingError || !preview.attributes['iiif-thumbnail-url']"
+          v-if="imageLoadingError || !previewData.attributes['iiif-thumbnail-url']"
           class="document-preview-card__alt-thumbnail"
         >
           <div style="width:100%; height: 100%; margin: auto">
@@ -26,77 +25,55 @@
         </div>
       </router-link>
     </aside>
-    <article v-if="preview">
-      <header class="document-preview-card__header">
-        <document-tag-bar
-          :doc-id="docId"
-          :preview-data="preview"
+    <article>
+      <router-link :to="{ name: 'document', params: { docId } }">
+        <h2
+          class="document-preview-card__title"
+          v-html="previewData.attributes.title"
         />
-      </header>
-
-      <div
-        v-if="preview"
-        class=""
-      >
-        <router-link :to="{ name: 'document', params: { docId } }">
-          <h2
-            class="document-preview-card__title"
-            v-html="titleContent"
-          />
-        </router-link>
-        <p
-          class="document-preview-card__content"
-          v-html="previewContent"
-        />
-      </div>
+      </router-link>
+      <p
+        class="document-preview-card__content"
+        v-html="previewContent"
+      />
     </article>
   </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapGetters } from "vuex";
 import { baseAppURL } from "@/modules/http-common";
+import DocumentPreviewCardSkeleton from '../ui/DocumentPreviewCardSkeleton.vue';
 
 export default {
   name: "DocumentPreviewCard",
   components: { 
-    DocumentTagBar: () => import("@/components/document/DocumentTagBar"),
-    DocumentPreviewCardSkeleton: () => import("@/components/ui/DocumentPreviewCardSkeleton"),
+    DocumentPreviewCardSkeleton
   },
   props: {
-    docId: { required: true, type: Number }
+    docId: { required: true, type: Number },
   },
   data() {
     return {
       baseUrl: baseAppURL,
       imageLoadingError: false,
-
-      preview: null,
-      titleContent: null,
-      previewContent: null,
-      loading: false,
+      previewData: null
     };
   }, 
   computed: {
-    ...mapGetters('document', ['getPreview'])
-  },
-  created () {
-    this.loading = true;
-  },
-  async mounted() {
-    this.preview = await this.getPreview(this.docId);
-    
-    this.titleContent = "";
-    this.previewContent = "";
+    ...mapGetters('document', ['getPreview']),
 
-    if (this.preview) {
-      this.titleContent = this.preview.attributes.title;
-      this.previewContent = this.preview.attributes.transcription
-          ? this.preview.attributes.transcription
-          : this.preview.attributes.argument;
+    previewContent() {
+      return this.previewData.attributes.transcription
+          ? this.previewData.attributes.transcription
+          : this.previewData.attributes.argument;
     }
+  },
+  async created () {
+    this.previewData = await this.getPreview(this.docId)
+  },
+  methods: {
 
-    this.loading = false;
   }
 };
 </script>
@@ -109,8 +86,8 @@ export default {
 }
 
 .document-preview-card {
-  margin-bottom: 6em;
-  margin-top: 2em;
+  margin-bottom: 4em;
+  margin-top: 0.5em;
 }
 .document-preview-card__header {
   margin-bottom: 30px;

@@ -30,18 +30,13 @@
           v-slot="props"
           field="id"
           label="Document"
-          width="40"
+          :td-attrs="columnTdAttrs"
         >
-          <span
-            class="tags has-addons document-tag-bar"
-          >
-            <router-link
-              :to="{name: 'document', params: {docId: props.row.id}}"
-              class="tag document-preview-card__doc-tag"
-            >
-              <span>Document {{ props.row.id }}</span>
-            </router-link>
-          </span>
+          <document-tag-bar
+            :doc-id="props.row.id"
+            :preview-data="props.row.tagData"
+            :with-status="withStatus"
+          />
         </b-table-column>
 
         <b-table-column
@@ -75,6 +70,7 @@
         <template #detail="props">
           <document-preview-card
             :doc-id="props.row.id"
+            :preview-data="props.row.previewData"
           />
         </template>
       </b-table>
@@ -83,11 +79,12 @@
 </template>
 
 <script>
-import { mapState, mapActions } from "vuex";
+import { mapState, mapActions, mapGetters } from "vuex";
 
 export default {
   name: "DocumentList",
   components: {
+    DocumentTagBar: () => import("@/components/document/DocumentTagBar"),
     DocumentPreviewCard: () => import("../document/DocumentPreviewCard")
   },
   props: {},
@@ -97,7 +94,7 @@ export default {
     };
   },
   computed: {
-    ...mapState("search", ["documents", "loadingStatus", "numPage", "pageSize", "totalCount"]),
+    ...mapState("search", ["documents", "loadingStatus", "numPage", "pageSize", "totalCount", "withStatus"]),
     ...mapState("user", ["current_user"]),
 
     currentPage: {
@@ -105,7 +102,6 @@ export default {
           return this.numPage
         },
         set: function (newValue) {
-          console.log("setting new page")
           this.setNumPage(newValue)
           this.performSearch()
           this.loadAsyncData()
@@ -126,10 +122,18 @@ export default {
     async loadAsyncData() {
       this.tableData = await Promise.all(this.documents.map(async d => {
         //const witnesses = await http.get(`documents/${d.id}/witnesses?without-relationships`)
+        const attrs = d.data.attributes
+       
         return {
-          id: d.id,
-          title :d.attributes.title,
-          date : d.attributes.creation,
+          id: d.data.id,
+          title: attrs.title,
+          date: attrs.creation,
+
+          tagData: {
+            currentLock: d.currentLock,
+            isPublished: attrs['is-published'],
+            isBookmarked: await attrs['is-bookmarked']
+          }
           //witnesses: witnesses.data.data
         }
       }));
@@ -139,7 +143,14 @@ export default {
         return {
           class: '',
           style: {
-            'min-width': '180px'
+            'min-width': '160px'
+          }
+        }
+      } else  if (column.label === 'Document') {
+        return {
+          class: '',
+          style: {
+            
           }
         }
       }

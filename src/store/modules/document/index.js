@@ -505,40 +505,23 @@ const getters = {
     // this dummy document is used as a base when creating a new document
     return makeDummyDocument(data);
   },
-  getPreview: (state,  getters, rootState,  rootGetters  ) => async (id) => {
+  getPreview: () => async (id) => {
 
     const incs = [
       //'collections',
-      'witnesses', 'current-lock'
+      'witnesses'
     ];
 
-    const response = await http.get(`documents/${id}?include=${incs.join(',')}&without-relationships`)
+    const response = await http.get(`documents/${id}?include=${incs.join(',')}&without-relationships&facade=preview`)
     const {data, included} = response.data
 
     let preview = {
       id,
       attributes: data.attributes,
+      witnesses: getWitnesses(included)
       //persons: getPersons(included),
       //languages: getLanguages(included),
       //collections: getCollections(included),
-      currentLock: getCurrentLock(included)
-    }
-
-    /* fetch lock user info*/
-    if (rootState.user.current_user) {
-      /* isBookmarked */
-      const response = await http.get(`/users/${rootState.user.current_user.id}/relationships/bookmarks`);
-      try {
-        preview.isBookmarked = response.data.data.filter(d => d.id === id).length > 0;
-      } catch (reason) {
-        console.warn(reason)
-      }
-      
-      /* isPublished */
-      //preview.isPublished = this.preview.attributes['is-published'];
-      if (preview.currentLock.id) {
-        store.dispatch('locks/fetchLockOwner', {docId: id, lockId: preview.currentLock.id}, {root: true});
-      }
     }
 
     return preview;
