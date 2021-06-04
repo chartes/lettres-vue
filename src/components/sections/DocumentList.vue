@@ -29,7 +29,6 @@
         show-detail-icon
 
         :narrowed="true"
-        :hoverable="true"
         :mobile-cards="true"
         @sort="sortPressed"
 
