@@ -174,15 +174,14 @@ export default {
           this.sortingPriority.push({field, order})
         }
         this.setSorts(this.sortingPriority)
-        this.performSearch()
-        this.loadAsyncData()
       } else {
         // request regular sorted data from backend
         this.sortingPriority = [] // [{field, order}]
         this.setSorts([])
-        this.performSearch()
-        this.loadAsyncData()
       }
+      
+      this.performSearch()
+      this.loadAsyncData()
     },
 
     async loadAsyncData() {

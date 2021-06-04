@@ -31,6 +31,9 @@ const mutations = {
   SET_SORTS(state, sorts) {
     state.sorts = sorts;
   },
+  SET_WITH_STATUS(state, b) {
+    state.withStatus = b;
+  },
   SET_LOADING_STATUS(state, s) {
     state.loadingStatus = s;
   },
@@ -56,7 +59,11 @@ const actions = {
     commit('SET_NUM_PAGE', num)
   },
   setSorts({commit}, sorting) {
+    commit('SET_NUM_PAGE', 1)
     commit('SET_SORTS', sorting)
+  },
+  setWithStatus({commit}, status) {
+    commit('SET_WITH_STATUS', status)
   },
   setSelectedCollectionId({commit}, id) {
     commit('SET_SELECTED_COLLECTION_ID', id)
