@@ -1,6 +1,19 @@
 <template>
   <aside class="menu">
-    <search-box class="mt-5 mb-5" />
+    <search-box class="mt-5 mb-2" />
+    <router-link
+      :to="{name: 'search'}"
+    >
+      <b-button 
+        icon-right="sliders-h"
+        icon-pack="fa"
+        class="mb-5 is-pulled-right toggle-form-btn"
+        type="is-text"
+        @click="setAdvancedSearchFormVisibility"
+      >
+        Recherche avancée
+      </b-button>
+    </router-link>
     <p class="menu-label">
       Général
     </p>
@@ -141,7 +154,7 @@
 
 <script>
 import { mapState, mapGetters, mapActions } from "vuex";
-import SearchBox from "./ui/SearchBox";
+import SearchBox from "@/components/SearchBox";
 
 export default {
   name: "NavBar",
@@ -154,6 +167,18 @@ export default {
     ...mapState('layout', ['lastSeenDocId'])
   },
   methods: {
+    ...mapActions('layout', ['toggleAdvancedSearchForm', 'showAdvancedSearchForm']),
+
+    setAdvancedSearchFormVisibility() {
+      if (this.$route.name === "search") {
+        console.log("toggle")
+        this.toggleAdvancedSearchForm()
+      } else {
+        console.log("show")
+        this.showAdvancedSearchForm()
+      }
+
+    }
   }
 };
 </script>
@@ -172,6 +197,10 @@ i {
 a.is-active {
   color: white !important;
   background-color: $purple !important;
+}
+
+.menu-label {
+  clear: both;
 }
 
 </style>

@@ -3,6 +3,7 @@ const state = {
   showLeftSideBar: true,
   showRightSideBar: false,
   lastSeenDocId: null,
+  showAdvancedSearchForm: false
 };
 
 
@@ -15,6 +16,9 @@ const mutations = {
   },
   SET_LAST_SEEN_DOC_ID(state, id) {
     state.lastSeenDocId = id;
+  },
+  SET_ADVANCED_SEARCH_FORM(state, v) {
+    state.showAdvancedSearchForm = v;
   }
 };
 
@@ -38,6 +42,17 @@ const actions = {
   toggleRightSideBar({commit, state}) {
     commit('SET_RIGHT_SIDEBAR', !state.showRightSideBar);
   },
+
+  showAdvancedSearchForm({commit}) {
+    commit('SET_ADVANCED_SEARCH_FORM', true);
+  },
+  hideAdvancedSearchForm({commit}) {
+    commit('SET_ADVANCED_SEARCH_FORM', false);
+  },
+  toggleAdvancedSearchForm({commit, state}) {
+    commit('SET_ADVANCED_SEARCH_FORM', !state.showAdvancedSearchForm);
+  },
+
   setLastSeen({commit}, docId) {
     commit('SET_LAST_SEEN_DOC_ID', docId)
   },

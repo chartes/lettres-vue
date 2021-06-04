@@ -1,7 +1,9 @@
 <template>
   <div class="section">
-    <div class="container">
-      <p>Environ {{ totalCount }} résultat(s)</p>
+    <div>
+      Environ {{ totalCount }} résultat(s)
+    </div>
+    <div class="">
       <b-table
         ref="multiSortTable"
         :data="tableData"

@@ -28,12 +28,6 @@
         </a>
       </div>
     </div>
-    <router-link
-      class="advanced-search black-link mb-5"
-      :to="{ name: 'advanced-search' }"
-    >
-      Recherche avancée
-    </router-link>
   </div>
 </template>
 

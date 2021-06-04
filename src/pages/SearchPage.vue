@@ -1,31 +1,43 @@
 <template>
   <div class="search-page-container">
     <div class="columns">
-      <div class="column is-one-quarter">
-        <aside class="collection-navbar">
-          <div class="">
-            <collection-tree-node
-              v-if="!isCollectionLoading && collectionTree.length > 0"
-              :collection="collectionTree[0]"
-            />
-            <div
-              v-else
-              class="progress-container"
-            >
-              <progress class="progress">
-                15%
-              </progress>
-            </div>
-          </div>
+      <div
+        v-if="showAdvancedSearchForm"
+        class="column is-one-quarter search-form-column"
+      >
+        <aside
+          class="advanced-search-form"
+        >
+          <advanced-search-form />
         </aside>
       </div>
       <div class="column">
-        <p
-          v-if="selectedCollection"
-          class="collection-description"
-        >
-          {{ selectedCollection.description }} (paragraphe descriptif de la collection)
-        </p>
+        <div class="collection-selection">
+          <div class="columns">
+            <div class="column">
+              <collection-tree-node
+                v-if="!isCollectionLoading && collectionTree.length > 0"
+                :collection="collectionTree[0]"
+              />
+              <div
+                v-else
+                class="progress-container"
+              >
+                <progress class="progress">
+                  15%
+                </progress>
+              </div>
+            </div>
+            <div class="column">
+              <p
+                v-if="selectedCollection"
+                class="collection-description"
+              >
+                {{ selectedCollection.description }} (paragraphe descriptif de la collection)
+              </p>
+            </div>
+          </div>
+        </div>
         <document-list />
       </div>
     </div>
@@ -37,15 +49,18 @@ import { mapState, mapActions, mapGetters } from 'vuex';
 
 import CollectionTreeNode from "@/components/CollectionTreeNode";
 import DocumentList from '@/components/sections/DocumentList'
+import AdvancedSearchForm from '@/components/AdvancedSearchForm.vue';
 
 export default {
     name: "SearchPage",
     components: {
       CollectionTreeNode,
-      DocumentList
+      DocumentList,
+      AdvancedSearchForm
     },
     computed: {
       ...mapState('user', ['current_user']),
+      ...mapState('layout', ['showAdvancedSearchForm']),
       ...mapState('collections', {
         'collectionTree': 'fullHierarchy',
         'isCollectionLoading': 'isLoading'
@@ -91,17 +106,12 @@ export default {
   margin-top: -30px;
   height: calc(100% + 72px);
 }
-.collection-navbar {
-  display: block;
-  height: 100%;
-  width: 100%;
 
-  border: 1px solid lightgrey;
-  border-left: none;
-  border-top: none;
-  border-bottom: none;
 
-  padding-top: 20px;
+.collection-selection {
+  top: 24px;
+  position: relative;
+  min-height: 170px; 
 }
 .progress-container {
   margin: 20px;
@@ -109,5 +119,9 @@ export default {
 .collection-description {
   margin-top: 50px;
   padding-left: 30px;
+}
+
+.search-form-column {
+  border-right: 1px solid #d6d6d6;
 }
 </style>

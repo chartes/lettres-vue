@@ -4,7 +4,6 @@ import VueRouter from 'vue-router'
 const HomePage = () => import('@/pages/HomePage.vue')
 
 const SearchPage = () => import('@/pages/SearchPage.vue')
-const AdvancedSearchPage = () => import('@/pages/AdvancedSearchPage.vue')
 
 const LoginPage = () => import('@/pages/LoginPage.vue')
 const RegisterPage = () => import('@/pages/RegisterPage.vue')
@@ -43,11 +42,6 @@ const router = new VueRouter({
       path: '/search',
       component: SearchPage,
       name: 'search'
-    },
-    {
-      path: '/advanced-search',
-      component: AdvancedSearchPage,
-      name: 'advanced-search'
     },
     {
       path: '/register',

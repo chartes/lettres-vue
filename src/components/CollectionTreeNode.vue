@@ -13,17 +13,21 @@
         class="collection tag is-medium is-white "
 
         :class="collection.id === selectedCollectionId ? 'is-active': ''"
-        role="button"
-        @click.prevent="selectCollection"
       >
-        <span class="collection-title is-pulled-left is-unselectable">
+        <span
+          class="collection-title is-pulled-left is-unselectable"
+          role="button"
+          @click.prevent="selectCollection"
+        >
           {{ collection.titleWithCount }}
         </span>
-        <i
-          v-if="collection.children"
-          class="is-pulled-right"
-          :class="isOpen ? 'fas fa-caret-down' : 'fas fa-caret-up'"
-        />
+        <span class="arrow">
+          <i
+            v-if="collection.children"
+            class="is-pulled-right"
+            :class="isOpen ? 'fas fa-caret-down' : 'fas fa-caret-up'"
+          />
+        </span>
       </div>
       <div style="height: 100%">
         <collection-tree-node
@@ -73,6 +77,10 @@ export default {
 <style lang="scss">
 @import "@/assets/sass/main.scss";
 
+.collection-tree {
+  padding-left: 24px;
+  padding-right: 24px;
+}
 .collection-tree.collapse {
   width: 100%;
   .with-border {
@@ -98,11 +106,12 @@ export default {
     background-color: $purple; 
   }
 
+
   .tag {
    width: 100%;
-   padding-top: 16px;
-   padding-bottom: 16px;
-   height: 50px;
+   padding-top: 10px;
+   padding-bottom: 10px;
+   height: 35px;
   }
   .collection-title {
     width: 100%;
