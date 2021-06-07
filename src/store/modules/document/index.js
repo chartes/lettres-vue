@@ -1,5 +1,4 @@
 import {http} from '@/modules/http-common';
-import store from "@/store/index"
 
 import {
   getPersons, getLanguages, getWitnesses,
@@ -504,27 +503,26 @@ const getters = {
     // this dummy document is used as a base when creating a new document
     return makeDummyDocument(data);
   },
-  getPreview: () => async (id) => {
-
+  getDocumentStatus: (state, getters, rootState, rootGetters) => async (id) => {
     const incs = [
-      //'collections',
-      'witnesses'
+      'current-lock'
     ];
 
-    const response = await http.get(`documents/${id}?include=${incs.join(',')}&without-relationships&facade=preview`)
+    const response = await http.get(`documents/${id}?include=${incs.join(',')}&without-relationships&facade=status`)
     const {data, included} = response.data
 
-    let preview = {
+    const isBookmarked = await http.get(`/users/${rootState.user.current_user.id}/relationships/bookmarks`).then(
+      response => response.data.data.filter(d => d.id === id).length > 0
+    )
+
+    let status = {
       id,
-      attributes: data.attributes,
-      witnesses: getWitnesses(included)
-      //persons: getPersons(included),
-      //languages: getLanguages(included),
-      //collections: getCollections(included),
+      isPublished: data.attributes['is-published'],
+      isBookmarked,
+      currentLock: getCurrentLock(included)
     }
 
-    return preview;
-
+    return status;
   }
 };
 

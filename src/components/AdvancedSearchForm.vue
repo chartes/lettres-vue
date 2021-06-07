@@ -16,6 +16,14 @@
 
       <p>Formulaire de recherche avancée (en cours de développement)</p>
 
+      <div class="with-status">
+        <b-field>
+          <b-checkbox v-model="showStatuses">
+            Afficher les badges
+          </b-checkbox>
+        </b-field>
+      </div>
+
       <div class="field date-slider">
         <span class="label">Date de rédaction</span>
         <b-field>
@@ -109,15 +117,24 @@ export default {
         return {
           creationDateSelection: [1370, 1415],
         }
-      },
+    },
     computed: {
-      ...mapState('layout', ['showLeftSideBar'])
+      ...mapState('layout', ['showLeftSideBar']),
+      ...mapState('search', ['withStatus']),
+
+      showStatuses: {
+        get: function() { return this.withStatus },
+        set: function(value) {
+          this.setWithStatus(value)
+          this.performSearch()
+        } 
+      }
     },
     created() {
      
     },
     methods: {
-      ...mapActions('search', ['performSearch']),
+      ...mapActions('search', ['performSearch', 'setWithStatus']),
       ...mapActions('layout', ['hideAdvancedSearchForm']),
     },
 }
@@ -142,8 +159,15 @@ export default {
     }
 }
 
+.with-status {
+  margin-top: 30px;
+  .checkbox {
+    display: inline-flex;
+  }
+}
+
 .date-slider {
-    margin-top: 40px;
+    margin-top: 16px;
     margin-bottom: 40px !important;
     .label {
       margin-bottom: 50px;

@@ -5,7 +5,6 @@
     <document-tag-bar
       v-if="!preview && current_user && tagData"
       :doc-id="docId"
-      :preview-data="tagData"
       :with-status="true"
     />
 

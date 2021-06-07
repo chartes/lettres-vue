@@ -1,8 +1,6 @@
 import {debounce} from 'lodash';
 import {http} from "@/modules/http-common";
-import {
- getCurrentLock
-} from '@/modules/document-helpers';
+
 const state = {
   searchTerm: null,
   sorts: [{field: 'creation', order: 'asc'}],
@@ -77,7 +75,7 @@ const actions = {
  
     commit('SET_LOADING_STATUS', true);
   
-    const incs = state.withStatus ? ['current-lock', 'witnesses'] : []; //['collections', 'persons', 'persons-having-roles', 'roles', 'witnesses', 'languages'];
+    const incs = []; //['collections', 'persons', 'persons-having-roles', 'roles', 'witnesses', 'languages'];
       
     let filters = ''
     if (!query || query.length === 0) {
@@ -92,36 +90,9 @@ const actions = {
   
     try {
       const response = await http.get(`/search?query=${query}&sort=${sorts}&include=${incs.join(',')}&without-relationships&page[size]=${state.pageSize}&page[number]=${state.numPage}${filters}`);
-      const {data, included, links, meta} = response.data
+      const {data, links, meta} = response.data
 
-      let documents = []
-      data.forEach(async doc => {
-
-        let document = {
-          data: doc,
-        }
-
-        if (state.withStatus) {
-          document.currentLock =  getCurrentLock(included)
-          /* fetch lock user info*/
-          if (rootState.user.current_user) {
-            /* isBookmarked */
-            document.data.attributes['is-bookmarked'] = http.get(`/users/${rootState.user.current_user.id}/relationships/bookmarks`).then(
-              response => response.data.data.filter(d => d.id === doc.id).length > 0
-            );
-           
-            /* isPublished */
-            if (document.currentLock.id) {
-              dispatch('locks/fetchLockOwner', {docId: doc.id, lockId: document.currentLock.id}, {root: true});
-            }
-          } 
-        }
-
-        documents.push(document)
-      })
-        
-     
-      commit('UPDATE_ALL', {documents, totalCount: meta['total-count'] , links});
+      commit('UPDATE_ALL', {documents: data, totalCount: meta['total-count'] , links});
       commit('SET_LOADING_STATUS', false);
     } catch (reason) {
       console.warn('cant search:', reason);

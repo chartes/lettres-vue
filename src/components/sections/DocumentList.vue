@@ -44,7 +44,6 @@
         >
           <document-tag-bar
             :doc-id="props.row.id"
-            :preview-data="props.row.tagData"
             :with-status="withStatus"
           />
         </b-table-column>
@@ -185,24 +184,15 @@ export default {
     },
 
     async loadAsyncData() {
-
-      this.tableData = await Promise.all(this.documents.map(async d => {
-        //const witnesses = await http.get(`documents/${d.id}/witnesses?without-relationships`)
-        const attrs = d.data.attributes
-       
+      if (this.documents) {
+        this.tableData = await Promise.all(this.documents.map(async d => {
         return {
-          id: d.data.id,
-          title: attrs.title,
-          creation: attrs.creation,
-
-          tagData: {
-            currentLock: d.currentLock,
-            isPublished: attrs['is-published'],
-            isBookmarked: await attrs['is-bookmarked']
-          }
-          //witnesses: witnesses.data.data
+          id: d.id,
+          title:  d.attributes.title,
+          creation:  d.attributes.creation,
         }
-      }));
+        }));
+      }
     },
     columnTdAttrs(row, column) {
       if (column.label === 'Titre') {
