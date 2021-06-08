@@ -3,6 +3,21 @@
     <div>
       Environ {{ totalCount }} résultat(s)
     </div>
+    <span class="pagination-goto">
+      <span>
+        Page :
+      </span>
+      <input
+        v-model="currentPage"
+        name="page"
+        class="input"
+        type="text"
+        placeholder="Page..."
+        @change.prevent="debounce(p => {
+          currentPage = parseInt(p)
+        }, 500)"
+      >
+    </span>
     <div class="">
       <b-table
         ref="multiSortTable"
@@ -91,7 +106,8 @@
 </template>
 
 <script>
-import { mapState, mapActions, mapGetters } from "vuex";
+import { mapState, mapActions } from "vuex";
+import {debounce} from "lodash";
 
 export default {
   name: "DocumentList",
@@ -124,7 +140,8 @@ export default {
           return this.numPage
         },
         set: function (newValue, oldValue) {
-          if (newValue !== oldValue) {
+          newValue = parseInt(newValue)
+          if (newValue && newValue !== oldValue) {
             this.setNumPage(newValue)
             this.performSearch(this.sortingPriority)
             this.loadAsyncData()
@@ -222,6 +239,21 @@ export default {
 
 .section {
   width: 100%;
+}
+.pagination-goto {
+  display: flex;
+  float: right;
+  position: relative;
+  width: 120px;
+  margin-left: 50px;
+  span {
+    width: 100px;
+    align-self: center;
+  }
+  input {
+    margin-left: 4px;
+    display: inline;
+  }
 }
 progress {
   margin-top: 30px;
