@@ -67,7 +67,7 @@
           v-slot="props"
           field="creation"
           label="Date de rédaction"
-          
+          :td-attrs="columnTdAttrs"
           sortable
         >
           {{ props.row.creation }}
@@ -107,7 +107,6 @@
 
 <script>
 import { mapState, mapActions } from "vuex";
-import {debounce} from "lodash";
 
 export default {
   name: "DocumentList",
@@ -216,11 +215,18 @@ export default {
         return {
           class: '',
           style: {
-            'max-width': '600px'
+            'max-width': '550px'
           }
         }
       }
-      else {
+      else if (column.label === 'Date de rédaction') {
+        return {
+          class: '',
+          style: {
+            'max-width': '300px'
+          }
+        }
+      } else {
         return null
       }
     },

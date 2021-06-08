@@ -3,7 +3,7 @@
     <div class="columns">
       <div
         v-if="showAdvancedSearchForm"
-        class="column is-one-quarter search-form-column"
+        class="column is-one-third search-form-column"
       >
         <aside
           class="advanced-search-form"
