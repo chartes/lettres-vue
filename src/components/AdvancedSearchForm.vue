@@ -169,7 +169,7 @@
         <!-- expéditeur -->
         <b-field
           v-for="(c, i) in correspondentFrom"
-          :key="i"
+          :key="`from_${i}`"
           grouped
         >
           <span :style="i===0 ? '' : 'visibility: hidden'">De</span> 
@@ -221,7 +221,7 @@
         <!-- destinataire -->
         <b-field
           v-for="(c, i) in correspondentTo"
-          :key="i"
+          :key="`to_${i}`"
           grouped
         >
           <span :style="i===0 ? '' : 'visibility: hidden'">À</span> 
@@ -292,6 +292,8 @@
 import { mapState, mapActions } from 'vuex';
 import SearchBox from "@/components/SearchBox";
 
+import {templates} from "@/store/modules/search";
+
 export default {
     name: "AdvancedSearchForm",
     components: {
@@ -308,32 +310,17 @@ export default {
               func: null
             }
         }
-        const creationDateTemplate = {
-          year: '', 
-          month: '',
-          day: '',
-          selection: {
-            year: null,
-            month: null,
-            day: null
-          }
-        }
-
+ 
         return {
           availableYears: ['n/a'].concat(Array.from({length: 400}, (x, i) => (1300+i).toString())),
           availableMonths: ['n/a'].concat([
             'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet',
             'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
           ]),
-          availableDays: ['n/a'].concat(Array.from({length: 30}, (x, i) => (1+i).toString().padStart(2, '0'))),
+          availableDays: ['n/a'].concat(Array.from({length: 31}, (x, i) => (1+i).toString().padStart(2, '0'))),
           availableCorrespondents: ['Caterine', 'Robert de la Mark', 'Salviati'].sort(),
           availableFunctions: ['Duc', 'Prince héritier', 'Régente', 'Comte', 'Cardinal'].sort(),
           availablePlacesTags: availablePlacesTags,
-
-          withDateRange: false,
-        
-          creationDateFrom: {...creationDateTemplate, year:'1474'},
-          creationDateTo: {...creationDateTemplate},
 
           correspondentTemplate,
           correspondentFrom:[{...correspondentTemplate}],
@@ -347,13 +334,39 @@ export default {
     },
     computed: {
       ...mapState('layout', ['showLeftSideBar']),
-      ...mapState('search', ['withStatus']),
+      ...mapState('search', {
+        withStatus:'withStatus',
+        _withDateRange:'withDateRange',
+        _creationDateFrom: 'creationDateFrom',
+        _creationDateTo: 'creationDateTo'
+      }),
 
       showStatuses: {
         get: function() { return this.withStatus },
         set: function(value) {
           this.setWithStatus(value)
           this.performSearch()
+        } 
+      },
+
+      withDateRange: {
+        get: function() { return this._withDateRange },
+        set: function(value) {
+          this.setWithDateRange(value)
+        } 
+      },
+
+      creationDateFrom: {
+        get: function() { return this._creationDateFrom },
+        set: function(value) {
+          this.setCreationDateFrom(value)
+        } 
+      },
+
+      creationDateTo: {
+        get: function() { return this._creationDateTo },
+        set: function(value) {
+          this.setCreationDateTo(value)
         } 
       },
 
@@ -375,14 +388,14 @@ export default {
     watch: {
       withDateRange() {
         /* initialize the second date when the switch is triggered*/
-        this.creationDateTo = this.withDateRange ? {...this.creationDateFrom} : {...this.creationDateTemplate}
+        this.creationDateTo = this.withDateRange ? {...this.creationDateFrom} : {...templates.creationDateTemplate}
       }
     },
     created() {
      
     },
     methods: {
-      ...mapActions('search', ['performSearch', 'setWithStatus']),
+      ...mapActions('search', ['performSearch', 'setWithStatus', 'setWithDateRange', 'setCreationDateFrom', 'setCreationDateTo']),
       ...mapActions('layout', ['hideAdvancedSearchForm']),
 
       filteredDataArray(data, value) {

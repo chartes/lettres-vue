@@ -1,21 +1,39 @@
 import {debounce} from 'lodash';
 import {http} from "@/modules/http-common";
 
+
+const creationDateTemplate = {
+  year: '', 
+  month: '',
+  day: '',
+  selection: {
+    year: null,
+    month: null,
+    day: null
+  }
+}
+
 const state = {
+
   searchTerm: null,
+  
   sorts: [{field: 'creation', order: 'asc'}],
+  creationDateFrom: {...creationDateTemplate,  year:'1474'},
+  creationDateTo: {...creationDateTemplate},
+
+  withStatus: false,
+  withDateRange: false,
+
+  selectedCollectionId: 1,
 
   numPage: 1,
   pageSize: 30,
 
-  withStatus: false,
-
-  links: [],
-  totalCount: 0,
   loadingStatus: false,
   documents: [],
+  totalCount: 0,
+  links: [],
 
-  selectedCollectionId: 1
 };
 
 
@@ -29,8 +47,17 @@ const mutations = {
   SET_SORTS(state, sorts) {
     state.sorts = sorts;
   },
+  SET_WITH_DATE_RANGE(state, b) {
+    state.withDateRange = b;
+  },
   SET_WITH_STATUS(state, b) {
     state.withStatus = b;
+  },
+  SET_CREATION_DATE_FROM(state, from) {
+    state.creationDateFrom = Object.assign({}, state.creationDateFrom, from)
+  },
+  SET_CREATION_DATE_TO(state, to) {
+    state.creationDateTo = Object.assign({}, state.creationDateTo, to)
   },
   SET_LOADING_STATUS(state, s) {
     state.loadingStatus = s;
@@ -62,6 +89,15 @@ const actions = {
   },
   setWithStatus({commit}, status) {
     commit('SET_WITH_STATUS', status)
+  },
+  setWithDateRange({commit}, status) {
+    commit('SET_WITH_DATE_RANGE', status)
+  },
+  setCreationDateFrom({commit}, from) {
+    commit('SET_CREATION_DATE_FROM', from)
+  },
+  setCreationDateTo({commit}, to) {
+    commit('SET_CREATION_DATE_TO', to)
   },
   setSelectedCollectionId({commit}, id) {
     commit('SET_SELECTED_COLLECTION_ID', id)
@@ -115,7 +151,11 @@ const searchModule = {
   state,
   mutations,
   actions,
-  getters
+  getters,
 };
+
+export const templates = { 
+  creationDateTemplate
+}
 
 export default searchModule;
