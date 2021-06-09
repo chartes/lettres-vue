@@ -167,18 +167,22 @@
       </div>
       <section class="correspondents-section">
         <!-- expéditeur -->
-        <b-field grouped>
-          <span>De</span> 
+        <b-field
+          v-for="(c, i) in correspondentFrom"
+          :key="i"
+          grouped
+        >
+          <span :style="i===0 ? '' : 'visibility: hidden'">De</span> 
           <!-- person -->
           <b-autocomplete
-            v-model="correspondentFrom[0].person"
-            :data="filteredCorrespondentsFrom.persons[0]"
+            v-model="correspondentFrom[i].person"
+            :data="filteredCorrespondentsFrom.persons[i]"
             placeholder="Expéditeur"
             open-on-focus
             clearable
             class="year-search"
             expanded
-            @select="option => correspondentFrom[0].selection.person = option"
+            @select="option => correspondentFrom[i].selection.person = option"
           >
             <template #empty>
               Aucun résultat
@@ -186,38 +190,51 @@
           </b-autocomplete>
           <!-- function -->
           <b-autocomplete
-            v-model="correspondentFrom[0].func"
-            :data="filteredCorrespondentsFrom.functions[0]"
+            v-model="c.func"
+            :data="filteredCorrespondentsFrom.functions[i]"
             placeholder="Fonction"
             open-on-focus
             clearable
             class="year-search"
             expanded
-            @select="option => correspondentFrom[0].selection.func = option"
+            @select="option => c.selection.func = option"
           >
             <template #empty>
               Aucun résultat
             </template>
           </b-autocomplete>
-          <b-button 
+          
+          <b-button  
+            v-if="i===correspondentFrom.length-1"
             icon-left="plus"
             type="is-light"
+            @click="addCorrespondentFrom"
+          />
+          <b-button  
+            v-else
+            icon-left="minus"
+            type="is-light"
+            @click="removeCorrespondentFrom(i)"
           />
         </b-field>
 
         <!-- destinataire -->
-        <b-field grouped>
-          <span>À</span>
+        <b-field
+          v-for="(c, i) in correspondentTo"
+          :key="i"
+          grouped
+        >
+          <span :style="i===0 ? '' : 'visibility: hidden'">À</span> 
           <!-- person -->
           <b-autocomplete
-            v-model="correspondentTo[0].person"
-            :data="filteredCorrespondentsTo.persons[0]"
+            v-model="correspondentTo[i].person"
+            :data="filteredCorrespondentsTo.persons[i]"
             placeholder="Destinataire"
             open-on-focus
             clearable
             class="year-search"
             expanded
-            @select="option => correspondentTo[0].selection.person = option"
+            @select="option => correspondentTo[i].selection.person = option"
           >
             <template #empty>
               Aucun résultat
@@ -225,22 +242,31 @@
           </b-autocomplete>
           <!-- function -->
           <b-autocomplete
-            v-model="correspondentTo[0].func"
-            :data="filteredCorrespondentsTo.functions[0]"
+            v-model="c.func"
+            :data="filteredCorrespondentsTo.functions[i]"
             placeholder="Fonction"
             open-on-focus
             clearable
             class="year-search"
             expanded
-            @select="option => correspondentTo[0].selection.func = option"
+            @select="option => c.selection.func = option"
           >
             <template #empty>
               Aucun résultat
             </template>
           </b-autocomplete>
-          <b-button 
+          
+          <b-button  
+            v-if="i===correspondentTo.length-1"
             icon-left="plus"
             type="is-light"
+            @click="addCorrespondentTo"
+          />
+          <b-button  
+            v-else
+            icon-left="minus"
+            type="is-light"
+            @click="removeCorrespondentTo(i)"
           />
         </b-field>
       </section>
@@ -274,11 +300,31 @@ export default {
     data() {
 
         const availablePlacesTags = ['Nice', 'Brest', 'Montpellier']
+        const correspondentTemplate = {
+            person: '',
+            func: '',
+            selection: {
+              person:null,
+              func: null
+            }
+        }
+        const creationDateTemplate = {
+          year: '', 
+          month: '',
+          day: '',
+          selection: {
+            year: null,
+            month: null,
+            day: null
+          }
+        }
 
         return {
           availableYears: ['n/a'].concat(Array.from({length: 400}, (x, i) => (1300+i).toString())),
-          availableMonths: ['n/a'].concat(['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet',
-          'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre']),
+          availableMonths: ['n/a'].concat([
+            'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet',
+            'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
+          ]),
           availableDays: ['n/a'].concat(Array.from({length: 30}, (x, i) => (1+i).toString().padStart(2, '0'))),
           availableCorrespondents: ['Caterine', 'Robert de la Mark', 'Salviati'].sort(),
           availableFunctions: ['Duc', 'Prince héritier', 'Régente', 'Comte', 'Cardinal'].sort(),
@@ -286,45 +332,12 @@ export default {
 
           withDateRange: false,
         
-          creationDateFrom: {
-            year: '1474', 
-            month: '',
-            day: '',
-            selection: {
-              year: null,
-              month: null,
-              day: null
-            }
-          },
+          creationDateFrom: {...creationDateTemplate, year:'1474'},
+          creationDateTo: {...creationDateTemplate},
 
-          creationDateTo: {
-            year: '', 
-            month: '',
-            day: '',
-            selection: {
-              year: null,
-              month: null,
-              day: null
-            }
-          },
-
-          correspondentFrom:[{
-            person: '',
-            func: '',
-            selection: {
-              person:null,
-              func: null
-            }
-          }],
-
-          correspondentTo:[{
-            person: '',
-            func: '',
-            selection: {
-              person:null,
-              func: null
-            }
-          }],
+          correspondentTemplate,
+          correspondentFrom:[{...correspondentTemplate}],
+          correspondentTo:[{...correspondentTemplate}],
 
           filteredPlacesFromTags: availablePlacesTags,
           filteredPlacesToTags: availablePlacesTags,
@@ -353,34 +366,16 @@ export default {
       filteredCreationDateToDay() { return this.filteredDataArray(this.availableDays, this.creationDateTo.day) },
       
       filteredCorrespondentsFrom() { 
-        return {
-          persons:[this.filteredDataArray(this.availableCorrespondents, this.correspondentFrom[0].person)],
-          functions:[this.filteredDataArray(this.availableFunctions, this.correspondentFrom[0].func)]
-        }
+        return this.filterCorrespondent(this.correspondentFrom)
       },
       filteredCorrespondentsTo() { 
-        return {
-          persons:[this.filteredDataArray(this.availableCorrespondents, this.correspondentTo[0].person)],
-          functions:[this.filteredDataArray(this.availableFunctions, this.correspondentTo[0].func)]
-        }
-      }
+        return this.filterCorrespondent(this.correspondentTo)
+      },
     },
     watch: {
       withDateRange() {
-        if (this.withDateRange) {
-          this.creationDateTo = {...this.creationDateFrom}
-        } else {
-          this.creationDateTo = {
-            year: '', 
-            month: '',
-            day: '',
-            selection: {
-              year: null,
-              month: null,
-              day: null
-            }
-          }
-        }
+        /* initialize the second date when the switch is triggered*/
+        this.creationDateTo = this.withDateRange ? {...this.creationDateFrom} : {...this.creationDateTemplate}
       }
     },
     created() {
@@ -402,6 +397,33 @@ export default {
                        .toLowerCase()
                        .startsWith(text.toLowerCase())
           })
+      },
+
+      filterCorrespondent(correspondents) { 
+        let persons = [];
+        let functions = []
+        for(let i=0; i < correspondents.length; i++) {
+          persons.push(this.filteredDataArray(this.availableCorrespondents, correspondents[i].person))
+          functions.push(this.filteredDataArray(this.availableFunctions, correspondents[i].func))
+        }
+        
+        return {
+          persons,
+          functions
+        }
+      },
+
+      addCorrespondentFrom() {
+        this.correspondentFrom.push({...this.correspondentTemplate})
+      },
+      removeCorrespondentFrom(i) {
+        this.correspondentFrom.splice(i, 1)
+      },
+      addCorrespondentTo() {
+        this.correspondentTo.push({...this.correspondentTemplate})
+      },
+      removeCorrespondentTo(i) {
+        this.correspondentTo.splice(i, 1)
       }
     },
 }
