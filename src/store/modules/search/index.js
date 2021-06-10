@@ -209,7 +209,17 @@ const actions = {
     if (cdfFormatted) {
       if (state.withDateRange && cdtFormatted) {
         // between from and to 
-        creationDateRange = `&range[creation]=gte:${cdfFormatted},lte:${cdtFormatted}`
+        let upperBound = cdtFormatted
+        let upperOp = 'lt'
+        if (cdt.month === null) {
+          upperBound = formatDate(parseInt(cdt.year) + 1, cdt.month, cdt.day)
+        }
+        else if (cdf.day === null) {
+          upperBound = formatDate(cdt.year, getNextMonthLabel(cdt.month), cdt.day)
+        } else {
+          upperOp = 'lte'
+        }
+        creationDateRange = `&range[creation]=gte:${cdfFormatted},${upperOp}:${upperBound}`
       } else {
         // single date (from)
         let upperBound = cdfFormatted
