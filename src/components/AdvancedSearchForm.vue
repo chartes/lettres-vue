@@ -24,6 +24,12 @@
         Dates de temps
       </div>
       <section class="date-section">
+        {{ creationDateFrom }}
+        ----------
+        {{ creationDateTo }}
+        ----------
+        {{ creationDateFrom == creationDateTo }}
+        {{ creationDateFrom === creationDateTo }}
         <b-field
           label="Date de rédaction"
           grouped
@@ -35,7 +41,7 @@
             open-on-focus
             clearable
             class="day-search"
-            @select="option => creationDateFrom.selection.day = option"
+            @select="option => {creationDateFrom.selection.day = option; creationDateFrom = {...creationDateFrom} }"
           >
             <template #empty>
               Aucun résultat
@@ -49,7 +55,7 @@
             open-on-focus
             clearable
             class="month-search"
-            @select="option => creationDateFrom.selection.month = option"
+            @select="option => {creationDateFrom.selection.month = option; creationDateFrom = {...creationDateFrom} }"
           >
             <template #empty>
               Aucun résultat
@@ -63,7 +69,7 @@
             open-on-focus
             clearable
             class="year-search"
-            @select="option => creationDateFrom.selection.year = option"
+            @select="option => {creationDateFrom.selection.year = option; creationDateFrom = {...creationDateFrom} }"
           >
             <template #empty>
               Aucun résultat
@@ -92,7 +98,7 @@
             clearable
             class="day-search"
             :disabled="!withDateRange"
-            @select="option => creationDateTo.selection.day = option"
+            @select="option => {creationDateTo.selection.day = option; creationDateTo = {...creationDateTo} }"
           >
             <template #empty>
               Aucun résultat
@@ -107,7 +113,7 @@
             clearable
             class="month-search"
             :disabled="!withDateRange"
-            @select="option => creationDateTo.selection.month = option"
+            @select="option => {creationDateTo.selection.month = option; creationDateTo = {...creationDateTo} }"
           >
             <template #empty>
               Aucun résultat
@@ -122,7 +128,7 @@
             clearable
             class="year-search"
             :disabled="!withDateRange"
-            @select="option => creationDateTo.selection.year = option"
+            @select="option => {creationDateTo.selection.year = option; creationDateTo = {...creationDateTo} }"
           >
             <template #empty>
               Aucun résultat
@@ -322,6 +328,7 @@ export default {
           availableFunctions: ['Duc', 'Prince héritier', 'Régente', 'Comte', 'Cardinal'].sort(),
           availablePlacesTags: availablePlacesTags,
 
+
           correspondentTemplate,
           correspondentFrom:[{...correspondentTemplate}],
           correspondentTo:[{...correspondentTemplate}],
@@ -352,6 +359,7 @@ export default {
       withDateRange: {
         get: function() { return this._withDateRange },
         set: function(value) {
+          console.log('cdt', value)
           this.setWithDateRange(value)
         } 
       },
@@ -359,6 +367,7 @@ export default {
       creationDateFrom: {
         get: function() { return this._creationDateFrom },
         set: function(value) {
+          console.log('cdf', value)
           this.setCreationDateFrom(value)
         } 
       },
@@ -366,6 +375,7 @@ export default {
       creationDateTo: {
         get: function() { return this._creationDateTo },
         set: function(value) {
+          console.log('cdt', value)
           this.setCreationDateTo(value)
         } 
       },
@@ -389,7 +399,7 @@ export default {
       withDateRange() {
         /* initialize the second date when the switch is triggered*/
         this.creationDateTo = this.withDateRange ? {...this.creationDateFrom} : {...templates.creationDateTemplate}
-      }
+      },
     },
     created() {
      

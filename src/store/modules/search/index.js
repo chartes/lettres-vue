@@ -18,6 +18,14 @@ const monthLabels = [
   'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
 ]
 
+function getNextMonthLabel(month) {
+  let next = monthLabels.indexOf(month) + 1
+  if (next >= monthLabels.length) {
+    next = 1
+  }
+  return monthLabels[next]
+}
+
 function getMonthNumber(month) {
   const idx =  monthLabels.indexOf(month)
   if (idx === -1) {
@@ -45,6 +53,7 @@ function formatDate(year, month, day) {
       formatted = `${formatted}-${day.toString()}`
     }
   } else {
+    day = day > 31 ? 1 : day
     if (day) {
       throw new Error(`Cannot format the date because the month is null: ${year, month, day}`, )
     }
@@ -201,7 +210,20 @@ const actions = {
         creationDateRange = `&range[creation]=gte:${cdfFormatted},lte:${cdtFormatted}`
       } else {
         // single date (from)
-        creationDateRange = `&range[creation]=gte:${cdfFormatted},lte:${cdfFormatted}`
+        let upperBound = cdfFormatted
+        let upperOp = 'lt'
+        // search a single and whole year
+        if (cdf.month === null) {
+          // between 1577 and 1578
+          upperBound = formatDate(parseInt(cdf.year) + 1, cdf.month, cdf.day)
+        } else if (cdf.day === null) {
+          // between 1577-01 and 1577-02
+          upperBound = formatDate(cdf.year, getNextMonthLabel(cdf.month), cdf.day)
+        } else {
+          // a single day: 1577-11-10
+          upperOp = 'lte'
+        }
+        creationDateRange = `&range[creation]=gte:${cdfFormatted},${upperOp}:${upperBound}`
       }
     }
 
