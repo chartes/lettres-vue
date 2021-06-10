@@ -13,9 +13,7 @@
         class="input"
         type="text"
         placeholder="Page..."
-        @change.prevent="debounce(p => {
-          currentPage = parseInt(p)
-        }, 500)"
+        @change.prevent="currentPage = parseInt(p)"
       >
     </span>
     <div class="">
