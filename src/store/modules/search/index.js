@@ -1,5 +1,6 @@
 import {debounce} from 'lodash';
 import {http} from "@/modules/http-common";
+import {cloneDeep} from 'lodash';
 
 
 const creationDateTemplate = {
@@ -70,14 +71,14 @@ const state = {
   sorts: [{field: 'creation', order: 'asc'}],
 
   creationDateFrom: {
-    ...creationDateTemplate,
-    year:'1577', 
-    selection: {
-      ...creationDateTemplate.selection,
-      year: '1577'
-    }
+    ...cloneDeep(creationDateTemplate),
+    //year:'1577', 
+    //selection: {
+    //  ...creationDateTemplate.selection,
+      //year: '1577'
+    //}
   },
-  creationDateTo: {...creationDateTemplate},
+  creationDateTo: cloneDeep(creationDateTemplate),
 
   withStatus: false,
   withDateRange: false,
@@ -200,6 +201,7 @@ const actions = {
       cdfFormatted = null
       cdtFormatted = null
       console.error(e)
+      console.log('@', cdf, cdt)
       console.log('cdf', cdfFormatted, 'cdt', cdtFormatted)
     }
 
@@ -212,8 +214,8 @@ const actions = {
         // single date (from)
         let upperBound = cdfFormatted
         let upperOp = 'lt'
-        // search a single and whole year
         if (cdf.month === null) {
+          // search a single and whole year
           // between 1577 and 1578
           upperBound = formatDate(parseInt(cdf.year) + 1, cdf.month, cdf.day)
         } else if (cdf.day === null) {

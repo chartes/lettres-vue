@@ -24,12 +24,6 @@
         Dates de temps
       </div>
       <section class="date-section">
-        {{ creationDateFrom }}
-        ----------
-        {{ creationDateTo }}
-        ----------
-        {{ creationDateFrom == creationDateTo }}
-        {{ creationDateFrom === creationDateTo }}
         <b-field
           label="Date de rédaction"
           grouped
@@ -41,7 +35,8 @@
             open-on-focus
             clearable
             class="day-search"
-            @select="option => {creationDateFrom.selection.day = option; creationDateFrom = {...creationDateFrom} }"
+            @input="option => {creationDateFrom.selection.day = option; creationDateFrom = cloneDeep(creationDateFrom) }"
+            @select="option => {creationDateFrom.selection.day = option; creationDateFrom = cloneDeep(creationDateFrom) }"
           >
             <template #empty>
               Aucun résultat
@@ -55,7 +50,8 @@
             open-on-focus
             clearable
             class="month-search"
-            @select="option => {creationDateFrom.selection.month = option; creationDateFrom = {...creationDateFrom} }"
+            @input="option => {creationDateFrom.selection.month = option; creationDateFrom = cloneDeep(creationDateFrom) }"
+            @select="option => {creationDateFrom.selection.month = option; creationDateFrom = cloneDeep(creationDateFrom) }"
           >
             <template #empty>
               Aucun résultat
@@ -69,7 +65,8 @@
             open-on-focus
             clearable
             class="year-search"
-            @select="option => {creationDateFrom.selection.year = option; creationDateFrom = {...creationDateFrom} }"
+            @input="option => {creationDateFrom.selection.year = option; creationDateFrom = cloneDeep(creationDateFrom) }"
+            @select="option => {creationDateFrom.selection.year = option; creationDateFrom = cloneDeep(creationDateFrom) }"
           >
             <template #empty>
               Aucun résultat
@@ -98,7 +95,8 @@
             clearable
             class="day-search"
             :disabled="!withDateRange"
-            @select="option => {creationDateTo.selection.day = option; creationDateTo = {...creationDateTo} }"
+            @input="option => {creationDateTo.selection.day = option; creationDateTo = cloneDeep(creationDateTo) }"
+            @select="option => {creationDateTo.selection.day = option; creationDateTo = cloneDeep(creationDateTo) }"
           >
             <template #empty>
               Aucun résultat
@@ -113,7 +111,8 @@
             clearable
             class="month-search"
             :disabled="!withDateRange"
-            @select="option => {creationDateTo.selection.month = option; creationDateTo = {...creationDateTo} }"
+            @input="option => {creationDateTo.selection.month = option; creationDateTo = cloneDeep(creationDateTo) }"
+            @select="option => {creationDateTo.selection.month = option; creationDateTo = cloneDeep(creationDateTo) }"
           >
             <template #empty>
               Aucun résultat
@@ -128,7 +127,8 @@
             clearable
             class="year-search"
             :disabled="!withDateRange"
-            @select="option => {creationDateTo.selection.year = option; creationDateTo = {...creationDateTo} }"
+            @input="option => {creationDateTo.selection.year = option; creationDateTo = cloneDeep(creationDateTo) }"
+            @select="option => {creationDateTo.selection.year = option; creationDateTo = cloneDeep(creationDateTo) }"
           >
             <template #empty>
               Aucun résultat
@@ -295,6 +295,8 @@
 </template>
 
 <script>
+import {cloneDeep as _cloneDeep} from 'lodash';
+
 import { mapState, mapActions } from 'vuex';
 import SearchBox from "@/components/SearchBox";
 
@@ -328,10 +330,9 @@ export default {
           availableFunctions: ['Duc', 'Prince héritier', 'Régente', 'Comte', 'Cardinal'].sort(),
           availablePlacesTags: availablePlacesTags,
 
-
           correspondentTemplate,
-          correspondentFrom:[{...correspondentTemplate}],
-          correspondentTo:[{...correspondentTemplate}],
+          correspondentFrom:[this.cloneDeep(correspondentTemplate)],
+          correspondentTo:[this.cloneDeep(correspondentTemplate)],
 
           filteredPlacesFromTags: availablePlacesTags,
           filteredPlacesToTags: availablePlacesTags,
@@ -359,7 +360,7 @@ export default {
       withDateRange: {
         get: function() { return this._withDateRange },
         set: function(value) {
-          console.log('cdt', value)
+          //console.log('cdt', value)
           this.setWithDateRange(value)
         } 
       },
@@ -398,7 +399,7 @@ export default {
     watch: {
       withDateRange() {
         /* initialize the second date when the switch is triggered*/
-        this.creationDateTo = this.withDateRange ? {...this.creationDateFrom} : {...templates.creationDateTemplate}
+        this.creationDateTo = this.withDateRange ? this.cloneDeep(this.creationDateFrom) : this.cloneDeep(templates.creationDateTemplate)
       },
     },
     created() {
@@ -422,6 +423,10 @@ export default {
           })
       },
 
+      cloneDeep(obj) {
+        return  _cloneDeep(obj)
+      },
+
       filterCorrespondent(correspondents) { 
         let persons = [];
         let functions = []
@@ -437,13 +442,13 @@ export default {
       },
 
       addCorrespondentFrom() {
-        this.correspondentFrom.push({...this.correspondentTemplate})
+        this.correspondentFrom.push(this.cloneDeep(this.correspondentTemplate))
       },
       removeCorrespondentFrom(i) {
         this.correspondentFrom.splice(i, 1)
       },
       addCorrespondentTo() {
-        this.correspondentTo.push({...this.correspondentTemplate})
+        this.correspondentTo.push(this.cloneDeep(this.correspondentTemplate))
       },
       removeCorrespondentTo(i) {
         this.correspondentTo.splice(i, 1)
