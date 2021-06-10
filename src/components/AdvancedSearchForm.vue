@@ -401,6 +401,13 @@ export default {
         /* initialize the second date when the switch is triggered*/
         this.creationDateTo = this.withDateRange ? this.cloneDeep(this.creationDateFrom) : this.cloneDeep(templates.creationDateTemplate)
       },
+
+      creationDateFrom() {
+        this.performSearch()
+      },
+      creationDateTo(){
+        this.performSearch()
+      }
     },
     created() {
      
