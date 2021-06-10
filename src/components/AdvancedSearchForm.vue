@@ -320,12 +320,12 @@ export default {
         }
  
         return {
-          availableYears: ['n/a'].concat(Array.from({length: 400}, (x, i) => (1300+i).toString())),
-          availableMonths: ['n/a'].concat([
+          availableYears: [].concat(Array.from({length: 400}, (x, i) => (1300+i).toString())),
+          availableMonths: [].concat([
             'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet',
             'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
           ]),
-          availableDays: ['n/a'].concat(Array.from({length: 31}, (x, i) => (1+i).toString().padStart(2, '0'))),
+          availableDays: [].concat(Array.from({length: 31}, (x, i) => (1+i).toString().padStart(2, '0'))),
           availableCorrespondents: ['Caterine', 'Robert de la Mark', 'Salviati'].sort(),
           availableFunctions: ['Duc', 'Prince héritier', 'Régente', 'Comte', 'Cardinal'].sort(),
           availablePlacesTags: availablePlacesTags,
