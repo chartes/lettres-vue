@@ -17,18 +17,19 @@ const creationDateTemplate = {
 const monthLabels = [
   'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet',
   'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
-]
+].map(m => m.toLowerCase())
 
 function getNextMonthLabel(month) {
-  let next = monthLabels.indexOf(month) + 1
+  let next = monthLabels.indexOf(month.toLowerCase()) + 1
   if (next >= monthLabels.length) {
     next = 1
   }
+  console.log("get next month label", month, monthLabels[next])
   return monthLabels[next]
 }
 
 function getMonthNumber(month) {
-  const idx =  monthLabels.indexOf(month)
+  const idx =  monthLabels.indexOf(month.toLowerCase())
   if (idx === -1) {
     throw new Error('bad month label:', month)
   }
@@ -278,6 +279,10 @@ const searchModule = {
 
 export const templates = { 
   creationDateTemplate
+}
+
+export const labels = {
+  monthLabels
 }
 
 export default searchModule;

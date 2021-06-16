@@ -19,7 +19,6 @@
         />
       </section>
 
-
       <div class="divider is-left">
         Dates de temps
       </div>
@@ -300,7 +299,7 @@ import {cloneDeep as _cloneDeep} from 'lodash';
 import { mapState, mapActions } from 'vuex';
 import SearchBox from "@/components/SearchBox";
 
-import {templates} from "@/store/modules/search";
+import {templates, labels} from "@/store/modules/search";
 
 export default {
     name: "AdvancedSearchForm",
@@ -321,10 +320,7 @@ export default {
  
         return {
           availableYears: [].concat(Array.from({length: 400}, (x, i) => (1300+i).toString())),
-          availableMonths: [].concat([
-            'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet',
-            'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
-          ]),
+          availableMonths: labels.monthLabels.map(m => this.capitalize(m)),
           availableDays: [].concat(Array.from({length: 31}, (x, i) => (1+i).toString().padStart(2, '0'))),
           availableCorrespondents: ['Caterine', 'Robert de la Mark', 'Salviati'].sort(),
           availableFunctions: ['Duc', 'Prince héritier', 'Régente', 'Comte', 'Cardinal'].sort(),
@@ -416,9 +412,13 @@ export default {
       ...mapActions('search', ['performSearch', 'setWithStatus', 'setWithDateRange', 'setCreationDateFrom', 'setCreationDateTo']),
       ...mapActions('layout', ['hideAdvancedSearchForm']),
 
+      capitalize(s) {
+        return s[0].toUpperCase() + s.slice(1);
+      },
+
       filteredDataArray(data, value) {
         return data.filter((option) => {
-          return option.startsWith(value)
+          return option.toLowerCase().startsWith(value.toLowerCase())
         })
       },
 
