@@ -241,6 +241,7 @@ const actions = {
       }
     } catch (e) {
       console.log(e)
+      creationDateRange = ''
     }
     
     let filters = `${creationDateRange}`
