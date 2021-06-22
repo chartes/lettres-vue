@@ -1,18 +1,15 @@
 <template>
-  <div
-    :id="`collection-${collection.id}`"
-  >
+  <div :id="`collection-${collection.id}`">
     <b-collapse
       class="collection-tree"
-      :class="depth > 0 ? 'with-border': ''"
+      :class="depth > 0 ? 'with-border' : ''"
       animation="none"
       :open.sync="isOpen"
     >
       <div
         slot="trigger"
-        class="collection tag is-medium is-white "
-
-        :class="collection.id === selectedCollectionId ? 'is-active': ''"
+        class="collection tag is-medium is-white"
+        :class="collection.id === selectedCollectionId ? 'is-active' : ''"
       >
         <span
           class="collection-title is-pulled-left is-unselectable"
@@ -34,7 +31,7 @@
           v-for="child in collection.children"
           :key="child.id"
           :collection="child"
-          :depth="depth+1"
+          :depth="depth + 1"
         />
       </div>
     </b-collapse>
@@ -42,36 +39,32 @@
 </template>
 
 <script>
-
 import { mapState, mapActions, mapGetters } from "vuex";
 
 export default {
-    name: "CollectionTreeNode",
-    components: {
-    },
-    props: {
-        collection: {type: Object, default: () => {}, required: true},
-        depth: {type: Number, default: 0}
-    },
-    data() {
-      return {
-        isOpen: true
-      }
-    },
-    computed:{
-      ...mapState('collections', ['fullHierarchy','isLoading']),
-      ...mapState('search', ['selectedCollectionId'])
+  name: "CollectionTreeNode",
+  components: {},
+  props: {
+    collection: { type: Object, default: () => {}, required: true },
+    depth: { type: Number, default: 0 },
+  },
+  data() {
+    return {
+      isOpen: true,
+    };
+  },
+  computed: {
+    ...mapState("search", ["selectedCollectionId"]),
+  },
+  methods: {
+    ...mapActions("search", ["setSelectedCollectionId"]),
 
+    selectCollection() {
+      console.warn("select", this.collection.id);
+      this.setSelectedCollectionId(this.collection.id);
     },
-    methods: {
-      ...mapActions('search', ['setSelectedCollectionId']),
-
-      selectCollection() {
-        console.warn('select', this.collection.id);
-        this.setSelectedCollectionId( this.collection.id);
-      }
-    }
-}
+  },
+};
 </script>
 
 <style lang="scss">
@@ -84,7 +77,6 @@ export default {
 .collection-tree.collapse {
   width: 100%;
   .with-border {
-   
     /*
     border: 1px solid lightgrey;
     border-right: none;
@@ -93,29 +85,27 @@ export default {
     */
   }
   .collection {
-     padding-left: 20px;
+    padding-left: 20px;
     &:hover {
       border-radius: 2px;
-      color:  $menu-item-active-color ;
-      background-color: lightgrey; 
+      color: $menu-item-active-color;
+      background-color: lightgrey;
     }
   }
   .is-active {
     border-radius: 2px;
-    color:  $menu-item-active-color ;
-    background-color: $purple; 
+    color: $menu-item-active-color;
+    background-color: $purple;
   }
 
-
   .tag {
-   width: 100%;
-   padding-top: 10px;
-   padding-bottom: 10px;
-   height: 35px;
+    width: 100%;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    height: 35px;
   }
   .collection-title {
     width: 100%;
   }
 }
-
 </style>

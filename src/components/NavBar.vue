@@ -22,13 +22,13 @@
         <div class="navbar-item">
           <div class="buttons">
             <span
-              v-if="loggedIn"
+              v-if="isAuthenticated"
               class="button is-light  is-outlined is-uppercase m-r-sm "
             >
               {{ current_user.username }}
             </span>
             <router-link
-              v-if="!loggedIn"
+              v-if="!isAuthenticated"
               :to="{ name: 'login', query: {from: $route.name}}"
             >
               <a class="button  is-light  is-outlined">
@@ -61,7 +61,7 @@ export default {
   },
   computed: {
     ...mapState("user", ["current_user"]),
-    ...mapGetters("user", ["loggedIn"])
+    ...mapGetters("user", ["isAuthenticated"])
   },
   methods: {
     logout() {

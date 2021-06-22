@@ -1,57 +1,39 @@
-import http_with_csrf_token,  {http} from '../../../modules/http-common';
-import {baseApiURL} from '../../../modules/http-common';
-import {getRoles, getUserRoles} from '../../../modules/user-helpers';
-import { deleteCookie, getCookie } from '../../../modules/cookies-helpers';
+import http_with_auth,  {http} from '../../../modules/http-common';
+import {getUserRoles} from '../../../modules/user-helpers';
+
+import { authenticate, register,  isValidJwt, EventBus } from '@/modules/http-common'
 
 const state = {
   current_user: null,
-  isUserLoaded: false,
+  jwt: localStorage.getItem('tokenLettres'),
 
   usersSearchResults: [],
 };
 
 const mutations = {
-  /*
-  UPDATE_USER (state, {data, included}) {
-    console.log('UPDATE_USER', data);
-    if (!data) {
-      state.current_user = null;
-    } else {
-      const roles = getRoles({included});
-      state.current_user = {
-        id: data.id,
-        ...data.attributes,
-        roles: roles,
-        isAdmin: roles.filter(r => r.name === "admin").length === 1
-      };
-    }
-    state.isUserLoaded = true;
-  },
-  */
-  CLEAR_USER_DATA(state) {
-    localStorage.removeItem('user')
-    deleteCookie('csrf_access_token')
-    deleteCookie('csrf_refresh_token')
-    location.reload()
-  },
+
   SET_USER_DATA (state, userData) {
-    //const roles = getRoles({});
-    state.current_user = {
-      ...userData,
-      isAdmin: userData.roles.indexOf("admin") > -1
+    //console.log('setUserData payload = ', userData)
+    if (userData) {
+      state.current_user = {
+        ...userData,
+        isAdmin: userData.roles.indexOf("admin") > -1
+      }
     }
-    localStorage.setItem('user', JSON.stringify(state.current_user))
-    console.log("cookies", document.cookie);
-    //const access_token =  getCookie('csrf_access_token');
-    //console.log("saving csrf_access_token", access_token)
-    //http.defaults.headers.common['Authorization'] = `Bearer ${access_token}`
+    else {
+      state.current_user = null
+    }
+  },
+  SET_JWT_TOKEN (state, token) {
+    //console.log('setJwtToken payload = ', token)
+    if (token) {
+      localStorage.tokenLettres = token
+    } else {
+      localStorage.removeItem('tokenLettres')
+    }
+    state.jwt = token
   },
 
-  /*
-  RESET_USER(state) {
-    state.isUserLoaded = false;
-  },
-  */
 
   SEARCH_RESULTS(state, {users, included}) {
     state.usersSearchResults = users.map( u => {
@@ -71,7 +53,7 @@ const actions = {
   fetchCurrent ({ commit }) {
     /*
     commit('RESET_USER');
-    const http = http_with_csrf_token();
+    const http = http_with_auth();
     return http.get("token/refresh")
       .then(response => {
         if (response.data && response.data.user) {
@@ -88,51 +70,47 @@ const actions = {
       });
       */
   },
-
-  login ({ commit }, credentials) { 
-    return http
-      .post('login', credentials)
-      .then(({ data }) => {
-        console.log("LOGIN user data is:", data)
-        commit('SET_USER_DATA', data)
-      }).catch(({error}) => {
-        console.log("LOGIN ERROR", error)
-        return error
+  setUserData({commit}, userData) {
+    commit('SET_USER_DATA', userData)
+  },
+  login ({commit}, userData) {
+    return authenticate(userData)
+      .then(response => {
+        commit('SET_USER_DATA', response.data.user_data)
+        commit('SET_JWT_TOKEN', response.data.token)
+      })
+      .catch(error => {
+        console.log('Error Authenticating: ', error)
+        EventBus.$emit('failedAuthentication', error)
       })
   },
   logout({commit}) {
-    commit('CLEAR_USER_DATA')
+    commit('SET_JWT_TOKEN', null)
+    commit('SET_USER_DATA', null)
+  },
+  register ({dispatch}, userData) {
+    return register(userData)
+      .then(dispatch('login', userData))
+      .catch(error => {
+        console.log('Error Registering: ', error)
+        EventBus.$emit('failedRegistering: ', error)
+      })
   },
 
-  register({commit}) {
-    console.log("Register: not yet implemented")
-  },
-
-  search({commit}, what) {
+  search({commit, state}, what) {
     console.log('user search', what);
     commit('SEARCH_RESULTS', {users: [], included: []});
+    const http = http_with_auth(state.jwt);
     http.get(`/search?query=*${what}*&index=lettres__${process.env.NODE_ENV}__users&include=roles`).then(response => {
       commit('SEARCH_RESULTS', {users: response.data.data, included: response.data.included});
     });
   }
-  /*
-  save ({ commit, rootGetters }, data) {
-    return http.put(`/documents`, { data: data })
-      .then(response => {
-        commit('UPDATE_DOCUMENT', response.data.data);
-        resolve(response.data)
-      })
-      .catch(error => {
-        console.error("error", error);
-        reject(error)
-      })
-  },
-  */
+  
 };
 
 const getters = {
-  loggedIn(state) {
-    return !!state.current_user
+  isAuthenticated (state) {
+    return state.current_user && isValidJwt(state.jwt)
   }
 };
 const userModule = {

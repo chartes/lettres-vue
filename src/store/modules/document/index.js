@@ -1,4 +1,4 @@
-import {http} from '@/modules/http-common';
+import {http_with_auth} from '@/modules/http-common';
 
 import {
   getPersons, getLanguages, getWitnesses,
@@ -153,7 +153,7 @@ const mutations = {
 };
 
 const actions = {
-  fetch ({ commit }, id) {
+  fetch ({ rootState, commit }, id) {
     commit('LOADING_STATUS', true);
 
     let incs = [
@@ -165,6 +165,7 @@ const actions = {
 
     this.dispatch('languages/fetch');
 
+    const http = http_with_auth(rootState.user.jwt);
     return http.get(`documents/${id}?include=${incs.join(',')}`).then( response => {
       commit('UPDATE_DOCUMENT', {
         data: response.data.data,
@@ -181,6 +182,8 @@ const actions = {
     removeContentEditableAttributesFromObject(data.attributes)
     //
     //console.log("axios http headers", http.defaults.headers.common);
+    const http = http_with_auth(rootState.user.jwt);
+
     return http.patch(`/documents/${data.id}`, { data })
       .then(response => {
         commit('UPDATE_DOCUMENT_DATA', response.data.data);
@@ -205,7 +208,7 @@ const actions = {
       })
   },
 
-  add({commit, state}) {
+  add({commit, rootState, state}) {
     const attributes = JSON.parse(JSON.stringify(state.document));
     delete(attributes.id);
     delete(attributes['iiif-collection-url']);
@@ -225,7 +228,8 @@ const actions = {
     };
 
     console.warn('posting', newDocument);
-    
+    const http = http_with_auth(rootState.user.jwt);
+
     return http.post(`/documents`, newDocument)
         .then(response => {
           commit('UPDATE_DOCUMENT_DATA', response.data.data);
@@ -252,7 +256,9 @@ const actions = {
         }
     });
   },
-  fetchWitnessInstitution ({ commit }, witnessId) {
+  fetchWitnessInstitution ({ commit, rootState }, witnessId) {
+    const http = http_with_auth(rootState.user.jwt);
+
     return http.get(`/witnesses/${witnessId}?include=institution`).then( response => {
       const institution = getInstitution(response.data.included)
       if (institution.id === null) return null;
@@ -260,10 +266,12 @@ const actions = {
       return institution;
     });
   },
-  removeWitnessInstitution({commit}, witnessId) {
+  removeWitnessInstitution({commit, rootState}, witnessId) {
+    const http = http_with_auth(rootState.user.jwt);
+
     return http.patch(`/witnesses/${witnessId}/relationships/institution`, {data: null});
   },
-  addWitness ({commit, state}, witness) {
+  addWitness ({commit, rootState, state}, witness) {
     witness.num = Math.max.apply(null, state.witnesses.map(w => w.num)) + 1;
 
     const witnessData = { ...witness };
@@ -294,14 +302,15 @@ const actions = {
         relationships
     };
 
-    
+    const http = http_with_auth(rootState.user.jwt);
+
     return http.post(`/witnesses?without-relationships`, {data})
       .then(response => {
         witness.id = response.data.data.id;
         commit('ADD_WITNESS', witness);
       })
   },
-  updateWitness ({commit, state}, witness) {
+  updateWitness ({commit, rootState, state}, witness) {
     const attributes = {...witness}
     removeContentEditableAttributesFromObject(attributes)
     const institutionId = witness.institution ? witness.institution.id : null;
@@ -330,25 +339,26 @@ const actions = {
         attributes: attributes,
         relationships
     }
-    
+
+    const http = http_with_auth(rootState.user.jwt);
     return http.patch(`witnesses/${witness.id}?without-relationships`, {data})
       .then(response => {
         commit('UPDATE_WITNESS', witness);
       })
   },
-  removeWitness ({commit, state}, witness) {
+  removeWitness ({commit, rootState, state}, witness) {
 
     const data = { data: { id : witness.id, type: "witness" } }
     console.log('document store removeWitness', data, state.document.id)
 
-    
+    const http = http_with_auth(rootState.user.jwt);
     return http.delete(`/witnesses/${witness.id}`, {data})
       .then(response => {
         console.log('response', response)
         commit('REMOVE_WITNESS', witness);
       })
   },
-  reorderWitnesses ({commit, state}, { witness, dir }) {
+  reorderWitnesses ({commit, rootState, state}, { witness, dir }) {
     let witnesses = state.witnesses.map(w => {return {...w}})
     let found = witnesses.find(w => w.id === witness.id)
     let foundIndex = witnesses.indexOf(found)
@@ -361,6 +371,7 @@ const actions = {
       return state.witnesses[index].id !== w.id
     })
 
+    const http = http_with_auth(rootState.user.jwt);
     Promise.all(changed.map(w => {
       return http.patch(`/witnesses/${w.id}`, { data: {
         type: "witness",
@@ -392,20 +403,21 @@ const actions = {
   unsetIsLoading({commit}) {
     commit('LOADING_STATUS', false);
   },
-  addCollection ({commit, state}, collection) {
+  addCollection ({commit, rootState, state}, collection) {
 
     const data = { data: [ { id : collection.id, type: "collection" }, ] }
 
-    
+    const http = http_with_auth(rootState.user.jwt);
     return http.post(`/documents/${state.document.id}/relationships/collections?without-relationships`, data)
       .then(response => {
         commit('ADD_COLLECTION', collection);
         return true
       })
   },
-  removeCollection ({commit, state}, collection) {
+  removeCollection ({commit, state, rootState}, collection) {
     const data = { data: { id : collection.id, type: "collection" } };
-    
+
+    const http = http_with_auth(rootState.user.jwt);
     return http.delete(`/documents/${state.document.id}/relationships/collections?without-relationships`, {data})
       .then(response => {
         commit('REMOVE_COLLECTION', collection);
@@ -413,7 +425,7 @@ const actions = {
       })
   },
 
-  addNote ({commit, state}, note) {
+  addNote ({commit, state, rootState}, note) {
     console.log('store updateNote', note)
     const data = {
       type: 'note',
@@ -425,6 +437,7 @@ const actions = {
       }
     }
     
+    const http = http_with_auth(rootState.user.jwt);
     return http.post(`notes?without-relationships`, {data})
       .then(response => {
         console.log('response', response.data)
@@ -433,7 +446,7 @@ const actions = {
         return note;
       })
   },
-  updateNote ({commit, state}, note) {
+  updateNote ({commit, state, rootState}, note) {
     console.log('store updateNote', note)
     const data = {
       id: note.id,
@@ -441,6 +454,7 @@ const actions = {
       attributes: { content: note.content }
     }
     
+    const http = http_with_auth(rootState.user.jwt);
     return http.patch(`notes/${note.id}?without-relationships`, {data})
       .then(response => {
         console.log('response', note.content)
@@ -448,9 +462,9 @@ const actions = {
         return note;
       })
   },
-  removeNote ({commit, state}, noteId) {
+  removeNote ({commit, state, rootState}, noteId) {
 
-    
+    const http = http_with_auth(rootState.user.jwt);
     return http.delete(`notes/${noteId}?without-relationships`)
       .then(response => {
         console.log('response', response)
@@ -460,8 +474,9 @@ const actions = {
   },
 
   initializeDummyDocument({commit, state, rootState}, defaultData) {
-    
     const collId = defaultData.relationships.collections.data[0].id;
+    
+    const http = http_with_auth(rootState.user.jwt);
     return http.get(`collections/${collId}`).then(r => {
       const collection = r.data.data;
       const dummy = makeDummyDocument(defaultData);
@@ -507,6 +522,8 @@ const getters = {
     const incs = [
       'current-lock'
     ];
+
+    const http = http_with_auth(rootState.user.jwt);
 
     const response = await http.get(`documents/${id}?include=${incs.join(',')}&without-relationships&facade=status`)
     const {data, included} = response.data

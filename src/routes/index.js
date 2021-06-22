@@ -23,6 +23,7 @@ const UsersPage = () => import('@/pages/UsersPage.vue')
 
 
 import store from '@/store/index';
+import { getCurrentUser } from '@/modules/http-common';
 
 
 Vue.use(VueRouter)
@@ -108,12 +109,21 @@ const router = new VueRouter({
   ]
 })
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
+  
   
   if (to.fullPath.indexOf("/edit") > -1 || ['history', 'bookmarks', 'locks', 'persons', 'places', 'users'].indexOf(to.name) > -1) {
       if (!store.state.user.current_user) {
         next({ name: 'login', query: { from: window.location.pathname } });
       }
+  }
+  
+
+  const jwt = store.state.user.jwt
+  if (jwt) {
+      const response = await getCurrentUser(jwt);
+      //console.log("trying to log back with jwt:", jwt, response.data)
+      store.dispatch("user/setUserData", response.data.user_data)
   }
  
   next();

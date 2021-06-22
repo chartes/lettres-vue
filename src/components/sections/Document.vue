@@ -91,8 +91,7 @@ import DocumentAttributes from "../document/DocumentAttributes";
 import DocumentDateAttributes from "../document/DocumentDateAttributes";
 import DocumentSkeleton from "@/components/ui/DocumentSkeleton";
 
-import {http} from "@/modules/http-common";
-import {getCurrentLock} from "@/modules/document-helpers"
+import {http_with_auth} from "@/modules/http-common";
 
 export default {
   name: "Document",
@@ -115,7 +114,6 @@ export default {
   },
   data() {
     return {
-      canEdit: false,
       isLoading: true
     };
   },
@@ -127,7 +125,7 @@ export default {
       "witnesses",
       "currentLock"
     ]),
-    ...mapState("user", ["current_user", "isUserLoaded"]),
+    ...mapState("user", ["current_user", 'jwt']),
     ...mapState("locks", ["lockOwner"]),
     ...mapGetters('document', ['getPreview']),
 
@@ -143,6 +141,7 @@ export default {
       if (!this.current_user || !this.document) {
         return null
       }
+      const http = http_with_auth(this.jwt);
       return {
         currentLock: this.document.currentLock,
         isPublished: this.document['is-published'],
@@ -150,11 +149,26 @@ export default {
               response => response.data.data.filter(d => d.id === this.docId).length > 0
         )
       }
-    }
-  },
-  watch: {
-    lockOwner() {
-      this.computeCanEdit();
+    },
+    canEdit() {
+      if (this.preview) {
+        return false
+      }
+      /*
+       * Can edit if 1) You are connected 2) You are an admin or there is no active lock or the active lock is yours
+       * */
+      if (!this.current_user || !this.jwt) {
+        return false ;
+      }
+
+      if (this.current_user.isAdmin) {
+        return true;
+      }
+
+    
+      return  (this.preview && this.preview.currentLock.id === null) ||
+        (this.lockOwner[this.docId] &&
+          this.lockOwner[this.docId].id === this.current_user.id);
     }
   },
   async created() {
@@ -163,7 +177,6 @@ export default {
       .dispatch("document/fetch", this.docId)
       .then(async r => {
         this.isLoading = false;
-        this.computeCanEdit();
         this.setLastSeen(this.docId);
       })
   },
@@ -171,28 +184,7 @@ export default {
   methods: {
     ...mapActions('layout', ['setLastSeen']),
 
-    computeCanEdit() {
-      if (this.preview) {
-        this.canEdit = false
-        return
-      }
-      /*
-       * Can edit if 1) You are connected 2) You are an admin or there is no active lock or the active lock is yours
-       * */
-      if (!this.current_user) {
-        this.canEdit = false;
-        return;
-      }
-
-      if (this.current_user.isAdmin) {
-        this.canEdit = true;
-        return;
-      }
-      this.canEdit =
-        (this.preview && this.preview.currentLock.id === null) ||
-        (this.lockOwner[this.docId] &&
-          this.lockOwner[this.docId].id === this.current_user.id);
-    }
+    
   }
 };
 </script>

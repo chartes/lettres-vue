@@ -1,4 +1,4 @@
-import http_with_csrf_token from '../../../modules/http-common';
+import http_with_auth from '../../../modules/http-common';
 import {debounce} from 'lodash';
 
 const state = {
@@ -41,10 +41,10 @@ const mutations = {
 };
 
 const actions = {
-  fetchUserBookmarks:  debounce(async({ commit }, {userId, pageId, pageSize, filters}) => {
+  fetchUserBookmarks:  debounce(async({ rootState, commit }, {userId, pageId, pageSize, filters}) => {
     commit('SET_LOADING', true)
     
-    const http = http_with_csrf_token();
+    const http = http_with_auth(rootState.user.jwt);
     const response = await  http.get(`users/${userId}/bookmarks?without-relationships&sort=title&page[size]=${pageSize}&page[number]=${pageId}${filters ? '&'+filters : ''}`)
     
     response.data.data.sort((d1, d2) => {return d1.attributes["title"] - d2.attributes["title"]})
@@ -72,8 +72,8 @@ const actions = {
 
   }, 250),
 
-  deleteUserBookmark({ commit }, {userId, docId}) {
-    const http = http_with_csrf_token();
+  deleteUserBookmark({ rootState, commit }, {userId, docId}) {
+    const http = http_with_auth(rootState.user.jwt);
     const dataToRemove = {
       data: [
         {id: docId, type: "document"}
@@ -82,8 +82,8 @@ const actions = {
     return http.delete(`users/${userId}/relationships/bookmarks`, {data: dataToRemove});
   },
 
-  postUserBookmark({ commit }, {userId, docId}) {
-    const http = http_with_csrf_token();
+  postUserBookmark({ rootState, commit }, {userId, docId}) {
+    const http = http_with_auth(rootState.user.jwt);
     const dataToAdd = {
       data: [
         {id: docId, type: "document"}

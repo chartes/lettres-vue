@@ -1,4 +1,4 @@
-import {http} from '../../../modules/http-common';
+import {http_with_auth} from '../../../modules/http-common';
 
 const state = {
 
@@ -16,7 +16,8 @@ const mutations = {
 
 const actions = {
 
-  fetch ({ commit }) {
+  fetch ({ commit, rootState }) {
+    const http = http_with_auth(rootState.user.jwt);
     http.get(`/languages?without-relationships`).then( response => {
       const languages = response.data.data.map(lang => { return { id: lang.id, ...lang.attributes}});
       commit('UPDATE', languages)

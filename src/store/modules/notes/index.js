@@ -1,4 +1,4 @@
-import http_with_csrf_token from '../../../modules/http-common';
+import http_with_auth from '../../../modules/http-common';
 
 const state = {
 
@@ -21,9 +21,9 @@ const mutations = {
 
 const actions = {
 
-  add ({ commit, getters, rootState }, newNote) {
+  add ({ commit, rootState }, newNote) {
     console.log("note add =>", newNote)
-    const http = http_with_csrf_token();
+    const http = http_with_auth(rootState.user.jwt);
     return http.post(`/notes`, { data: {...newNote}, type: 'note'})
       .then( response => {
         console.log("note add =>", response.data)
@@ -32,7 +32,7 @@ const actions = {
         return note
       })
   },
-  update ({ commit, getters, rootState }, note) {
+  update ({ rootState }, note) {
     const config = { auth: { username: rootState.user.authToken, password: undefined }};
     const theNote = {
       data: [{
@@ -42,10 +42,10 @@ const actions = {
         "content": note.content
       }]
     };
-    const http = http_with_csrf_token()
+    const http = http_with_auth(rootState.user.jwt)
 
   },
-  delete ({ commit, getters, rootState }, note) {
+  delete ({ rootState }, note) {
     const config = { auth: { username: rootState.user.authToken, password: undefined }};
     const theNote = {
       data: [{
@@ -55,7 +55,7 @@ const actions = {
         "content": note.content
       }]
     };
-    const http = http_with_csrf_token()
+    const http = http_with_auth(rootState.user.jwt)
 
   }
 

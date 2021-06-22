@@ -1,24 +1,12 @@
 <template>
   <div class="container">
-    <div
-      v-if="current_user"
-      class="welcome"
-    >
+    <div v-if="isAuthenticated" class="welcome">
       Bienvenue {{ current_user.username }}
     </div>
-    <form
-      v-else
-      class="login-form"
-      @submit.prevent="login"
-    >
+    <form v-else class="login-form" @submit.prevent="authenticate">
       <div class="field">
         <p class="control has-icons-left has-icons-right">
-          <input
-            v-model="email"
-            class="input"
-            type="email"
-            placeholder="Email"
-          >
+          <input v-model="email" class="input" type="email" placeholder="Email" />
           <span class="icon is-small is-left">
             <i class="fas fa-envelope" />
           </span>
@@ -36,7 +24,7 @@
             placeholder="Mot de passe"
             value
             name="password"
-          >
+          />
           <span class="icon is-small is-left">
             <i class="fas fa-lock" />
           </span>
@@ -44,9 +32,7 @@
       </div>
       <div class="field">
         <p class="control">
-          <button class="button is-primary">
-            Connexion
-          </button>
+          <button class="button is-primary">Connexion</button>
         </p>
       </div>
     </form>
@@ -54,49 +40,48 @@
 </template>
 
 <script>
-
-import {mapState} from 'vuex'
+import { mapGetters, mapState } from "vuex";
+import { EventBus } from "@/modules/http-common";
 
 export default {
-    name: "LoginPage",
-    components: {
-        
+  name: "LoginPage",
+  components: {},
+  data() {
+    return {
+      email: "",
+      password: "",
+    };
+  },
+  computed: {
+    ...mapGetters("user", ["isAuthenticated"]),
+    ...mapState("user", ["current_user"]),
+  },
+  watch: {},
+  mounted() {
+    EventBus.$on("failedRegistering", (msg) => {
+      this.errorMsg = msg;
+    });
+    EventBus.$on("failedAuthentication", (msg) => {
+      this.errorMsg = msg;
+    });
+  },
+  methods: {
+    authenticate() {
+      this.$store
+        .dispatch("user/login", { email: this.email, password: this.password })
+        .then(() => {
+          this.$router.push({ name: "home" });
+        });
     },
-    data () {
-        return {
-          email: '',
-          password: ''
-        }
+    register() {
+      this.$store
+        .dispatch("user/register", { email: this.email, password: this.password })
+        .then(() => {
+          this.$router.push({ name: "home" });
+        });
     },
-    computed: {
-      ...mapState("user", ["current_user"])
-    },
-    watch: {
-      current_user() {
-        this.redirect()
-      }
-    },
-    mounted() {
-        this.redirect()
-    },
-    methods: {
-      redirect() {
-        if (this.current_user) {
-          if (!this.$route.query.from) {
-            this.$router.replace('/');
-          } else {
-            this.$router.replace(this.$route.query.from);
-          }
-        }
-      },
-      login () {
-          this.$store.dispatch('user/login', {
-              email: this.email,
-              password: this.password
-            })
-      }
-    }
-}
+  },
+};
 </script>
 
 <style scoped lang="scss">

@@ -1,4 +1,4 @@
-import {http} from '../../../modules/http-common';
+import {http_with_auth} from '../../../modules/http-common';
 import {getIncludedRelation} from "../../../modules/document-helpers";
 
 const state = {
@@ -44,48 +44,24 @@ function searchId(tree, id) {
     }
 }
 
-function countDocuments(collectionId) {
-  return http.get(`/collections/${collectionId}/relationships/documents`).then(response => {
-    return response.data.meta['total-count'];
-  })
-}
-
 const mutations = {
 
   RESET(state) {
     state.collectionsWithParents = {};
+    state.collectionsSearchResults = [];
+    state.fullHierarchy = [];
     state.isLoading = false;
   },
 
-  FETCH_ALL(state, {data, included}) {
-    state.isLoading = true;
+  SET_LOADING(state, b) {
+    state.isLoading  = b;
+  },
 
-    let countPromises = [];
-    let collections = data.map( c => {
-      countPromises.push(countDocuments(c.id));
-      return {
-        id: c.id,
-        title: c.attributes.title,
-        description: c.attributes.description,
-        //documentCount: count,
-        //documents: getIncludedRelation(c, included, "documents"),
-        parents: getIncludedRelation(c, included, "parents"),
-      }
-    });
-
-    Promise.all(countPromises).then(counts =>{
-      collections.map( c => {
-        c.documentCount = counts.shift();
-        c.titleWithCount = c.parents.length === 0 ? c.title : `${c.title} (${c.documentCount})`;
-      });
-      // build full hierarchy tree
-      state.allCollectionsWithParents = collections;
-      state.fullHierarchy = [];
-      state.fullHierarchy = buildTree(collections, null, 0);
-
-      state.isLoading = false;
-    });
-
+  SET_ALL(state, collections) {
+    // build full hierarchy tree
+    state.allCollectionsWithParents = Object.assign({}, state.allCollectionsWithParents, collections);
+    //state.fullHierarchy = [];
+    state.fullHierarchy =  buildTree(collections, null, 0);
   },
   SEARCH_RESULTS (state, payload) {
     state.collectionsSearchResults = payload;
@@ -99,9 +75,36 @@ const actions = {
     commit('RESET');
   },
 
-  fetchAll({commit}) {
-    return http.get(`/collections?include=parents`).then(response => {
-      commit('FETCH_ALL', {data: response.data.data, included: response.data.included})
+  fetchAll({rootState, commit}) {
+    commit('SET_LOADING', true)
+
+    const http = http_with_auth(rootState.user.jwt);
+    return http.get(`/collections?include=parents`).then(async response => {
+
+      let countPromises = [];
+      response.data.data.forEach(c => {
+        const newCountPromise = http.get(`/collections/${c.id}/relationships/documents`).then(docs => {
+          return  {
+            id: c.id,
+            title: c.attributes.title,
+            description: c.attributes.description,
+            documentCount: docs.data.meta['total-count'],
+            titleWithCount: c.parents && c.parents.length === 0 ? c.attributes.title : `${c.attributes.title} (${docs.data.meta['total-count']})`,
+            //documents: getIncludedRelation(c, included, "documents"),
+            parents: getIncludedRelation(c, response.data.included, "parents"),
+          }
+        })
+
+        countPromises.push(newCountPromise);
+      });
+
+      const collections = await Promise.all(countPromises)
+      commit('SET_ALL', collections)
+      commit('SET_LOADING', false)
+     
+    }).catch((e) => {
+      console.error('issue with collections loading', e)
+      commit('RESET');
     });
   },
   /*

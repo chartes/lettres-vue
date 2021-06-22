@@ -1,5 +1,5 @@
 import {debounce} from 'lodash';
-import {http} from "@/modules/http-common";
+import {http_with_auth} from "@/modules/http-common";
 import {cloneDeep} from 'lodash';
 
 
@@ -201,46 +201,48 @@ const actions = {
     } catch (e) {
       cdfFormatted = null
       cdtFormatted = null
-      console.error(e)
-      console.log('@', cdf, cdt)
-      console.log('cdf', cdfFormatted, 'cdt', cdtFormatted)
+      console.log(e)
     }
 
     let creationDateRange = ''
-    if (cdfFormatted) {
-      if (state.withDateRange && cdtFormatted) {
-        // between from and to 
-        let upperBound = cdtFormatted
-        let upperOp = 'lt'
-        if (cdt.month === null) {
-          upperBound = formatDate(parseInt(cdt.year) + 1, cdt.month, cdt.day)
-        }
-        else if (cdf.day === null) {
-          upperBound = formatDate(cdt.year, getNextMonthLabel(cdt.month), cdt.day)
-        } else {
-          upperOp = 'lte'
-        }
-        creationDateRange = `&range[creation]=gte:${cdfFormatted},${upperOp}:${upperBound}`
-      } else {
-        // single date (from)
-        let upperBound = cdfFormatted
-        let upperOp = 'lt'
-        if (cdf.month === null) {
-          // search a single and whole year
-          // between 1577 and 1578
-          upperBound = formatDate(parseInt(cdf.year) + 1, cdf.month, cdf.day)
-        } else if (cdf.day === null) {
-          // between 1577-01 and 1577-02
-          upperBound = formatDate(cdf.year, getNextMonthLabel(cdf.month), cdf.day)
-        } else {
-          // a single day: 1577-11-10
-          upperOp = 'lte'
-        }
-        creationDateRange = `&range[creation]=gte:${cdfFormatted},${upperOp}:${upperBound}`
-      }
-    }
 
-   
+    try {
+      if (cdfFormatted) {
+        if (state.withDateRange && cdtFormatted) {
+          // between from and to 
+          let upperBound = cdtFormatted
+          let upperOp = 'lt'
+          if (cdt.month === null) {
+            upperBound = formatDate(parseInt(cdt.year) + 1, cdt.month, cdt.day)
+          }
+          else if (cdf.day === null) {
+            upperBound = formatDate(cdt.year, getNextMonthLabel(cdt.month), cdt.day)
+          } else {
+            upperOp = 'lte'
+          }
+          creationDateRange = `&range[creation]=gte:${cdfFormatted},${upperOp}:${upperBound}`
+        } else {
+          // single date (from)
+          let upperBound = cdfFormatted
+          let upperOp = 'lt'
+          if (cdf.month === null) {
+            // search a single and whole year
+            // between 1577 and 1578
+            upperBound = formatDate(parseInt(cdf.year) + 1, cdf.month, cdf.day)
+          } else if (cdf.day === null) {
+            // between 1577-01 and 1577-02
+            upperBound = formatDate(cdf.year, getNextMonthLabel(cdf.month), cdf.day)
+          } else {
+            // a single day: 1577-11-10
+            upperOp = 'lte'
+          }
+          creationDateRange = `&range[creation]=gte:${cdfFormatted},${upperOp}:${upperBound}`
+        }
+      }
+    } catch (e) {
+      console.log(e)
+    }
+    
     let filters = `${creationDateRange}`
 
     /* =========== execution =========== */
@@ -248,6 +250,7 @@ const actions = {
       const toInclude = []; //['collections', 'persons', 'persons-having-roles', 'roles', 'witnesses', 'languages'];
       const includes = toInclude.length ? `&include=${[].join(',')}` : ''; 
       
+      const http = http_with_auth(rootState.user.jwt);
       const response = await http.get(`/search?query=${query}${filters}${includes}&without-relationships&sort=${sorts}&page[size]=${state.pageSize}&page[number]=${state.numPage}`);
       const {data, links, meta} = response.data
 

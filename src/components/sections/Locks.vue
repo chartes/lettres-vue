@@ -110,7 +110,7 @@
   import InputFilter from '../ui/InputFilter';
   import Pagination from '../ui/Pagination';
 
-  import http_with_csrf_token from "../../modules/http-common";
+  import http_with_auth from "../../modules/http-common";
   import {getUrlParameter} from "../../modules/utils";
 
   export default {
@@ -137,7 +137,7 @@
       }
     },
     computed: {
-      ...mapState('user', ['current_user']),
+      ...mapState('user', ['current_user', 'jwt']),
       ...mapState('locks', ['fullLocks', 'links']),
       nbPages() {
         return parseInt(this.links.last ? getUrlParameter(this.links.last, "page%5Bnumber%5D") : 1);
@@ -157,7 +157,7 @@
            }
            /* compute the user filter by fetching the user id from a username */
            if (this.filteredUsername) {
-             const http = http_with_csrf_token();
+             const http = http_with_auth(this.jwt);
              return http.get(`users?filter[username]=${this.filteredUsername}&without-relationships`).then( response => {
                 try {
                    const userId = response.data.data[0].id;

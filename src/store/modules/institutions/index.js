@@ -1,5 +1,4 @@
-import http_with_csrf_token from '../../../modules/http-common';
-import {http} from '../../../modules/http-common';
+import http_with_auth from '../../../modules/http-common';
 import findOrganization from "../../../modules/ref-providers/wikidata";
 import  Vue from "vue";
 
@@ -44,8 +43,9 @@ const mutations = {
 
 const actions = {
 
-  fetch ({ commit }) {
+  fetch ({ rootState, commit }) {
     commit('UPDATE', []);
+    const http = http_with_auth(rootState.user.jwt);
     http.get(`/institutions?include=witnesses&without-relationships`).then( response => {
       const institutions = response.data.data.map(inst => {
         return {
@@ -57,7 +57,8 @@ const actions = {
       commit('UPDATE', institutions)
     });
   },
-  fetchOne ({ commit }, id) {
+  fetchOne ({ rootState, commit }, id) {
+    const http = http_with_auth(rootState.user.jwt);
     http.get(`/institution/${id}?include=witnesses&without-relationships`).then( response => {
       const institution = {
         id: response.data.data.id,
@@ -71,7 +72,7 @@ const actions = {
     })
   },
 
-  addOne ({commit}, institution) {
+  addOne ({ rootState, commit}, institution) {
     const institutionData = {
       data: {
         type: 'institution',
@@ -79,16 +80,17 @@ const actions = {
       }
     };
 
-    const http = http_with_csrf_token();
+    const http = http_with_auth(rootState.user.jwt);
     return http.post(`/institutions`, institutionData).then( response => {
       const institution = { id: response.data.data.id, ...response.data.data.attributes };
       commit('ADD_ONE', institution)
       return institution
     })
   },
-  search ({ commit }, what) {
+  search ({ commit, rootState }, what) {
     console.log('institution search', what)
     commit('SEARCH_RESULTS', [])
+    const http = http_with_auth(rootState.user.jwt);
     http.get(`/search?query=*${what}*&index=lettres__${process.env.NODE_ENV}__institutions&without-relationships`).then( response => {
       const institutions = response.data.data.map(inst => { return { id: inst.id, ...inst.attributes}});
       commit('SEARCH_RESULTS', institutions)

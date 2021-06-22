@@ -1,5 +1,5 @@
 import {http} from '../../../modules/http-common';
-import http_with_csrf_token from '../../../modules/http-common';
+import http_with_auth from '../../../modules/http-common';
 import findPerson from '../../../modules/ref-providers/wikidata';
 
 const state = {
@@ -35,8 +35,9 @@ const mutations = {
 
 const actions = {
 
-  search ({ commit }, what) {
+  search ({ rootState, commit }, what) {
     commit('SEARCH_RESULTS', [])
+    const http = http_with_auth(rootState.user.jwt);
     http.get(`/search?query=*${what}*&index=lettres__${process.env.NODE_ENV}__persons&without-relationships`)
       .then( response => {
         const persons = response.data.data.map(inst => { return { id: inst.id, ...inst.attributes}});
@@ -50,7 +51,8 @@ const actions = {
       commit('WIKIDATA_SEARCH_RESULTS', result)
     });
   },
-  fetchRoles ({ commit }) {
+  fetchRoles ({ rootState, commit }) {
+    const http = http_with_auth(rootState.user.jwt);
     http.get(`/person-roles?without-relationships`).then( response => {
       const roles = response.data.data.map( r =>  {
         return { id: r.id, ...r.attributes, }
@@ -59,7 +61,7 @@ const actions = {
     });
   },
 
-  addOne ({ commit }, person) {
+  addOne ({rootState, commit }, person) {
     const data = { type: 'person', attributes: { ...person }}
     return http.post(`persons`, {data})
       .then(response => {
@@ -94,13 +96,14 @@ const actions = {
           }
         }
       }}
+    const http = http_with_auth(rootState.user.jwt);
     return http.post(`/persons-having-roles`, data).then( response => {
         return response.data.data
       })
       .catch(error => console.log(error))
   },
   unlinkFromDocument ({ commit, rootState }, {relationId, personId, roleId}) {
-    const http = http_with_csrf_token()
+    const http = http_with_auth(rootState.user.jwt)
     return http.delete(`/persons-having-roles/${relationId}`)
       .then (() => this.dispatch('document/removePerson', relationId))
       .catch(error => console.log(error))

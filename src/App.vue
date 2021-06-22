@@ -14,7 +14,7 @@ export default {
     return {
       layout: LayoutDefault,
     };
-  },
+  }
 };
 </script>
 

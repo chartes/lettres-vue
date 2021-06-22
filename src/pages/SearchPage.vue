@@ -5,9 +5,7 @@
         v-if="showAdvancedSearchForm"
         class="column is-one-third search-form-column"
       >
-        <aside
-          class="advanced-search-form"
-        >
+        <aside class="advanced-search-form">
           <advanced-search-form />
         </aside>
       </div>
@@ -33,7 +31,8 @@
                 v-if="selectedCollection"
                 class="collection-description"
               >
-                {{ selectedCollection.description }} (paragraphe descriptif de la collection)
+                {{ selectedCollection.description }} (paragraphe descriptif de la
+                collection)
               </p>
             </div>
           </div>
@@ -45,55 +44,53 @@
 </template>
 
 <script>
-import { mapState, mapActions, mapGetters } from 'vuex';
+import { mapState, mapActions, mapGetters } from "vuex";
 
 import CollectionTreeNode from "@/components/CollectionTreeNode";
-import DocumentList from '@/components/sections/DocumentList'
-import AdvancedSearchForm from '@/components/AdvancedSearchForm.vue';
+import DocumentList from "@/components/sections/DocumentList";
+import AdvancedSearchForm from "@/components/AdvancedSearchForm.vue";
 
 export default {
-    name: "SearchPage",
-    components: {
-      CollectionTreeNode,
-      DocumentList,
-      AdvancedSearchForm
-    },
-    computed: {
-      ...mapState('user', ['current_user']),
-      ...mapState('layout', ['showAdvancedSearchForm']),
-      ...mapState('collections', {
-        'collectionTree': 'fullHierarchy',
-        'isCollectionLoading': 'isLoading'
-      }),
-      ...mapState('search', ['selectedCollectionId', 'documents', 'loadingStatus']),
-      ...mapGetters('collections', ['searchWithinTree']),
+  name: "SearchPage",
+  components: {
+    CollectionTreeNode,
+    DocumentList,
+    AdvancedSearchForm,
+  },
+  computed: {
+    ...mapState("user", ["current_user"]),
+    ...mapState("layout", ["showAdvancedSearchForm"]),
+    ...mapState("collections", {
+      collectionTree: "fullHierarchy",
+      isCollectionLoading: "isLoading",
+    }),
+    ...mapState("search", ["selectedCollectionId", "documents", "loadingStatus"]),
+    ...mapGetters("collections", ["searchWithinTree"]),
 
-      selectedCollection() {
-        if (this.selectedCollectionId) {
-          return this.searchWithinTree(this.selectedCollectionId)
-        } else {
-          return null;
-        }
-      }
-
-    },
-    watch: {
-      selectedCollection() {
-        this.performSearch()
+    selectedCollection() {
+      if (this.selectedCollectionId) {
+        return this.searchWithinTree(this.selectedCollectionId);
+      } else {
+        return null;
       }
     },
-    created() {
-      this.fetchCollections()
+  },
+  watch: {
+    selectedCollection() {
+      this.performSearch();
     },
-    methods: {
-      ...mapActions('search', ['performSearch', 'setSelectedCollectionId']),
-      ...mapActions('collections', {'fetchCollections': 'fetchAll'}),
-
-    },
-}
+  },
+  created() {
+    this.fetchCollections();
+  },
+  methods: {
+    ...mapActions("search", ["performSearch", "setSelectedCollectionId"]),
+    ...mapActions("collections", { fetchCollections: "fetchAll" }),
+  },
+};
 </script>
 
-<style  scoped lang="scss">
+<style scoped lang="scss">
 @import "@/assets/sass/main.scss";
 .columns {
   height: 100%;
@@ -107,11 +104,10 @@ export default {
   height: calc(100% + 72px);
 }
 
-
 .collection-selection {
   top: 24px;
   position: relative;
-  min-height: 170px; 
+  min-height: 170px;
 }
 .progress-container {
   margin: 20px;

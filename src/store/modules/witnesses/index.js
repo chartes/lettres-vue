@@ -1,5 +1,4 @@
-import {http} from '../../../modules/http-common';
-import  Vue from "vue";
+import {http_with_auth} from '../../../modules/http-common';
 
 export const getInstitution = function (included) {
   let found = included.find(item => item.type === 'institution');
@@ -23,7 +22,8 @@ const mutations = {
 
 const actions = {
 
-  fetchOne ({ commit }, id) {
+  fetchOne ({ commit, rootState }, id) {
+    const http = http_with_auth(rootState.user.jwt);
     return http.get(`/witnesses/${id}?include=institution`).then( response => {
       const witness = {
         id: response.data.data.id,

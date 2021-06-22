@@ -70,12 +70,9 @@
     import { mapState } from 'vuex';
 
     import ModalForm from './ModalForm';
-    import FieldLabel from './fields/FieldLabel';
-    import FieldSelect from './fields/SelectField';
-    import FieldText from './fields/TextField';
     import SelectAutocompleteField from './fields/SelectAutocompleteField';
     import LoadingIndicator from '../ui/LoadingIndicator';
-    import http_with_csrf_token from "../../modules/http-common";
+    import http_with_auth from "../../modules/http-common";
 
     export default {
         name: "LockForm",
@@ -101,6 +98,34 @@
                 description: null,
                 
                 loading: true
+            }
+        },
+        computed: {
+            ...mapState('user', ['current_user', 'usersSearchResults', 'jwt']) ,
+            nextLock() {
+                if (this.nextLockOwner) {
+                    return {
+                        type: 'lock',
+                        attributes: {
+                            description: this.description ? this.description : this.defaultDescription,
+                            'object-type': 'document',
+                            'object-id' : this.docId
+                        },
+                        relationships: {
+                            user: {
+                                data: [{type: 'user', id: this.nextLockOwner.id}]
+                            }
+                        }
+                    }
+                } else {
+                    return null;
+                }
+            },
+            canBeLocked() {
+                return this.current_user.isAdmin ? true : this.lock.id === null ;
+            },
+            canBeUnlocked() {
+                return this.lock.id ? (this.current_user.isAdmin ? true : this.lockOwner && this.lockOwner.id === this.current_user.id) : false;
             }
         },
         watch: {
@@ -132,7 +157,7 @@
                 this.lock = this.$props.currentLock;
                 /* fetch lock user info*/
                 if (this.lock && this.lock.id) {
-                    const http = http_with_csrf_token();
+                    const http = http_with_auth(this.jwt);
                     http.get(`/locks/${this.lock.id}/user`).then(response => {
                         this.lockOwner = response.data.data;
                         this.loading = false;
@@ -152,34 +177,6 @@
             },
             resetDescription() {
                 this.description = this.defaultDescription;
-            }
-        },
-        computed: {
-            ...mapState('user', ['current_user', 'usersSearchResults']) ,
-            nextLock() {
-                if (this.nextLockOwner) {
-                    return {
-                        type: 'lock',
-                        attributes: {
-                            description: this.description ? this.description : this.defaultDescription,
-                            'object-type': 'document',
-                            'object-id' : this.docId
-                        },
-                        relationships: {
-                            user: {
-                                data: [{type: 'user', id: this.nextLockOwner.id}]
-                            }
-                        }
-                    }
-                } else {
-                    return null;
-                }
-            },
-            canBeLocked() {
-                return this.current_user.isAdmin ? true : this.lock.id === null ;
-            },
-            canBeUnlocked() {
-                return this.lock.id ? (this.current_user.isAdmin ? true : this.lockOwner && this.lockOwner.id === this.current_user.id) : false;
             }
         }
     }

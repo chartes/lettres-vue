@@ -1,4 +1,4 @@
-import http_with_csrf_token from '../../../modules/http-common';
+import http_with_auth from '../../../modules/http-common';
 import {getUser} from "../../../modules/change-helpers";
 import Vue from "vue";
 
@@ -49,8 +49,8 @@ const mutations = {
 };
 
 const actions = {
-  fetchFullLocks ({ commit }, {pageId, pageSize, filters}) {
-    const http = http_with_csrf_token();
+  fetchFullLocks ({ rootState, commit }, {pageId, pageSize, filters}) {
+    const http = http_with_auth(rootState.user.jwt);
     return http.get(`locks?include=user&sort=-expiration-date&page[size]=${pageSize}&page[number]=${pageId}${filters ? '&'+filters : ''}`).then( response => {
       commit('UPDATE_FULL_LOCKS', {
         locks: response.data.data,
@@ -60,22 +60,22 @@ const actions = {
     });
   },
 
-  fetchLockOwner({commit}, {docId, lockId}) {
-    const http = http_with_csrf_token();
+  fetchLockOwner({ rootState, commit}, {docId, lockId}) {
+    const http = http_with_auth(rootState.user.jwt);
     return http.get(`/locks/${lockId}/user`).then(response => {
       commit('FETCH_LOCK_OWNER', {docId: docId, user: response.data.data});
     });
   },
 
-  saveLock({commit}, lock) {
-    const http = http_with_csrf_token();
+  saveLock({ rootState, commit}, lock) {
+    const http = http_with_auth(rootState.user.jwt);
     return http.post(`/locks`, {data: lock}).then(response => {
       commit('SAVE_LOCK', response.data.data);
     });
   },
 
-  removeLock({commit}, lock) {
-    const http = http_with_csrf_token();
+  removeLock({ rootState, commit}, lock) {
+    const http = http_with_auth(rootState.user.jwt);
     return http.delete(`locks/${lock.id}`, {data : {data: [{id: lock.id, type: 'lock'}]}}).then(response => {
       commit('REMOVE_LOCK');
       commit('RESET_LOCK_OWNER', {docId: lock['object-id']});

@@ -1,5 +1,5 @@
 import {http} from '../../../modules/http-common';
-import http_with_csrf_token from '../../../modules/http-common';
+import http_with_auth from '../../../modules/http-common';
 import findPlace from '../../../modules/ref-providers/wikidata';
 
 const state = {
@@ -35,8 +35,9 @@ const mutations = {
 
 const actions = {
 
-    search({commit}, what) {
+    search({commit, rootState}, what) {
         commit('SEARCH_RESULTS', [])
+        const http = http_with_auth(rootState.user.jwt);
         http.get(`/search?query=*${what}*&index=lettres__${process.env.NODE_ENV}__placenames&without-relationships`)
             .then(response => {
                 const placenames = response.data.data.map(inst => {
@@ -52,7 +53,8 @@ const actions = {
             commit('WIKIDATA_SEARCH_RESULTS', result)
         });
     },
-    fetchRoles({commit}) {
+    fetchRoles({commit, rootState}) {
+        const http = http_with_auth(rootState.user.jwt);
         http.get(`/placename-roles?without-relationships`).then(response => {
             const roles = response.data.data.map(r => {
                 return {id: r.id, ...r.attributes,}
@@ -61,8 +63,9 @@ const actions = {
         });
     },
 
-    addOne({commit}, placename) {
+    addOne({commit, rootState}, placename) {
         const data = {type: 'placename', attributes: {...placename}}
+        const http = http_with_auth(rootState.user.jwt);
         return http.post(`placenames`, {data})
             .then(response => {
                 return response.data.data
@@ -98,12 +101,14 @@ const actions = {
                 }
             }
         }
+        const http = http_with_auth(rootState.user.jwt);
         return http.post(`/placenames-having-roles`, data).then(response => {
             return response.data.data
         })
             .catch(error => console.log(error))
     },
     unlinkFromDocument({commit, rootState}, {relationId}) {
+        const http = http_with_auth(rootState.user.jwt);
         return http.delete(`/placenames-having-roles/${relationId}`)
             .then(() => this.dispatch('document/removePlacename', relationId))
             .catch(error => console.log(error))
