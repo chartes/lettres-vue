@@ -85,6 +85,7 @@ const actions = {
       })
   },
   logout({commit}) {
+    console.log("logout")
     commit('SET_JWT_TOKEN', null)
     commit('SET_USER_DATA', null)
   },

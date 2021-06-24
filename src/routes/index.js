@@ -121,9 +121,15 @@ router.beforeEach(async (to, from, next) => {
 
   const jwt = store.state.user.jwt
   if (jwt) {
-      const response = await getCurrentUser(jwt);
-      //console.log("trying to log back with jwt:", jwt, response.data)
-      store.dispatch("user/setUserData", response.data.user_data)
+      try {
+        const response = await getCurrentUser(jwt);
+        //console.log("trying to log back with jwt:", jwt, response.data)
+        store.dispatch("user/setUserData", response.data.user_data)
+      } catch (e) {
+        console.log(e)
+        store.dispatch('user/logout')
+      }
+
   }
  
   next();
