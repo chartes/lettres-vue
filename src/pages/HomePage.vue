@@ -1,28 +1,30 @@
 <template>
   <div>
     Home Page
+    <div class="main-form">
+      <wizard-form />
+    </div>
   </div>
 </template>
 
 <script>
-
-import { mapState, mapActions } from "vuex";
+import WizardForm from "@/components/forms/wizards/WizardForm";
 
 export default {
-    name: "HomePage",
-    components: {
-    },
-     data(){
-       return {
-       }
-    },
-    methods: {
-    }
-}
+  name: "HomePage",
+  components: {
+    WizardForm,
+  },
+  data() {
+    return {};
+  },
+  methods: {},
+};
 </script>
 
 <style scoped lang="scss">
-@import "@/assets/sass/main.scss";
-
-
+.main-form {
+  width: 90%;
+  height: 80vh;
+}
 </style>

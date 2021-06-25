@@ -4,20 +4,15 @@
   </component>
 </template>
 
-
 <script>
-import LayoutDefault from './layouts/LayoutDefault'
+import LayoutDefault from "./layouts/LayoutDefault";
 
 export default {
-  name: 'App',
+  name: "App",
   data() {
     return {
       layout: LayoutDefault,
     };
-  }
+  },
 };
 </script>
-
-<style lang="scss">
-@import './assets/sass/main.scss'
-</style>

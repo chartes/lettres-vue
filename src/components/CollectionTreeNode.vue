@@ -95,7 +95,7 @@ export default {
   .is-active {
     border-radius: 2px;
     color: $menu-item-active-color;
-    background-color: $purple;
+    background-color: $primary;
   }
 
   .tag {

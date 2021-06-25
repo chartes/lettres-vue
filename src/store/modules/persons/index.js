@@ -1,4 +1,3 @@
-import {http} from '../../../modules/http-common';
 import http_with_auth from '../../../modules/http-common';
 import findPerson from '../../../modules/ref-providers/wikidata';
 
@@ -63,6 +62,7 @@ const actions = {
 
   addOne ({rootState, commit }, person) {
     const data = { type: 'person', attributes: { ...person }}
+    const http = http_with_auth(rootState.user.jwt)
     return http.post(`persons`, {data})
       .then(response => {
         return response.data.data

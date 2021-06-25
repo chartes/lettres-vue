@@ -8,7 +8,7 @@
       <div class="columns">
         <div
           v-show="showLeftSideBar"
-          class="column is-2 "
+          class="column is-2"
         >
           <side-bar />
         </div>
@@ -21,15 +21,15 @@
         >
           <div style="display: flex">
             <div
-              class=" hide-button  is-vertical divider-left"
+              class="hide-button is-vertical divider-left"
               @click="toggleLeftSideBar"
             />
-            <div class=" main-column-content">
+            <div class="main-column-content">
               <slot />
             </div>
             <div
               v-show="iiifManifestUrl"
-              class=" hide-button  is-vertical divider-right"
+              class="hide-button is-vertical divider-right"
               @click="toggleRightSideBar"
             />
           </div>
@@ -37,7 +37,7 @@
         <div
           v-show="rightSideBarIsVisible"
           class="column is-5"
-          style="background-color: #F6F6F6"
+          style="background-color: #f6f6f6"
         >
           <mirador-viewer
             v-if="iiifManifestUrl"
@@ -50,11 +50,13 @@
     <footer class="footer">
       <nav class="level">
         <div class="level-item has-text-centered">
-          <span 
+          <span
             class="cths-logo mr-5 pt-3"
-            v-html="require('@/assets/images/logos/Comité_des_travaux_historiques_et_scientifiques_logo.svg')"
+            v-html="
+              require('@/assets/images/logos/Comité_des_travaux_historiques_et_scientifiques_logo.svg')
+            "
           />
-          <img 
+          <img
             class="enc-logo ml-5 pt-3"
             src="@/assets/images/logos/logo-ecole-nationale-des-chartes-header.png"
           >
@@ -75,10 +77,7 @@ export default {
   components: {
     NavBar,
     SideBar,
-    MiradorViewer: () =>
-      import(
-        "@/components/MiradorViewer"
-      )
+    MiradorViewer: () => import("@/components/MiradorViewer"),
   },
 
   computed: {
@@ -98,26 +97,24 @@ export default {
     },
 
     rightSideBarIsVisible() {
-     return this.showRightSideBar && ['document'].indexOf(this.$route.name) > -1 
-    }
+      return this.showRightSideBar && ["document"].indexOf(this.$route.name) > -1;
+    },
   },
   watch: {
     iiifManifestUrl() {
       if (!this.iiifManifestUrl) {
         //this.hideRightSideBar();
       }
-    }
+    },
   },
-  created() {
-   
-  },
+  created() {},
   methods: {
     ...mapActions("layout", [
       "toggleLeftSideBar",
       "toggleRightSideBar",
-      "hideRightSideBar"
-    ])
-  }
+      "hideRightSideBar",
+    ]),
+  },
 };
 </script>
 
@@ -141,21 +138,21 @@ export default {
   }
 }
 .main {
-  background-color: $white-ter;
   min-height: 100%;
 }
 .main-column {
-  background-color: $white;
+  background-color: $beige-lighter;
   padding-bottom: 0;
 }
 .main-column-content {
   padding: 30px;
   width: 100%;
+  background-color: white;
 }
 .hide-button {
   width: 15px;
   min-height: 100vh;
-  background-color: $white-ter;
+  background-color: $beige-lighter;
   border: 1px solid;
   border-top: none;
   border-bottom: none;
@@ -165,12 +162,12 @@ export default {
   }
   &.divider-left {
     padding-left: 25px;
-    border-right-color:  $nice-grey;
+    border-right-color: $nice-grey;
     border-left: none;
   }
   &.divider-right {
     padding-right: 25px;
-    border-left-color:  $nice-grey;
+    border-left-color: $nice-grey;
     border-right: none;
   }
 }
@@ -179,11 +176,10 @@ export default {
   padding: 0;
 }
 footer {
-  background-color: $nice-grey  !important;
+  background-color: $nice-grey !important;
   margin-top: 12px;
   padding: 15px 0px 25px !important;
   z-index: 10000;
-
 
   .enc-logo {
     height: 55px;
@@ -191,6 +187,5 @@ footer {
   .cths-logo {
     width: 80px;
   }
-
 }
 </style>

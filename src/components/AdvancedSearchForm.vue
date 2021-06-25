@@ -1,32 +1,17 @@
 <template>
   <section class="advanced-search-form">
-    <span
-      class="close-form"
-      @click="hideAdvancedSearchForm"
-    >
-      <i
-        class="far fa-times-circle"
-      />
+    <span class="close-form" @click="hideAdvancedSearchForm">
+      <i class="far fa-times-circle" />
     </span>
     <div class="section grid-container">
-      <div class="divider is-left">
-        Recherche
-      </div>
+      <div class="divider is-left">Recherche</div>
       <section class="search-section">
-        <search-box
-          v-if="!showLeftSideBar"
-          class="mt-5 mb-2"
-        />
+        <search-box v-if="!showLeftSideBar" class="mt-5 mb-2" />
       </section>
 
-      <div class="divider is-left">
-        Dates de temps
-      </div>
+      <div class="divider is-left">Dates de temps</div>
       <section class="date-section">
-        <b-field
-          label="Date de rédaction"
-          grouped
-        >
+        <b-field label="Date de rédaction" grouped>
           <b-autocomplete
             v-model="creationDateFrom.day"
             :data="filteredCreationDateFromDay"
@@ -34,12 +19,20 @@
             open-on-focus
             clearable
             class="day-search"
-            @input="option => {creationDateFrom.selection.day = option; creationDateFrom = cloneDeep(creationDateFrom) }"
-            @select="option => {creationDateFrom.selection.day = option; creationDateFrom = cloneDeep(creationDateFrom) }"
+            @input="
+              (option) => {
+                creationDateFrom.selection.day = option;
+                creationDateFrom = cloneDeep(creationDateFrom);
+              }
+            "
+            @select="
+              (option) => {
+                creationDateFrom.selection.day = option;
+                creationDateFrom = cloneDeep(creationDateFrom);
+              }
+            "
           >
-            <template #empty>
-              Aucun résultat
-            </template>
+            <template #empty> Aucun résultat </template>
           </b-autocomplete>
 
           <b-autocomplete
@@ -49,14 +42,22 @@
             open-on-focus
             clearable
             class="month-search"
-            @input="option => {creationDateFrom.selection.month = option; creationDateFrom = cloneDeep(creationDateFrom) }"
-            @select="option => {creationDateFrom.selection.month = option; creationDateFrom = cloneDeep(creationDateFrom) }"
+            @input="
+              (option) => {
+                creationDateFrom.selection.month = option;
+                creationDateFrom = cloneDeep(creationDateFrom);
+              }
+            "
+            @select="
+              (option) => {
+                creationDateFrom.selection.month = option;
+                creationDateFrom = cloneDeep(creationDateFrom);
+              }
+            "
           >
-            <template #empty>
-              Aucun résultat
-            </template>
+            <template #empty> Aucun résultat </template>
           </b-autocomplete>
-        
+
           <b-autocomplete
             v-model="creationDateFrom.year"
             :data="filteredCreationDateFromYear"
@@ -64,12 +65,20 @@
             open-on-focus
             clearable
             class="year-search"
-            @input="option => {creationDateFrom.selection.year = option; creationDateFrom = cloneDeep(creationDateFrom) }"
-            @select="option => {creationDateFrom.selection.year = option; creationDateFrom = cloneDeep(creationDateFrom) }"
+            @input="
+              (option) => {
+                creationDateFrom.selection.year = option;
+                creationDateFrom = cloneDeep(creationDateFrom);
+              }
+            "
+            @select="
+              (option) => {
+                creationDateFrom.selection.year = option;
+                creationDateFrom = cloneDeep(creationDateFrom);
+              }
+            "
           >
-            <template #empty>
-              Aucun résultat
-            </template>
+            <template #empty> Aucun résultat </template>
           </b-autocomplete>
         </b-field>
 
@@ -78,14 +87,10 @@
         to
         -->
         <b-field>
-          <b-checkbox v-model="withDateRange">
-            Plage de dates (jusqu'au…)
-          </b-checkbox>
+          <b-checkbox v-model="withDateRange"> Plage de dates (jusqu'au…) </b-checkbox>
         </b-field>
 
-        <b-field
-          grouped
-        >
+        <b-field grouped>
           <b-autocomplete
             v-model="creationDateTo.day"
             :data="filteredCreationDateToDay"
@@ -94,12 +99,20 @@
             clearable
             class="day-search"
             :disabled="!withDateRange"
-            @input="option => {creationDateTo.selection.day = option; creationDateTo = cloneDeep(creationDateTo) }"
-            @select="option => {creationDateTo.selection.day = option; creationDateTo = cloneDeep(creationDateTo) }"
+            @input="
+              (option) => {
+                creationDateTo.selection.day = option;
+                creationDateTo = cloneDeep(creationDateTo);
+              }
+            "
+            @select="
+              (option) => {
+                creationDateTo.selection.day = option;
+                creationDateTo = cloneDeep(creationDateTo);
+              }
+            "
           >
-            <template #empty>
-              Aucun résultat
-            </template>
+            <template #empty> Aucun résultat </template>
           </b-autocomplete>
 
           <b-autocomplete
@@ -110,14 +123,22 @@
             clearable
             class="month-search"
             :disabled="!withDateRange"
-            @input="option => {creationDateTo.selection.month = option; creationDateTo = cloneDeep(creationDateTo) }"
-            @select="option => {creationDateTo.selection.month = option; creationDateTo = cloneDeep(creationDateTo) }"
+            @input="
+              (option) => {
+                creationDateTo.selection.month = option;
+                creationDateTo = cloneDeep(creationDateTo);
+              }
+            "
+            @select="
+              (option) => {
+                creationDateTo.selection.month = option;
+                creationDateTo = cloneDeep(creationDateTo);
+              }
+            "
           >
-            <template #empty>
-              Aucun résultat
-            </template>
+            <template #empty> Aucun résultat </template>
           </b-autocomplete>
-        
+
           <b-autocomplete
             v-model="creationDateTo.year"
             :data="filteredCreationDateToYear"
@@ -126,20 +147,25 @@
             clearable
             class="year-search"
             :disabled="!withDateRange"
-            @input="option => {creationDateTo.selection.year = option; creationDateTo = cloneDeep(creationDateTo) }"
-            @select="option => {creationDateTo.selection.year = option; creationDateTo = cloneDeep(creationDateTo) }"
+            @input="
+              (option) => {
+                creationDateTo.selection.year = option;
+                creationDateTo = cloneDeep(creationDateTo);
+              }
+            "
+            @select="
+              (option) => {
+                creationDateTo.selection.year = option;
+                creationDateTo = cloneDeep(creationDateTo);
+              }
+            "
           >
-            <template #empty>
-              Aucun résultat
-            </template>
+            <template #empty> Aucun résultat </template>
           </b-autocomplete>
         </b-field>
       </section>
 
-    
-      <div class="divider is-left">
-        Dates de lieu
-      </div>
+      <div class="divider is-left">Dates de lieu</div>
       <section class="places-section">
         <b-field label="Expédition">
           <b-taginput
@@ -167,17 +193,11 @@
         </b-field>
       </section>
 
-      <div class="divider is-left">
-        Correspondants
-      </div>
+      <div class="divider is-left">Correspondants</div>
       <section class="correspondents-section">
         <!-- expéditeur -->
-        <b-field
-          v-for="(c, i) in correspondentFrom"
-          :key="`from_${i}`"
-          grouped
-        >
-          <span :style="i===0 ? '' : 'visibility: hidden'">De</span> 
+        <b-field v-for="(c, i) in correspondentFrom" :key="`from_${i}`" grouped>
+          <span :style="i === 0 ? '' : 'visibility: hidden'">De</span>
           <!-- person -->
           <b-autocomplete
             v-model="correspondentFrom[i].person"
@@ -187,11 +207,9 @@
             clearable
             class="year-search"
             expanded
-            @select="option => correspondentFrom[i].selection.person = option"
+            @select="(option) => (correspondentFrom[i].selection.person = option)"
           >
-            <template #empty>
-              Aucun résultat
-            </template>
+            <template #empty> Aucun résultat </template>
           </b-autocomplete>
           <!-- function -->
           <b-autocomplete
@@ -202,20 +220,18 @@
             clearable
             class="year-search"
             expanded
-            @select="option => c.selection.func = option"
+            @select="(option) => (c.selection.func = option)"
           >
-            <template #empty>
-              Aucun résultat
-            </template>
+            <template #empty> Aucun résultat </template>
           </b-autocomplete>
-          
-          <b-button  
-            v-if="i===correspondentFrom.length-1"
+
+          <b-button
+            v-if="i === correspondentFrom.length - 1"
             icon-left="plus"
             type="is-light"
             @click="addCorrespondentFrom"
           />
-          <b-button  
+          <b-button
             v-else
             icon-left="minus"
             type="is-light"
@@ -224,12 +240,8 @@
         </b-field>
 
         <!-- destinataire -->
-        <b-field
-          v-for="(c, i) in correspondentTo"
-          :key="`to_${i}`"
-          grouped
-        >
-          <span :style="i===0 ? '' : 'visibility: hidden'">À</span> 
+        <b-field v-for="(c, i) in correspondentTo" :key="`to_${i}`" grouped>
+          <span :style="i === 0 ? '' : 'visibility: hidden'">À</span>
           <!-- person -->
           <b-autocomplete
             v-model="correspondentTo[i].person"
@@ -239,11 +251,9 @@
             clearable
             class="year-search"
             expanded
-            @select="option => correspondentTo[i].selection.person = option"
+            @select="(option) => (correspondentTo[i].selection.person = option)"
           >
-            <template #empty>
-              Aucun résultat
-            </template>
+            <template #empty> Aucun résultat </template>
           </b-autocomplete>
           <!-- function -->
           <b-autocomplete
@@ -254,20 +264,18 @@
             clearable
             class="year-search"
             expanded
-            @select="option => c.selection.func = option"
+            @select="(option) => (c.selection.func = option)"
           >
-            <template #empty>
-              Aucun résultat
-            </template>
+            <template #empty> Aucun résultat </template>
           </b-autocomplete>
-          
-          <b-button  
-            v-if="i===correspondentTo.length-1"
+
+          <b-button
+            v-if="i === correspondentTo.length - 1"
             icon-left="plus"
             type="is-light"
             @click="addCorrespondentTo"
           />
-          <b-button  
+          <b-button
             v-else
             icon-left="minus"
             type="is-light"
@@ -276,16 +284,11 @@
         </b-field>
       </section>
 
-
-      <div class="divider is-left">
-        Options d'affichage
-      </div>
+      <div class="divider is-left">Options d'affichage</div>
       <section class="display-section">
         <div class="with-status">
           <b-field>
-            <b-checkbox v-model="showStatuses">
-              Afficher les badges
-            </b-checkbox>
+            <b-checkbox v-model="showStatuses"> Afficher les badges </b-checkbox>
           </b-field>
         </div>
       </section>
@@ -294,179 +297,215 @@
 </template>
 
 <script>
-import {cloneDeep as _cloneDeep} from 'lodash';
+import { cloneDeep as _cloneDeep } from "lodash";
 
-import { mapState, mapActions } from 'vuex';
+import { mapState, mapActions } from "vuex";
 import SearchBox from "@/components/SearchBox";
 
-import {templates, labels} from "@/store/modules/search";
+import { templates, labels } from "@/store/modules/search";
 
 export default {
-    name: "AdvancedSearchForm",
-    components: {
-      SearchBox
-    },
-    data() {
-
-        const availablePlacesTags = ['Nice', 'Brest', 'Montpellier']
-        const correspondentTemplate = {
-            person: '',
-            func: '',
-            selection: {
-              person:null,
-              func: null
-            }
-        }
- 
-        return {
-          availableYears: [].concat(Array.from({length: 400}, (x, i) => (1300+i).toString())),
-          availableMonths: labels.monthLabels.map(m => this.capitalize(m)),
-          availableDays: [].concat(Array.from({length: 31}, (x, i) => (1+i).toString().padStart(2, '0'))),
-          availableCorrespondents: ['Caterine', 'Robert de la Mark', 'Salviati'].sort(),
-          availableFunctions: ['Duc', 'Prince héritier', 'Régente', 'Comte', 'Cardinal'].sort(),
-          availablePlacesTags: availablePlacesTags,
-
-          correspondentTemplate,
-          correspondentFrom:[this.cloneDeep(correspondentTemplate)],
-          correspondentTo:[this.cloneDeep(correspondentTemplate)],
-
-          filteredPlacesFromTags: availablePlacesTags,
-          filteredPlacesToTags: availablePlacesTags,
-          placesTagsFrom: [],
-          placesTagsTo: []
-        }
-    },
-    computed: {
-      ...mapState('layout', ['showLeftSideBar']),
-      ...mapState('search', {
-        withStatus:'withStatus',
-        _withDateRange:'withDateRange',
-        _creationDateFrom: 'creationDateFrom',
-        _creationDateTo: 'creationDateTo'
-      }),
-
-      showStatuses: {
-        get: function() { return this.withStatus },
-        set: function(value) {
-          this.setWithStatus(value)
-          this.performSearch()
-        } 
+  name: "AdvancedSearchForm",
+  components: {
+    SearchBox,
+  },
+  data() {
+    const availablePlacesTags = ["Nice", "Brest", "Montpellier"];
+    const correspondentTemplate = {
+      person: "",
+      func: "",
+      selection: {
+        person: null,
+        func: null,
       },
+    };
 
-      withDateRange: {
-        get: function() { return this._withDateRange },
-        set: function(value) {
-          //console.log('cdt', value)
-          this.setWithDateRange(value)
-        } 
+    return {
+      availableYears: [].concat(
+        Array.from({ length: 400 }, (x, i) => (1300 + i).toString())
+      ),
+      availableMonths: labels.monthLabels.map((m) => this.capitalize(m)),
+      availableDays: [].concat(
+        Array.from({ length: 31 }, (x, i) => (1 + i).toString().padStart(2, "0"))
+      ),
+      availableCorrespondents: ["Caterine", "Robert de la Mark", "Salviati"].sort(),
+      availableFunctions: [
+        "Duc",
+        "Prince héritier",
+        "Régente",
+        "Comte",
+        "Cardinal",
+      ].sort(),
+      availablePlacesTags: availablePlacesTags,
+
+      correspondentTemplate,
+      correspondentFrom: [this.cloneDeep(correspondentTemplate)],
+      correspondentTo: [this.cloneDeep(correspondentTemplate)],
+
+      filteredPlacesFromTags: availablePlacesTags,
+      filteredPlacesToTags: availablePlacesTags,
+      placesTagsFrom: [],
+      placesTagsTo: [],
+    };
+  },
+  computed: {
+    ...mapState("layout", ["showLeftSideBar"]),
+    ...mapState("search", {
+      withStatus: "withStatus",
+      _withDateRange: "withDateRange",
+      _creationDateFrom: "creationDateFrom",
+      _creationDateTo: "creationDateTo",
+    }),
+
+    showStatuses: {
+      get: function () {
+        return this.withStatus;
       },
-
-      creationDateFrom: {
-        get: function() { return this._creationDateFrom },
-        set: function(value) {
-          console.log('cdf', value)
-          this.setCreationDateFrom(value)
-        } 
-      },
-
-      creationDateTo: {
-        get: function() { return this._creationDateTo },
-        set: function(value) {
-          console.log('cdt', value)
-          this.setCreationDateTo(value)
-        } 
-      },
-
-      filteredCreationDateFromYear() { return this.filteredDataArray(this.availableYears, this.creationDateFrom.year) },
-      filteredCreationDateFromMonth() { return this.filteredDataArray(this.availableMonths, this.creationDateFrom.month) },
-      filteredCreationDateFromDay() { return this.filteredDataArray(this.availableDays, this.creationDateFrom.day) },
-
-      filteredCreationDateToYear() { return this.filteredDataArray(this.availableYears, this.creationDateTo.year) },
-      filteredCreationDateToMonth() { return this.filteredDataArray(this.availableMonths, this.creationDateTo.month) },
-      filteredCreationDateToDay() { return this.filteredDataArray(this.availableDays, this.creationDateTo.day) },
-      
-      filteredCorrespondentsFrom() { 
-        return this.filterCorrespondent(this.correspondentFrom)
-      },
-      filteredCorrespondentsTo() { 
-        return this.filterCorrespondent(this.correspondentTo)
+      set: function (value) {
+        this.setWithStatus(value);
+        this.performSearch();
       },
     },
-    watch: {
-      withDateRange() {
-        /* initialize the second date when the switch is triggered*/
-        this.creationDateTo = this.withDateRange ? this.cloneDeep(this.creationDateFrom) : this.cloneDeep(templates.creationDateTemplate)
-      },
 
-      creationDateFrom() {
-        this.performSearch()
+    withDateRange: {
+      get: function () {
+        return this._withDateRange;
       },
-      creationDateTo(){
-        this.performSearch()
+      set: function (value) {
+        //console.log('cdt', value)
+        this.setWithDateRange(value);
+      },
+    },
+
+    creationDateFrom: {
+      get: function () {
+        return this._creationDateFrom;
+      },
+      set: function (value) {
+        console.log("cdf", value);
+        this.setCreationDateFrom(value);
+      },
+    },
+
+    creationDateTo: {
+      get: function () {
+        return this._creationDateTo;
+      },
+      set: function (value) {
+        console.log("cdt", value);
+        this.setCreationDateTo(value);
+      },
+    },
+
+    filteredCreationDateFromYear() {
+      return this.filteredDataArray(this.availableYears, this.creationDateFrom.year);
+    },
+    filteredCreationDateFromMonth() {
+      return this.filteredDataArray(this.availableMonths, this.creationDateFrom.month);
+    },
+    filteredCreationDateFromDay() {
+      return this.filteredDataArray(this.availableDays, this.creationDateFrom.day);
+    },
+
+    filteredCreationDateToYear() {
+      return this.filteredDataArray(this.availableYears, this.creationDateTo.year);
+    },
+    filteredCreationDateToMonth() {
+      return this.filteredDataArray(this.availableMonths, this.creationDateTo.month);
+    },
+    filteredCreationDateToDay() {
+      return this.filteredDataArray(this.availableDays, this.creationDateTo.day);
+    },
+
+    filteredCorrespondentsFrom() {
+      return this.filterCorrespondent(this.correspondentFrom);
+    },
+    filteredCorrespondentsTo() {
+      return this.filterCorrespondent(this.correspondentTo);
+    },
+  },
+  watch: {
+    withDateRange() {
+      /* initialize the second date when the switch is triggered*/
+      this.creationDateTo = this.withDateRange
+        ? this.cloneDeep(this.creationDateFrom)
+        : this.cloneDeep(templates.creationDateTemplate);
+    },
+
+    creationDateFrom() {
+      this.performSearch();
+    },
+    creationDateTo() {
+      this.performSearch();
+    },
+  },
+  created() {},
+  methods: {
+    ...mapActions("search", [
+      "performSearch",
+      "setWithStatus",
+      "setWithDateRange",
+      "setCreationDateFrom",
+      "setCreationDateTo",
+    ]),
+    ...mapActions("layout", ["hideAdvancedSearchForm"]),
+
+    capitalize(s) {
+      return s[0].toUpperCase() + s.slice(1);
+    },
+
+    filteredDataArray(data, value) {
+      return data.filter((option) => {
+        return option.toLowerCase().startsWith(value.toLowerCase());
+      });
+    },
+
+    getFilteredTags(text) {
+      this.filteredPlacesTagsFrom = this.availablePlacesTags.filter((option) => {
+        return option.toString().toLowerCase().startsWith(text.toLowerCase());
+      });
+    },
+
+    cloneDeep(obj) {
+      return _cloneDeep(obj);
+    },
+
+    filterCorrespondent(correspondents) {
+      let persons = [];
+      let functions = [];
+      for (let i = 0; i < correspondents.length; i++) {
+        persons.push(
+          this.filteredDataArray(this.availableCorrespondents, correspondents[i].person)
+        );
+        functions.push(
+          this.filteredDataArray(this.availableFunctions, correspondents[i].func)
+        );
       }
+
+      return {
+        persons,
+        functions,
+      };
     },
-    created() {
-     
+
+    addCorrespondentFrom() {
+      this.correspondentFrom.push(this.cloneDeep(this.correspondentTemplate));
     },
-    methods: {
-      ...mapActions('search', ['performSearch', 'setWithStatus', 'setWithDateRange', 'setCreationDateFrom', 'setCreationDateTo']),
-      ...mapActions('layout', ['hideAdvancedSearchForm']),
-
-      capitalize(s) {
-        return s[0].toUpperCase() + s.slice(1);
-      },
-
-      filteredDataArray(data, value) {
-        return data.filter((option) => {
-          return option.toLowerCase().startsWith(value.toLowerCase())
-        })
-      },
-
-      getFilteredTags(text) {
-        this.filteredPlacesTagsFrom = this.availablePlacesTags.filter((option) => {
-          return option.toString()
-                       .toLowerCase()
-                       .startsWith(text.toLowerCase())
-          })
-      },
-
-      cloneDeep(obj) {
-        return  _cloneDeep(obj)
-      },
-
-      filterCorrespondent(correspondents) { 
-        let persons = [];
-        let functions = []
-        for(let i=0; i < correspondents.length; i++) {
-          persons.push(this.filteredDataArray(this.availableCorrespondents, correspondents[i].person))
-          functions.push(this.filteredDataArray(this.availableFunctions, correspondents[i].func))
-        }
-        
-        return {
-          persons,
-          functions
-        }
-      },
-
-      addCorrespondentFrom() {
-        this.correspondentFrom.push(this.cloneDeep(this.correspondentTemplate))
-      },
-      removeCorrespondentFrom(i) {
-        this.correspondentFrom.splice(i, 1)
-      },
-      addCorrespondentTo() {
-        this.correspondentTo.push(this.cloneDeep(this.correspondentTemplate))
-      },
-      removeCorrespondentTo(i) {
-        this.correspondentTo.splice(i, 1)
-      }
+    removeCorrespondentFrom(i) {
+      this.correspondentFrom.splice(i, 1);
     },
-}
+    addCorrespondentTo() {
+      this.correspondentTo.push(this.cloneDeep(this.correspondentTemplate));
+    },
+    removeCorrespondentTo(i) {
+      this.correspondentTo.splice(i, 1);
+    },
+  },
+};
 </script>
 
-<style lang="scss" >
+<style lang="scss">
 @import "@/assets/sass/main.scss";
-@import "~@creativebulma/bulma-divider";
 
 .advanced-search-form {
   .b-slider .b-slider-thumb-wrapper.has-indicator .b-slider-thumb {
@@ -474,52 +513,54 @@ export default {
   }
 
   .close-form {
-      font-size: 28px;
-      
-      position: relative;
-      float: right;
-      top: 10px;
+    font-size: 28px;
 
-      &:hover {
-        cursor: pointer;
-      }
+    position: relative;
+    float: right;
+    top: 10px;
+
+    &:hover {
+      cursor: pointer;
+    }
   }
 
   .checkbox {
     display: inline-flex;
-   }
+  }
 
   .year-search {
-    width: 100px
+    width: 100px;
   }
   .month-search {
     width: 140px;
   }
   .day-search {
-    width: 80px
+    width: 80px;
   }
 
-
-  .date-section, .correspondents-section, .places-section, .display-section, .search-section {
-      margin-top: 16px;
-      .input {
-        width: 250px;
-      }
-     
+  .date-section,
+  .correspondents-section,
+  .places-section,
+  .display-section,
+  .search-section {
+    margin-top: 16px;
+    .input {
+      width: 250px;
+    }
   }
 
   .correspondents-section {
     span {
-            align-self: center;
-            margin-right: 12px;
-            width: 24px;
-          }
+      align-self: center;
+      margin-right: 12px;
+      width: 24px;
+    }
   }
 
-  .autocomplete .icon{
+  .autocomplete .icon {
     height: 31px !important;
   }
-  .taginput .autocomplete .icon{
+  .taginput .autocomplete .icon {
     height: 22px !important;
   }
 }
