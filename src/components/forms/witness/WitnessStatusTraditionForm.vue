@@ -43,16 +43,14 @@ import {statuses, traditions} from '@/components/forms/data'
 
 export default {
   name: "WitnessStatusTraditionForm",
-
   data() {
     return {
       selectedStatus: ['base'],
       selectedTradition: ['n/a'],
       witnessStatuses: statuses,
-      traditions
+      traditions,
     };
   },
-
   watch: {
     selectedStatus() {
       if (this.selectedStatus.length > 1) {

@@ -36,20 +36,8 @@
           </b-tab-item>
         </b-tabs>
       </div>
-      <div class="leftbar-footer-area">
-        <div class="buttons">
-          <b-button
-            v-if="activeTab > 0"
-            type="is-primary"
-            size="is-medium"
-            @click="activeTab = Math.max(0, activeTab - 1)"
-          >
-            Précédent
-          </b-button>
-        </div>
-      </div>
+      <div class="leftbar-footer-area" />
 
-      <div class="center-header-area" />
       <div class="center-content-area">
         <b-tabs v-model="activeTab">
           <b-tab-item
@@ -61,6 +49,7 @@
               <component
                 :is="stepItem.center.component"
                 v-bind="stepItem.center.attributes"
+                @goto-wizard-step="gotoStep"
               />
             </keep-alive>
           </b-tab-item>
@@ -93,14 +82,22 @@
               </b-button>
             </span>
           </span>
+          <b-button
+            v-if="activeTab > 0"
+            type="is-primary"
+            size="is-medium"
+            class="previous-button"
+            @click="gotoPrevStep"
+          >
+            Précédent
+          </b-button>
 
           <b-button
             type="is-primary"
             size="is-medium"
-            @click="activeTab = Math.min(stepItems.length - 1, activeTab + 1)"
+            @click="gotoNextStep"
           >
-            <span v-if="activeTab < stepItems.length - 1">Suivant</span>
-            <span v-else>Enregistrer</span>
+            <span>Suivant</span>
           </b-button>
         </div>
       </div>
@@ -109,18 +106,18 @@
 </template>
 
 <script>
-import WitnessTextInputForm from "@/components/forms/witness/WitnessTextInputForm.vue";
+import WitnessInputForm from "@/components/forms/witness/WitnessInputForm.vue";
 import WitnessStatusTraditionForm from "@/components/forms/witness/WitnessStatusTraditionForm.vue";
-import InstitutionSearchForm from "@/components/forms/institution/InstitutionSearchForm";
+import InstitutionCreationForm from "@/components/forms/institution/InstitutionCreationForm";
 import ManifestCreationForm from "@/components/forms/manifest/ManifestCreationForm";
 
 export default {
   name: "WizardForm",
   components: {
-    WitnessTextInputForm,
+    WitnessInputForm,
     WitnessStatusTraditionForm,
     ManifestCreationForm,
-    InstitutionSearchForm,
+    InstitutionCreationForm
   },
   data() {
     return {
@@ -134,22 +131,30 @@ export default {
     stepItems() {
       return [
         {
+          name: "classification",
           label: "Classification",
+          next: "images",
           left: {
             label: "left",
             component: "WitnessStatusTraditionForm",
             attributes: {},
           },
-          center: { label: "center", component: "WitnessTextInputForm", attributes: {} }
+          center: { label: "center", component: "WitnessInputForm", attributes: {} }
         },
         {
+          name: "institution-creation",
+          next: "images",
+          prev: "classification",
           label: "Institution",
-          center: { label: "center", component: "InstitutionSearchForm", attributes: {} },
+          center: { label: "center", component: "InstitutionCreationForm", attributes: {} },
           footer: {
             buttons: []
           }
         },
         {
+          name: "images",
+          prev: "classification",
+
           label: "Images",
           center: { label: "center", component: "ManifestCreationForm", attributes: {} },
           footer: {
@@ -158,6 +163,26 @@ export default {
         },
       ];
     },
+  },
+  methods: {
+    gotoStep(stepName) {
+      const nextStepIndex = this.stepItems.findIndex(s => s.name === stepName)
+      if (nextStepIndex > -1) {
+        this.activeTab = nextStepIndex
+      }
+    },
+    gotoNextStep() {
+      const nextStep = this.stepItems[this.activeTab].next
+      if (nextStep) {
+        this.gotoStep(nextStep)
+      }
+    },
+    gotoPrevStep() {
+      const prevStep = this.stepItems[this.activeTab].prev
+      if (prevStep) {
+        this.gotoStep(prevStep)
+      }
+    }
   },
 };
 </script>
@@ -168,17 +193,31 @@ export default {
 .root-container {
   overflow: hidden;
 
-  min-width: 1200px;
+  min-width: 1100px;
   min-height: 700px;
 
-  width: 800px;
-  height: 600px;
+  width: 1100px;
+  height: 700px;
 
   padding: 0px !important;
+
+  .label {
+    color: inherit !important;
+  }
 
   .step-label {
     font-family: $bitter-family;
     padding: 12px;
+  }
+
+  .wizard-center-form {
+    margin-left: 12px;
+    margin-right: 12px;
+    min-width: 300px;
+  }
+
+  .previous-button {
+    margin-left: 40px;
   }
 
   .leftbar-header-area,
@@ -218,9 +257,6 @@ export default {
     }
   }
 
-  .center-header-area {
-    grid-area: center-header;
-  }
   .center-content-area {
     grid-area: center-content;
     .tabs {
@@ -244,11 +280,11 @@ export default {
     min-height: 100%;
 
     grid-template-columns: 300px auto;
-    grid-template-rows: 120px  auto 15%;
+    grid-template-rows: 120px  auto 80px;
     grid-template-areas:
-      "leftbar-header center-header center-header center-header"
-      "leftbar-content center-content center-content center-content"
-      "leftbar-footer center-footer center-footer center-footer-buttons";
+      "leftbar-header center-content center-content"
+      "leftbar-content center-content  center-content"
+      "leftbar-footer center-footer center-footer-buttons";
   }
 }
 </style>
