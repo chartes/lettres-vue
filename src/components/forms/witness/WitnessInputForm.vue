@@ -19,7 +19,10 @@
       />
     </div>
 
-    <b-field label="Institution">
+    <b-field
+      label="Institution de conservation"
+      class="institution-input"
+    >
       <b-autocomplete
         v-model="searchedTerm"
         placeholder="e.g. BnF"
@@ -54,7 +57,7 @@ export default {
   components: {
       RichTextEditor
   },
-    emits: ["goto-wizard-step"],
+  emits: ["goto-wizard-step"],
 
   data() {
       return {
@@ -66,15 +69,14 @@ export default {
           selected: null,
       }
   },
-
-    computed: {
+  computed: {
         filteredDataObj() {
             return ["Bnf", "Ecole"].filter(option => {
                 return   option.indexOf(this.searchedTerm) >= 0
             })
         }
   },
-    methods: {
+  methods: {
     goToNewInstitutionForm() {
       this.$emit('goto-wizard-step', 'institution-creation')
     }
@@ -88,6 +90,10 @@ export default {
     }
     .wizard-center-form {
       padding-top: 75px;
+      padding-left: 12px;
       width: 80%;
+    }
+    .institution-input {
+      max-width: 420px;
     }
 </style>

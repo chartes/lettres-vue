@@ -2,18 +2,18 @@
   <div>
     Home Page
     <div class="main-form">
-      <wizard-form />
+      <witness-wizard-form />
     </div>
   </div>
 </template>
 
 <script>
-import WizardForm from "@/components/forms/wizards/WizardForm";
+import WitnessWizardForm from "@/components/forms/wizards/WitnessWizardForm";
 
 export default {
   name: "HomePage",
   components: {
-    WizardForm,
+    WitnessWizardForm,
   },
   data() {
     return {};

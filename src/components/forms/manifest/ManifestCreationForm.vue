@@ -1,9 +1,312 @@
 <template>
-  <div>ManifestCreationForm</div>
+  <div class="image-grid-container">
+    <div class="image-area">
+      <div class="no-image-text is-size-4 has-text-centered">
+        Aucune image pour le moment
+      </div>
+    </div>
+    <div class="navbar-area" />
+
+    <div class="metadata-area">
+      <section>
+        <div class="columns">
+          <div class="column">
+            <b-field
+              label="URL de la ressource"
+              :message="inputGallicaUrlMsg"
+              :type="inputGallicaUrlMsgType"
+            >
+              <b-input
+                v-model="inputGallicaUrl"
+                class="url-input"
+                placeholder="https://gallica.bnf.fr/ark:/12148/bpt6k1521194n"
+                type="url"
+              />
+            </b-field>
+
+            <div>
+              <p class="label">Prévisualisation des pages à importer</p>
+              <div class="field is-grouped">
+                <div class="control image-preview">
+                  <b-skeleton
+                    v-if="firstPageImageUrl === null || firstPageError"
+                    :width="`${previewWidth}px`"
+                    :height="`${previewHeight}px`"
+                    :animated="false"
+                  />
+                  <div
+                    v-else
+                    @mouseover="toolTipImageFullIndex = startPageIndex"
+                    @mouseleave="toolTipImageFullIndex = null"
+                  >
+                    <b-image
+                      :src="firstPageImageUrl.url"
+                      @error="firstPageError = true"
+                    />
+                  </div>
+                </div>
+                <div class="control image-preview">
+                  <b-skeleton
+                    v-if="lastPageImageUrl === null || lastPageError"
+                    :width="`${previewWidth}px`"
+                    :height="`${previewHeight}px`"
+                    :animated="false"
+                  />
+                  <div
+                    v-else
+                    @mouseover="toolTipImageFullIndex = endPageIndex"
+                    @mouseleave="toolTipImageFullIndex = null"
+                  >
+                    <b-image :src="lastPageImageUrl.url" @error="lastPageError = false" />
+                  </div>
+                </div>
+              </div>
+              <div class="field is-grouped">
+                <p class="control">
+                  <b-field>
+                    <b-numberinput
+                      v-model="startPageIndex"
+                      :min="1"
+                      :max="manifestPageCount"
+                      class="number-input"
+                      size="is-small"
+                      controls-position="compact"
+                    />
+                  </b-field>
+                </p>
+                <p class="control">
+                  <b-field>
+                    <b-numberinput
+                      v-model="endPageIndex"
+                      :min="startPageIndex"
+                      :max="manifestPageCount"
+                      size="is-small"
+                      class="number-input"
+                      controls-position="compact"
+                    />
+                  </b-field>
+                </p>
+              </div>
+            </div>
+            <p class="control import-button">
+              <b-button type="is-primary is-info" :disabled="!manifest">
+                Importer la sélection ({{ pageRangeSize }} page{{
+                  pageRangeSize > 1 ? "s" : ""
+                }})
+              </b-button>
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <div v-if="toolTipImageFullUrl" class="tooltip-image-full">
+        <b-image :src="toolTipImageFullUrl.url" />
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
+import { debounce } from "lodash";
+
 export default {
   name: "ManifestCreationForm",
+
+  data() {
+    return {
+      inputGallicaUrl: "https://gallica.bnf.fr/ark:/12148/bpt6k3045360j/",
+      gallicaRegexp: /(ark:\/\d+\/[a-z0-9]+[a-z])/,
+      manifest: null,
+      startPageIndex: 1,
+      endPageIndex: 1,
+      toolTipImageFullIndex: null,
+      //insertionPageIndex: 1,
+
+      previewWidth: 120,
+      previewHeight: 160,
+
+      firstPageError: false,
+      lastPageError: false,
+    };
+  },
+  computed: {
+    inputGallicaUrlMsg() {
+      if (this.inputGallicaUrl.length > 5) {
+        return this.getGallicaIIIFUrl()
+          ? ""
+          : "L'url ne correspond pas au format attendu";
+      } else {
+        return "";
+      }
+    },
+    inputGallicaUrlMsgType() {
+      if (this.inputGallicaUrl.length > 5) {
+        return this.getGallicaIIIFUrl() ? "is-success" : "is-danger";
+      } else {
+        return "";
+      }
+    },
+    pageRangeSize() {
+      return this.endPageIndex - this.startPageIndex + 1;
+    },
+    manifestPageCount() {
+      if (this.manifest) {
+        return this.manifest.sequences[0].canvases.length;
+      } else {
+        return 0;
+      }
+    },
+    firstPageImageUrl() {
+      return this.getImageUrl(this.startPageIndex, this.firstPageError);
+    },
+    lastPageImageUrl() {
+      return this.getImageUrl(this.endPageIndex, this.lastPageError);
+    },
+    toolTipImageFullUrl() {
+      if (this.manifest && this.toolTipImageFullIndex) {
+        return this.getImageUrl(this.toolTipImageFullIndex, false, true);
+      } else {
+        return null;
+      }
+    },
+  },
+  watch: {
+    startPageIndex() {
+      this.firstPageError = false;
+      if (this.startPageIndex > this.endPageIndex) {
+        this.endPageIndex = this.startPageIndex;
+      }
+    },
+    endPageIndex() {
+      this.lastPageError = false;
+    },
+    inputGallicaUrl() {
+      this.manifest = null;
+      this.startPageIndex = 1;
+      this.endPageIndex = 1;
+
+      this.fetchGallicaManifestUrl();
+    },
+  },
+  methods: {
+    async getGallicaIIIFUrl() {
+      if (this.inputGallicaUrl) {
+        const ark = this.inputGallicaUrl.match(this.gallicaRegexp);
+        if (!ark) {
+          return false;
+        } else {
+          const url = `https://gallica.bnf.fr/iiif/${ark[0]}/manifest.json`;
+          const resp = await fetch(url, { method: "HEAD" });
+          console.log("valid:", resp);
+          return resp.ok ? url : false;
+        }
+      } else {
+        return false;
+      }
+    },
+    fetchGallicaManifestUrl: debounce(async function () {
+      const url = await this.getGallicaIIIFUrl();
+      if (url) {
+        console.log("fetching", url);
+        const response = await fetch(url);
+        console.log(response);
+        this.manifest = await response.json();
+        this.lastPageError = false;
+        this.firstPageError = false;
+        this.startPageIndex = 1;
+        this.endPageIndex = this.manifestPageCount;
+      }
+    }, 1000),
+    getImageUrl(index, error, full) {
+      if (this.manifest && !error) {
+        // this is iiif presentation v2
+        const canvas = this.manifest.sequences[0].canvases[index - 1];
+        const url = canvas.images[0].resource["@id"];
+        return {
+          url: full
+            ? url.replace("/full/full/", `/full/${this.previewWidth * 4},/`)
+            : url.replace(
+                "/full/full/",
+                `/full/${this.previewWidth},${this.previewHeight}/`
+              ),
+        };
+      } else {
+        return null;
+      }
+    },
+  },
 };
 </script>
+
+<style lang="scss" scoped>
+@import "@/assets/sass/main.scss";
+
+.image-area {
+  grid-area: image-viewer;
+  background-color: black;
+
+  .no-image-text {
+    color: white;
+    margin: 100px auto;
+  }
+}
+
+.navbar-area {
+  grid-area: navbar;
+  border-bottom: 1px solid $beige-light;
+  box-shadow: 2px 0px 3px 0px rgb(10 10 10 / 30%);
+
+  background-color: $white;
+}
+.metadata-area {
+  grid-area: metadata;
+
+  padding-top: 20px;
+  padding-left: 12px;
+  padding-right: 12px;
+
+  .source-selection-table {
+    margin-top: 1px;
+  }
+
+  .number-input {
+    width: 132px;
+  }
+  .url-input {
+    width: 400px;
+  }
+
+  .image-preview {
+    margin-top: 0px;
+    margin-right: 12px;
+  }
+
+  .tooltip-image-full {
+    padding: 10px;
+    background-color: $white;
+    border-radius: 5px;
+    box-shadow: 2px 2px 14px 0px rgb(10 10 10 / 40%);
+    position: absolute;
+    z-index: 1000;
+    width: 480px;
+    height: 100%;
+    top: 20px;
+    right: 20px;
+  }
+
+  .import-button {
+    margin-top: 12px;
+  }
+}
+.image-grid-container {
+  display: grid;
+  min-height: 100%;
+
+  grid-template-columns: auto;
+  grid-template-rows: 230px 10px auto;
+  grid-template-areas:
+    "image-viewer"
+    "navbar"
+    "metadata";
+}
+</style>

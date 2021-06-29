@@ -2,26 +2,15 @@
   <div class="root-container box">
     <div class="root-grid-container">
       <div class="leftbar-header-area">
-        <h1 class=" step-label is-uppercase is-size-2	">
+        <h1 class="step-label is-uppercase is-size-2">
           {{ wizardLabel }}
         </h1>
-        <div
-          v-for="(stepItem, i) in stepItems"
-          :key="`left-step-header-${i}`"
-        >
-          <h2
-            v-if="stepItem.label && activeTab === i"
-            class=" step-label is-uppercase is-size-5"
-          >
-            {{ stepItem.label }}
-          </h2>
-        </div>
+        <h2 v-if="currentStep.label" class="step-label is-uppercase is-size-5">
+          {{ currentStep.label }}
+        </h2>
       </div>
       <div class="leftbar-content-area">
-        <b-tabs
-          v-model="activeTab"
-          :animated="false"
-        >
+        <b-tabs v-model="activeTab" :animated="false">
           <b-tab-item
             v-for="(stepItem, i) in stepItems"
             :key="`left-step-${i}`"
@@ -50,6 +39,7 @@
                 :is="stepItem.center.component"
                 v-bind="stepItem.center.attributes"
                 @goto-wizard-step="gotoStep"
+                @select-image-source="selectImageSource"
               />
             </keep-alive>
           </b-tab-item>
@@ -58,32 +48,10 @@
       <div class="center-footer-area" />
       <div class="center-footer-buttons-area">
         <div class="buttons">
-          <b-button
-            type="is-primary"
-            size="is-medium"
-          >
-            Annuler
-          </b-button>
+          <b-button type="is-primary" size="is-medium"> Annuler </b-button>
 
-          <span
-            v-for="(stepItem, i) in stepItems"
-            :key="`footer-buttons-step-${i}`"
-          >
-            <span v-if="stepItem.footer && activeTab === i">
-              <b-button
-                v-for="(button, j) in stepItem.footer.buttons"
-             
-                :key="`button-${j}`"
-                type="is-info"
-                size="is-medium"
-                @click="button.action()"
-              >
-                {{ button.label }}
-              </b-button>
-            </span>
-          </span>
           <b-button
-            v-if="activeTab > 0"
+            v-if="currentStep.prev"
             type="is-primary"
             size="is-medium"
             class="previous-button"
@@ -93,12 +61,27 @@
           </b-button>
 
           <b-button
+            v-if="currentStep.next"
             type="is-primary"
             size="is-medium"
             @click="gotoNextStep"
           >
             <span>Suivant</span>
           </b-button>
+
+          <span v-for="(stepItem, i) in stepItems" :key="`footer-buttons-step-${i}`">
+            <span v-if="stepItem.footer && activeTab === i">
+              <b-button
+                v-for="(button, j) in stepItem.footer.buttons"
+                :key="`button-${j}`"
+                :type="button.type ? button.type : 'is-primary'"
+                size="is-medium"
+                @click="button.action()"
+              >
+                {{ button.label }}
+              </b-button>
+            </span>
+          </span>
         </div>
       </div>
     </div>
@@ -109,6 +92,7 @@
 import WitnessInputForm from "@/components/forms/witness/WitnessInputForm.vue";
 import WitnessStatusTraditionForm from "@/components/forms/witness/WitnessStatusTraditionForm.vue";
 import InstitutionCreationForm from "@/components/forms/institution/InstitutionCreationForm";
+import ImageSourceForm from "@/components/forms/manifest/ImageSourceForm";
 import ManifestCreationForm from "@/components/forms/manifest/ManifestCreationForm";
 
 export default {
@@ -116,73 +100,107 @@ export default {
   components: {
     WitnessInputForm,
     WitnessStatusTraditionForm,
+    ImageSourceForm,
+    InstitutionCreationForm,
     ManifestCreationForm,
-    InstitutionCreationForm
   },
   data() {
     return {
       activeTab: 0,
+      imageSource: { name: null },
     };
   },
   computed: {
     wizardLabel() {
-      return "Témoin"
+      return "Témoin";
+    },
+    currentStep() {
+      return this.stepItems[this.activeTab > -1 ? this.activeTab : 0];
     },
     stepItems() {
       return [
         {
           name: "classification",
           label: "Classification",
-          next: "images",
+          next: "image-source-selection",
           left: {
             label: "left",
             component: "WitnessStatusTraditionForm",
             attributes: {},
           },
-          center: { label: "center", component: "WitnessInputForm", attributes: {} }
+          center: { label: "center", component: "WitnessInputForm", attributes: {} },
         },
         {
           name: "institution-creation",
-          next: "images",
+          next: "image-source-selection",
           prev: "classification",
           label: "Institution",
-          center: { label: "center", component: "InstitutionCreationForm", attributes: {} },
+          center: {
+            label: "center",
+            component: "InstitutionCreationForm",
+            attributes: {},
+          },
           footer: {
-            buttons: []
-          }
+            buttons: [],
+          },
         },
         {
-          name: "images",
+          name: "image-source-selection",
           prev: "classification",
+          next: this.imageSource && this.imageSource.name ? "manifest-creation" : null,
 
           label: "Images",
-          center: { label: "center", component: "ManifestCreationForm", attributes: {} },
+          center: {
+            label: "center",
+            component: "ImageSourceForm",
+            attributes: { imageSource: this.imageSource },
+          },
           footer: {
-            buttons: []
-          }
+            buttons:
+              this.imageSource && this.imageSource.name
+                ? []
+                : [{ label: "Terminer", type: "is-primary", action: () => {} }],
+          },
+        },
+        {
+          name: "manifest-creation",
+          prev: "image-source-selection",
+
+          label: "Images",
+          center: {
+            label: "center",
+            component: "ManifestCreationForm",
+            attributes: { imageSource: this.imageSource },
+          },
+          footer: {
+            buttons: [{ label: "Terminer", type: "is-primary", action: () => {} }],
+          },
         },
       ];
     },
   },
   methods: {
     gotoStep(stepName) {
-      const nextStepIndex = this.stepItems.findIndex(s => s.name === stepName)
+      const nextStepIndex = this.stepItems.findIndex((s) => s.name === stepName);
       if (nextStepIndex > -1) {
-        this.activeTab = nextStepIndex
+        this.activeTab = nextStepIndex;
       }
     },
     gotoNextStep() {
-      const nextStep = this.stepItems[this.activeTab].next
+      const nextStep = this.stepItems[this.activeTab].next;
       if (nextStep) {
-        this.gotoStep(nextStep)
+        this.gotoStep(nextStep);
       }
     },
     gotoPrevStep() {
-      const prevStep = this.stepItems[this.activeTab].prev
+      const prevStep = this.stepItems[this.activeTab].prev;
       if (prevStep) {
-        this.gotoStep(prevStep)
+        this.gotoStep(prevStep);
       }
-    }
+    },
+    selectImageSource(selection) {
+      this.imageSource = selection;
+    },
   },
 };
 </script>
@@ -194,10 +212,10 @@ export default {
   overflow: hidden;
 
   min-width: 1100px;
-  min-height: 700px;
+  min-height: 720px;
 
   width: 1100px;
-  height: 700px;
+  height: 720px;
 
   padding: 0px !important;
 
@@ -223,7 +241,7 @@ export default {
   .leftbar-header-area,
   .leftbar-content-area,
   .leftbar-footer-area {
-    background-color: $light!important;
+    background-color: $light !important;
   }
 
   .leftbar-header-area {
@@ -259,8 +277,19 @@ export default {
 
   .center-content-area {
     grid-area: center-content;
+    height: 100%;
     .tabs {
       display: none !important;
+    }
+    .b-tabs {
+      height: 100%;
+      .tab-content {
+        padding: 0;
+      }
+      .tab-content,
+      .tab-item {
+        height: 100%;
+      }
     }
   }
   .center-footer-area {
@@ -280,7 +309,7 @@ export default {
     min-height: 100%;
 
     grid-template-columns: 300px auto;
-    grid-template-rows: 120px  auto 80px;
+    grid-template-rows: 120px auto 80px;
     grid-template-areas:
       "leftbar-header center-content center-content"
       "leftbar-content center-content  center-content"
