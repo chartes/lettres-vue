@@ -39,7 +39,7 @@
                 :is="stepItem.center.component"
                 v-bind="stepItem.center.attributes"
                 @goto-wizard-step="gotoStep"
-                @select-image-source="selectImageSource"
+                @set-source-manifest="setSourceManifest"
               />
             </keep-alive>
           </b-tab-item>
@@ -107,7 +107,7 @@ export default {
   data() {
     return {
       activeTab: 0,
-      imageSource: { name: null },
+      manifest: null,
     };
   },
   computed: {
@@ -147,19 +147,17 @@ export default {
         {
           name: "image-source-selection",
           prev: "classification",
-          next: this.imageSource && this.imageSource.name ? "manifest-creation" : null,
+          next: this.manifest ? "manifest-creation" : null,
 
           label: "Images",
           center: {
             label: "center",
             component: "ImageSourceForm",
-            attributes: { imageSource: this.imageSource },
           },
           footer: {
-            buttons:
-              this.imageSource && this.imageSource.name
-                ? []
-                : [{ label: "Terminer", type: "is-primary", action: () => {} }],
+            buttons: this.manifest
+              ? []
+              : [{ label: "Terminer", type: "is-primary", action: () => {} }],
           },
         },
         {
@@ -170,7 +168,7 @@ export default {
           center: {
             label: "center",
             component: "ManifestCreationForm",
-            attributes: { imageSource: this.imageSource },
+            attributes: this.manifest,
           },
           footer: {
             buttons: [{ label: "Terminer", type: "is-primary", action: () => {} }],
@@ -198,8 +196,8 @@ export default {
         this.gotoStep(prevStep);
       }
     },
-    selectImageSource(selection) {
-      this.imageSource = selection;
+    setSourceManifest(m) {
+      this.manifest = m;
     },
   },
 };

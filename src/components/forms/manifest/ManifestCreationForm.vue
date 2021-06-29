@@ -1,29 +1,18 @@
 <template>
   <div class="image-grid-container">
     <div class="image-area">
-      <div class="no-image-text is-size-4 has-text-centered">
+      <div v-if="pages.length < 1" class="no-image-text is-size-4 has-text-centered">
         Aucune image pour le moment
+      </div>
+      <div v-else>
+        <b-carousel-list :data="pages" arrow arrow-hover opacity :items-to-show="3" />
       </div>
     </div>
     <div class="navbar-area" />
-
     <div class="metadata-area">
       <section>
         <div class="columns">
           <div class="column">
-            <b-field
-              label="URL de la ressource"
-              :message="inputGallicaUrlMsg"
-              :type="inputGallicaUrlMsgType"
-            >
-              <b-input
-                v-model="inputGallicaUrl"
-                class="url-input"
-                placeholder="https://gallica.bnf.fr/ark:/12148/bpt6k1521194n"
-                type="url"
-              />
-            </b-field>
-
             <div>
               <p class="label">Prévisualisation des pages à importer</p>
               <div class="field is-grouped">
@@ -89,7 +78,11 @@
               </div>
             </div>
             <p class="control import-button">
-              <b-button type="is-primary is-info" :disabled="!manifest">
+              <b-button
+                type="is-primary is-info"
+                :disabled="!manifest"
+                @click="addSelectedPages"
+              >
                 Importer la sélection ({{ pageRangeSize }} page{{
                   pageRangeSize > 1 ? "s" : ""
                 }})
@@ -107,16 +100,10 @@
 </template>
 
 <script>
-import { debounce } from "lodash";
-
 export default {
   name: "ManifestCreationForm",
-
   data() {
     return {
-      inputGallicaUrl: "https://gallica.bnf.fr/ark:/12148/bpt6k3045360j/",
-      gallicaRegexp: /(ark:\/\d+\/[a-z0-9]+[a-z])/,
-      manifest: null,
       startPageIndex: 1,
       endPageIndex: 1,
       toolTipImageFullIndex: null,
@@ -127,27 +114,16 @@ export default {
 
       firstPageError: false,
       lastPageError: false,
+
+      pages: [],
     };
   },
   computed: {
-    inputGallicaUrlMsg() {
-      if (this.inputGallicaUrl.length > 5) {
-        return this.getGallicaIIIFUrl()
-          ? ""
-          : "L'url ne correspond pas au format attendu";
-      } else {
-        return "";
-      }
-    },
-    inputGallicaUrlMsgType() {
-      if (this.inputGallicaUrl.length > 5) {
-        return this.getGallicaIIIFUrl() ? "is-success" : "is-danger";
-      } else {
-        return "";
-      }
-    },
     pageRangeSize() {
       return this.endPageIndex - this.startPageIndex + 1;
+    },
+    manifest() {
+      return this.$attrs.manifest;
     },
     manifestPageCount() {
       if (this.manifest) {
@@ -180,44 +156,13 @@ export default {
     endPageIndex() {
       this.lastPageError = false;
     },
-    inputGallicaUrl() {
-      this.manifest = null;
+    manifest() {
       this.startPageIndex = 1;
-      this.endPageIndex = 1;
-
-      this.fetchGallicaManifestUrl();
+      this.endPageIndex = this.manifestPageCount;
     },
   },
   methods: {
-    async getGallicaIIIFUrl() {
-      if (this.inputGallicaUrl) {
-        const ark = this.inputGallicaUrl.match(this.gallicaRegexp);
-        if (!ark) {
-          return false;
-        } else {
-          const url = `https://gallica.bnf.fr/iiif/${ark[0]}/manifest.json`;
-          const resp = await fetch(url, { method: "HEAD" });
-          console.log("valid:", resp);
-          return resp.ok ? url : false;
-        }
-      } else {
-        return false;
-      }
-    },
-    fetchGallicaManifestUrl: debounce(async function () {
-      const url = await this.getGallicaIIIFUrl();
-      if (url) {
-        console.log("fetching", url);
-        const response = await fetch(url);
-        console.log(response);
-        this.manifest = await response.json();
-        this.lastPageError = false;
-        this.firstPageError = false;
-        this.startPageIndex = 1;
-        this.endPageIndex = this.manifestPageCount;
-      }
-    }, 1000),
-    getImageUrl(index, error, full) {
+    getImageUrl(index, error, full = false) {
       if (this.manifest && !error) {
         // this is iiif presentation v2
         const canvas = this.manifest.sequences[0].canvases[index - 1];
@@ -232,6 +177,17 @@ export default {
         };
       } else {
         return null;
+      }
+    },
+    addSelectedPages() {
+      for (let i = this.startPageIndex; i < this.endPageIndex + 1; ++i) {
+        const image = this.getImageUrl(i, false);
+        this.pages.push({
+          //canvas: this.manifest.sequences[0].canvases[i - 1],
+          thumbnail: image,
+          title: i,
+          image: image.url,
+        });
       }
     },
   },
@@ -279,6 +235,9 @@ export default {
   .image-preview {
     margin-top: 0px;
     margin-right: 12px;
+    &:hover {
+      cursor: pointer;
+    }
   }
 
   .tooltip-image-full {
