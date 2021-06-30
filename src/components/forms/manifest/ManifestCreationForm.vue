@@ -1,16 +1,26 @@
 <template>
   <div class="image-grid-container">
-    <div class="image-area">
-      <div v-if="pages.length < 1" class="no-image-text is-size-4 has-text-centered">
+    <div class="image-area" style="position: relative">
+      <div
+        v-if="false && pages.length < 1"
+        class="no-image-text is-size-4 has-text-centered"
+      >
         Aucune image pour le moment
       </div>
       <div v-else>
-        <b-carousel-list :data="pages" arrow arrow-hover opacity :items-to-show="3" />
+        <div style="width: 100%; height: 100%">
+          <simple-manifest-carousel
+            :item-width="140"
+            :display-num="5"
+            :data-items="pages"
+          />
+        </div>
       </div>
     </div>
     <div class="navbar-area" />
     <div class="metadata-area">
       <section>
+        pages {{ pages.length }}
         <div class="columns">
           <div class="column">
             <div>
@@ -100,8 +110,13 @@
 </template>
 
 <script>
+import SimpleManifestCarousel from "@/components/forms/manifest/SimpleManifestCarousel.vue";
+
 export default {
   name: "ManifestCreationForm",
+  components: {
+    SimpleManifestCarousel,
+  },
   data() {
     return {
       startPageIndex: 1,
@@ -109,8 +124,8 @@ export default {
       toolTipImageFullIndex: null,
       //insertionPageIndex: 1,
 
-      previewWidth: 120,
-      previewHeight: 160,
+      previewWidth: 140,
+      previewHeight: 180,
 
       firstPageError: false,
       lastPageError: false,
@@ -182,11 +197,16 @@ export default {
     addSelectedPages() {
       for (let i = this.startPageIndex; i < this.endPageIndex + 1; ++i) {
         const image = this.getImageUrl(i, false);
+        //avoid duplicates
+        if (this.pages.find((p) => p.num === i)) {
+          continue;
+        }
         this.pages.push({
           //canvas: this.manifest.sequences[0].canvases[i - 1],
           thumbnail: image,
           title: i,
-          image: image.url,
+          url: image.url,
+          num: i,
         });
       }
     },
@@ -198,8 +218,9 @@ export default {
 @import "@/assets/sass/main.scss";
 
 .image-area {
-  grid-area: image-viewer;
   background-color: black;
+  width: 800px;
+  height: 280px;
 
   .no-image-text {
     color: white;
@@ -208,15 +229,13 @@ export default {
 }
 
 .navbar-area {
-  grid-area: navbar;
+  height: 8px;
   border-bottom: 1px solid $beige-light;
   box-shadow: 2px 0px 3px 0px rgb(10 10 10 / 30%);
 
   background-color: $white;
 }
 .metadata-area {
-  grid-area: metadata;
-
   padding-top: 20px;
   padding-left: 12px;
   padding-right: 12px;
@@ -256,16 +275,5 @@ export default {
   .import-button {
     margin-top: 12px;
   }
-}
-.image-grid-container {
-  display: grid;
-  min-height: 100%;
-
-  grid-template-columns: auto;
-  grid-template-rows: 230px 10px auto;
-  grid-template-areas:
-    "image-viewer"
-    "navbar"
-    "metadata";
 }
 </style>
