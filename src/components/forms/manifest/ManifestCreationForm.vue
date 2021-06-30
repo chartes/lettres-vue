@@ -24,7 +24,6 @@
         <div class="columns">
           <div class="column">
             <div>
-              <p class="label">Prévisualisation des pages à importer</p>
               <div class="field is-grouped">
                 <div class="control image-preview">
                   <b-skeleton
@@ -255,9 +254,6 @@ export default {
   .image-preview {
     margin-top: 0px;
     margin-right: 12px;
-    &:hover {
-      cursor: pointer;
-    }
   }
 
   .tooltip-image-full {

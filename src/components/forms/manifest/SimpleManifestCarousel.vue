@@ -1,43 +1,44 @@
 <template>
   <div id="manifest-carousel" class="carousel-container">
-    <span class="button is-light navigation-left" @click="moveLeft"
+    <span class="button is-light is-rounded navigation-left" @click="moveLeft"
       ><i class="fas fa-chevron-left"
     /></span>
-    <span class="button is-light navigation-right" @click="moveRight"
+    <span class="button is-light is-rounded navigation-right" @click="moveRight"
       ><i class="fas fa-chevron-right"
     /></span>
 
     <div class="card-container">
       <div
-        v-for="item in items"
+        v-for="(item, i) in items"
         :key="item.num"
         class="card"
-        @mouseover="onMouseOverPage(item)"
+        @mouseover="onMouseOverPage(item, i)"
         @mouseleave="onMouseLeavePage"
       >
         <div class="card-image">
           <figure :class="`image`">
             <img :src="item.thumbnail.url" :style="`min-width: ${itemWidth}px`" />
           </figure>
-        </div>
-        <div class="card-content">
-          <span class="page-num">{{ item.num }}</span>
-
-          <span v-show="showActions === item.num">
-            <button class="button is-small page-action">
+          <span v-show="showActions === item.num" class="page-actions">
+            <button class="button is-light is-danger page-action">
               <i class="fas fa-trash" />
             </button>
-            <button class="button is-small page-action">
+            <button class="button is-light is-info page-action">
               <i class="fas fa-chevron-left" />
             </button>
-            <button class="button is-small page-action">
+            <button class="button is-light is-info page-action">
               <i class="fas fa-chevron-right" />
             </button>
           </span>
         </div>
+        <div class="card-content">
+          <span class="page-num">{{ i + 1 }} - p.{{ item.num }}</span>
+        </div>
       </div>
     </div>
-
+    <!--
+    translationOffset: {{ translationOffset }} | index: {{ index }} (min: {{ minIndex }},
+    max: {{ maxIndex }}) -->
     <div v-show="toolTipImageFullUrl" class="tooltip-image-full">
       <b-image :src="toolTipImageFullUrl" />
     </div>
@@ -55,7 +56,6 @@ export default {
   },
   data() {
     return {
-      offset: this.itemWidth + 10 + 10,
       index: this.startIndex,
       items: this.dataItems,
       display: this.displayNum,
@@ -69,7 +69,11 @@ export default {
       return -Math.floor(this.display * 0.5);
     },
     maxIndex() {
-      return Math.ceil(this.items.length - 0.5 * this.display);
+      return Math.max(this.items.length - Math.floor(this.display * 0.5) - 1, 0);
+    },
+    translationOffset() {
+      const width = this.itemWidth + 10 + 10;
+      return `translateX(${-this.index * width}px)`;
     },
   },
   watch: {
@@ -79,13 +83,13 @@ export default {
   },
   methods: {
     move(toTheRight = true) {
-      const dir = toTheRight ? -1 : 1;
-      const next = this.index + -dir;
-      if (next >= this.minIndex && next < this.maxIndex) {
+      const dir = toTheRight ? 1 : -1;
+      const next = this.index + dir;
+      if (next >= this.minIndex && next <= this.maxIndex) {
+        this.index = next;
         document.querySelectorAll("#manifest-carousel .card").forEach((e) => {
-          e.style.transform += `translateX(${dir * this.offset}px)`;
+          e.style.transform = this.translationOffset;
         });
-        this.index += -dir;
       }
     },
     moveRight() {
@@ -94,9 +98,11 @@ export default {
     moveLeft() {
       this.move(false);
     },
-    onMouseOverPage(item) {
-      this.showActions = item.num;
-      this.toolTipImageFullUrl = item.fullUrl;
+    onMouseOverPage(item, pageIdx) {
+      if (pageIdx !== this.index && pageIdx !== this.index + this.display - 1) {
+        this.showActions = item.num;
+        this.toolTipImageFullUrl = item.fullUrl;
+      }
     },
     onMouseLeavePage() {
       this.showActions = null;
@@ -118,7 +124,7 @@ export default {
 .card {
   margin-left: 10px;
   margin-right: 10px;
-  transition: transform 0.5s ease;
+  transition: transform 0.4s ease;
 }
 
 .card-content {
@@ -144,23 +150,34 @@ export default {
 .navigation-left {
   z-index: 1000;
   position: absolute;
-  top: calc(50% - 30px);
+  top: calc(50% - 20px);
   left: 22px;
-  height: 50px;
+  height: 42px;
 }
 
 .navigation-right {
   z-index: 1000;
   position: absolute;
-  height: 50px;
-  top: calc(50% - 30px);
+  height: 42px;
+  top: calc(50% - 20px);
   right: calc(0% + 22px);
 }
 
+.page-actions {
+  position: absolute;
+  display: flex;
+  z-index: 5000;
+  top: 50%;
+  width: 100%;
+
+  justify-content: space-evenly;
+  align-items: center;
+  align-content: space-around;
+}
+
 .page-action {
-  padding: 2px;
-  height: 22px;
-  width: 24px;
+  height: 36px;
+  width: 36px;
   border: none;
 }
 
