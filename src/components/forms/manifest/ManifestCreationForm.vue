@@ -184,7 +184,7 @@ export default {
         const url = canvas.images[0].resource["@id"];
         return {
           url: full
-            ? url.replace("/full/full/", `/full/${this.previewWidth * 4},/`)
+            ? url.replace("/full/full/", `/full/${this.previewWidth * 3},/`)
             : url.replace(
                 "/full/full/",
                 `/full/${this.previewWidth},${this.previewHeight}/`
@@ -197,6 +197,7 @@ export default {
     addSelectedPages() {
       for (let i = this.startPageIndex; i < this.endPageIndex + 1; ++i) {
         const image = this.getImageUrl(i, false);
+        const fullImage = this.getImageUrl(i, false, true);
         //avoid duplicates
         if (this.pages.find((p) => p.num === i)) {
           continue;
@@ -205,7 +206,7 @@ export default {
           //canvas: this.manifest.sequences[0].canvases[i - 1],
           thumbnail: image,
           title: i,
-          url: image.url,
+          fullUrl: fullImage.url,
           num: i,
         });
       }
@@ -266,8 +267,7 @@ export default {
     box-shadow: 2px 2px 14px 0px rgb(10 10 10 / 40%);
     position: absolute;
     z-index: 1000;
-    width: 480px;
-    height: 100%;
+
     top: 20px;
     right: 20px;
   }

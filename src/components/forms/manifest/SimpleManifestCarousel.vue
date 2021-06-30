@@ -12,12 +12,12 @@
         v-for="item in items"
         :key="item.num"
         class="card"
-        @mouseover="showActions = item.num"
-        @mouseleave="showActions = null"
+        @mouseover="onMouseOverPage(item)"
+        @mouseleave="onMouseLeavePage"
       >
         <div class="card-image">
           <figure :class="`image`">
-            <img :src="item.url" :style="`min-width: ${itemWidth}px`" />
+            <img :src="item.thumbnail.url" :style="`min-width: ${itemWidth}px`" />
           </figure>
         </div>
         <div class="card-content">
@@ -36,6 +36,10 @@
           </span>
         </div>
       </div>
+    </div>
+
+    <div v-show="toolTipImageFullUrl" class="tooltip-image-full">
+      <b-image :src="toolTipImageFullUrl" />
     </div>
   </div>
 </template>
@@ -57,6 +61,7 @@ export default {
       display: this.displayNum,
 
       showActions: false,
+      toolTipImageFullUrl: null,
     };
   },
   computed: {
@@ -89,11 +94,21 @@ export default {
     moveLeft() {
       this.move(false);
     },
+    onMouseOverPage(item) {
+      this.showActions = item.num;
+      this.toolTipImageFullUrl = item.fullUrl;
+    },
+    onMouseLeavePage() {
+      this.showActions = null;
+      this.toolTipImageFullUrl = null;
+    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
+@import "@/assets/sass/main.scss";
+
 .card-container {
   display: flex;
   width: 100%;
@@ -130,7 +145,7 @@ export default {
   z-index: 1000;
   position: absolute;
   top: calc(50% - 30px);
-  left: 45px;
+  left: 22px;
   height: 50px;
 }
 
@@ -139,7 +154,7 @@ export default {
   position: absolute;
   height: 50px;
   top: calc(50% - 30px);
-  right: calc(0% + 40px);
+  right: calc(0% + 22px);
 }
 
 .page-action {
@@ -147,5 +162,17 @@ export default {
   height: 22px;
   width: 24px;
   border: none;
+}
+
+.tooltip-image-full {
+  padding: 10px;
+  background-color: $white;
+  border-radius: 5px;
+  box-shadow: 2px 2px 14px 0px rgb(10 10 10 / 40%);
+  position: fixed;
+  z-index: 1000;
+
+  right: 20px;
+  margin-top: 15px;
 }
 </style>
