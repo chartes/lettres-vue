@@ -40,6 +40,7 @@
                 v-bind="stepItem.center.attributes"
                 @goto-wizard-step="gotoStep"
                 @set-source-manifest="setSourceManifest"
+                @manage-manifest-data="manageManifestData"
               />
             </keep-alive>
           </b-tab-item>
@@ -108,6 +109,7 @@ export default {
     return {
       activeTab: 0,
       manifest: null,
+      collectedPages: [],
     };
   },
   computed: {
@@ -168,7 +170,7 @@ export default {
           center: {
             label: "center",
             component: "ManifestCreationForm",
-            attributes: this.manifest,
+            attributes: { manifest: this.manifest, collectedPages: this.collectedPages },
           },
           footer: {
             buttons: [{ label: "Terminer", type: "is-primary", action: () => {} }],
@@ -198,6 +200,28 @@ export default {
     },
     setSourceManifest(m) {
       this.manifest = m;
+    },
+    manageManifestData({ action, data }) {
+      console.log(`manifest[${action.name}]`, data);
+      switch (action.name) {
+        case "add":
+          this.collectedPages = this.collectedPages.concat(data);
+          break;
+        case "del":
+          this.collectedPages.splice(data.index, 1);
+          break;
+        case "move":
+          if (data.to !== data.from) {
+            this.collectedPages.splice(
+              data.to,
+              0,
+              this.collectedPages.splice(data.from, 1)[0]
+            );
+          }
+          break;
+        default:
+          break;
+      }
     },
   },
 };

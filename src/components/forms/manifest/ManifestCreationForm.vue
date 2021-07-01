@@ -1,26 +1,19 @@
 <template>
   <div class="image-grid-container">
-    <div class="image-area" style="position: relative">
-      <div
-        v-if="false && pages.length < 1"
-        class="no-image-text is-size-4 has-text-centered"
-      >
-        Aucune image pour le moment
-      </div>
-      <div v-else>
-        <div style="width: 100%; height: 100%">
-          <simple-manifest-carousel
-            :item-width="140"
-            :display-num="5"
-            :data-items="pages"
-          />
-        </div>
-      </div>
+    <div
+      class="image-area"
+      style="position: relative"
+    >
+      <simple-manifest-carousel
+        :item-width="140"
+        :display-num="5"
+        :data-items="pages"
+        @manage-manifest-data="manageManifestData"
+      />
     </div>
     <div class="navbar-area" />
     <div class="metadata-area">
       <section>
-        pages {{ pages.length }}
         <div class="columns">
           <div class="column">
             <div>
@@ -55,7 +48,10 @@
                     @mouseover="toolTipImageFullIndex = endPageIndex"
                     @mouseleave="toolTipImageFullIndex = null"
                   >
-                    <b-image :src="lastPageImageUrl.url" @error="lastPageError = false" />
+                    <b-image
+                      :src="lastPageImageUrl.url"
+                      @error="lastPageError = false"
+                    />
                   </div>
                 </div>
               </div>
@@ -92,7 +88,7 @@
                 :disabled="!manifest"
                 @click="addSelectedPages"
               >
-                Importer la sélection ({{ pageRangeSize }} page{{
+                Ajouter la sélection ({{ pageRangeSize }} page{{
                   pageRangeSize > 1 ? "s" : ""
                 }})
               </b-button>
@@ -101,7 +97,10 @@
         </div>
       </section>
 
-      <div v-if="toolTipImageFullUrl" class="tooltip-image-full">
+      <div
+        v-if="toolTipImageFullUrl"
+        class="tooltip-image-full"
+      >
         <b-image :src="toolTipImageFullUrl.url" />
       </div>
     </div>
@@ -116,6 +115,7 @@ export default {
   components: {
     SimpleManifestCarousel,
   },
+  emit: ["manage-manifest-data"],
   data() {
     return {
       startPageIndex: 1,
@@ -129,7 +129,7 @@ export default {
       firstPageError: false,
       lastPageError: false,
 
-      pages: [],
+      //pages: [],
     };
   },
   computed: {
@@ -138,6 +138,9 @@ export default {
     },
     manifest() {
       return this.$attrs.manifest;
+    },
+    pages() {
+      return this.$attrs.collectedPages;
     },
     manifestPageCount() {
       if (this.manifest) {
@@ -194,6 +197,7 @@ export default {
       }
     },
     addSelectedPages() {
+      let newItems = [];
       for (let i = this.startPageIndex; i < this.endPageIndex + 1; ++i) {
         const image = this.getImageUrl(i, false);
         const fullImage = this.getImageUrl(i, false, true);
@@ -201,14 +205,25 @@ export default {
         if (this.pages.find((p) => p.num === i)) {
           continue;
         }
-        this.pages.push({
+        newItems.push({
           //canvas: this.manifest.sequences[0].canvases[i - 1],
           thumbnail: image,
           title: i,
           fullUrl: fullImage.url,
           num: i,
         });
+        //this.pages.push(item);
       }
+
+      if (newItems.length > 0) {
+        this.manageManifestData({
+          action: { name: "add", index: this.pages.length },
+          data: newItems,
+        });
+      }
+    },
+    manageManifestData({ action, data }) {
+      this.$emit("manage-manifest-data", { action, data });
     },
   },
 };
@@ -245,7 +260,7 @@ export default {
   }
 
   .number-input {
-    width: 132px;
+    width: 140px;
   }
   .url-input {
     width: 400px;
