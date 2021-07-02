@@ -22,20 +22,48 @@
     <div class="division" />
 
     <div v-if="selected" class="input-form">
-      <div v-if="selected.name === 'gallica'" id="gallica">
-        <b-field
-          label="URL de la ressource"
-          :message="inputGallicaUrlMsg"
-          :type="inputGallicaUrlMsgType"
-        >
+      <div v-if="selected.name === 'gallica'" class="gallica-form">
+        <b-field label="URL de la ressource" :message="loadingMsg" :type="loadingMsgType">
           <b-input
             v-model="inputGallicaUrl"
             class="url-input"
             placeholder="https://gallica.bnf.fr/ark:/12148/bpt6k1521194n"
             type="url"
+            :disabled="pagesHaveBeenCollected"
+            :loading="loadingManifest"
           />
         </b-field>
-        https://gallica.bnf.fr/ark:/12148/bpt6k3045360j/
+
+        <b-message v-if="pagesHaveBeenCollected" type="is-warning is-small" has-icon>
+          Impossible de changer la source du document pour le moment. Supprimez toutes les
+          pages collectées et réessayez.
+        </b-message>
+
+        <div v-if="manifest" class="source-desc block">
+          <article class="media">
+            <div class="media-left">
+              <figure class="image is-64x64">
+                <img :src="manifest.logo" alt="Image" />
+              </figure>
+            </div>
+            <div class="media-content">
+              <div class="content">
+                <p>
+                  <strong>{{ manifest.label }}</strong>
+                  <br /><small>{{ manifest.attribution }}</small> <br /><br />
+                  {{ manifest.description }}
+                </p>
+              </div>
+              <nav class="level is-mobile">
+                <div class="level-left">
+                  <a class="level-item" aria-label="reply">
+                    {{ manifest.license }}
+                  </a>
+                </div>
+              </nav>
+            </div>
+          </article>
+        </div>
       </div>
     </div>
   </div>
@@ -75,26 +103,17 @@ export default {
       ],
 
       inputGallicaUrl: null,
-      gallicaRegexp: /(ark:\/\d+\/[a-z0-9]+[a-z])/,
+      gallicaRegexp: /(ark:\/\d+\/[a-z0-9]+)/,
       manifest: null,
+
+      loadingManifest: false,
+      loadingMsg: null,
+      loadingMsgType: null,
     };
   },
   computed: {
-    inputGallicaUrlMsg() {
-      if (this.inputGallicaUrl && this.inputGallicaUrl.length > 5) {
-        return this.getGallicaIIIFUrl()
-          ? ""
-          : "L'url ne correspond pas au format attendu";
-      } else {
-        return "";
-      }
-    },
-    inputGallicaUrlMsgType() {
-      if (this.inputGallicaUrl && this.inputGallicaUrl.length > 5) {
-        return this.getGallicaIIIFUrl() ? "is-success" : "is-danger";
-      } else {
-        return "";
-      }
+    pagesHaveBeenCollected() {
+      return this.$attrs.collectedPages && this.$attrs.collectedPages.length > 0;
     },
   },
   watch: {
@@ -103,20 +122,20 @@ export default {
       this.manifest = null;
     },
     inputGallicaUrl() {
+      this.manifest = null;
+
       if (this.inputGallicaUrl) {
         this.fetchGallicaManifestUrl();
       }
     },
     manifest() {
       this.$emit("set-source-manifest", this.manifest);
-      console.log("emit", this.manifest);
+      //console.log("emit", this.manifest);
     },
   },
   methods: {
     async getGallicaIIIFUrl() {
       if (this.inputGallicaUrl) {
-        console.log("get fallica url", this.inputGallicaUrl);
-
         const ark = this.inputGallicaUrl.match(this.gallicaRegexp);
         if (!ark) {
           return false;
@@ -130,16 +149,26 @@ export default {
       }
     },
     fetchGallicaManifestUrl: debounce(async function () {
-      const url = await this.getGallicaIIIFUrl();
-      if (url) {
-        const response = await fetch(url);
-        this.manifest = await response.json();
-        /*
-        this.lastPageError = false;
-        this.firstPageError = false;
-        this.startPageIndex = 1;
-        this.endPageIndex = this.manifestPageCount;
-        */
+      this.loadingManifest = true;
+      try {
+        const url = await this.getGallicaIIIFUrl();
+        if (url) {
+          const response = await fetch(url);
+          this.manifest = await response.json();
+          this.loadingMsg = "";
+          this.loadingMsgType = "is-success";
+        } else {
+          this.loadingMsg = "L'url ne correspond pas au format de la source sélectionnée";
+          this.loadingMsgType = "is-danger";
+        }
+      } catch (e) {
+        this.manifest = null;
+        this.loadingMsg =
+          "Erreur lors de la récupération du manifeste d'images, impossible de récupérer la ressource" +
+          `(${e})`;
+        this.loadingMsgType = "is-danger";
+      } finally {
+        this.loadingManifest = false;
       }
     }, 1000),
   },
@@ -164,5 +193,9 @@ export default {
   margin-top: 20px;
   padding-left: 16px;
   padding-right: 128px;
+}
+
+.source-desc {
+  margin-top: 35px;
 }
 </style>

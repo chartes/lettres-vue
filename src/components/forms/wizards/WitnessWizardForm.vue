@@ -155,6 +155,7 @@ export default {
           center: {
             label: "center",
             component: "ImageSourceForm",
+            attributes: { collectedPages: this.collectedPages },
           },
           footer: {
             buttons: this.manifest
@@ -208,7 +209,11 @@ export default {
           this.collectedPages = this.collectedPages.concat(data);
           break;
         case "del":
-          this.collectedPages.splice(data.index, 1);
+          if (data.index >= 0) {
+            this.collectedPages.splice(data.index, 1);
+          } else {
+            this.collectedPages = [];
+          }
           break;
         case "move":
           if (data.to !== data.from) {

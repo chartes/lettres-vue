@@ -1,5 +1,5 @@
 <template>
-  <div class="image-grid-container">
+  <div class="manifest-creation-form">
     <div
       class="image-area"
       style="position: relative"
@@ -15,8 +15,12 @@
     <div class="metadata-area">
       <section>
         <div class="columns">
-          <div class="column">
+          <div class="column is-two-fifths">
             <div>
+              <p class="label">
+                Sélection des images
+              </p>
+
               <div class="field is-grouped">
                 <div class="control image-preview">
                   <b-skeleton
@@ -82,17 +86,28 @@
                 </p>
               </div>
             </div>
-            <p class="control import-button">
-              <b-button
-                type="is-primary is-info"
-                :disabled="!manifest"
-                @click="addSelectedPages"
-              >
-                Ajouter la sélection ({{ pageRangeSize }} page{{
-                  pageRangeSize > 1 ? "s" : ""
-                }})
-              </b-button>
-            </p>
+          </div>
+          <div class="column">
+            <div class="manage-manifest-buttons">
+              <p class="control import-button">
+                <b-button
+                  type="is-light"
+                  :disabled="!manifest"
+                  @click="addSelectedPages"
+                >
+                  Ajouter la sélection
+                </b-button>
+              </p>
+              <p class="control import-button">
+                <b-button
+                  type="is-danger is-light"
+                  :disabled="!manifest"
+                  @click="deleteAllPages"
+                >
+                  Tout supprimer
+                </b-button>
+              </p>
+            </div>
           </div>
         </div>
       </section>
@@ -222,6 +237,12 @@ export default {
         });
       }
     },
+    deleteAllPages() {
+      this.manageManifestData({
+        action: { name: "del" },
+        data: {},
+      });
+    },
     manageManifestData({ action, data }) {
       this.$emit("manage-manifest-data", { action, data });
     },
@@ -262,7 +283,8 @@ export default {
   .number-input {
     width: 140px;
   }
-  .url-input {
+
+  input {
     width: 400px;
   }
 
@@ -283,8 +305,13 @@ export default {
     right: 20px;
   }
 
-  .import-button {
-    margin-top: 12px;
+  .manage-manifest-buttons {
+    margin-top: 33px;
+    margin-left: 12px;
+    button {
+      width: 180px;
+      margin-bottom: 8px;
+    }
   }
 }
 </style>
