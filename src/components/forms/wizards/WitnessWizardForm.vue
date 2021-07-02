@@ -123,7 +123,7 @@ export default {
       return [
         {
           name: "classification",
-          label: "Classification",
+          label: "Définition",
           next: "image-source-selection",
           left: {
             label: "left",
@@ -151,7 +151,7 @@ export default {
           prev: "classification",
           next: this.manifest ? "manifest-creation" : null,
 
-          label: "Images",
+          label: "Sélection des images",
           center: {
             label: "center",
             component: "ImageSourceForm",
