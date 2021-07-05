@@ -74,7 +74,7 @@ import { debounce } from "lodash";
 
 export default {
   name: "ImageSourceForm",
-  emits: ["set-source-manifest"],
+  emits: ["manage-manifest-data"],
 
   data() {
     const data = [
@@ -129,8 +129,10 @@ export default {
       }
     },
     manifest() {
-      this.$emit("set-source-manifest", this.manifest);
-      //console.log("emit", this.manifest);
+      this.$emit("manage-manifest-data", {
+        action: { name: "set" },
+        data: { manifest: this.manifest },
+      });
     },
   },
   methods: {

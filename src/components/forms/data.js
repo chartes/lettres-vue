@@ -4,7 +4,7 @@ export const statuses =  [
 ]
 
 export const traditions =  [
-  {id: null, label:'Non renseigné'},
+  {id: 'n/a', label:'Non renseigné'},
   {id: 'autographe', label: 'Autographe'},
   {id: 'copie', label:	'Copie'},
   {id: 'édition', label:'Édition'},

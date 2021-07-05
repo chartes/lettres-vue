@@ -39,8 +39,8 @@
                 :is="stepItem.center.component"
                 v-bind="stepItem.center.attributes"
                 @goto-wizard-step="gotoStep"
-                @set-source-manifest="setSourceManifest"
                 @manage-manifest-data="manageManifestData"
+                @manage-witness-data="manageWitnessData"
               />
             </keep-alive>
           </b-tab-item>
@@ -108,6 +108,7 @@ export default {
   data() {
     return {
       activeTab: 0,
+      witness: null,
       manifest: null,
       collectedPages: [],
     };
@@ -199,12 +200,12 @@ export default {
         this.gotoStep(prevStep);
       }
     },
-    setSourceManifest(m) {
-      this.manifest = m;
-    },
     manageManifestData({ action, data }) {
       console.log(`manifest[${action.name}]`, data);
       switch (action.name) {
+        case "set":
+          this.manifest = data.manifest;
+          break;
         case "add":
           this.collectedPages = this.collectedPages.concat(data);
           break;
@@ -223,6 +224,22 @@ export default {
               this.collectedPages.splice(data.from, 1)[0]
             );
           }
+          break;
+        default:
+          break;
+      }
+    },
+    manageWitnessData({ action, data }) {
+      console.log(`witness[${action.name}]`, data);
+      switch (action.name) {
+        case "set-status":
+          this.witness.status = { id: data.id, label: data.label };
+          break;
+        case "set-tradition":
+          this.witness.tradition = { id: data.id, label: data.label };
+          break;
+        case "set-institution":
+          this.witness.institution = { name: data.name, ref: data.ref };
           break;
         default:
           break;
