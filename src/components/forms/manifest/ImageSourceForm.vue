@@ -30,8 +30,18 @@
             placeholder="https://gallica.bnf.fr/ark:/12148/bpt6k1521194n"
             type="url"
             :disabled="pagesHaveBeenCollected"
-            :loading="loadingManifest"
+            expanded
           />
+          <p class="control">
+            <b-button
+              class="button is-primary"
+              :disabled="loadingManifest || !inputGallicaUrl"
+              :loading="loadingManifest"
+              @click="validateGallicaUrl"
+            >
+              Valider
+            </b-button>
+          </p>
         </b-field>
 
         <b-message v-if="pagesHaveBeenCollected" type="is-warning is-small" has-icon>
@@ -121,13 +131,6 @@ export default {
       this.inputGallicaUrl = null;
       this.manifest = null;
     },
-    inputGallicaUrl() {
-      this.manifest = null;
-
-      if (this.inputGallicaUrl) {
-        this.fetchGallicaManifestUrl();
-      }
-    },
     manifest() {
       this.$emit("manage-manifest-data", {
         action: { name: "set" },
@@ -136,6 +139,12 @@ export default {
     },
   },
   methods: {
+    validateGallicaUrl() {
+      this.manifest = null;
+      if (this.inputGallicaUrl) {
+        this.fetchGallicaManifestUrl();
+      }
+    },
     async getGallicaIIIFUrl() {
       if (this.inputGallicaUrl) {
         const ark = this.inputGallicaUrl.match(this.gallicaRegexp);
@@ -194,7 +203,7 @@ export default {
 .input-form {
   margin-top: 20px;
   padding-left: 16px;
-  padding-right: 128px;
+  padding-right: 256px;
 }
 
 .source-desc {

@@ -24,21 +24,21 @@
 
     <b-field label="Institution de conservation" class="institution-input">
       <b-autocomplete
-        v-model="searchedTerm"
+        v-model="searchedInstitutionName"
         placeholder="e.g. BnF"
         open-on-focus
         :data="filteredDataObj"
-        field="label"
+        field="name"
         clearable
-        @select="(option) => (selected = option)"
+        @select="(option) => (selectedInstitution = option)"
       >
         <template #header>
           <a @click="goToNewInstitutionForm">
             <span> Ajouter une institution... </span>
           </a>
         </template>
-        <template v-if="searchedTerm" #empty>
-          Aucun résultat pour {{ searchedTerm }}
+        <template v-if="searchedInstitutionName" #empty>
+          Aucun résultat pour {{ searchedInstitutionName }}
         </template>
       </b-autocomplete>
     </b-field>
@@ -61,16 +61,58 @@ export default {
       witnessTextContent: "",
 
       //institution
-      searchedTerm: "",
-      selected: null,
-      institutionName: null,
-      institutionRef: null,
+      searchedInstitutionName: "",
+      selectedInstitution: null,
     };
   },
   computed: {
     filteredDataObj() {
-      return [{ label: "BnF" }, { label: "École" }].filter((option) => {
-        return option.label.toLowerCase().indexOf(this.searchedTerm.toLowerCase()) >= 0;
+      return [
+        { name: "BnF", ref: "http://bnf" },
+        { name: "École", ref: "http://ecole" },
+      ].filter((option) => {
+        return (
+          option &&
+          option.name.toLowerCase().indexOf(this.searchedInstitutionName.toLowerCase()) >=
+            0
+        );
+      });
+    },
+  },
+  watch: {
+    selectedInstitution(newVal, oldVal) {
+      let data;
+      if (newVal !== oldVal) {
+        if (this.selectedInstitution) {
+          data = {
+            name: this.selectedInstitution.name,
+            ref: this.selectedInstitution.ref,
+          };
+        } else {
+          data = null;
+        }
+
+        this.$emit("manage-witness-data", {
+          action: { name: "set-institution" },
+          data,
+        });
+      }
+    },
+    "$attrs.witness.institution"() {
+      const inst = this.$attrs.witness.institution;
+      //this.fetchInstitutions();
+      this.searchedInstitutionName = inst ? inst.name : "";
+    },
+    classificationMark() {
+      this.$emit("manage-witness-data", {
+        action: { name: "set-classification-mark" },
+        data: { classificationMark: this.classificationMark },
+      });
+    },
+    witnessTextContent() {
+      this.$emit("manage-witness-data", {
+        action: { name: "set-witness-text-content" },
+        data: { witnessTextContent: this.witnessTextContent },
       });
     },
   },
@@ -80,6 +122,9 @@ export default {
     },
     manageWitnessData(evt) {
       this.$emit("manage-witness-data", evt);
+    },
+    fetchInstitutions() {
+      console.log("fetch institutions from api");
     },
   },
 };

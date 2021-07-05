@@ -59,11 +59,12 @@ export default {
     },
   },
   created() {
-    this.selectedStatus = ["base"];
-    this.selectedTradition = ["n/a"];
+    this.selectedStatus = this.$attrs.witness.status;
+    this.selectedTradition = this.$attrs.witness.tradition;
   },
   methods: {
     manageWitnessData(evt) {
+      console.log("emit manage-witness-data", evt);
       this.$emit("manage-witness-data", evt);
     },
   },

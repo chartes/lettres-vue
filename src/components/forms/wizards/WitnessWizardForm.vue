@@ -20,6 +20,9 @@
               <component
                 :is="stepItem.left.component"
                 v-bind="stepItem.left.attributes"
+                @goto-wizard-step="gotoStep"
+                @manage-manifest-data="manageManifestData"
+                @manage-witness-data="manageWitnessData"
               />
             </keep-alive>
           </b-tab-item>
@@ -108,7 +111,7 @@ export default {
   data() {
     return {
       activeTab: 0,
-      witness: null,
+      witness: { status: ["base"], tradition: ["n/a"], institution: null },
       manifest: null,
       collectedPages: [],
     };
@@ -129,19 +132,23 @@ export default {
           left: {
             label: "left",
             component: "WitnessStatusTraditionForm",
-            attributes: {},
+            attributes: { witness: this.witness },
           },
-          center: { label: "center", component: "WitnessInputForm", attributes: {} },
+          center: {
+            label: "center",
+            component: "WitnessInputForm",
+            attributes: { witness: this.witness },
+          },
         },
         {
           name: "institution-creation",
-          next: "image-source-selection",
+
           prev: "classification",
           label: "Institution",
           center: {
             label: "center",
             component: "InstitutionCreationForm",
-            attributes: {},
+            attributes: { witness: this.witness },
           },
           footer: {
             buttons: [],
@@ -233,13 +240,19 @@ export default {
       console.log(`witness[${action.name}]`, data);
       switch (action.name) {
         case "set-status":
-          this.witness.status = { id: data.id, label: data.label };
+          this.witness.status = data;
           break;
         case "set-tradition":
-          this.witness.tradition = { id: data.id, label: data.label };
+          this.witness.tradition = data;
           break;
         case "set-institution":
-          this.witness.institution = { name: data.name, ref: data.ref };
+          this.witness.institution = data;
+          break;
+        case "set-classification-mark":
+          // TODO
+          break;
+        case "set-witness-text-content":
+          // TODO
           break;
         default:
           break;
