@@ -121,8 +121,8 @@ const mutations = {
     wit = { ...wit, institution }
     state.witnesses.splice(index, 1, wit)
   },
-  REMOVE_WITNESS (state, payload) {
-    let wit = state.witnesses.find(w => w.id === payload.id)
+  REMOVE_WITNESS (state, id) {
+    let wit = state.witnesses.find(w => w.id === id)
     const index = state.witnesses.indexOf(wit)
     state.witnesses.splice(index, 1)
   },
@@ -272,10 +272,10 @@ const actions = {
     return http.patch(`/witnesses/${witnessId}/relationships/institution`, {data: null});
   },
   addWitness ({commit, rootState, state}, witness) {
-    witness.num = Math.max.apply(null, state.witnesses.map(w => w.num)) + 1;
+    witness.num = Math.max.apply(null, state.witnesses.map(w => w.num)) + 1; //TODO server side
 
-    const witnessData = { ...witness };
-    removeContentEditableAttributesFromObject(witnessData)
+    const witnessData = { ...witness }; //TODO probably useless if the incoming variable is expandable
+    removeContentEditableAttributesFromObject(witnessData) //TODO utile?
     const institutionId = witness.institution ? witness.institution.id : null;
     delete(witnessData.id);
     delete(witnessData.institution);
@@ -283,7 +283,7 @@ const actions = {
     const relationships = {
       document: {
         data: {
-          id: state.document.id,
+          id: 1,//state.document.id,
           type: "document"
         }
       }
@@ -355,7 +355,7 @@ const actions = {
     return http.delete(`/witnesses/${witness.id}`, {data})
       .then(response => {
         console.log('response', response)
-        commit('REMOVE_WITNESS', witness);
+        commit('REMOVE_WITNESS', witness.id);
       })
   },
   reorderWitnesses ({commit, rootState, state}, { witness, dir }) {

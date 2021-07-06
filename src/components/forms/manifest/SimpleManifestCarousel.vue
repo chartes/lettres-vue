@@ -28,7 +28,7 @@
           v-for="(item, i) in items"
           :key="item.num"
           class="card"
-          @mouseover="onMouseOverPage(item, i)"
+          @mouseover="onMouseOverPage(item)"
           @mouseleave="onMouseLeavePage"
         >
           <div class="card-image">
@@ -38,20 +38,20 @@
             <span v-show="showActions === item.num" class="page-actions">
               <button
                 class="button is-light is-danger page-action"
-                @click="deletePage(i)"
+                @click.prevent="deletePage(i)"
               >
                 <i class="fas fa-trash" />
               </button>
               <button
                 class="button is-light is-info page-action"
-                @click="movePage(i, Math.max(i - 1, 0))"
+                @click.prevent="movePage(i, Math.max(i - 1, 0))"
               >
                 <i class="fas fa-chevron-left" />
               </button>
               <button class="button is-light is-info page-action">
                 <i
                   class="fas fa-chevron-right"
-                  @click="movePage(i, Math.min(i + 1, items.length - 1))"
+                  @click.prevent="movePage(i, Math.min(i + 1, items.length - 1))"
                 />
               </button>
             </span>
@@ -138,12 +138,9 @@ export default {
     moveLeft() {
       this.move(false);
     },
-    onMouseOverPage(item, pageIdx) {
+    onMouseOverPage(item) {
       this.toolTipImageFullUrl = item.fullUrl;
       this.showActions = item.num;
-      //if (pageIdx !== this.index && pageIdx !== this.index + this.display - 1) {
-      //  this.showActions = item.num;
-      //}
     },
     onMouseLeavePage() {
       this.showActions = null;

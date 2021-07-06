@@ -203,7 +203,7 @@ export default {
 .input-form {
   margin-top: 20px;
   padding-left: 16px;
-  padding-right: 256px;
+  padding-right: 128px;
 }
 
 .source-desc {

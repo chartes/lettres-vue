@@ -1,9 +1,28 @@
 <template>
   <div>
-    Home Page
-    <div class="main-form">
-      <witness-wizard-form />
-    </div>
+    Home Page <br />
+    <b-button
+      label="Ajouter un témoin"
+      type="is-primary"
+      size="is-medium"
+      @click="isComponentModalActive = true"
+    />
+
+    <b-modal
+      v-model="isComponentModalActive"
+      trap-focus
+      has-modal-card
+      scroll="clip"
+      :width="1080"
+      :destroy-on-hide="true"
+      aria-role="dialog"
+      aria-label="Example Modal"
+      aria-modal
+    >
+      <template #default="props">
+        <witness-wizard-form @close="props.close" />
+      </template>
+    </b-modal>
   </div>
 </template>
 
@@ -16,14 +35,11 @@ export default {
     WitnessWizardForm,
   },
   data() {
-    return {};
+    return {
+      isComponentModalActive: false,
+    };
   },
 };
 </script>
 
-<style scoped lang="scss">
-.main-form {
-  width: 90%;
-  height: 80vh;
-}
-</style>
+<style scoped lang="scss"></style>

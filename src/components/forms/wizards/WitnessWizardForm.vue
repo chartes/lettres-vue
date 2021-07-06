@@ -1,5 +1,5 @@
 <template>
-  <div class="root-container box">
+  <div class="root-container box modal-card">
     <div class="root-grid-container">
       <div class="leftbar-header-area">
         <h1 class="step-label is-uppercase is-size-2">
@@ -49,10 +49,11 @@
           </b-tab-item>
         </b-tabs>
       </div>
-      <div class="center-footer-area" />
-      <div class="center-footer-buttons-area">
+      <div class="center-footer-area">
         <div class="buttons">
-          <b-button type="is-primary" size="is-medium"> Annuler </b-button>
+          <b-button type="is-primary" size="is-medium" @click="closeWizard">
+            Annuler
+          </b-button>
 
           <b-button
             v-if="currentStep.prev"
@@ -111,7 +112,13 @@ export default {
   data() {
     return {
       activeTab: 0,
-      witness: { status: ["base"], tradition: ["n/a"], institution: null },
+      witness: {
+        status: ["base"],
+        tradition: ["n/a"],
+        institution: null,
+        classification_mark: null,
+        content: null,
+      },
       manifest: null,
       collectedPages: [],
     };
@@ -168,7 +175,7 @@ export default {
           footer: {
             buttons: this.manifest
               ? []
-              : [{ label: "Terminer", type: "is-primary", action: () => {} }],
+              : [{ label: "Terminer", type: "is-primary", action: this.saveWitness }],
           },
         },
         {
@@ -182,7 +189,9 @@ export default {
             attributes: { manifest: this.manifest, collectedPages: this.collectedPages },
           },
           footer: {
-            buttons: [{ label: "Terminer", type: "is-primary", action: () => {} }],
+            buttons: [
+              { label: "Terminer", type: "is-primary", action: this.saveWitness },
+            ],
           },
         },
       ];
@@ -240,23 +249,30 @@ export default {
       console.log(`witness[${action.name}]`, data);
       switch (action.name) {
         case "set-status":
-          this.witness.status = data;
+          this.witness.status = data.id;
           break;
         case "set-tradition":
-          this.witness.tradition = data;
+          this.witness.tradition = data.id;
           break;
         case "set-institution":
           this.witness.institution = data;
           break;
         case "set-classification-mark":
-          // TODO
+          this.witness["classification-mark"] = data;
           break;
         case "set-witness-text-content":
-          // TODO
+          this.witness.content = data;
           break;
         default:
           break;
       }
+    },
+    closeWizard() {
+      this.$parent.close();
+    },
+    async saveWitness() {
+      await this.$store.dispatch("document/addWitness", this.witness);
+      this.closeWizard();
     },
   },
 };
@@ -268,11 +284,11 @@ export default {
 .root-container {
   overflow: hidden;
 
-  min-width: 1100px;
   min-height: 720px;
+  min-width: 960px;
 
-  width: 1100px;
-  height: 720px;
+  width: 100%;
+  height: inherit;
 
   padding: 0px !important;
 
@@ -335,6 +351,7 @@ export default {
   .center-content-area {
     grid-area: center-content;
     height: 100%;
+
     .tabs {
       display: none !important;
     }
@@ -351,9 +368,6 @@ export default {
   }
   .center-footer-area {
     grid-area: center-footer;
-  }
-  .center-footer-buttons-area {
-    grid-area: center-footer-buttons;
     justify-self: end;
     align-self: center;
     .buttons {
@@ -363,14 +377,15 @@ export default {
 
   .root-grid-container {
     display: grid;
-    min-height: 100%;
+    min-height: inherit;
+    height: 100%;
 
-    grid-template-columns: 300px auto;
+    grid-template-columns: minmax(280px, 28%) minmax(800px, auto);
     grid-template-rows: 120px auto 80px;
     grid-template-areas:
-      "leftbar-header center-content center-content"
-      "leftbar-content center-content  center-content"
-      "leftbar-footer center-footer center-footer-buttons";
+      "leftbar-header center-content"
+      "leftbar-content center-content"
+      "leftbar-footer center-footer";
   }
 }
 </style>

@@ -106,13 +106,13 @@ export default {
     classificationMark() {
       this.$emit("manage-witness-data", {
         action: { name: "set-classification-mark" },
-        data: { classificationMark: this.classificationMark },
+        data: this.classificationMark,
       });
     },
     witnessTextContent() {
       this.$emit("manage-witness-data", {
         action: { name: "set-witness-text-content" },
-        data: { witnessTextContent: this.witnessTextContent },
+        data: this.witnessTextContent,
       });
     },
   },

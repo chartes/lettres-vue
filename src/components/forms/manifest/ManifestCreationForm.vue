@@ -12,7 +12,7 @@
     <div class="metadata-area">
       <section>
         <div class="columns">
-          <div class="column is-two-fifths">
+          <div class="column is-half">
             <div>
               <p class="label">Sélection des images</p>
 
@@ -244,7 +244,7 @@ export default {
 
 .image-area {
   background-color: black;
-  width: 800px;
+  width: inherit;
   height: 280px;
 
   .no-image-text {
