@@ -271,6 +271,7 @@ export default {
       this.$parent.close();
     },
     async saveWitness() {
+      this.witness.images = this.collectedPages.map((p) => p.canvasId);
       await this.$store.dispatch("document/addWitness", this.witness);
       this.closeWizard();
     },

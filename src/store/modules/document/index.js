@@ -271,7 +271,9 @@ const actions = {
 
     return http.patch(`/witnesses/${witnessId}/relationships/institution`, {data: null});
   },
-  addWitness ({commit, rootState, state}, witness) {
+  async addWitness ({commit, rootState, state}, witness) {
+    const http = http_with_auth(rootState.user.jwt);
+
     witness.num = Math.max.apply(null, state.witnesses.map(w => w.num)) + 1; //TODO server side
 
     const witnessData = { ...witness }; //TODO probably useless if the incoming variable is expandable
@@ -296,13 +298,32 @@ const actions = {
         }
       }
     }
+
+    if (witness.images) {
+      /* first we create all the new images */
+      const imagesData = witness.images.map((i, index) => {
+        return {
+          attributes: {'canvas-id': i, 'order-num': index+1},
+          type: 'image'  
+        }
+      })
+  
+      let imagesPromises = imagesData.map(data => http.post(`/images?without-relationships`, {data}))
+      const imagesCreated = await Promise.all(imagesPromises)
+
+      relationships.images = {
+        data: imagesCreated.map(r => {return {id: r.data.data.id, type: 'image'}})    
+      }
+
+      delete(witnessData.images);
+    }
+
     const data = {
         type: "witness",
         attributes: witnessData,
         relationships
     };
 
-    const http = http_with_auth(rootState.user.jwt);
 
     return http.post(`/witnesses?without-relationships`, {data})
       .then(response => {
@@ -333,6 +354,25 @@ const actions = {
         }
       }
     }
+
+    if (witness.images) {
+      const imagesData = witness.images.map((i, index) => {
+        return {
+          attributes: {'canvas-id': i, 'order-num': index+1},
+          type: 'image'  
+        }
+      })
+  
+      let imagesPromises = imagesData.map(data => http.post(`/images?without-relationships`, {data}))
+      const imagesCreated = await Promise.all(imagesPromises)
+
+      relationships.images = {
+        data: imagesCreated.map(r => {return {id: r.data.data.id, type: 'image'}})    
+      }
+
+      delete(witnessData.images);
+    }
+
     const data = {
         id : witness.id,
         type: "witness",

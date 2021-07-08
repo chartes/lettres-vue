@@ -1,22 +1,16 @@
 <template>
   <section class="main">
     <nav-bar />
-    <section
-      class="section"
-      style="height: 100%"
-    >
+    <section class="section" style="height: 100%">
       <div class="columns">
-        <div
-          v-show="showLeftSideBar"
-          class="column is-2"
-        >
+        <div v-show="showLeftSideBar" class="column is-2">
           <side-bar />
         </div>
         <div
           class="column main-column"
           :style="
             (showLeftSideBar ? 'padding-left: 0;' : '') +
-              (rightSideBarIsVisible ? 'padding-right: 0;' : '')
+            (rightSideBarIsVisible ? 'padding-right: 0;' : '')
           "
         >
           <div style="display: flex">
@@ -59,7 +53,7 @@
           <img
             class="enc-logo ml-5 pt-3"
             src="@/assets/images/logos/logo-ecole-nationale-des-chartes-header.png"
-          >
+          />
         </div>
       </nav>
     </footer>
@@ -70,7 +64,6 @@
 import { mapState, mapActions } from "vuex";
 import NavBar from "@/components/NavBar.vue";
 import SideBar from "@/components/SideBar.vue";
-//import MiradorViewer from "@/components/MiradorViewer";
 
 export default {
   name: "LayoutDefault",
@@ -179,7 +172,7 @@ footer {
   background-color: $nice-grey !important;
   margin-top: 12px;
   padding: 15px 0px 25px !important;
-  z-index: 10000;
+  z-index: 100;
 
   .enc-logo {
     height: 55px;

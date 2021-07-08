@@ -209,12 +209,15 @@ export default {
         if (this.pages.find((p) => p.num === i)) {
           continue;
         }
+
+        const canvas = this.manifest.sequences[0].canvases[i - 1];
         newItems.push({
           //canvas: this.manifest.sequences[0].canvases[i - 1],
           thumbnail: image,
           title: i,
           fullUrl: fullImage.url,
           num: i,
+          canvasId: canvas["@id"],
         });
         //this.pages.push(item);
       }
