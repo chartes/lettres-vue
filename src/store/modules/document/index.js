@@ -370,7 +370,7 @@ const actions = {
         data: imagesCreated.map(r => {return {id: r.data.data.id, type: 'image'}})    
       }
 
-      delete(witnessData.images);
+      delete(attributes.images);
     }
 
     const data = {
