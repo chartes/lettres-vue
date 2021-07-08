@@ -331,7 +331,7 @@ const actions = {
         commit('ADD_WITNESS', witness);
       })
   },
-  updateWitness ({commit, rootState, state}, witness) {
+  async updateWitness ({commit, rootState, state}, witness) {
     const attributes = {...witness}
     removeContentEditableAttributesFromObject(attributes)
     const institutionId = witness.institution ? witness.institution.id : null;
