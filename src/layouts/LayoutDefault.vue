@@ -34,7 +34,7 @@
           style="background-color: #f6f6f6"
         >
           <mirador-viewer
-            v-if="iiifManifestUrl"
+            v-if="document && iiifManifestUrl"
             class="mirador-container"
             :manifest-url="iiifManifestUrl"
           />
@@ -67,6 +67,7 @@ import SideBar from "@/components/SideBar.vue";
 
 export default {
   name: "LayoutDefault",
+  emit: ["refresh-viewer"],
   components: {
     NavBar,
     SideBar,
@@ -81,7 +82,7 @@ export default {
     iiifManifestUrl() {
       let url;
       if (this.$route.name === "document" && this.document) {
-        url = this.document["iiif-collection-url"];
+        url = this.document["iiif-base-witness-manifest-url"];
       } else {
         //url = 'https://gallica.bnf.fr/iiif/ark:/12148/btv1b550076223/manifest.json';
       }
@@ -96,7 +97,9 @@ export default {
   watch: {
     iiifManifestUrl() {
       if (!this.iiifManifestUrl) {
-        //this.hideRightSideBar();
+        this.hideRightSideBar();
+      } else {
+        this.$emit("refresh-viewer");
       }
     },
   },

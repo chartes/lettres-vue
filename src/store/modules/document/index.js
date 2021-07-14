@@ -285,7 +285,7 @@ const actions = {
     const relationships = {
       document: {
         data: {
-          id: 1,//state.document.id,
+          id: state.document.id,
           type: "document"
         }
       }

@@ -109,6 +109,20 @@ export default {
     InstitutionCreationForm,
     ManifestCreationForm,
   },
+  props: {
+    witnessInput: {
+      type: Object,
+      default: () => {
+        return {
+          status: ["base"],
+          tradition: ["n/a"],
+          institution: null,
+          classification_mark: null,
+          content: null,
+        };
+      },
+    },
+  },
   data() {
     return {
       activeTab: 0,
@@ -196,6 +210,18 @@ export default {
         },
       ];
     },
+  },
+  created() {
+    if (this.$props.witnessInput) {
+      const w = this.$props.witnessInput;
+      this.witness = {
+        status: [w.status],
+        tradition: [w.tradition],
+        institution: w.institution,
+        classification_mark: w.classification_mark,
+        content: w.content,
+      };
+    }
   },
   methods: {
     gotoStep(stepName) {

@@ -1,27 +1,10 @@
 <template>
   <section class="document-correspondents">
     <div class="panel">
-      <header class="panel-heading">
-        <span 
-          class="svg-icon"
-          v-html="require('@/assets/images/icons/document-correspondents.svg')"
-        />
-        <h2 class="document-correspondents__title subtitle">
-          Correspondants
-        </h2>
-      </header>
-      <div
-        class="panel-block"
-        style="display: inline-block; width: 100%"
-      >
-        <div class="subtitle mb-2">
-          Expéditeur{{ documentSender.length > 1 ? 's' :'' }}
-          <a
-            v-if="editable"
-            class="tag"
-            href="#"
-            @click="openAddPerson('sender')"
-          >
+      <div class="panel-block" style="display: inline-block; width: 100%">
+        <div class="heading mb-2">
+          Expéditeur{{ documentSender.length > 1 ? "s" : "" }}
+          <a v-if="editable" class="tag" href="#" @click="openAddPerson('sender')">
             <icon-add />
           </a>
         </div>
@@ -32,11 +15,12 @@
             class="tags has-addons are-medium correspondent-item mb-1"
           >
             <span class="tag">
-              <a
-                :href="c.person.ref"
-                target="_blank"
-              >
-                {{ !!c.person.function ? `${c.person.label}, ${c.person.function}` : c.person.label }}
+              <a :href="c.person.ref" target="_blank">
+                {{
+                  !!c.person.function
+                    ? `${c.person.label}, ${c.person.function}`
+                    : c.person.label
+                }}
               </a>
             </span>
             <a
@@ -52,18 +36,10 @@
           </p>
         </div>
       </div>
-      <div
-        class="panel-block"
-        style="display: inline-block; width: 100%"
-      >
-        <div class="subtitle mb-2">
-          Destinataire{{ documentRecipients.length > 1 ? 's':'' }}
-          <a
-            v-if="editable"
-            class="tag"
-            href="#"
-            @click="openAddPerson('recipient')"
-          >
+      <div class="panel-block" style="display: inline-block; width: 100%">
+        <div class="heading mb-2">
+          Destinataire{{ documentRecipients.length > 1 ? "s" : "" }}
+          <a v-if="editable" class="tag" href="#" @click="openAddPerson('recipient')">
             <icon-add />
           </a>
         </div>
@@ -74,11 +50,12 @@
             class="tags has-addons are-medium correspondent-item mb-1"
           >
             <span class="tag">
-              <a
-                :href="c.person.ref"
-                target="_blank"
-              >
-                {{ !!c.person.function ? `${c.person.label}, ${c.person.function}` : c.person.label }}
+              <a :href="c.person.ref" target="_blank">
+                {{
+                  !!c.person.function
+                    ? `${c.person.label}, ${c.person.function}`
+                    : c.person.label
+                }}
               </a>
             </span>
             <a
@@ -94,7 +71,7 @@
           </p>
         </div>
       </div>
-  
+
       <person-list-form
         v-if="personsForm && editable"
         title="Sélectionner une personne"
@@ -106,80 +83,79 @@
 </template>
 
 <script>
-
-  import { mapState, mapGetters } from 'vuex'
-  import IconBin from '../ui/icons/IconBin';
-  import PersonListForm from '../forms/PersonListForm';
-  import LauchButton from '../forms/LaunchButton';
-  import IconAdd from "../ui/icons/IconAdd";
-  export default {
-    name: 'DocumentPersons',
-    components: { PersonListForm, IconAdd},
-    props: {
-      editable: {
-        type: Boolean,
-        default: false
-      },
+import { mapState, mapGetters } from "vuex";
+import IconBin from "../ui/icons/IconBin";
+import PersonListForm from "../forms/PersonListForm";
+import LauchButton from "../forms/LaunchButton";
+import IconAdd from "../ui/icons/IconAdd";
+export default {
+  name: "DocumentPersons",
+  components: { PersonListForm, IconAdd },
+  props: {
+    editable: {
+      type: Boolean,
+      default: false,
     },
-    data () {
-      return {
-        personsForm: null
-      }
+  },
+  data() {
+    return {
+      personsForm: null,
+    };
+  },
+  mounted() {
+    this.$store.dispatch("persons/fetchRoles");
+  },
+  methods: {
+    openAddPerson(role) {
+      this.personsForm = role;
     },
-    mounted () {
-      this.$store.dispatch('persons/fetchRoles')
+    closePersonChoice() {
+      this.personsForm = null;
+      console.log("close person choice");
     },
-    methods: {
-      openAddPerson (role) {
-        this.personsForm = role;
-      },
-      closePersonChoice() {
-        this.personsForm = null;
-        console.log("close person choice");
-      },
-      linkPersonToDoc(person) {
-        const personId = person.id;
-        const role = this.getRoleByLabel(this.personsForm);
-        const roleId =  role && role.id ? role.id : null;
-        this.$store.dispatch('persons/linkToDocument', {
+    linkPersonToDoc(person) {
+      const personId = person.id;
+      const role = this.getRoleByLabel(this.personsForm);
+      const roleId = role && role.id ? role.id : null;
+      this.$store
+        .dispatch("persons/linkToDocument", {
           personId,
           roleId,
-          func: person.function
+          func: person.function,
         })
-          .then(personHasRole => {
-            const corrData = {
-              person,
-              personId,
-              relationId: personHasRole.id,
-              role,
-              roleId,
-            }
-            this.$store.dispatch('document/addPerson', corrData);
-            this.closePersonChoice()
-          })
-      },
-      unlinkPersonFromDoc(person) {
-        const personId = person.personId
-        const roleId =  person.roleId
-        this.$store.dispatch('persons/unlinkFromDocument', {
-            relationId: person.relationId,
+        .then((personHasRole) => {
+          const corrData = {
+            person,
             personId,
-            roleId
-          })
-          .then(response => {
-            this.closePersonChoice()
-          })
-      }
+            relationId: personHasRole.id,
+            role,
+            roleId,
+          };
+          this.$store.dispatch("document/addPerson", corrData);
+          this.closePersonChoice();
+        });
     },
-    computed: {
-      ...mapState('document', ['persons']),
-      ...mapState('persons', ['roles']),
-      ...mapGetters('document', ['documentSender', 'documentRecipients']),
-      ...mapGetters('persons', ['getRoleByLabel']),
-    }
-  }
-
+    unlinkPersonFromDoc(person) {
+      const personId = person.personId;
+      const roleId = person.roleId;
+      this.$store
+        .dispatch("persons/unlinkFromDocument", {
+          relationId: person.relationId,
+          personId,
+          roleId,
+        })
+        .then((response) => {
+          this.closePersonChoice();
+        });
+    },
+  },
+  computed: {
+    ...mapState("document", ["persons"]),
+    ...mapState("persons", ["roles"]),
+    ...mapGetters("document", ["documentSender", "documentRecipients"]),
+    ...mapGetters("persons", ["getRoleByLabel"]),
+  },
+};
 </script>
 
-<style>
-</style>
+<style></style>

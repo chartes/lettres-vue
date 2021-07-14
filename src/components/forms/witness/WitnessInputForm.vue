@@ -56,9 +56,11 @@ export default {
   emits: ["goto-wizard-step", "manage-witness-data"],
 
   data() {
+    const witness = this.$attrs.witness;
     return {
-      classificationMark: "",
-      witnessTextContent: "",
+      witnessTextContent: witness && witness.content ? witness.content : "",
+      classificationMark:
+        witness && witness["classification-mark"] ? witness["classification-mark"] : "",
 
       //institution
       searchedInstitutionName: "",

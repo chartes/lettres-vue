@@ -1,11 +1,8 @@
 <template>
-  <section
-    class="document-placenames mb-3"
-    style="width: 100%"
-  >
+  <section class="document-placenames mb-3" style="width: 100%">
     <div class="columns">
       <div class="document-placenames__senders column is-one-third">
-        <h3 class="document-placenames__subtitle subtitle">
+        <h3 class="document-placenames__subtitle heading">
           Dates de lieu d'expédition
           <a
             v-if="editable"
@@ -19,16 +16,16 @@
         <div v-if="locationDateFrom.length">
           <div
             v-for="c in locationDateFrom"
-          
             :key="c.placename.id"
             class="tags has-addons are-medium document-placenames__senders-list mb-1"
           >
             <span class="tag">
-              <a
-                :href="c.placename.ref"
-                target="_blank"
-              >
-                {{ !!c.placename.function ? `${c.placename.label}, ${c.placename.function}` : c.placename.label }}
+              <a :href="c.placename.ref" target="_blank">
+                {{
+                  !!c.placename.function
+                    ? `${c.placename.label}, ${c.placename.function}`
+                    : c.placename.label
+                }}
               </a>
             </span>
             <a
@@ -44,9 +41,9 @@
           </p>
         </div>
       </div>
-      
-      <div class="document-placenames__recipients column  is-one-third">
-        <h3 class="document-placenames__subtitle subtitle">
+
+      <div class="document-placenames__recipients column is-one-third">
+        <h3 class="document-placenames__subtitle heading">
           Dates de lieu de destination
           <a
             v-if="editable"
@@ -60,16 +57,16 @@
         <div v-if="locationDateTo.length">
           <div
             v-for="c in locationDateTo"
-          
             :key="c.placename.id"
             class="tags has-addons are-medium document-placenames__senders-list mb-1"
           >
             <span class="tag">
-              <a
-                :href="c.placename.ref"
-                target="_blank"
-              >
-                {{ !!c.placename.function ? `${c.placename.label}, ${c.placename.function}` : c.placename.label }}
+              <a :href="c.placename.ref" target="_blank">
+                {{
+                  !!c.placename.function
+                    ? `${c.placename.label}, ${c.placename.function}`
+                    : c.placename.label
+                }}
               </a>
             </span>
             <a
@@ -85,7 +82,7 @@
           </p>
         </div>
       </div>
-      
+
       <placename-list-form
         v-if="placenamesForm && editable"
         title="Sélectionner un lieu"
@@ -97,82 +94,81 @@
 </template>
 
 <script>
+import { mapState, mapGetters } from "vuex";
+import IconBin from "../ui/icons/IconBin";
+import PlacenameListForm from "../forms/PlacenameListForm";
+import LauchButton from "../forms/LaunchButton";
+import IconAdd from "../ui/icons/IconAdd";
 
-    import {mapState, mapGetters} from 'vuex'
-    import IconBin from '../ui/icons/IconBin';
-    import PlacenameListForm from '../forms/PlacenameListForm';
-    import LauchButton from '../forms/LaunchButton';
-    import IconAdd from "../ui/icons/IconAdd";
-
-    export default {
-        name: 'DocumentPlacenames',
-        components: {PlacenameListForm,  IconAdd},
-        props: {
-            editable: {
-                type: Boolean,
-                default: false
-            },
-        },
-        data() {
-            return {
-                placenamesForm: null
-            }
-        },
-        mounted() {
-            this.$store.dispatch('placenames/fetchRoles')
-        },
-        methods: {
-            openAddPlacename(role) {
-                this.placenamesForm = role;
-            },
-            closePlacenameChoice() {
-                this.placenamesForm = null;
-            },
-            linkPlacenameToDoc(placename) {
-                const placenameId = placename.id
-                const role = this.getRoleByLabel(this.placenamesForm)
-                const roleId = role && role.id ? role.id : null;
-                this.$store.dispatch('placenames/linkToDocument', {
-                    placenameId,
-                    roleId,
-		                func: placename.function
-                })
-                    .then(placenameHasRole => {
-                        if (placenameHasRole) {
-                            const corrData = {
-                                placename,
-                                placenameId,
-                                relationId: placenameHasRole.id,
-                                role,
-                                roleId
-                            };
-                            this.$store.dispatch('document/addPlacename', corrData);
-	                          this.closePlacenameChoice()
-                        }
-                    })
-            },
-            unlinkPlacenameFromDoc(placename) {
-                const placenameId = placename.placenameId;
-                const roleId = placename.roleId;
-                this.$store.dispatch('placenames/unlinkFromDocument', {
-                    relationId: placename.relationId,
-                    placenameId,
-                    roleId
-                })
-                    .then(response => {
-                        this.closePlacenameChoice()
-                    })
-            }
-        },
-        computed: {
-            ...mapState('document', ['placenames']),
-            ...mapState('placenames', ['roles']),
-            ...mapGetters('document', ['locationDateFrom', 'locationDateTo']),
-            ...mapGetters('placenames', ['getRoleByLabel']),
-        }
-    }
-
+export default {
+  name: "DocumentPlacenames",
+  components: { PlacenameListForm, IconAdd },
+  props: {
+    editable: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  data() {
+    return {
+      placenamesForm: null,
+    };
+  },
+  mounted() {
+    this.$store.dispatch("placenames/fetchRoles");
+  },
+  methods: {
+    openAddPlacename(role) {
+      this.placenamesForm = role;
+    },
+    closePlacenameChoice() {
+      this.placenamesForm = null;
+    },
+    linkPlacenameToDoc(placename) {
+      const placenameId = placename.id;
+      const role = this.getRoleByLabel(this.placenamesForm);
+      const roleId = role && role.id ? role.id : null;
+      this.$store
+        .dispatch("placenames/linkToDocument", {
+          placenameId,
+          roleId,
+          func: placename.function,
+        })
+        .then((placenameHasRole) => {
+          if (placenameHasRole) {
+            const corrData = {
+              placename,
+              placenameId,
+              relationId: placenameHasRole.id,
+              role,
+              roleId,
+            };
+            this.$store.dispatch("document/addPlacename", corrData);
+            this.closePlacenameChoice();
+          }
+        });
+    },
+    unlinkPlacenameFromDoc(placename) {
+      const placenameId = placename.placenameId;
+      const roleId = placename.roleId;
+      this.$store
+        .dispatch("placenames/unlinkFromDocument", {
+          relationId: placename.relationId,
+          placenameId,
+          roleId,
+        })
+        .then((response) => {
+          this.closePlacenameChoice();
+        });
+    },
+  },
+  computed: {
+    ...mapState("document", ["placenames"]),
+    ...mapState("placenames", ["roles"]),
+    ...mapGetters("document", ["locationDateFrom", "locationDateTo"]),
+    ...mapGetters("placenames", ["getRoleByLabel"]),
+  },
+};
 </script>
 
-<style>
-</style>
+<style></style>

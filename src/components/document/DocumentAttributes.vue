@@ -1,9 +1,6 @@
 <template>
   <div class="document__attributes">
-    <header
-      v-if="!preview"
-      class="document__attributes--title subtitle"
-    >
+    <header v-if="!preview" class="document__attributes--title subtitle">
       <title-field-in-place
         :tabulation-index="0"
         label="Titre"
@@ -17,10 +14,7 @@
       />
     </header>
 
-    <div
-      v-if="editAttributes"
-      class="columns is-multiline subtitle"
-    >
+    <div v-if="editAttributes" class="columns is-multiline heading">
       <div class="column">
         <multiselect-field
           :editable="editable"
@@ -35,79 +29,83 @@
   </div>
 </template>
 <script>
-  import { mapState } from 'vuex';
-  import MultiselectField from '../forms/fields/MultiselectField';
-  import TitleFieldInPlace from '../forms/fields/TitleFieldInPlace';
+import { mapState } from "vuex";
+import MultiselectField from "../forms/fields/MultiselectField";
+import TitleFieldInPlace from "../forms/fields/TitleFieldInPlace";
 
-  export default {
-    name: 'DocumentAttributes',
-    components: {TitleFieldInPlace,  MultiselectField },
-    props: {
-      editable: {
-        type: Boolean,
-        default: false
-      },
-      editAttributes: {
-          type: Boolean, default: true
-      },
-      preview: {
-        type: Boolean, default: false
-      }
+export default {
+  name: "DocumentAttributes",
+  components: { TitleFieldInPlace, MultiselectField },
+  props: {
+    editable: {
+      type: Boolean,
+      default: false,
     },
-    data() {
-      return {
-        titleStatus: 'normal'
-      }
+    editAttributes: {
+      type: Boolean,
+      default: true,
     },
-    methods: {
-      titleChanged (fieldProps) {
-        const data = { id: this.document.id, attributes: {} };
-        data.attributes[fieldProps.name] = fieldProps.value;
-        this.titleSetStatusNormal()
-        this.$store.dispatch('document/save', data).then(response => {
-          this.titleSetStatusSuccess()
-          setTimeout(this.titleSetStatusNormal, 3000)
-        }).catch(() => {
-          this.titleSetStatusError()
-          setTimeout(this.titleSetStatusNormal, 3000)
+    preview: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  data() {
+    return {
+      titleStatus: "normal",
+    };
+  },
+  methods: {
+    titleChanged(fieldProps) {
+      const data = { id: this.document.id, attributes: {} };
+      data.attributes[fieldProps.name] = fieldProps.value;
+      this.titleSetStatusNormal();
+      this.$store
+        .dispatch("document/save", data)
+        .then((response) => {
+          this.titleSetStatusSuccess();
+          setTimeout(this.titleSetStatusNormal, 3000);
         })
-      },
-      titleSetStatusNormal () {
-        this.titleStatus = 'normal'
-      },
-      titleSetStatusSuccess () {
-        this.titleStatus = 'success'
-      },
-      titleSetStatusError () {
-        this.titleStatus = 'error'
-      },
-      languagesChanged (langs) {
-        const data = { id: this.document.id,
-          relationships: {
-            languages: {
-              data: langs.map(l => {
-                return {
-                  id: l.id,
-                  type: "language"
-                }
-              })
-            }
-          }
-        };
-
-        this.$store.dispatch('document/save', data);
-        console.log("lang data", data)
-      },
-
+        .catch(() => {
+          this.titleSetStatusError();
+          setTimeout(this.titleSetStatusNormal, 3000);
+        });
     },
-    computed: {
-      ...mapState('document', ['document', 'languages']),
-      ...mapState({
-        allLanguages: state => state.languages.languages
-      })
-    }
-  }
+    titleSetStatusNormal() {
+      this.titleStatus = "normal";
+    },
+    titleSetStatusSuccess() {
+      this.titleStatus = "success";
+    },
+    titleSetStatusError() {
+      this.titleStatus = "error";
+    },
+    languagesChanged(langs) {
+      const data = {
+        id: this.document.id,
+        relationships: {
+          languages: {
+            data: langs.map((l) => {
+              return {
+                id: l.id,
+                type: "language",
+              };
+            }),
+          },
+        },
+      };
+
+      this.$store.dispatch("document/save", data);
+      console.log("lang data", data);
+    },
+  },
+  computed: {
+    ...mapState("document", ["document", "languages"]),
+    ...mapState({
+      allLanguages: (state) => state.languages.languages,
+    }),
+  },
+};
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

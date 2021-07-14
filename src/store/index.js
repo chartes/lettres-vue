@@ -18,6 +18,10 @@ import layout from './modules/layout';
 
 Vue.use(Vuex);
 
+const VueInputMask = require('vue-inputmask').default
+Vue.use(VueInputMask)
+
+
 export default new Vuex.Store({
     modules: {
       collections,
