@@ -63,14 +63,15 @@ export default {
         witness && witness["classification-mark"] ? witness["classification-mark"] : "",
 
       //institution
-      searchedInstitutionName: "",
-      selectedInstitution: null,
+      searchedInstitutionName:
+        witness && witness.institution ? witness.institution.name : "",
+      selectedInstitution: witness && witness.institution ? witness.institution : null,
     };
   },
   computed: {
     filteredDataObj() {
       return [
-        { name: "BnF", ref: "http://bnf" },
+        { name: "Paris, Bibl. nat. Fr.", ref: "http://bnf" },
         { name: "École", ref: "http://ecole" },
       ].filter((option) => {
         return (

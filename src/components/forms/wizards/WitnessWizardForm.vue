@@ -133,6 +133,7 @@ export default {
         classification_mark: null,
         content: null,
       },
+      manifestUrl: null,
       manifest: null,
       collectedPages: [],
     };
@@ -145,6 +146,8 @@ export default {
       return this.stepItems[this.activeTab > -1 ? this.activeTab : 0];
     },
     stepItems() {
+      const w = this.$props.witnessInput;
+
       return [
         {
           name: "classification",
@@ -178,18 +181,22 @@ export default {
         {
           name: "image-source-selection",
           prev: "classification",
-          next: this.manifest ? "manifest-creation" : null,
+          next: this.manifest || this.collectedPages.length ? "manifest-creation" : null,
 
           label: "Sélection des images",
           center: {
             label: "center",
             component: "ImageSourceForm",
-            attributes: { collectedPages: this.collectedPages },
+            attributes: {
+              collectedPages: this.collectedPages,
+              manifestUrl: this.manifestUrl,
+            },
           },
           footer: {
-            buttons: this.manifest
-              ? []
-              : [{ label: "Terminer", type: "is-primary", action: this.saveWitness }],
+            buttons:
+              this.manifest || this.collectedPages.length
+                ? []
+                : [{ label: "Terminer", type: "is-primary", action: this.saveWitness }],
           },
         },
         {
@@ -211,7 +218,7 @@ export default {
       ];
     },
   },
-  created() {
+  async created() {
     if (this.$props.witnessInput) {
       const w = this.$props.witnessInput;
       this.witness = {
@@ -221,6 +228,35 @@ export default {
         classification_mark: w.classification_mark,
         content: w.content,
       };
+      this.manifestUrl = w["manifest-url"];
+
+      // TODO: fill up the collected pages here
+      /*
+       thumbnail: image,
+       title: i,
+       fullUrl: fullImage.url,
+       num: i,
+       canvasId: canvas["@id"],
+      */
+      if (this.manifestUrl) {
+        const r = await fetch(this.manifestUrl);
+        this.manifest = await r.json();
+        //TODO: should I fetch the 'origin' manifest there after ?
+
+        let num = 1;
+        for (const canvas of this.manifest.sequences[0].canvases) {
+          this.collectedPages.push({
+            thumbnail: { url: canvas.thumbnail["@id"] },
+            title: canvas.label,
+            fullUrl: canvas.images[0].resource["@id"],
+            num,
+            canvasId: canvas["@id"],
+          });
+          num += 1;
+        }
+
+        console.log("collectedPages", this.collectedPages);
+      }
     }
   },
   methods: {

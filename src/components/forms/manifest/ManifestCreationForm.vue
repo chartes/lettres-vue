@@ -1,6 +1,9 @@
 <template>
   <div class="manifest-creation-form">
-    <div class="image-area" style="position: relative">
+    <div
+      class="image-area"
+      style="position: relative"
+    >
       <simple-manifest-carousel
         :item-width="140"
         :display-num="5"
@@ -14,7 +17,9 @@
         <div class="columns">
           <div class="column is-half">
             <div>
-              <p class="label">Sélection des images</p>
+              <p class="label">
+                Sélection des images
+              </p>
 
               <div class="field is-grouped">
                 <div class="control image-preview">
@@ -47,7 +52,10 @@
                     @mouseover="toolTipImageFullIndex = endPageIndex"
                     @mouseleave="toolTipImageFullIndex = null"
                   >
-                    <b-image :src="lastPageImageUrl.url" @error="lastPageError = false" />
+                    <b-image
+                      :src="lastPageImageUrl.url"
+                      @error="lastPageError = false"
+                    />
                   </div>
                 </div>
               </div>
@@ -82,7 +90,11 @@
           <div class="column">
             <div class="manage-manifest-buttons">
               <p class="control import-button">
-                <b-button type="is-light" :disabled="!manifest" @click="addSelectedPages">
+                <b-button
+                  type="is-light"
+                  :disabled="!manifest"
+                  @click="addSelectedPages"
+                >
                   Ajouter la sélection
                 </b-button>
               </p>
@@ -100,7 +112,10 @@
         </div>
       </section>
 
-      <div v-if="toolTipImageFullUrl" class="tooltip-image-full">
+      <div
+        v-if="toolTipImageFullUrl"
+        class="tooltip-image-full"
+      >
         <b-image :src="toolTipImageFullUrl.url" />
       </div>
     </div>

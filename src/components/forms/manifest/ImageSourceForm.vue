@@ -97,9 +97,11 @@ export default {
       { name: "upload", src: "Téléverser des images" },
     ];
 
+    const manifestUrl = this.$attrs.manifestUrl;
+
     return {
       data,
-      selected: data[0],
+      selected: manifestUrl ? data[1] : data[0],
       columns: [
         {
           field: "src",
@@ -112,7 +114,7 @@ export default {
         },
       ],
 
-      inputGallicaUrl: null,
+      inputGallicaUrl: manifestUrl ? manifestUrl : null,
       gallicaRegexp: /(ark:\/\d+\/[a-z0-9]+)/,
       manifest: null,
 

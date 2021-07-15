@@ -11,13 +11,13 @@
       @mouseleave="showNavigation = false"
     >
       <span
-        v-show="showNavigation"
+        v-show="showNavigation && items.length > 1"
         class="button is-light is-rounded navigation-left"
         @click="moveLeft"
         ><i class="fas fa-chevron-left"
       /></span>
       <span
-        v-show="showNavigation"
+        v-show="showNavigation && items.length > 1"
         class="button is-light is-rounded navigation-right"
         @click="moveRight"
         ><i class="fas fa-chevron-right"
@@ -64,9 +64,7 @@
           </div>
         </div>
       </div>
-      <!--
-    translationOffset: {{ translationOffset }} | index: {{ index }} (min: {{ minIndex }},
-    max: {{ maxIndex }}) -->
+
       <span class="carousel-info">
         {{ items.length }} page{{ items.length > 1 ? "s" : "" }}
       </span>
@@ -230,7 +228,7 @@ export default {
   position: sticky;
   right: 12px;
   color: $white-ter;
-  padding-top: 5px;
+  padding-top: 0px;
   font-family: $bitter-family;
 }
 .page-actions {

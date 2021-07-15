@@ -64,7 +64,6 @@ export default {
   },
   methods: {
     manageWitnessData(evt) {
-      console.log("emit manage-witness-data", evt);
       this.$emit("manage-witness-data", evt);
     },
   },
