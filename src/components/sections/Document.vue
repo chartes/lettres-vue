@@ -56,7 +56,16 @@
 
       <section class="document-section">
         <div class="heading is-size-5 is-uppercase">
-          <span class="heading-content">Témoins</span>
+          <span class="heading-content"> Témoins </span>
+          <b-button
+            type="is-light"
+            value="+"
+            size="is-small"
+            class="open-modal-button"
+            @click="openWitnessModal = true"
+          >
+            <i class="fas fa-plus" />
+          </b-button>
           <div class="slope-container">
             <span class="slope tier-1" />
             <span class="slope tier-2" />
@@ -65,7 +74,7 @@
           </div>
         </div>
         <div>
-          <witness-list />
+          <witness-list :open-modal="openWitnessModal" />
         </div>
       </section>
 
@@ -136,6 +145,7 @@ import { http_with_auth } from "@/modules/http-common";
 
 export default {
   name: "Document",
+  emit: ["open-witness-modal"],
   components: {
     Changelog,
     DocumentSkeleton,
@@ -156,6 +166,8 @@ export default {
   data() {
     return {
       isLoading: true,
+
+      openWitnessModal: false,
     };
   },
   computed: {
@@ -297,17 +309,21 @@ export default {
   border-left: 3px solid $nice-grey;
 }
 .heading-content {
-  width: 190px;
   display: inline-block;
 
   color: $brown;
   font-family: $bitter-family;
   font-size: 18px;
   padding: 5px;
-
-  margin-right: 12px;
 }
 .main-column-content {
   padding-left: 0px !important;
+}
+.open-modal-button {
+  margin-top: 3px;
+  background-color: $beige-lighter !important;
+  &:hover {
+    background-color: $nice-grey !important;
+  }
 }
 </style>
