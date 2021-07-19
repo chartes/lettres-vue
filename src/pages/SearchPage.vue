@@ -1,10 +1,7 @@
 <template>
   <div class="search-page-container">
     <div class="columns">
-      <div
-        v-if="showAdvancedSearchForm"
-        class="column is-one-third search-form-column"
-      >
+      <div v-if="showAdvancedSearchForm" class="column is-one-third search-form-column">
         <aside class="advanced-search-form">
           <advanced-search-form />
         </aside>
@@ -17,20 +14,12 @@
                 v-if="!isCollectionLoading && collectionTree.length > 0"
                 :collection="collectionTree[0]"
               />
-              <div
-                v-else
-                class="progress-container"
-              >
-                <progress class="progress">
-                  15%
-                </progress>
+              <div v-else class="progress-container">
+                <progress class="progress">15%</progress>
               </div>
             </div>
             <div class="column">
-              <p
-                v-if="selectedCollection"
-                class="collection-description"
-              >
+              <p v-if="selectedCollection" class="collection-description">
                 {{ selectedCollection.description }} (paragraphe descriptif de la
                 collection)
               </p>
@@ -105,7 +94,7 @@ export default {
 }
 
 .collection-selection {
-  top: 24px;
+  top: 50px;
   position: relative;
   min-height: 170px;
 }

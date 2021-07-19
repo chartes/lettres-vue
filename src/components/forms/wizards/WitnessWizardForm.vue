@@ -5,12 +5,18 @@
         <h1 class="step-label is-uppercase is-size-2">
           {{ wizardLabel }}
         </h1>
-        <h2 v-if="currentStep.label" class="step-label is-uppercase is-size-5">
+        <h2
+          v-if="currentStep.label"
+          class="step-label is-uppercase is-size-5"
+        >
           {{ currentStep.label }}
         </h2>
       </div>
       <div class="leftbar-content-area">
-        <b-tabs v-model="activeTab" :animated="false">
+        <b-tabs
+          v-model="activeTab"
+          :animated="false"
+        >
           <b-tab-item
             v-for="(stepItem, i) in stepItems"
             :key="`left-step-${i}`"
@@ -51,7 +57,11 @@
       </div>
       <div class="center-footer-area">
         <div class="buttons">
-          <b-button type="is-primary" size="is-medium" @click="closeWizard">
+          <b-button
+            type="is-primary"
+            size="is-medium"
+            @click="closeWizard"
+          >
             Annuler
           </b-button>
 
@@ -74,7 +84,10 @@
             <span>Suivant</span>
           </b-button>
 
-          <span v-for="(stepItem, i) in stepItems" :key="`footer-buttons-step-${i}`">
+          <span
+            v-for="(stepItem, i) in stepItems"
+            :key="`footer-buttons-step-${i}`"
+          >
             <span v-if="stepItem.footer && activeTab === i">
               <b-button
                 v-for="(button, j) in stepItem.footer.buttons"
@@ -230,14 +243,6 @@ export default {
       };
       this.manifestUrl = w["manifest-url"];
 
-      // TODO: fill up the collected pages here
-      /*
-       thumbnail: image,
-       title: i,
-       fullUrl: fullImage.url,
-       num: i,
-       canvasId: canvas["@id"],
-      */
       if (this.manifestUrl) {
         const r = await fetch(this.manifestUrl);
         this.manifest = await r.json();

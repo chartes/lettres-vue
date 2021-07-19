@@ -8,49 +8,96 @@
 
     <article v-if="document && !isLoading" class="document__content">
       <!-- titre et langue -->
-      <document-attributes :editable="canEdit" :preview="preview" />
-
+      <section class="document-section columns">
+        <document-title
+          :editable="canEdit"
+          :preview="preview"
+          class="column is-three-quarters"
+        />
+        <document-languages :editable="canEdit" class="column" />
+      </section>
       <!-- dates de lieux et de temps -->
 
       <section class="document-section">
         <div class="heading is-size-5 is-uppercase">
           <span class="heading-content">Dates</span>
+          <div class="slope-container">
+            <span class="slope tier-1" />
+            <span class="slope tier-2" />
+            <span class="slope tier-3" />
+            <span class="slope tier-4" />
+          </div>
         </div>
-        <document-date-attributes :editable="canEdit" />
-        <document-placenames :editable="canEdit" />
+        <div>
+          <document-date-attributes :editable="canEdit" />
+          <document-placenames :editable="canEdit" />
+        </div>
       </section>
 
       <!-- correspondents -->
       <section class="document-section">
         <div class="heading is-size-5 is-uppercase">
           <span class="heading-content">Correspondants</span>
+          <div class="slope-container">
+            <span class="slope tier-1" />
+            <span class="slope tier-2" />
+            <span class="slope tier-3" />
+            <span class="slope tier-4" />
+          </div>
         </div>
-        <document-persons :editable="canEdit" />
+        <div>
+          <document-persons :editable="canEdit" />
+        </div>
       </section>
 
-      <!-- témoins -->
+      <!-- témoins
       <document-witnesses :editable="canEdit" :list="witnesses" />
+       -->
 
       <section class="document-section">
         <div class="heading is-size-5 is-uppercase">
           <span class="heading-content">Témoins</span>
+          <div class="slope-container">
+            <span class="slope tier-1" />
+            <span class="slope tier-2" />
+            <span class="slope tier-3" />
+            <span class="slope tier-4" />
+          </div>
         </div>
-        <witness-list />
+        <div>
+          <witness-list />
+        </div>
       </section>
 
       <!-- analyse -->
       <section class="document-section">
         <div class="heading is-size-5 is-uppercase">
           <span class="heading-content">Analyse</span>
+          <div class="slope-container">
+            <span class="slope tier-1" />
+            <span class="slope tier-2" />
+            <span class="slope tier-3" />
+            <span class="slope tier-4" />
+          </div>
         </div>
-        <document-argument :editable="canEdit" />
+        <div>
+          <document-argument :editable="canEdit" />
+        </div>
       </section>
       <!-- transcription -->
       <section class="document-section">
         <div class="heading is-size-5 is-uppercase">
           <span class="heading-content">Transcription</span>
+          <div class="slope-container">
+            <span class="slope tier-1" />
+            <span class="slope tier-2" />
+            <span class="slope tier-3" />
+            <span class="slope tier-4" />
+          </div>
         </div>
-        <document-transcription v-if="!preview" :editable="canEdit" />
+        <div>
+          <document-transcription v-if="!preview" :editable="canEdit" />
+        </div>
       </section>
       <!-- collections 
       <document-collections :editable="canEdit" />
@@ -78,12 +125,12 @@ import DocumentTagBar from "../document/DocumentTagBar";
 import DocumentPlacenames from "../document/DocumentPlacenames";
 import { baseApiURL } from "../../modules/http-common";
 import DocumentArgument from "../document/DocumentArgument";
-import DocumentWitnesses from "../document/DocumentWitnesses";
-//import DocumentCollections from "../document/DocumentCollections";
-import DocumentAttributes from "../document/DocumentAttributes";
+import DocumentTitle from "../document/DocumentTitle";
+import DocumentLanguages from "../document/DocumentLanguages";
+
 import DocumentDateAttributes from "../document/DocumentDateAttributes";
 import DocumentSkeleton from "@/components/ui/DocumentSkeleton";
-import WitnessList from "@/components/WitnessList.vue";
+import WitnessList from "@/components/document/WitnessList.vue";
 
 import { http_with_auth } from "@/modules/http-common";
 
@@ -97,10 +144,9 @@ export default {
     DocumentArgument,
     DocumentTranscription,
     DocumentTagBar,
-    // DocumentCollections,
-    DocumentWitnesses,
+    DocumentLanguages,
     WitnessList,
-    DocumentAttributes,
+    DocumentTitle,
     DocumentDateAttributes,
   },
   props: {
@@ -189,37 +235,77 @@ export default {
 .document {
   width: 100%;
 }
+
+.document__content {
+  //display: flex;
+  //flex-wrap: wrap;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
 .panel {
   -webkit-box-shadow: none;
   box-shadow: none;
 }
 
 .document-section {
-  margin-top: 10px;
-  padding-bottom: 10px;
+  &.columns {
+    margin-left: 0;
+    margin-right: 0;
+    margin-bottom: 30px;
+
+    .column {
+      padding-top: 0;
+      padding-bottom: 0;
+    }
+  }
+}
+
+.slope-container {
+  height: 3px;
+  //width: 227px;
+  display: flex;
+}
+
+.slope {
+  transform: skewX(45deg);
+  display: none;
+}
+.tier-1 {
+  width: 120px;
+  background-color: #557174;
+}
+.tier-2 {
+  width: 14px;
+  background-color: #96bb7c;
+}
+.tier-3 {
+  width: 7px;
+  background-color: #c6ebc9;
+}
+.tier-4 {
+  width: 160px;
+  background-color: #baaf92;
 }
 
 .heading {
-  border-bottom: 1px solid $grey-light;
+  display: block;
+  background-color: $beige-lighter;
+  margin-bottom: 3px;
+  margin-top: 3px;
+  padding-left: 5px;
+  border-left: 3px solid $nice-grey;
 }
 .heading-content {
-  width: 230px;
+  width: 190px;
   display: inline-block;
 
   color: $brown;
-
-  background-color: $beige-lighter;
   font-family: $bitter-family;
-  padding: 3px;
-  padding-left: 8px;
-  padding-right: 40px;
-  margin-left: 7px;
+  font-size: 18px;
+  padding: 5px;
 
-  border: 1px solid $grey-light;
-  border-bottom: none;
-
-  border-top-right-radius: 10px;
-  border-top-left-radius: 10px;
+  margin-right: 12px;
 }
 .main-column-content {
   padding-left: 0px !important;

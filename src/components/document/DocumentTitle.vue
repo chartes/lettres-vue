@@ -1,6 +1,8 @@
 <template>
-  <div class="document__attributes">
-    <header v-if="!preview" class="document__attributes--title subtitle">
+  <div class="document-title__component">
+    <header v-if="!preview">
+      <!-- <span class="heading">Titre</span> -->
+
       <title-field-in-place
         :tabulation-index="0"
         label="Titre"
@@ -13,29 +15,15 @@
         @changed="titleChanged"
       />
     </header>
-
-    <div v-if="editAttributes" class="columns is-multiline heading">
-      <div class="column">
-        <multiselect-field
-          :editable="editable"
-          label="Langues"
-          :add-colons="false"
-          :options-list="allLanguages"
-          :selected-items="languages"
-          :on-change="languagesChanged"
-        />
-      </div>
-    </div>
   </div>
 </template>
 <script>
 import { mapState } from "vuex";
-import MultiselectField from "../forms/fields/MultiselectField";
 import TitleFieldInPlace from "../forms/fields/TitleFieldInPlace";
 
 export default {
-  name: "DocumentAttributes",
-  components: { TitleFieldInPlace, MultiselectField },
+  name: "DocumentTitle",
+  components: { TitleFieldInPlace },
   props: {
     editable: {
       type: Boolean,
@@ -80,32 +68,17 @@ export default {
     titleSetStatusError() {
       this.titleStatus = "error";
     },
-    languagesChanged(langs) {
-      const data = {
-        id: this.document.id,
-        relationships: {
-          languages: {
-            data: langs.map((l) => {
-              return {
-                id: l.id,
-                type: "language",
-              };
-            }),
-          },
-        },
-      };
-
-      this.$store.dispatch("document/save", data);
-      console.log("lang data", data);
-    },
   },
   computed: {
-    ...mapState("document", ["document", "languages"]),
-    ...mapState({
-      allLanguages: (state) => state.languages.languages,
-    }),
+    ...mapState("document", ["document"]),
   },
 };
 </script>
 
-<style scoped></style>
+<style scoped lang="scss">
+@import "@/assets/sass/main.scss";
+
+.document-title__component {
+  color: #444;
+}
+</style>

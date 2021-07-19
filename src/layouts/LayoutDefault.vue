@@ -141,7 +141,7 @@ export default {
   padding-bottom: 0;
 }
 .main-column-content {
-  padding: 30px;
+  padding: 18px;
   width: 100%;
   background-color: white;
 }

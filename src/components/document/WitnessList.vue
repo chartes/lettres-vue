@@ -10,7 +10,7 @@
       @end="drag = false"
     >
       <transition-group type="transition" :name="!drag ? 'flip-list' : null">
-        <li v-for="witness in witnessTmpList" :key="witness.num" class="list-group-item">
+        <li v-for="witness in witnessTmpList" :key="witness.id" class="list-group-item">
           <span class="columns">
             <div class="column">
               <div v-html="witness.content" />
@@ -83,7 +83,7 @@
     </draggable>
 
     <b-button
-      type="is-primary is-light is-pulled-right mt-3 mb-5"
+      type="is-primary is-light is-pulled-right mt-4 mb-2"
       @click="
         () => {
           selectedWitness = null;
@@ -98,6 +98,7 @@
       v-model="isComponentModalActive"
       trap-focus
       has-modal-card
+      :can-cancel="['escape', 'x']"
       scroll="clip"
       :width="1080"
       :destroy-on-hide="true"
@@ -171,8 +172,7 @@ export default {
 @import "@/assets/sass/main.scss";
 
 .witness-list {
-  padding-left: 2px;
-  padding-right: 2px;
+  display: inline-block;
 }
 
 .flip-list-move {
