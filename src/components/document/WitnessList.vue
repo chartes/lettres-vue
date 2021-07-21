@@ -69,7 +69,10 @@
                           </button>
                         </p>
                         <p class="control">
-                          <button class="button is-small is-danger is-light">
+                          <button
+                            class="button is-small is-danger is-light"
+                            @click="deleteWitness(witness)"
+                          >
                             <span class="icon is-small">
                               <i class="fas fa-trash-alt" />
                             </span>
@@ -120,6 +123,7 @@ import draggable from "vuedraggable";
 
 export default {
   name: "WitnessList",
+  emits: ["close-witness-modal"],
   components: {
     draggable,
     WitnessWizardForm,
@@ -163,11 +167,22 @@ export default {
         this.isComponentModalActive = true;
       }
     },
+    isComponentModalActive() {
+      if (!this.isComponentModalActive) {
+        this.$emit("close-witness-modal");
+      }
+    },
   },
   created() {
     this.witnessTmpList = this.witnesses;
   },
-  methods: {},
+  methods: {
+    async deleteWitness(witness) {
+      if (witness && witness.id) {
+        await this.$store.dispatch("document/removeWitness", witness);
+      }
+    },
+  },
 };
 </script>
 

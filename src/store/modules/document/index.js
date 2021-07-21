@@ -282,6 +282,11 @@ const actions = {
     delete(witnessData.id);
     delete(witnessData.institution);
 
+    if (witnessData['classification-mark']) {
+      witnessData.classification_mark = witnessData['classification-mark']
+      delete(witnessData['classification-mark'])
+    }
+
     const relationships = {
       document: {
         data: {
@@ -332,12 +337,22 @@ const actions = {
       })
   },
   async updateWitness ({commit, rootState, state}, witness) {
+
+    console.log("update witness", witness)
+    const http = http_with_auth(rootState.user.jwt);
+
     const attributes = {...witness}
     removeContentEditableAttributesFromObject(attributes)
     const institutionId = witness.institution ? witness.institution.id : null;
     delete (attributes.id)
     delete (attributes.institution)
     delete (attributes['manifest-url'])
+
+    if (attributes['classification-mark']) {
+      attributes.classification_mark = attributes['classification-mark']
+      delete (attributes['classification-mark'])
+    }
+
     const relationships = {
       document: {
         data: {
@@ -380,18 +395,17 @@ const actions = {
         relationships
     }
 
-    const http = http_with_auth(rootState.user.jwt);
     return http.patch(`witnesses/${witness.id}?without-relationships`, {data})
       .then(response => {
         commit('UPDATE_WITNESS', witness);
       })
   },
   removeWitness ({commit, rootState, state}, witness) {
+    const http = http_with_auth(rootState.user.jwt);
 
     const data = { data: { id : witness.id, type: "witness" } }
     console.log('document store removeWitness', data, state.document.id)
 
-    const http = http_with_auth(rootState.user.jwt);
     return http.delete(`/witnesses/${witness.id}`, {data})
       .then(response => {
         console.log('response', response)
@@ -406,6 +420,7 @@ const actions = {
     witnesses.splice(foundIndex, 1)
     witnesses.splice(foundIndex + dir, 0, found)
     witnesses = witnesses.map((w, index) => { w.num = index+1; return w})
+
     const changed = witnesses.filter((w, index) => {
       console.log(state.witnesses[index].id, w.id, 'add', state.witnesses[index].id !== w.id)
       return state.witnesses[index].id !== w.id

@@ -5,18 +5,12 @@
         <h1 class="step-label is-uppercase is-size-2">
           {{ wizardLabel }}
         </h1>
-        <h2
-          v-if="currentStep.label"
-          class="step-label is-uppercase is-size-5"
-        >
+        <h2 v-if="currentStep.label" class="step-label is-uppercase is-size-5">
           {{ currentStep.label }}
         </h2>
       </div>
       <div class="leftbar-content-area">
-        <b-tabs
-          v-model="activeTab"
-          :animated="false"
-        >
+        <b-tabs v-model="activeTab" :animated="false">
           <b-tab-item
             v-for="(stepItem, i) in stepItems"
             :key="`left-step-${i}`"
@@ -57,11 +51,7 @@
       </div>
       <div class="center-footer-area">
         <div class="buttons">
-          <b-button
-            type="is-primary"
-            size="is-medium"
-            @click="closeWizard"
-          >
+          <b-button type="is-primary" size="is-medium" @click="closeWizard">
             Annuler
           </b-button>
 
@@ -84,10 +74,7 @@
             <span>Suivant</span>
           </b-button>
 
-          <span
-            v-for="(stepItem, i) in stepItems"
-            :key="`footer-buttons-step-${i}`"
-          >
+          <span v-for="(stepItem, i) in stepItems" :key="`footer-buttons-step-${i}`">
             <span v-if="stepItem.footer && activeTab === i">
               <b-button
                 v-for="(button, j) in stepItem.footer.buttons"
@@ -130,7 +117,7 @@ export default {
           status: ["base"],
           tradition: ["n/a"],
           institution: null,
-          classification_mark: null,
+          "classification-mark": null,
           content: null,
         };
       },
@@ -143,7 +130,7 @@ export default {
         status: ["base"],
         tradition: ["n/a"],
         institution: null,
-        classification_mark: null,
+        "classification-mark": null,
         content: null,
       },
       manifestUrl: null,
@@ -224,7 +211,11 @@ export default {
           },
           footer: {
             buttons: [
-              { label: "Terminer", type: "is-primary", action: this.saveWitness },
+              {
+                label: "Terminer",
+                type: "is-primary",
+                action: this.saveWitness,
+              },
             ],
           },
         },
@@ -238,10 +229,14 @@ export default {
         status: [w.status],
         tradition: [w.tradition],
         institution: w.institution,
-        classification_mark: w.classification_mark,
+        "classification-mark": w["classification-mark"],
         content: w.content,
       };
       this.manifestUrl = w["manifest-url"];
+
+      if (this.witnessInput.id) {
+        this.witness.id = this.witnessInput.id;
+      }
 
       if (this.manifestUrl) {
         const r = await fetch(this.manifestUrl);
@@ -339,7 +334,11 @@ export default {
     },
     async saveWitness() {
       this.witness.images = this.collectedPages.map((p) => p.canvasId);
-      await this.$store.dispatch("document/addWitness", this.witness);
+      if (this.witness.id) {
+        await this.$store.dispatch("document/updateWitness", this.witness);
+      } else {
+        await this.$store.dispatch("document/addWitness", this.witness);
+      }
       this.closeWizard();
     },
   },

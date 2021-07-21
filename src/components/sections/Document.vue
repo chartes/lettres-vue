@@ -74,7 +74,10 @@
           </div>
         </div>
         <div>
-          <witness-list :open-modal="openWitnessModal" />
+          <witness-list
+            :open-modal="openWitnessModal"
+            @close-witness-modal="openWitnessModal = false"
+          />
         </div>
       </section>
 
