@@ -8,7 +8,7 @@
         handle=".handle"
         v-bind="dragOptions"
         @start="drag = true"
-        @end="drag = false"
+        @end="dragEnd"
       >
         <transition-group type="transition" :name="!drag ? 'flip-list' : null">
           <li v-for="witness in witnessTmpList" :key="witness.id" class="list-group-item">
@@ -142,15 +142,6 @@ export default {
   computed: {
     ...mapState("document", ["witnesses"]),
 
-    witnessList: {
-      get() {
-        return this.witnessTmpList;
-      },
-      set(value) {
-        console.log("move", this.witnessTmpList, value);
-        //this.witnessList = value;
-      },
-    },
     dragOptions() {
       return {
         animation: 200,
@@ -172,15 +163,31 @@ export default {
         this.$emit("close-witness-modal");
       }
     },
+    witnesses() {
+      this.witnessTmpList = this.witnesses;
+    },
   },
   created() {
     this.witnessTmpList = this.witnesses;
   },
   methods: {
+    recomputeOrder() {
+      this.witnessTmpList.forEach((element, i) => {
+        element.num = i + 1;
+      });
+    },
     async deleteWitness(witness) {
       if (witness && witness.id) {
         await this.$store.dispatch("document/removeWitness", witness);
+        this.recomputeOrder();
       }
+    },
+    dragEnd() {
+      this.drag = false;
+      this.witnessTmpList.forEach((element, i) => {
+        element.num = i + 1;
+      });
+      this.recomputeOrder();
     },
   },
 };

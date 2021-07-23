@@ -412,22 +412,9 @@ const actions = {
         commit('REMOVE_WITNESS', witness.id);
       })
   },
-  reorderWitnesses ({commit, rootState, state}, { witness, dir }) {
-    let witnesses = state.witnesses.map(w => {return {...w}})
-    let found = witnesses.find(w => w.id === witness.id)
-    let foundIndex = witnesses.indexOf(found)
-    if ((foundIndex === 0 && dir === -1) || (foundIndex === (witnesses.length-1) && dir === 1)) return;
-    witnesses.splice(foundIndex, 1)
-    witnesses.splice(foundIndex + dir, 0, found)
-    witnesses = witnesses.map((w, index) => { w.num = index+1; return w})
-
-    const changed = witnesses.filter((w, index) => {
-      console.log(state.witnesses[index].id, w.id, 'add', state.witnesses[index].id !== w.id)
-      return state.witnesses[index].id !== w.id
-    })
-
+  reorderWitnesses ({commit, rootState}, { witnesses }) {
     const http = http_with_auth(rootState.user.jwt);
-    Promise.all(changed.map(w => {
+    Promise.all(witnesses.map(w => {
       return http.patch(`/witnesses/${w.id}`, { data: {
         type: "witness",
         id: w.id,
@@ -436,7 +423,6 @@ const actions = {
     })).then(() => {
       commit('REORDER_WITNESSES', witnesses)
     })
-
   },
 
   addPerson ({commit}, person) {
