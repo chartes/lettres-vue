@@ -44,7 +44,7 @@
                         </b-tag>
                       </b-taglist>
                     </div>
-                    <b-field>
+                    <b-field v-if="editable">
                       <div class="field has-addons">
                         <p class="handle control">
                           <button class="button is-small is-light">
@@ -130,6 +130,7 @@ export default {
   },
   props: {
     openModal: { type: Boolean, default: false },
+    editable: { type: Boolean, default: false },
   },
   data() {
     return {

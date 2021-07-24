@@ -75,6 +75,7 @@
         </div>
         <div>
           <witness-list
+            :editable="canEdit"
             :open-modal="openWitnessModal"
             @close-witness-modal="openWitnessModal = false"
           />

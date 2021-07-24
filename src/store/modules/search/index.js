@@ -289,4 +289,9 @@ export const labels = {
   monthLabels
 }
 
+export {
+  getNextMonthLabel,
+  formatDate,
+};
+
 export default searchModule;

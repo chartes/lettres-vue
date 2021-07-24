@@ -1,27 +1,23 @@
 <template>
   <div>
-    Places page
+    Place page
+
+    <place-list />
   </div>
 </template>
 
 <script>
-
-import { mapState, mapActions } from "vuex";
+import PlaceList from "@/components/sections/PlaceList.vue";
 
 export default {
-    name: "PlacesPage",
-    components: {
-    },
-    mounted() {
-      this.hideRightSideBar();
-    },
-    methods: {
-    }
-}
+  name: "PlacePages",
+  components: {
+    PlaceList,
+  },
+  methods: {},
+};
 </script>
 
 <style scoped lang="scss">
 @import "@/assets/sass/main.scss";
-
-
 </style>
