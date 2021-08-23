@@ -134,7 +134,7 @@ export default {
   },
   created() {
     //this.setSearchTerm("relationships.placename_function:donjon");
-    this.setSearchTerm("label.keyword:Caen");
+    this.setSearchTerm("label.keyword:République*");
 
     this.performSearch();
     this.loadAsyncData();

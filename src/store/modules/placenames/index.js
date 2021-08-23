@@ -144,6 +144,82 @@ const actions = {
             .catch(error => console.log(error))
     },
 
+    async updateInlinedRole({state, rootState}, {inlined}) {
+        const http = http_with_auth(rootState.user.jwt);
+        const inlinedRole = state.roles.find(r => r.label === 'inlined')
+        
+        console.log('foreach inlined found in argument and transcription...')
+
+        for (let [placenameId, placenameField] of Object.entries(inlined)) {  
+
+            placenameId = parseInt(placenameId)
+       
+            let placenamesHavingRoles = await http.get(`/documents/${rootState.document.document.id}/placenames-having-roles`)
+            console.log('inlined:', [placenameId, placenameField])
+            console.log('placenamesHavingRoles (db)', placenamesHavingRoles.data)
+            console.log('inlinedRole:', inlinedRole)
+
+            const found = placenamesHavingRoles.data.data.find(phr => {
+                console.log(phr.relationships['placename-role'].data.id === inlinedRole.id, phr.relationships.document.data.id === rootState.document.document.id, phr.relationships.placename.data.id === placenameId,  phr.relationships.placename.data.id, placenameId   )
+                return phr.relationships['placename-role'].data.id === inlinedRole.id && phr.relationships.document.data.id === rootState.document.document.id && phr.relationships.placename.data.id === placenameId                
+            }) 
+
+            // le role existe deja; on met simplement à jour l'attribut field
+            if (found) {
+                console.log(`Inlined phr already exists (placename: ${placenameId}, field: ${placenameField}, document: ${rootState.document.document.id})`)
+
+                http.patch(`/placenames-having-roles/${found.id}`, {
+                    data: {
+                        type: "placename-has-role",
+                        id:found.id,
+                        attributes: { field: placenameField}
+                    }
+                })
+            } else {
+                console.log(`Inlined phr does not exist(placename: ${placenameId}, field: ${placenameField}, document: ${rootState.document.document.id})`)
+
+                // le role inlined n'existe pas encore pour ce document, on le crée et on rempli l'attribut field
+                let data = {
+                    data: {
+                        type: 'placename-has-role',
+                        attributes: {
+                            field: placenameField 
+                        },
+                        relationships: {
+                            document: {
+                                data: { id: rootState.document.document.id, type: 'document' }
+                            },
+                            'placename-role': {
+                                data: { id: inlinedRole.id, type: 'placename-role' }
+                            },
+                            placename: {
+                                data: { id: placenameId, type: 'placename' }
+                            }
+                        }
+                    }
+                }
+
+                http.post(`/placenames-having-roles`, data).then(response => {
+                    return response.data.data
+                })
+            }
+
+
+        }
+
+        let  placenamesHavingRoles = await http.get(`/documents/${rootState.document.document.id}/placenames-having-roles`);
+        placenamesHavingRoles.data.data.forEach(async phr => {
+            console.log(`looking if phr ${phr.id} is still in `)
+            if (!inlined[phr.relationships.placename.data.id] && phr.relationships['placename-role'].data.id === inlinedRole.id) {
+                console.log(`phr ${phr.id} no longer exists in inlined data (argument, transcription), so delete it`)
+                await http.delete(`/placenames-having-roles/${phr.id}`)
+            }
+        })
+    },
+
+    /* ======================
+        SEARCH ACTIONS
+       ======================*/
     ...searchStore.actions,
 
     performSearch: debounce(async ({commit, state, rootState}) => {
@@ -239,8 +315,8 @@ const actions = {
           const {data, links, meta} = response.data
     
           // TODO :  par exemple
-          // http://localhost:5004/lettres/api/1.0/search?query=relationships.function:donjon&index=lettres__development__placenames&include=roles-within-documents
-          // http://localhost:9200/lettres__development__placenames/_doc/_search?q=relationships.function:donjon
+          // http://localhost:5004/lettres/api/1.0/search?query=relationships.placename_function:donjon&index=lettres__development__placenames&include=roles-within-documents
+          // http://localhost:9200/lettres__development__placenames/_doc/_search?q=relationships.placename_function:donjon
           // TODO: par la suite, extraire le store "search" qui permet de chercher les documents pour le rendre davantage générique
           // (ex: remplacer state.document par state.items)
 

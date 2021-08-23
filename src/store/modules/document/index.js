@@ -60,6 +60,8 @@ function makeDummyDocument(data) {
   return DUMMY_DOCUMENT;
 }
 
+const dummy = makeDummyDocument();
+
 const mutations = {
 
   UPDATE_DOCUMENT (state, {data, included}) {
@@ -175,37 +177,101 @@ const actions = {
     })
   },
 
-  save ({ commit, rootState }, data) {
+  async save ({ commit, rootState, dispatch }, data) {
     const modifiedData = data.attributes || data.relationships;
     console.log('document/save', data)
     data.type = 'document';
     removeContentEditableAttributesFromObject(data.attributes)
     //
-    //console.log("axios http headers", http.defaults.headers.common);
     const http = http_with_auth(rootState.user.jwt);
 
-    return http.patch(`/documents/${data.id}`, { data })
-      .then(response => {
-        commit('UPDATE_DOCUMENT_DATA', response.data.data);
-        return response.data.data
-      })
-      .then( doc => {
-        if (doc.id !== makeDummyDocument().data.id) {
-          let msg = null;
-          if (doc.attributes) {
-            msg = `Modification de ${Object.keys(modifiedData).map(
-                d => `'${TRANSLATION_MAPPING[d] ? TRANSLATION_MAPPING[d] : d}'`
-            ).join(', ')}`;
-          }
-          this.dispatch('changelog/trackChanges', {
-            objId: doc.id,
-            objType: 'document',
-            userId: rootState.user.current_user.id,
-            msg: msg
-          });
+    const response = await http.patch(`/documents/${data.id}`, { data })
+    commit('UPDATE_DOCUMENT_DATA', response.data.data);
+
+    console.log('@@saving inlined: seeking for tags in content')
+    /* 
+      seek for placenames and persons in the doc attributes (argument, transcription) 
+      and update the placename_has_role and person_has_role tables accordingly. 
+    */
+    const placenameRegexp = /(?:class="placeName" id=")(\d+)/gmi;
+    const personRegexp = /(?:class="persName" id=")(\d+)/gmi;
+    const attrs = response.data.data.attributes;
+
+    /* =========== find placenames =========== */
+    let IdsInArgument = [...attrs.argument.matchAll(placenameRegexp)].map(m => parseInt(m[1]))
+    let IdsInTranscription = [...attrs.transcription.matchAll(placenameRegexp)].map(m => parseInt(m[1]))
+  
+    let uniqIds = [... new Set(IdsInArgument.concat(IdsInTranscription))]
+    let inlined = {}
+    
+    for (let _id of uniqIds) {
+      let field = ""
+      if (IdsInArgument.indexOf(_id) > -1) {
+        field = "argument"
+      }
+      if (IdsInTranscription.indexOf(_id) > -1) {
+        if (field === "argument") {
+          field = "argument,transcription"
+        } else {
+          field = "transcription"
         }
-        return doc
-      })
+      }
+      inlined[parseInt(_id)] = field
+    }
+    console.log('@@saving inlined placenames:', inlined);
+        
+    // s'il y a des matches
+    // ajout / mise à jour / suppression
+    if (IdsInTranscription.length > 0 || IdsInArgument.length > 0) {
+      await this.dispatch('placenames/updateInlinedRole', {inlined})
+    }
+
+    /* =========== find persons =========== */
+    IdsInArgument = [...attrs.argument.matchAll(personRegexp)].map(m => parseInt(m[1]))
+    IdsInTranscription = [...attrs.transcription.matchAll(personRegexp)].map(m => parseInt(m[1]))
+    uniqIds = [... new Set(IdsInArgument.concat(IdsInTranscription))]
+    inlined = {}
+    
+    for (let _id of uniqIds) {
+      let field = ""
+      if (IdsInArgument.indexOf(_id) > -1) {
+        field = "argument"
+      }
+      if (IdsInTranscription.indexOf(_id) > -1) {
+        if (field === "argument") {
+          field = "argument,transcription"
+        } else {
+          field = "transcription"
+        }
+      }
+      inlined[parseInt(_id)] = field
+    }
+    console.log('@@saving inlined persons:', inlined);
+        
+    // s'il y a des matches
+    // ajout / mise à jour / suppression
+    if (IdsInTranscription.length > 0 || IdsInArgument.length > 0) {
+      await this.dispatch('persons/updateInlinedRole', {inlined})
+    }
+
+
+    // track changes
+    if (state.document.id !== dummy.data.id) {
+      let msg = null;
+      if (modifiedData) {
+        msg = `Modification de ${Object.keys(modifiedData).map(
+          d => `'${TRANSLATION_MAPPING[d] ? TRANSLATION_MAPPING[d] : d}'`
+        ).join(', ')}`;
+      }
+      this.dispatch('changelog/trackChanges', {
+        objId: state.document.id,
+        objType: 'document',
+        userId: rootState.user.current_user.id,
+        msg: msg
+      });
+    } 
+
+    return 
   },
 
   add({commit, rootState, state}) {
