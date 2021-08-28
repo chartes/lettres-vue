@@ -225,6 +225,15 @@ const actions = {
     if (IdsInTranscription.length > 0 || IdsInArgument.length > 0) {
       await this.dispatch('placenames/updateInlinedRole', {inlined})
     }
+    let placenamesHavingRoles = await http.get(`/documents/${rootState.document.document.id}/placenames-having-roles`);
+    let inlinedRole = rootState.placenames.roles.find(r => r.label === 'inlined')
+    placenamesHavingRoles.data.data.forEach(async phr => {
+        console.log(`looking if phr ${phr.id} is still in `)
+        if (!inlined[phr.relationships.placename.data.id] && phr.relationships['placename-role'].data.id === inlinedRole.id) {
+            console.log(`phr ${phr.id} no longer exists in inlined data (argument, transcription), so delete it`)
+            await http.delete(`/placenames-having-roles/${phr.id}`)
+        }
+    })
 
     /* =========== find persons =========== */
     IdsInArgument = [...attrs.argument.matchAll(personRegexp)].map(m => parseInt(m[1]))
@@ -254,6 +263,15 @@ const actions = {
       await this.dispatch('persons/updateInlinedRole', {inlined})
     }
 
+    let  personsHavingRoles = await http.get(`/documents/${rootState.document.document.id}/persons-having-roles`);
+    inlinedRole = rootState.persons.roles.find(r => r.label === 'inlined')
+    personsHavingRoles.data.data.forEach(async phr => {
+        console.log(`looking if phr ${phr.id} is still in `)
+        if (!inlined[phr.relationships.person.data.id] && phr.relationships['person-role'].data.id === inlinedRole.id) {
+            console.log(`phr ${phr.id} no longer exists in inlined data (argument, transcription), so delete it`)
+            await http.delete(`/persons-having-roles/${phr.id}`)
+        }
+    })
 
     // track changes
     if (state.document.id !== dummy.data.id) {

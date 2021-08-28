@@ -1,9 +1,64 @@
 <template>
   <div class="section">
-    searchTerm: {{ searchTerm }}
-    <br />
-    items: {{ items }}
-    <div>Environ {{ totalCount }} résultat(s)</div>
+    <div class="search-container">
+      <section>
+        <header>
+          <div class="heading divider is-left">Référentiel des lieux identifés</div>
+        </header>
+        <div class="searchbox-container">
+          <b-field label="Lieu">
+            <div class="field has-addons">
+              <div class="control">
+                <input
+                  v-model="inputTerm"
+                  class="input"
+                  type="text"
+                  placeholder="Paris"
+                  @keyup.enter="search"
+                />
+              </div>
+              <div class="control">
+                <a class="button pl-5 pr-5" @click="search">
+                  <span class="icon">
+                    <i v-if="loadingStatus" class="fas fa-spinner fa-pulse" />
+                    <i v-else class="fas fa-search" />
+                  </span>
+                </a>
+              </div>
+            </div>
+          </b-field>
+
+          <b-field label="Dates de lieu">
+            <b-field>
+              <b-checkbox v-model="fromPlace" type="is-info"> Expédition </b-checkbox>
+            </b-field>
+            <b-field>
+              <b-checkbox v-model="toPlace" type="is-info"> Réception </b-checkbox>
+            </b-field>
+          </b-field>
+
+          <b-field label="Parties du document">
+            <b-field>
+              <b-checkbox v-model="inArgument" type="is-info"> Analyse </b-checkbox>
+            </b-field>
+            <b-field>
+              <b-checkbox v-model="inTranscription" type="is-info">
+                Transcription
+              </b-checkbox>
+            </b-field>
+          </b-field>
+        </div>
+      </section>
+
+      <section class="filterbox-container">
+        <header>
+          <div class="heading divider is-left">Filtres</div>
+        </header>
+        Document, personne, date, collection
+      </section>
+    </div>
+
+    <p class="mt-4 mb-1">Environ {{ totalCount }} résultat(s)</p>
     <span class="pagination-goto">
       <span> Page : </span>
       <input
@@ -45,25 +100,53 @@
         <b-table-column
           v-slot="props"
           field="id"
-          label="id"
+          label="Id"
           :td-attrs="columnTdAttrs"
           sortable
         >
           {{ props.row.id }}
         </b-table-column>
-
         <b-table-column
           v-slot="props"
-          field="label"
-          label="Nom"
+          field="label.keyword"
+          label="Lieu"
           :td-attrs="columnTdAttrs"
           sortable
         >
           {{ props.row.label }}
         </b-table-column>
 
-        <b-table-column v-slot="props" field="ref" label="Ref" :td-attrs="columnTdAttrs">
+        <b-table-column
+          v-slot="props"
+          field="ref"
+          label="Identifiant de référence"
+          :td-attrs="columnTdAttrs"
+        >
           {{ props.row.ref }}
+        </b-table-column>
+
+        <b-table-column
+          v-slot="props"
+          field="coords"
+          label="Localisation"
+          :td-attrs="columnTdAttrs"
+        >
+          {{ props.row.coords }}
+        </b-table-column>
+
+        <b-table-column
+          v-slot="props"
+          field="documents"
+          label="Documents"
+          :td-attrs="columnTdAttrs"
+        >
+          <span v-if="props.row.documents.length === 0">-</span>
+          <span v-else
+            >{{ props.row.documents.length }} document<span
+              v-if="props.row.documents.length > 1"
+              >s</span
+            ></span
+          >
         </b-table-column>
 
         <template #empty>
@@ -71,7 +154,52 @@
         </template>
 
         <template #detail="props">
-          {{ props.row }}
+          <div class="columns">
+            <div class="column is-one-quarter ref-section-heading">
+              <span class="heading">
+                Dates de lieu d'expédition ({{ props.row.fromPlace.length }})
+              </span>
+            </div>
+            <div class="column">
+              <span>
+                {{ props.row.fromPlace }}
+              </span>
+            </div>
+          </div>
+          <div class="columns">
+            <div class="column is-one-quarter ref-section-heading">
+              <span class="heading">
+                Dates de lieu de réception ({{ props.row.toPlace.length }})
+              </span>
+            </div>
+            <div class="column">
+              <span>
+                {{ props.row.toPlace }}
+              </span>
+            </div>
+          </div>
+          <div class="columns">
+            <div class="column is-one-quarter ref-section-heading">
+              <span class="heading"> Analyse({{ props.row.inArgument.length }}) </span>
+            </div>
+            <div class="column">
+              <span>
+                {{ props.row.inArgument }}
+              </span>
+            </div>
+          </div>
+          <div class="columns">
+            <div class="column is-one-quarter ref-section-heading">
+              <span class="heading">
+                Transcription ({{ props.row.inTranscription.length }})
+              </span>
+            </div>
+            <div class="column">
+              <span>
+                {{ props.row.inTranscription }}
+              </span>
+            </div>
+          </div>
         </template>
       </b-table>
     </div>
@@ -79,7 +207,7 @@
 </template>
 
 <script>
-import { mapState, mapActions } from "vuex";
+import { mapState, mapActions, mapGetters } from "vuex";
 
 export default {
   name: "PlaceList",
@@ -88,12 +216,21 @@ export default {
   data() {
     return {
       tableData: [],
+
+      inputTerm: "Paris",
+      fromPlace: false,
+      toPlace: false,
+      inArgument: false,
+      inTranscription: false,
+
+      isDocListOpen: false,
     };
   },
   computed: {
+    ...mapState("placenames", {
+      placenames: "documents",
+    }),
     ...mapState("placenames", [
-      "placenamesHavingRoles",
-      "documents",
       "loadingStatus",
       "numPage",
       "pageSize",
@@ -101,7 +238,10 @@ export default {
       "sorts",
       "searchTerm",
     ]),
-    ...mapState("placenames", { items: "documents" }),
+
+    ...mapGetters("placenames", {
+      placenamesHavingRoles: "getIncluded",
+    }),
 
     sortingPriority: {
       get: function () {
@@ -126,18 +266,23 @@ export default {
         }
       },
     },
-  },
-  watch: {
-    documents() {
-      this.loadAsyncData();
+
+    labeledInputTerm() {
+      return `label.keyword:*${this.inputTerm}*`;
     },
   },
-  created() {
-    //this.setSearchTerm("relationships.placename_function:donjon");
-    this.setSearchTerm("label.keyword:République*");
-
-    this.performSearch();
-    this.loadAsyncData();
+  watch: {
+    placenames() {
+      this.loadAsyncData();
+    },
+    inputTerm() {
+      this.setSearchTerm(this.labeledInputTerm);
+    },
+  },
+  async created() {
+    await this.$store.dispatch("placenames/fetchRoles");
+    this.setSearchTerm(this.labeledInputTerm);
+    this.search();
   },
   methods: {
     ...mapActions("placenames", [
@@ -146,6 +291,11 @@ export default {
       "setSorts",
       "setSearchTerm",
     ]),
+
+    search() {
+      this.performSearch();
+      this.loadAsyncData();
+    },
 
     resetPriority() {
       console.log("reset");
@@ -185,22 +335,27 @@ export default {
         this.setSorts([]);
       }
 
-      this.performSearch();
-      this.loadAsyncData();
+      this.search();
     },
 
     async loadAsyncData() {
-      if (this.documents) {
+      if (this.placenames) {
         this.tableData = await Promise.all(
-          this.documents.map(async (d) => {
+          this.placenames.map(async (p) => {
             return {
               //placeFunction: d.attributes.function,
               //placename: d.placename,
               // placenameRole: d.role,
+              documents: this.placenamesHavingRoles.documents[p.id] || [],
+              fromPlace: this.placenamesHavingRoles.fromPlace[p.id] || [],
+              toPlace: this.placenamesHavingRoles.toPlace[p.id] || [],
+              inArgument: this.placenamesHavingRoles.inArgument[p.id] || [],
+              inTranscription: this.placenamesHavingRoles.inTranscription[p.id] || [],
 
-              id: d.id,
-              label: d.attributes.label,
-              ref: d.attributes.ref,
+              id: p.id,
+              label: p.attributes.label,
+              ref: p.attributes.ref,
+              coords: [p.attributes.long, p.attributes.lat],
             };
           })
         );
@@ -258,5 +413,22 @@ export default {
 }
 progress {
   margin-top: 30px;
+}
+
+.checkbox {
+  display: inline-flex;
+}
+.search-container {
+  margin-bottom: 70px;
+}
+.searchbox-container {
+  display: flex;
+
+  .field {
+    margin-right: 50px;
+  }
+}
+.ref-section-heading {
+  border-bottom: 1px solid $coffee;
 }
 </style>

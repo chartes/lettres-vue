@@ -1,7 +1,5 @@
 <template>
   <div>
-    Place page
-
     <place-list />
   </div>
 </template>

@@ -67,7 +67,7 @@ const actions = {
     },
     fetchRoles({commit, rootState}) {
         const http = http_with_auth(rootState.user.jwt);
-        http.get(`/placename-roles?without-relationships`).then(response => {
+        return http.get(`/placename-roles?without-relationships`).then(response => {
             const roles = response.data.data.map(r => {
                 return {id: r.id, ...r.attributes,}
             })
@@ -207,14 +207,7 @@ const actions = {
 
         }
 
-        let  placenamesHavingRoles = await http.get(`/documents/${rootState.document.document.id}/placenames-having-roles`);
-        placenamesHavingRoles.data.data.forEach(async phr => {
-            console.log(`looking if phr ${phr.id} is still in `)
-            if (!inlined[phr.relationships.placename.data.id] && phr.relationships['placename-role'].data.id === inlinedRole.id) {
-                console.log(`phr ${phr.id} no longer exists in inlined data (argument, transcription), so delete it`)
-                await http.delete(`/placenames-having-roles/${phr.id}`)
-            }
-        })
+
     },
 
     /* ======================
@@ -307,12 +300,13 @@ const actions = {
     
         /* =========== execution =========== */
         try {
-          const toInclude = []; ['roles-within-document'];
-          const includes = toInclude.length ? `&include=${[].join(',')}` : ''; 
+          const toInclude = ['roles-within-documents@placenameHasRoleWithIds'];
+          const includes = toInclude.length ? `&include=${[toInclude].join(',')}` : ''; 
           
           const http = http_with_auth(rootState.user.jwt);
           const response = await http.get(`/search?query=${query}${filters}${includes}&index=lettres__${process.env.NODE_ENV}__placenames&sort=${sorts}&page[size]=${state.pageSize}&page[number]=${state.numPage}`);
-          const {data, links, meta} = response.data
+          const {data, links, meta, included} = response.data
+
     
           // TODO :  par exemple
           // http://localhost:5004/lettres/api/1.0/search?query=relationships.placename_function:donjon&index=lettres__development__placenames&include=roles-within-documents
@@ -320,7 +314,7 @@ const actions = {
           // TODO: par la suite, extraire le store "search" qui permet de chercher les documents pour le rendre davantage générique
           // (ex: remplacer state.document par state.items)
 
-          commit('UPDATE_ALL', {documents: data, totalCount: meta['total-count'] , links});
+          commit('UPDATE_ALL', {documents: data, totalCount: meta['total-count'] , links, included: included || []});
           commit('SET_LOADING_STATUS', false);
         } catch (reason) {
           console.warn('cant search:', reason);
@@ -334,6 +328,66 @@ const getters = {
 
     getRoleByLabel: state => label => {
         return state.roles.find(role => role.label === label)
+    },
+
+    getIncluded: (state)  => {
+        const roles = state.roles
+        let inlinedRole = roles.find(r => r.label === 'inlined')
+        let fromRole = roles.find(r => r.label === 'location-date-from')
+        let toRole = roles.find(r => r.label === 'location-date-to')
+
+        function reformatPhr(phr) {
+                return {
+                    id: phr.id,
+                    placenameId: phr.attributes.placename_id,
+                    docId: phr.attributes.document_id,
+                    placenameFunction: phr.attributes['function'],
+                }
+        }
+
+        let fromPlace = state.included.filter(phr => phr.attributes.role_id === fromRole.id).map(reformatPhr)
+        let toPlace = state.included.filter(phr => phr.attributes.role_id === toRole.id).map(reformatPhr)
+        let inArgument = state.included.filter(phr => phr.attributes.role_id === inlinedRole.id && phr.attributes.field.indexOf('argument') > -1).map(reformatPhr)
+        let inTranscription = state.included.filter(phr => phr.attributes.role_id === inlinedRole.id && phr.attributes.field.indexOf('transcription') > -1).map(reformatPhr)
+        
+        // TODO: groupby par placenameId
+        function groupbyPlacename(phrList) {
+            let _d = {}
+            phrList.forEach(p => {
+                if (_d[p.placenameId] === undefined) {
+                    _d[p.placenameId] = []
+                }
+                const id = p.placenameId
+                delete p.placenameId;
+                _d[id].push(p)
+            })
+            return _d
+        }
+        const fromPlaceDict = groupbyPlacename(fromPlace)
+        const toPlaceDict = groupbyPlacename(toPlace)
+        const inArgumentDict = groupbyPlacename(inArgument)
+        const inTranscriptionDict = groupbyPlacename(inTranscription)
+
+        console.log('fromPlace', fromPlaceDict)
+        console.log('toPlace', toPlaceDict)
+        console.log('inArgument', inArgumentDict)
+        console.log('inTranscription', inTranscriptionDict)
+
+        const docIds = state.included.map(phr => phr.attributes.document_id).filter(function(item, pos, self) {
+            return self.indexOf(item) == pos;
+        })
+        docIds.sort();
+
+        const documentsDict = groupbyPlacename(state.included.map(reformatPhr))
+        console.log('documents', documentsDict)
+
+        return {
+            fromPlace: fromPlaceDict,
+            toPlace: toPlaceDict,
+            inArgument: inArgumentDict,
+            inTranscription: inTranscriptionDict,
+            documents: documentsDict
+        } 
     },
 
     ...searchStore.getters

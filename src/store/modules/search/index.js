@@ -91,6 +91,7 @@ const state = {
 
   loadingStatus: false,
   documents: [],
+  included: [],
   totalCount: 0,
   links: [],
 
@@ -125,8 +126,9 @@ const mutations = {
   SET_SELECTED_COLLECTION_ID(state, id) {
     state.selectedCollectionId = id > 0 ? id : 1;
   },
-  UPDATE_ALL (state, {documents, totalCount, links}) {
+  UPDATE_ALL (state, {documents, totalCount, links, included}) {
     state.documents = documents;
+    state.included = included
     state.links = links;
     state.totalCount = totalCount;
   },
@@ -253,9 +255,9 @@ const actions = {
       
       const http = http_with_auth(rootState.user.jwt);
       const response = await http.get(`/search?query=${query}${filters}${includes}&without-relationships&sort=${sorts}&page[size]=${state.pageSize}&page[number]=${state.numPage}`);
-      const {data, links, meta} = response.data
+      const {data, links, meta, included} = response.data
 
-      commit('UPDATE_ALL', {documents: data, totalCount: meta['total-count'] , links});
+      commit('UPDATE_ALL', {documents: data, totalCount: meta['total-count'] , links, included: included || []});
       commit('SET_LOADING_STATUS', false);
     } catch (reason) {
       console.warn('cant search:', reason);

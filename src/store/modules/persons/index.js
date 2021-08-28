@@ -205,15 +205,6 @@ const actions = {
 
 
     }
-
-    let  personsHavingRoles = await http.get(`/documents/${rootState.document.document.id}/persons-having-roles`);
-    personsHavingRoles.data.data.forEach(async phr => {
-        console.log(`looking if phr ${phr.id} is still in `)
-        if (!inlined[phr.relationships.person.data.id] && phr.relationships['person-role'].data.id === inlinedRole.id) {
-            console.log(`phr ${phr.id} no longer exists in inlined data (argument, transcription), so delete it`)
-            await http.delete(`/persons-having-roles/${phr.id}`)
-        }
-    })
 },
 
 /* ======================
@@ -306,12 +297,12 @@ performSearch: debounce(async ({commit, state, rootState}) => {
 
     /* =========== execution =========== */
     try {
-      const toInclude = []; ['roles-within-document'];
-      const includes = toInclude.length ? `&include=${[].join(',')}` : ''; 
+      const toInclude = ['roles-within-documents@placenameHasRoleWithIds'];
+      const includes = toInclude.length ? `&include=${[toInclude].join(',')}` : ''; 
       
       const http = http_with_auth(rootState.user.jwt);
       const response = await http.get(`/search?query=${query}${filters}${includes}&index=lettres__${process.env.NODE_ENV}__persons&sort=${sorts}&page[size]=${state.pageSize}&page[number]=${state.numPage}`);
-      const {data, links, meta} = response.data
+      const {data, links, meta, included} = response.data
 
       // TODO :  par exemple
       // http://localhost:5004/lettres/api/1.0/search?query=relationships.person_function:donjon&index=lettres__development__persons&include=roles-within-documents
@@ -319,7 +310,7 @@ performSearch: debounce(async ({commit, state, rootState}) => {
       // TODO: par la suite, extraire le store "search" qui permet de chercher les documents pour le rendre davantage générique
       // (ex: remplacer state.document par state.items)
 
-      commit('UPDATE_ALL', {documents: data, totalCount: meta['total-count'] , links});
+      commit('UPDATE_ALL', {documents: data, totalCount: meta['total-count'] , links, included: included || []});
       commit('SET_LOADING_STATUS', false);
     } catch (reason) {
       console.warn('cant search:', reason);
