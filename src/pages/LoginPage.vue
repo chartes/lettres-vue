@@ -57,6 +57,12 @@ export default {
     ...mapState("user", ["current_user"]),
   },
   watch: {},
+  created() {
+    if (this.isAuthenticated) {
+      console.log(this.$route.query.from);
+      this.$router.push({ path: this.$route.query.from });
+    }
+  },
   mounted() {
     EventBus.$on("failedRegistering", (msg) => {
       this.errorMsg = msg;

@@ -1,5 +1,5 @@
 <template>
-  <div class="section">
+  <div class="section place-list">
     <div class="search-container">
       <section>
         <header>
@@ -71,6 +71,7 @@
       />
     </span>
     <div class="">
+      {{ placenameCounts }}
       <b-table
         ref="multiSortTable"
         :data="tableData"
@@ -140,13 +141,11 @@
           label="Documents"
           :td-attrs="columnTdAttrs"
         >
-          <span v-if="props.row.documents.length === 0">-</span>
+          <span v-if="placenameCounts[props.row.id] === 0">-</span>
           <span v-else
-            >{{ props.row.documents.length }} document<span
-              v-if="props.row.documents.length > 1"
-              >s</span
-            ></span
-          >
+            >{{ placenameCounts[props.row.id] }} document
+            <span v-if="placenameCounts[props.row.id] > 1">(s)</span>
+          </span>
         </b-table-column>
 
         <template #empty>
@@ -154,50 +153,68 @@
         </template>
 
         <template #detail="props">
-          <div class="columns">
-            <div class="column is-one-quarter ref-section-heading">
-              <span class="heading">
-                Dates de lieu d'expédition ({{ props.row.fromPlace.length }})
-              </span>
+          <div class="detail-td">
+            <div v-if="fromPlace" class="columns ref-section-heading">
+              <div class="column is-one-quarter section-title">
+                <span class="heading">
+                  Dates de lieu d'expédition ({{ props.row.fromPlace.length }})
+                </span>
+              </div>
+              <div class="column">
+                <document-title-bar
+                  v-for="item in props.row.fromPlace"
+                  :key="item.docId"
+                  :doc-id="item.docId"
+                  :title="item.docTitle"
+                  :creation-label="item.docCreationLabel"
+                />
+              </div>
             </div>
-            <div class="column">
-              <span>
-                {{ props.row.fromPlace }}
-              </span>
+            <div v-if="toPlace" class="columns ref-section-heading">
+              <div class="column is-one-quarter section-title">
+                <span class="heading">
+                  Dates de lieu de réception ({{ props.row.toPlace.length }})
+                </span>
+              </div>
+              <div class="column">
+                <document-title-bar
+                  v-for="item in props.row.toPlace"
+                  :key="item.docId"
+                  :doc-id="item.docId"
+                  :title="item.docTitle"
+                  :creation-label="item.docCreationLabel"
+                />
+              </div>
             </div>
-          </div>
-          <div class="columns">
-            <div class="column is-one-quarter ref-section-heading">
-              <span class="heading">
-                Dates de lieu de réception ({{ props.row.toPlace.length }})
-              </span>
+            <div v-if="inArgument" class="columns ref-section-heading">
+              <div class="column is-one-quarter section-title">
+                <span class="heading"> Analyse({{ props.row.inArgument.length }}) </span>
+              </div>
+              <div class="column">
+                <document-title-bar
+                  v-for="item in props.row.inArgument"
+                  :key="item.docId"
+                  :doc-id="item.docId"
+                  :title="item.docTitle"
+                  :creation-label="item.docCreationLabel"
+                />
+              </div>
             </div>
-            <div class="column">
-              <span>
-                {{ props.row.toPlace }}
-              </span>
-            </div>
-          </div>
-          <div class="columns">
-            <div class="column is-one-quarter ref-section-heading">
-              <span class="heading"> Analyse({{ props.row.inArgument.length }}) </span>
-            </div>
-            <div class="column">
-              <span>
-                {{ props.row.inArgument }}
-              </span>
-            </div>
-          </div>
-          <div class="columns">
-            <div class="column is-one-quarter ref-section-heading">
-              <span class="heading">
-                Transcription ({{ props.row.inTranscription.length }})
-              </span>
-            </div>
-            <div class="column">
-              <span>
-                {{ props.row.inTranscription }}
-              </span>
+            <div v-if="inTranscription" class="columns ref-section-heading">
+              <div class="column is-one-quarter section-title">
+                <span class="heading">
+                  Transcription ({{ props.row.inTranscription.length }})
+                </span>
+              </div>
+              <div class="column">
+                <document-title-bar
+                  v-for="item in props.row.inTranscription"
+                  :key="item.docId"
+                  :doc-id="item.docId"
+                  :title="item.docTitle"
+                  :creation-label="item.docCreationLabel"
+                />
+              </div>
             </div>
           </div>
         </template>
@@ -208,20 +225,24 @@
 
 <script>
 import { mapState, mapActions, mapGetters } from "vuex";
+import DocumentTitleBar from "../forms/placename/DocumentTitleBar.vue";
 
 export default {
   name: "PlaceList",
-  components: {},
+  components: {
+    DocumentTitleBar,
+  },
   props: {},
   data() {
     return {
       tableData: [],
+      placenameCounts: {},
 
       inputTerm: "Paris",
-      fromPlace: false,
-      toPlace: false,
-      inArgument: false,
-      inTranscription: false,
+      fromPlace: true,
+      toPlace: true,
+      inArgument: true,
+      inTranscription: true,
 
       isDocListOpen: false,
     };
@@ -278,6 +299,19 @@ export default {
     inputTerm() {
       this.setSearchTerm(this.labeledInputTerm);
     },
+
+    fromPlace() {
+      this.recomputeCounts();
+    },
+    toPlace() {
+      this.recomputeCounts();
+    },
+    inArgument() {
+      this.recomputeCounts();
+    },
+    inTranscription() {
+      this.recomputeCounts();
+    },
   },
   async created() {
     await this.$store.dispatch("placenames/fetchRoles");
@@ -295,6 +329,59 @@ export default {
     search() {
       this.performSearch();
       this.loadAsyncData();
+    },
+
+    count(pId) {
+      const s_pId = pId.toString();
+      let countSet = new Set([]);
+
+      // fromPlace
+      if (this.placenamesHavingRoles.fromPlace[s_pId] && this.fromPlace) {
+        const fromSet = new Set(
+          this.placenamesHavingRoles.fromPlace[s_pId].map((i) => i.docId)
+        );
+        for (let elem of fromSet) {
+          countSet.add(elem);
+        }
+      }
+      // toPlace
+      if (this.placenamesHavingRoles.toPlace[s_pId] && this.toPlace) {
+        const toSet = new Set(
+          this.placenamesHavingRoles.toPlace[s_pId].map((i) => i.docId)
+        );
+        for (let elem of toSet) {
+          countSet.add(elem);
+        }
+      }
+      // inArgument
+      if (this.placenamesHavingRoles.inArgument[s_pId] && this.inArgument) {
+        const argSet = new Set(
+          this.placenamesHavingRoles.inArgument[s_pId].map((i) => i.docId)
+        );
+        for (let elem of argSet) {
+          countSet.add(elem);
+        }
+      }
+      // inTranscription
+      if (this.placenamesHavingRoles.inTranscription[s_pId] && this.inTranscription) {
+        const trSet = new Set(
+          this.placenamesHavingRoles.inTranscription[s_pId].map((i) => i.docId)
+        );
+        for (let elem of trSet) {
+          countSet.add(elem);
+        }
+      }
+
+      this.placenameCounts[s_pId] = countSet.size || 0;
+
+      return countSet.size;
+    },
+
+    recomputeCounts() {
+      this.placenameCounts = {};
+      for (let p of this.placenames) {
+        this.count(p.id);
+      }
     },
 
     resetPriority() {
@@ -359,6 +446,7 @@ export default {
             };
           })
         );
+        this.recomputeCounts();
       }
     },
     columnTdAttrs(row, column) {
@@ -390,45 +478,60 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
 @import "@/assets/sass/main.scss";
 
-.section {
-  width: 100%;
-}
-.pagination-goto {
-  display: flex;
-  float: right;
-  position: relative;
-  width: 120px;
-  margin-left: 50px;
-  span {
-    width: 100px;
-    align-self: center;
+.place-list {
+  .pagination-goto {
+    display: flex;
+    float: right;
+    position: relative;
+    width: 120px;
+    margin-left: 50px;
+    span {
+      width: 100px;
+      align-self: center;
+    }
+    input {
+      margin-left: 4px;
+      display: inline;
+    }
   }
-  input {
-    margin-left: 4px;
-    display: inline;
+  progress {
+    margin-top: 30px;
   }
-}
-progress {
-  margin-top: 30px;
-}
 
-.checkbox {
-  display: inline-flex;
-}
-.search-container {
-  margin-bottom: 70px;
-}
-.searchbox-container {
-  display: flex;
-
-  .field {
-    margin-right: 50px;
+  .checkbox {
+    display: inline-flex;
   }
-}
-.ref-section-heading {
-  border-bottom: 1px solid $coffee;
+  .search-container {
+    margin-bottom: 70px;
+  }
+  .searchbox-container {
+    display: flex;
+
+    .field {
+      margin-right: 50px;
+    }
+  }
+  .ref-section-heading {
+    border-bottom: 1px solid $nice-grey;
+  }
+  .section-title {
+    background-color: $light;
+  }
+
+  .detail {
+    td {
+      padding: 0;
+    }
+  }
+  .detail-container {
+    padding: 0 !important;
+
+    .columns {
+      margin: 0px;
+    }
+  }
 }
 </style>

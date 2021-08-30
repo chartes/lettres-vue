@@ -341,6 +341,8 @@ const getters = {
                     id: phr.id,
                     placenameId: phr.attributes.placename_id,
                     docId: phr.attributes.document_id,
+                    docTitle: phr.attributes.document_title,
+                    docCreationLabel: phr.attributes.document_creation_label,
                     placenameFunction: phr.attributes['function'],
                 }
         }
@@ -367,19 +369,12 @@ const getters = {
         const toPlaceDict = groupbyPlacename(toPlace)
         const inArgumentDict = groupbyPlacename(inArgument)
         const inTranscriptionDict = groupbyPlacename(inTranscription)
-
-        console.log('fromPlace', fromPlaceDict)
-        console.log('toPlace', toPlaceDict)
-        console.log('inArgument', inArgumentDict)
-        console.log('inTranscription', inTranscriptionDict)
-
         const docIds = state.included.map(phr => phr.attributes.document_id).filter(function(item, pos, self) {
             return self.indexOf(item) == pos;
         })
         docIds.sort();
 
         const documentsDict = groupbyPlacename(state.included.map(reformatPhr))
-        console.log('documents', documentsDict)
 
         return {
             fromPlace: fromPlaceDict,
