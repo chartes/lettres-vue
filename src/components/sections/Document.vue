@@ -58,6 +58,7 @@
         <div class="heading is-size-5 is-uppercase">
           <span class="heading-content"> Témoins </span>
           <b-button
+            v-if="canEdit"
             type="is-light"
             value="+"
             size="is-small"

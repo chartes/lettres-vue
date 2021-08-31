@@ -1,4 +1,5 @@
 import {http_with_auth} from '@/modules/http-common';
+import Vue from 'vue';
 
 import {
   getPersons, getLanguages, getWitnesses,
@@ -129,7 +130,7 @@ const mutations = {
     state.witnesses.splice(index, 1)
   },
   REORDER_WITNESSES (state, payload) {
-    state.witnesses = [ ...payload ]
+    Vue.set(state, 'witnesses', [ ...payload ])
   },
   REMOVE_COLLECTION (state, payload) {
     if (state.collections) {

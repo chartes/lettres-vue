@@ -24,7 +24,9 @@ export default {
       this.setManifestUrl(this.manifestUrl);
     },
   },
-  created() {},
+  created() {
+    this.$parent.$on("refresh-viewer", this.updateCurrentWindow);
+  },
   async mounted() {
     await this.initialize();
   },
@@ -98,13 +100,16 @@ export default {
     },
 
     updateCurrentWindow() {
+      console.log("refresh-viewer caught by mirador viewer");
       this.setManifestUrl(this.manifestUrl);
     },
   },
 };
 </script>
 
-<style>
+<style lang="scss">
+@import "@/assets/sass/main.scss";
+
 #vue-mirador-container {
   min-height: calc(100% - 170px);
   min-width: calc(100vw * (5 / 12));

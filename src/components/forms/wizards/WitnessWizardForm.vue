@@ -115,7 +115,7 @@ export default {
       default: () => {
         return {
           status: ["base"],
-          tradition: ["n/a"],
+          tradition: [null],
           institution: null,
           "classification-mark": null,
           content: null,
@@ -128,7 +128,7 @@ export default {
       activeTab: 0,
       witness: {
         status: ["base"],
-        tradition: ["n/a"],
+        tradition: [null],
         institution: null,
         "classification-mark": null,
         content: null,

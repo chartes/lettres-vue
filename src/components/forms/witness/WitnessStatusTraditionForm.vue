@@ -13,7 +13,7 @@
         <option
           v-for="(tradition, i) in traditions"
           :key="`status-${i}`"
-          :value="tradition.id || 'n/a'"
+          :value="tradition.id"
         >
           {{ tradition.label }}
         </option>

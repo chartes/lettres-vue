@@ -8,13 +8,13 @@
 <script>
 export default {
   name: "BestGuessPlacenameForm",
-  emit: ["manage-witness-data"],
+  emit: ["manage-placename-data"],
   data() {
     return {};
   },
   watch: {},
   created() {
-    this.manageWitnessData({
+    this.managePlacenameData({
       action: { name: "set-label" },
       data: { label: "this is the label" },
     });

@@ -141,7 +141,7 @@ export default {
     };
   },
   computed: {
-    ...mapState("document", ["witnesses"]),
+    ...mapState("document", ["witnesses", "document"]),
 
     dragOptions() {
       return {
@@ -172,10 +172,14 @@ export default {
     this.witnessTmpList = this.witnesses;
   },
   methods: {
-    recomputeOrder() {
+    async recomputeOrder() {
       this.witnessTmpList.forEach((element, i) => {
         element.num = i + 1;
       });
+      await this.$store.dispatch("document/reorderWitnesses", {
+        witnesses: this.witnessTmpList,
+      });
+      await this.$store.dispatch("document/fetch", this.document.id);
     },
     async deleteWitness(witness) {
       if (witness && witness.id) {
@@ -185,9 +189,6 @@ export default {
     },
     dragEnd() {
       this.drag = false;
-      this.witnessTmpList.forEach((element, i) => {
-        element.num = i + 1;
-      });
       this.recomputeOrder();
     },
   },

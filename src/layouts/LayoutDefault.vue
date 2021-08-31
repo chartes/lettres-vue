@@ -77,7 +77,7 @@ export default {
   computed: {
     ...mapState("user", ["current_user"]),
     ...mapState("layout", ["showLeftSideBar", "showRightSideBar"]),
-    ...mapState("document", ["document"]),
+    ...mapState("document", ["document", "witnesses"]),
 
     iiifManifestUrl() {
       let url;
@@ -101,6 +101,10 @@ export default {
       } else {
         this.$emit("refresh-viewer");
       }
+    },
+    witnesses() {
+      console.log("emission refresh-viewer");
+      this.$emit("refresh-viewer");
     },
   },
   created() {},
