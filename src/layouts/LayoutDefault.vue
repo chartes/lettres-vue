@@ -22,9 +22,8 @@
               <slot />
             </div>
             <div
-              v-show="iiifManifestUrl"
+              v-show="displayedManifestUrl"
               class="hide-button is-vertical divider-right"
-              @click="toggleRightSideBar"
             />
           </div>
         </div>
@@ -34,9 +33,9 @@
           style="background-color: #f6f6f6"
         >
           <mirador-viewer
-            v-if="document && iiifManifestUrl"
+            v-if="document && displayedManifestUrl"
             class="mirador-container"
-            :manifest-url="iiifManifestUrl"
+            :manifest-url="displayedManifestUrl"
           />
         </div>
       </div>
@@ -76,35 +75,33 @@ export default {
 
   computed: {
     ...mapState("user", ["current_user"]),
-    ...mapState("layout", ["showLeftSideBar", "showRightSideBar"]),
+    ...mapState("layout", [
+      "showLeftSideBar",
+      "showRightSideBar",
+      "displayedManifestUrl",
+    ]),
     ...mapState("document", ["document", "witnesses"]),
-
-    iiifManifestUrl() {
-      let url;
-      if (this.$route.name === "document" && this.document) {
-        url = this.document["iiif-base-witness-manifest-url"];
-      } else {
-        //url = 'https://gallica.bnf.fr/iiif/ark:/12148/btv1b550076223/manifest.json';
-      }
-
-      return url;
-    },
 
     rightSideBarIsVisible() {
       return this.showRightSideBar && ["document"].indexOf(this.$route.name) > -1;
     },
   },
   watch: {
-    iiifManifestUrl() {
-      if (!this.iiifManifestUrl) {
+    displayedManifestUrl() {
+      if (!this.displayedManifestUrl) {
         this.hideRightSideBar();
       } else {
-        this.$emit("refresh-viewer");
+        //this.$emit("refresh-viewer");
       }
     },
     witnesses() {
       console.log("emission refresh-viewer");
       this.$emit("refresh-viewer");
+    },
+    showRightSideBar() {
+      if (this.showRightSideBar) {
+        this.$emit("refresh-viewer");
+      }
     },
   },
   created() {},

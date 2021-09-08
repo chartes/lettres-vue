@@ -80,6 +80,24 @@
                         </p>
                       </div>
                     </b-field>
+                    <b-field>
+                      <p class="control">
+                        <button
+                          rounded
+                          class="button is-small is-rounded display-manifest-button"
+                          :class="
+                            displayedWitness && displayedWitness.id === witness.id
+                              ? 'is-success'
+                              : 'is-light'
+                          "
+                          @click="showWitness(witness)"
+                        >
+                          <span class="icon is-small">
+                            <i class="far fa-eye" />
+                          </span>
+                        </button>
+                      </p>
+                    </b-field>
                   </b-field>
                 </div>
               </div>
@@ -117,7 +135,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapActions } from "vuex";
 import WitnessWizardForm from "@/components/forms/wizards/WitnessWizardForm";
 import draggable from "vuedraggable";
 
@@ -137,6 +155,7 @@ export default {
       drag: false,
       isComponentModalActive: false,
       selectedWitness: null,
+      displayedWitness: null,
       witnessTmpList: [],
     };
   },
@@ -166,12 +185,21 @@ export default {
     },
     witnesses() {
       this.witnessTmpList = this.witnesses;
+      //this.displayedWitness = this.witnessTmpList ? this.witnessTmpList[0] : null;
     },
   },
   created() {
     this.witnessTmpList = this.witnesses;
+    if (this.witnessTmpList.length > 0) {
+      // this.showWitness(this.witnessTmpList[0], false);
+    }
   },
   methods: {
+    ...mapActions("layout", [
+      "showRightSideBar",
+      "setDisplayedManifestUrl",
+      "toggleRightSideBar",
+    ]),
     async recomputeOrder() {
       this.witnessTmpList.forEach((element, i) => {
         element.num = i + 1;
@@ -185,6 +213,18 @@ export default {
       if (witness && witness.id) {
         await this.$store.dispatch("document/removeWitness", witness);
         this.recomputeOrder();
+      }
+    },
+    showWitness(witness, forceSideBar = true) {
+      if (this.displayedWitness && witness.id === this.displayedWitness.id) {
+        this.toggleRightSideBar();
+        this.displayedWitness = null;
+      } else {
+        this.displayedWitness = witness;
+        if (forceSideBar) {
+          this.showRightSideBar();
+        }
+        this.setDisplayedManifestUrl(witness["manifest-url"]);
       }
     },
     dragEnd() {
@@ -236,5 +276,8 @@ export default {
   display: inline-flex;
   float: right;
   width: max-content;
+}
+.display-manifest-button {
+  width: 52px;
 }
 </style>

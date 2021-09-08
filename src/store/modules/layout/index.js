@@ -3,7 +3,8 @@ const state = {
   showLeftSideBar: true,
   showRightSideBar: false,
   lastSeenDocId: null,
-  showAdvancedSearchForm: false
+  showAdvancedSearchForm: false,
+  displayedManifestUrl: null
 };
 
 
@@ -19,6 +20,9 @@ const mutations = {
   },
   SET_ADVANCED_SEARCH_FORM(state, v) {
     state.showAdvancedSearchForm = v;
+  },
+  SET_DISPLAYED_MANIFEST_URL(state, u) {
+    state.displayedManifestUrl = u
   }
 };
 
@@ -56,6 +60,10 @@ const actions = {
   setLastSeen({commit}, docId) {
     commit('SET_LAST_SEEN_DOC_ID', docId)
   },
+
+  setDisplayedManifestUrl({commit}, url) {
+    commit('SET_DISPLAYED_MANIFEST_URL', url)
+  }
 };
 
 const getters = {
