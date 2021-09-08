@@ -85,6 +85,16 @@
         </ul>
       </li>
       <li>
+        <a class="">Gestion des témoins</a>
+        <ul>
+          <li>
+            <router-link :to="{ name: 'witnesses' }" active-class="is-active">
+              <i class="fas fa-book" />Témoins
+            </router-link>
+          </li>
+        </ul>
+      </li>
+      <li>
         <a class="">Gestion des collaborateurs</a>
         <ul>
           <li>

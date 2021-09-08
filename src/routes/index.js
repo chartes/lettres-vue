@@ -20,6 +20,7 @@ const AboutPage = () => import('@/pages/AboutPage.vue')
 const PersonsPage = () => import('@/pages/PersonsPage.vue')
 const PlacesPage = () => import('@/pages/PlacesPage.vue')
 const UsersPage = () => import('@/pages/UsersPage.vue')
+const WitnessesPage = () => import('@/pages/WitnessesPage.vue')
 
 
 import store from '@/store/index';
@@ -90,6 +91,11 @@ const router = new VueRouter({
       path: '/places',
       component: PlacesPage,
       name: 'places'
+    },
+    {
+      path: '/witnesses',
+      component: WitnessesPage,
+      name: 'witnesses'
     },
     {
       path: '/about',

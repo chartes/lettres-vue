@@ -101,6 +101,11 @@ const actions = {
                 return response.data.data
             })
     },
+    async checkIfRefExists({rootState}, ref) {
+        const http = http_with_auth(rootState.user.jwt);
+        const response = await http.get(`placenames?page[size]=1&without-relationships&filter[ref]=${ref}`)
+        return response.data.meta['total-count']
+    },
 
     linkToDocument({commit, rootState}, {roleId, placenameId, func}) {
         const data = {

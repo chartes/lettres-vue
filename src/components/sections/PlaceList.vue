@@ -1,10 +1,8 @@
 <template>
-  <div class="section place-list">
+  <div class="place-list">
     <div class="search-container">
       <section>
-        <header>
-          <div class="heading divider is-left">Référentiel des lieux identifés</div>
-        </header>
+        <header />
         <div class="searchbox-container">
           <b-field label="Lieu">
             <div class="field has-addons">
@@ -71,7 +69,6 @@
       />
     </span>
     <div class="">
-      {{ placenameCounts }}
       <b-table
         ref="multiSortTable"
         :data="tableData"
@@ -289,7 +286,7 @@ export default {
     },
 
     labeledInputTerm() {
-      return `label.keyword:*${this.inputTerm}*`;
+      return `label:*${this.inputTerm}*`;
     },
   },
   watch: {
