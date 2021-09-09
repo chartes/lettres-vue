@@ -99,7 +99,7 @@
         </div>
       </section>
       <!-- transcription -->
-      <section class="document-section">
+      <section v-if="!preview" class="document-section">
         <div class="heading is-size-5 is-uppercase">
           <span class="heading-content">Transcription</span>
           <div class="slope-container">
@@ -110,7 +110,7 @@
           </div>
         </div>
         <div>
-          <document-transcription v-if="!preview" :editable="canEdit" />
+          <document-transcription :editable="canEdit" />
         </div>
       </section>
       <!-- collections 
