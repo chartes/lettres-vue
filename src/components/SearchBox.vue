@@ -1,15 +1,7 @@
 <template>
   <div class="search-container">
-    <div class="field has-addons">
-      <div class="control">
-        <input
-          v-model="inputTerm"
-          class="input"
-          type="text"
-          placeholder="Catherine de Medicis"
-          @keyup.enter="search"
-        />
-      </div>
+    <b-field>
+      <b-input v-model="inputTerm" placeholder="Catherine de Medicis" type="search" />
       <div class="control">
         <a class="button pl-5 pr-5" @click="search">
           <span class="icon">
@@ -18,7 +10,7 @@
           </span>
         </a>
       </div>
-    </div>
+    </b-field>
   </div>
 </template>
 
