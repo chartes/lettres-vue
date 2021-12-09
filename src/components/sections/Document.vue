@@ -1,7 +1,7 @@
 <template>
   <div class="document">
     <document-tag-bar
-      v-if="!preview && current_user && tagData"
+      v-if="!preview && current_user"
       :doc-id="docId"
       :with-status="true"
     />
@@ -194,21 +194,6 @@ export default {
       return `${baseUrl}${baseApiURL.substr(1)}/iiif/documents/${
         this.docId
       }/collection/default`;
-    },
-    tagData() {
-      if (!this.current_user || !this.document) {
-        return null;
-      }
-      const http = http_with_auth(this.jwt);
-      return {
-        currentLock: this.document.currentLock,
-        isPublished: this.document["is-published"],
-        isBookmarked: http
-          .get(`/users/${this.current_user.id}/relationships/bookmarks`)
-          .then(
-            (response) => response.data.data.filter((d) => d.id === this.docId).length > 0
-          ),
-      };
     },
     canEdit() {
       if (this.preview) {

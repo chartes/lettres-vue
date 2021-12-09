@@ -10,6 +10,7 @@ const RegisterPage = () => import('@/pages/RegisterPage.vue')
 
 const DocumentPage = () => import('@/pages/DocumentPage.vue')
 
+const DocumentCreationPage = () => import('@/pages/DocumentCreationPage.vue')
 const CollectionListPage = () => import('@/pages/CollectionListPage.vue')
 const LocksPage = () => import('@/pages/LocksPage.vue')
 const BookmarksPage = () => import('@/pages/BookmarksPage.vue')
@@ -59,6 +60,12 @@ const router = new VueRouter({
       path: '/documents/:docId',
       component: DocumentPage,
       name: 'document',
+      props: true
+    },
+    {
+      path: '/document-creation',
+      component: DocumentCreationPage,
+      name: 'document-creation',
       props: true
     },
     {

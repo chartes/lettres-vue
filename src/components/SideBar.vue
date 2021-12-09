@@ -65,6 +65,11 @@
     <p v-if="current_user" class="menu-label">Administration</p>
     <ul v-if="current_user" class="menu-list">
       <li>
+        <router-link :to="{ name: 'document-creation' }" active-class="is-active">
+          <i class="fas fa-list" />Documents
+        </router-link>
+      </li>
+      <li>
         <router-link :to="{ name: 'collections' }" active-class="is-active">
           <i class="fas fa-list" />Collections
         </router-link>
