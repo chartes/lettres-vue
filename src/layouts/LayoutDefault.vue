@@ -132,6 +132,7 @@ export default {
   &.is-5 {
     padding-left: 0;
     padding-right: 0;
+    background-color: $beige-lighter;
   }
 }
 .main {
