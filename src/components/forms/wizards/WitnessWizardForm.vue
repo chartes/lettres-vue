@@ -330,14 +330,18 @@ export default {
       }
     },
     closeWizard() {
-      this.$parent.close();
+      if (this.$parent.close) {
+        this.$parent.close();
+      }
     },
     async saveWitness() {
-      this.witness.images = this.collectedPages.map((p) => p.canvasId);
-      if (this.witness.id) {
-        await this.$store.dispatch("document/updateWitness", this.witness);
-      } else {
-        await this.$store.dispatch("document/addWitness", this.witness);
+      if (this.witness && !!this.witness.content) {
+        this.witness.images = this.collectedPages.map((p) => p.canvasId);
+        if (this.witness.id) {
+          await this.$store.dispatch("document/updateWitness", this.witness);
+        } else {
+          await this.$store.dispatch("document/addWitness", this.witness);
+        }
       }
       this.closeWizard();
     },

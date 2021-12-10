@@ -297,6 +297,7 @@ const actions = {
     const attributes = JSON.parse(JSON.stringify(state.document));
     delete(attributes.id);
     delete(attributes['iiif-collection-url']);
+    delete(attributes['iiif-base-witness-manifest-url']);
     delete(attributes['iiif-thumbnail-url']);
     const newDocument = {
       data: {

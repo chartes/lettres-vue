@@ -45,7 +45,7 @@
         
         <rich-text-editor
           v-model="form['classification-mark']"
-          label="Cote / unité de conservation"
+          label="Unité de conservation"
           :formats="[['italic','superscript'], ['link']]"
           :options="{placeholder: 'Ex. Français 3512, Ms. 564, K 35'}"
           :multiline="false"
