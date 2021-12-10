@@ -9,7 +9,12 @@
           :options="{ placeholder: 'Ex. Français 3512, Ms. 564, K 35' }"
         />
       </b-field>
-      <b-button type="is-primary" label="Créer" @click="createNewDocument" />
+      <b-button
+        type="is-primary"
+        label="Créer le document"
+        @click="createNewDocument"
+        :loading="loading"
+      />
     </section>
   </div>
 </template>
@@ -24,6 +29,7 @@ export default {
   data() {
     return {
       title: "Ceci est le titre du nouveau document",
+      loading: false,
     };
   },
   computed: {
@@ -31,6 +37,7 @@ export default {
   },
   methods: {
     async createNewDocument() {
+      this.loading = true;
       const defaultData = {
         attributes: {
           title: this.title,
@@ -51,6 +58,7 @@ export default {
       const doc = await this.$store.dispatch("document/add");
       console.log("document added !", doc);
       this.$router.push({ name: "document", params: { docId: doc.id } });
+      this.loading = false;
     },
   },
 };
