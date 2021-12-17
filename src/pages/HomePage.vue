@@ -2,17 +2,17 @@
   <div>
     Home Page <br />
 
-    <placename-wizard-form subtitle="d'expédition" />
+    <place-wizard-form subtitle="d'expédition" :popup-mode="true" />
   </div>
 </template>
 
 <script>
-import PlacenameWizardForm from "@/components/forms/wizards/PlacenameWizardForm.vue";
+import PlaceWizardForm from "@/components/forms/wizards/PlaceWizardForm.vue";
 
 export default {
   name: "HomePage",
   components: {
-    PlacenameWizardForm,
+    PlaceWizardForm,
   },
   data() {
     return {

@@ -24,10 +24,7 @@ export default {
 .doc-tag {
   margin-bottom: 4px;
 }
-.doc-id {
-}
-.doc-title {
-}
+
 .doc-creation-label {
   font-weight: bold;
   justify-content: start !important;

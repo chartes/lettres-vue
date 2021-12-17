@@ -24,7 +24,7 @@
                 :is="stepItem.left.component"
                 v-bind="stepItem.left.attributes"
                 @goto-wizard-step="gotoStep"
-                @manage-witness-data="manageWitnessData"
+                @manage-place-data="managePlaceData"
               />
             </keep-alive>
           </b-tab-item>
@@ -44,7 +44,7 @@
                 :is="stepItem.center.component"
                 v-bind="stepItem.center.attributes"
                 @goto-wizard-step="gotoStep"
-                @manage-witness-data="manageWitnessData"
+                @manage-place-data="managePlaceData"
               />
             </keep-alive>
           </b-tab-item>
@@ -67,7 +67,7 @@
           </b-button>
 
           <b-button
-            v-if="currentStep.next"
+            :disabled="!currentStep.next"
             type="is-primary"
             size="is-medium"
             @click="gotoNextStep"
@@ -95,28 +95,30 @@
 </template>
 
 <script>
-import SelectOrCreatePlacenameForm from "@/components/forms/placename/SelectOrCreatePlacenameForm.vue";
-import BestGuessPlacenameForm from "@/components/forms/placename/BestGuessPlacenameForm.vue";
+import SelectOrCreatePlaceForm from "@/components/forms/place/SelectOrCreatePlaceForm.vue";
+import PlaceInfoCard from "@/components/forms/place/PlaceInfoCard.vue";
+import FunctionPlaceForm from "@/components/forms/place/FunctionPlaceForm.vue";
 
 export default {
-  name: "PlacenameWizardForm",
+  name: "PlaceWizardForm",
   components: {
-    SelectOrCreatePlacenameForm,
-    BestGuessPlacenameForm,
+    SelectOrCreatePlaceForm,
+    PlaceInfoCard,
+    FunctionPlaceForm,
   },
   props: {
     subtitle: { type: String, default: null },
-    placenameInput: {
+    placeInput: {
       type: Object,
       default: () => {
-        return {};
+        return null;
       },
     },
   },
   data() {
     return {
       activeTab: 0,
-      placename: {},
+      place: null,
       collectedPages: [],
     };
   },
@@ -130,32 +132,51 @@ export default {
     stepItems() {
       return [
         {
-          name: "classification",
+          name: "select-or-create",
+          next: this.place ? "set-description" : null,
           left: {
             label: "left",
-            component: "BestGuessPlacenameForm",
-            attributes: { placename: this.placename },
+            component: "PlaceInfoCard",
+            attributes: { place: this.place },
           },
           center: {
             label: "center",
-            component: "SelectOrCreatePlacenameForm",
-            attributes: { placename: this.placename },
+            component: "SelectOrCreatePlaceForm",
+            attributes: { place: this.place },
+          },
+        },
+        {
+          name: "set-description",
+          prev: "select-or-create",
+          left: {
+            label: "left",
+            component: "PlaceInfoCard",
+            attributes: { place: this.place },
+          },
+          center: {
+            label: "center",
+            component: "FunctionPlaceForm",
+            attributes: { place: this.place },
+          },
+          footer: {
+            buttons: [{ label: "Terminer", type: "is-primary", action: this.savePlace }],
           },
         },
       ];
     },
   },
   async created() {
-    if (this.$props.placenameInput) {
-      const w = this.$props.placenameInput;
-      this.placename = {
-        status: [w.status],
-        tradition: [w.tradition],
-        institution: w.institution,
-        "classification-mark": w["classification-mark"],
-        content: w.content,
+    if (this.$props.placeInput) {
+      const p = this.$props.placeInput;
+      this.place = {
+        id: p.id,
+        description: p.description,
+        // TODO
       };
     }
+  },
+  mounted() {
+    this.$store.dispatch("placenames/setPageSize", 5);
   },
   methods: {
     gotoStep(stepName) {
@@ -176,36 +197,37 @@ export default {
         this.gotoStep(prevStep);
       }
     },
-    manageWitnessData({ action, data }) {
-      console.log(`witness[${action.name}]`, data);
+    managePlaceData({ action, data }) {
+      console.log(`place[${action.name}]`, data);
       switch (action.name) {
-        case "set-status":
-          this.placename.status = data.id;
+        case "set-place":
+          this.place = data;
           break;
-        case "set-tradition":
-          this.placename.tradition = data.id;
-          break;
-        case "set-institution":
-          this.placename.institution = data;
-          break;
-        case "set-classification-mark":
-          this.placename["classification-mark"] = data;
-          break;
-        case "set-witness-text-content":
-          this.placename.content = data;
+        case "set-description":
+          this.place.description = data;
           break;
         default:
           break;
       }
+      this.place = { ...this.place };
     },
     closeWizard() {
-      this.$parent.close();
+      if (this.$parent.close) {
+        this.$parent.close();
+      }
     },
-    async saveWitness() {
-      if (this.placename.id) {
-        //await this.$store.dispatch("document/updateWitness", this.placename);
-      } else {
-        //await this.$store.dispatch("document/addWitness", this.placename);
+    async savePlace() {
+      if (this.place) {
+        let long = null;
+        let lat = null;
+        if (this.place.coords) {
+          long = this.place.coords[0];
+          lat = this.place.coords[1];
+        }
+
+        //const response = await this.$store.dispatch("placenames/addOne", this.place);
+
+        console.log("save place:", this.place);
       }
       this.closeWizard();
     },
@@ -287,10 +309,11 @@ export default {
     grid-area: center-content;
     height: 100%;
 
-    .tabs {
-      display: none !important;
-    }
-    .b-tabs {
+    & > .b-tabs {
+      & > .tabs {
+        display: none;
+      }
+
       height: 100%;
       .tab-content {
         padding: 0;
@@ -315,7 +338,7 @@ export default {
     min-height: inherit;
     height: 100%;
 
-    grid-template-columns: minmax(280px, 28%) minmax(800px, auto);
+    grid-template-columns: 320px auto;
     grid-template-rows: 120px auto 80px;
     grid-template-areas:
       "leftbar-header center-content"

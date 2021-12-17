@@ -14,7 +14,7 @@ class SPARQLQueryDispatcher {
 
 const endpointUrl = "https://query.wikidata.org/sparql";
 
-const getPlacenameQuery = name => `SELECT DISTINCT ?item ?label ?coords
+const getPlacenameQuery = name => `SELECT DISTINCT ?item ?label ?paysLabel ?coords
 WHERE
 {
   SERVICE wikibase:mwapi
@@ -27,13 +27,17 @@ WHERE
     ?item wikibase:apiOutputItem mwapi:title.
   }
   ?item rdfs:label ?label.
-  ?item wdt:P625 ?coords;
-
+  ?item wdt:P17 ?pays.
+  ?item wdt:P625 ?coords.
+  ?item p:P31 ?statement0.
+  ?statement0 (ps:P31/(wdt:P279*)) wd:Q486972.
+  ?pays wdt:P30 wd:Q46;
 
   FILTER(LANG(?label) = "fr")
+  service wikibase:label {bd:serviceParam wikibase:language  "fr","en".}
 }
-ORDER BY ?label
-LIMIT 100`;
+ORDER BY ?label ?pays 
+LIMIT 50`;
 //  FILTER CONTAINS(?label, "${name}")
 
 const queryDispatcher = new SPARQLQueryDispatcher(endpointUrl);

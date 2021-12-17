@@ -14,7 +14,7 @@
 
 <script>
 import PlaceList from "@/components/sections/PlaceList.vue";
-import CreatePlaceForm from "@/components/forms/placename/CreatePlaceForm.vue";
+import CreatePlaceForm from "@/components/forms/place/CreatePlaceForm.vue";
 
 export default {
   name: "PlacePages",
@@ -39,12 +39,15 @@ export default {
         },
         {
           id: "add",
-          label: "Ajout d'un lieu",
+          label: "Nouveau lieu",
           component: "CreatePlaceForm",
           displayed: true,
         },
       ];
     },
+  },
+  mounted() {
+    this.$store.dispatch("placenames/setPageSize", 20);
   },
   methods: {},
 };

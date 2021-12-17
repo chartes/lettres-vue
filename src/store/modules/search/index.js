@@ -105,6 +105,9 @@ const mutations = {
   SET_NUM_PAGE(state, num) {
     state.numPage = num;
   },
+  SET_PAGE_SIZE(state, size) {
+    state.pageSize = size;
+  },
   SET_SORTS(state, sorts) {
     state.sorts = sorts;
   },
@@ -144,6 +147,9 @@ const actions = {
   },
   setNumPage({commit}, num) {
     commit('SET_NUM_PAGE', num)
+  },
+  setPageSize({commit}, size) {
+    commit('SET_PAGE_SIZE', size)
   },
   setSorts({commit}, sorting) {
     commit('SET_NUM_PAGE', 1)

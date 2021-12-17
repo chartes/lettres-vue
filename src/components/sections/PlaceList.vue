@@ -57,18 +57,19 @@
     </div>
 
     <p class="mt-4 mb-1">Environ {{ totalCount }} résultat(s)</p>
-    <span class="pagination-goto">
-      <span> Page : </span>
-      <input
-        v-model="currentPage"
-        name="page"
-        class="input"
-        type="text"
-        placeholder="Page..."
-        @change.prevent="currentPage = parseInt(p)"
-      />
-    </span>
-    <div class="">
+    <div class="result-container">
+      <span class="pagination-goto">
+        <span> Page : </span>
+        <input
+          v-model="currentPage"
+          name="page"
+          class="input"
+          type="text"
+          placeholder="Page..."
+          @change.prevent="currentPage = parseInt(p)"
+        />
+      </span>
+
       <b-table
         ref="multiSortTable"
         :data="tableData"
@@ -91,6 +92,8 @@
         show-detail-icon
         :narrowed="true"
         :mobile-cards="true"
+        :selected.sync="selected"
+        focusable
         @sort="sortPressed"
         @sorting-priority-removed="sortingPriorityRemoved"
         @page-change="onPageChange"
@@ -222,16 +225,19 @@
 
 <script>
 import { mapState, mapActions, mapGetters } from "vuex";
-import DocumentTitleBar from "../forms/placename/DocumentTitleBar.vue";
+import DocumentTitleBar from "../forms/place/DocumentTitleBar.vue";
 
 export default {
   name: "PlaceList",
   components: {
     DocumentTitleBar,
   },
+  emit: ["manage-place-data"],
+
   props: {},
   data() {
     return {
+      selected: null,
       tableData: [],
       placenameCounts: {},
 
@@ -309,6 +315,24 @@ export default {
     inTranscription() {
       this.recomputeCounts();
     },
+
+    selected() {
+      if (this.selected) {
+        this.managePlaceData({ action: { name: "set-place" }, data: this.selected });
+      }
+    },
+    "$attrs.place"() {
+      if (
+        !this.$attrs.place ||
+        !this.selected ||
+        this.$attrs.place.id === this.selected.id
+      ) {
+        console.log("keep selection", this.$attrs.place);
+      } else {
+        console.log("unselect");
+        this.selected = null;
+      }
+    },
   },
   async created() {
     await this.$store.dispatch("placenames/fetchRoles");
@@ -322,6 +346,10 @@ export default {
       "setSorts",
       "setSearchTerm",
     ]),
+
+    managePlaceData(evt) {
+      this.$emit("manage-place-data", evt);
+    },
 
     search() {
       this.performSearch();
@@ -439,7 +467,10 @@ export default {
               id: p.id,
               label: p.attributes.label,
               ref: p.attributes.ref,
-              coords: [p.attributes.long, p.attributes.lat],
+              coords:
+                p.attributes.long !== null && p.attributes.lat !== null
+                  ? [p.attributes.long, p.attributes.lat]
+                  : null,
             };
           })
         );
@@ -508,7 +539,7 @@ export default {
     display: flex;
 
     .field {
-      margin-right: 50px;
+      margin-right: 32px;
     }
   }
   .ref-section-heading {
@@ -517,7 +548,6 @@ export default {
   .section-title {
     background-color: $light;
   }
-
   .detail {
     td {
       padding: 0;

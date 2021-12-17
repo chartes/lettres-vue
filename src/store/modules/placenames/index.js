@@ -220,6 +220,12 @@ const actions = {
        ======================*/
     ...searchStore.actions,
 
+    async performFunctionSearch({rootState}) {
+        const http = http_with_auth(rootState.user.jwt);
+        const response = await http.get(`/placenames-functions`);
+        return response.data['placename-functions']
+    },
+
     performSearch: debounce(async ({commit, state, rootState}) => {
         commit('SET_LOADING_STATUS', true);
     
