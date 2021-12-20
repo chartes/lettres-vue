@@ -13,18 +13,11 @@
           ['person', 'location'],
           ['note', 'link'],
         ]"
+        @add-place="addPlace($event, 'argument')"
       >
-        <editor-save-button
-          :doc-id="document.id"
-          name="argument"
-          :value="form"
-        />
+        <editor-save-button :doc-id="document.id" name="argument" :value="form" />
       </rich-text-editor>
-      <div
-        v-else
-        class="argument__content"
-        v-html="form"
-      />
+      <div v-else class="argument__content" v-html="form" />
     </div>
   </div>
 </template>
@@ -43,6 +36,7 @@ export default {
       default: false,
     },
   },
+  emits: ["add-place"],
   data() {
     return {
       editorEnabled: true,
@@ -54,6 +48,11 @@ export default {
   },
   computed: {
     ...mapState("document", ["document"]),
+  },
+  methods: {
+    addPlace(evt, source) {
+      this.$emit("add-place", { ...evt, source });
+    },
   },
 };
 </script>

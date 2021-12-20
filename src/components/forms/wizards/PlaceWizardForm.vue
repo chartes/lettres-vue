@@ -2,6 +2,8 @@
   <div class="root-container box modal-card">
     <div class="root-grid-container">
       <div class="leftbar-header-area">
+        @inputData@
+        {{ inputData }}
         <h1 class="step-label is-uppercase is-size-2">
           {{ wizardLabel }}
         </h1>
@@ -108,7 +110,7 @@ export default {
   },
   props: {
     subtitle: { type: String, default: null },
-    placeInput: {
+    inputData: {
       type: Object,
       default: () => {
         return null;
@@ -166,13 +168,42 @@ export default {
     },
   },
   async created() {
-    if (this.$props.placeInput) {
-      const p = this.$props.placeInput;
+    //TODO: charger le place correctement
+    if (this.$props.inputData) {
+      const p = this.$props.inputData;
+      const id = p.formats ? p.formats.location : null;
+      /*
       this.place = {
         id: p.id,
         description: p.description,
-        // TODO
+        // TODO label, ref, coords?, fromPlace, toPlace, inArgument, inTranscription
       };
+      */
+      let place = {};
+
+      if (id !== null) {
+        place.id = id;
+      }
+      if (p.label !== null) {
+        place.label = p.label;
+      }
+      if (p.selection !== null) {
+        place.selection = p.selection;
+      }
+      if (p.description !== null) {
+        place.description = p.description;
+      }
+      if (p.coords !== null) {
+        place.coords = p.coords;
+      }
+      if (p.ref !== null) {
+        place.ref = p.ref;
+      }
+      if (p.role !== null) {
+        place.role = p.role;
+      }
+
+      this.place = place;
     }
   },
   mounted() {
@@ -224,7 +255,7 @@ export default {
           long = this.place.coords[0];
           lat = this.place.coords[1];
         }
-
+        // TODO sauvegarder le place
         //const response = await this.$store.dispatch("placenames/addOne", this.place);
 
         console.log("save place:", this.place);

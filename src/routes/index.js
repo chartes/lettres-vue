@@ -123,7 +123,7 @@ const router = new VueRouter({
 })
 
 router.beforeEach(async (to, from, next) => {
-  
+  console.log('USER', store.state.user.current_user)
   
   if (to.fullPath.indexOf("/edit") > -1 || ['history', 'bookmarks', 'locks', 'persons', 'places', 'users'].indexOf(to.name) > -1) {
       if (!store.state.user.current_user) {

@@ -153,7 +153,7 @@ const actions = {
         const http = http_with_auth(rootState.user.jwt);
         const inlinedRole = state.roles.find(r => r.label === 'inlined')
         
-        console.log('foreach inlined found in argument and transcription...')
+        console.log('foreach inlined found in adress and transcription...')
 
         for (let [placenameId, placenameField] of Object.entries(inlined)) {  
 
@@ -332,7 +332,14 @@ const actions = {
           commit('SET_LOADING_STATUS', false);
         }
        
-      }, 500)
+      }, 400),
+
+      async getPlacenameById({rootState}, id) {
+        const http = http_with_auth(rootState.user.jwt);
+        const resp = await http.get(`/placenames/${id}?without-relationships`)
+        return resp.data.data;
+      }
+
 };
 
 const getters = {
@@ -341,6 +348,7 @@ const getters = {
         return state.roles.find(role => role.label === label)
     },
 
+    /* used to build the 'placename uses' section in the placename search table rows */
     getIncluded: (state)  => {
         const roles = state.roles
         let inlinedRole = roles.find(r => r.label === 'inlined')
@@ -360,9 +368,11 @@ const getters = {
 
         let fromPlace = state.included.filter(phr => phr.attributes.role_id === fromRole.id).map(reformatPhr)
         let toPlace = state.included.filter(phr => phr.attributes.role_id === toRole.id).map(reformatPhr)
+        let inAddress = state.included.filter(phr => phr.attributes.role_id === inlinedRole.id && phr.attributes.field.indexOf('address') > -1).map(reformatPhr)
         let inArgument = state.included.filter(phr => phr.attributes.role_id === inlinedRole.id && phr.attributes.field.indexOf('argument') > -1).map(reformatPhr)
+        let inNotes = state.included.filter(phr => phr.attributes.role_id === inlinedRole.id && phr.attributes.field.indexOf('note') > -1).map(reformatPhr)
         let inTranscription = state.included.filter(phr => phr.attributes.role_id === inlinedRole.id && phr.attributes.field.indexOf('transcription') > -1).map(reformatPhr)
-        
+
         // TODO: groupby par placenameId
         function groupbyPlacename(phrList) {
             let _d = {}
@@ -378,7 +388,9 @@ const getters = {
         }
         const fromPlaceDict = groupbyPlacename(fromPlace)
         const toPlaceDict = groupbyPlacename(toPlace)
+        const inAddressDict = groupbyPlacename(inAddress)
         const inArgumentDict = groupbyPlacename(inArgument)
+        const inNotesDict = groupbyPlacename(inNotes)
         const inTranscriptionDict = groupbyPlacename(inTranscription)
         const docIds = state.included.map(phr => phr.attributes.document_id).filter(function(item, pos, self) {
             return self.indexOf(item) == pos;
@@ -390,7 +402,9 @@ const getters = {
         return {
             fromPlace: fromPlaceDict,
             toPlace: toPlaceDict,
+            inAddress: inAddressDict,
             inArgument: inArgumentDict,
+            inNotes: inNotesDict,
             inTranscription: inTranscriptionDict,
             documents: documentsDict
         } 

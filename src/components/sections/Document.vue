@@ -30,7 +30,11 @@
         </div>
         <div>
           <document-date-attributes :editable="canEdit" />
-          <document-placenames :editable="canEdit" />
+          <document-placenames
+            :editable="canEdit"
+            @add-place="addPlace"
+            @delete-place="deletePlace"
+          />
         </div>
       </section>
 
@@ -95,7 +99,7 @@
           </div>
         </div>
         <div>
-          <document-argument :editable="canEdit" />
+          <document-argument :editable="canEdit" @add-place="addPlace" />
         </div>
       </section>
       <!-- transcription -->
@@ -110,7 +114,7 @@
           </div>
         </div>
         <div>
-          <document-transcription :editable="canEdit" />
+          <document-transcription :editable="canEdit" @add-place="addPlace" />
         </div>
       </section>
       <!-- collections 
@@ -127,6 +131,34 @@
     </article>
 
     <document-skeleton v-if="isLoading" class="mt-5" />
+
+    <!-- modals -->
+    <b-modal
+      v-model="isPlaceWizardFormModalActive"
+      trap-focus
+      has-modal-card
+      :can-cancel="['escape', 'x']"
+      scroll="clip"
+      width="80%"
+      :destroy-on-hide="true"
+      aria-role="dialog"
+      aria-label="Date de lieu"
+      aria-modal
+    >
+      <template #default="props">
+        <place-wizard-form
+          subtitle="d'expédition"
+          :input-data="placeInputData"
+          @close="
+            () => {
+              props.close();
+              selectedPlace = null;
+              //isPlaceWizardFormModalActive = false;
+            }
+          "
+        />
+      </template>
+    </b-modal>
   </div>
 </template>
 
@@ -146,7 +178,7 @@ import DocumentDateAttributes from "../document/DocumentDateAttributes";
 import DocumentSkeleton from "@/components/ui/DocumentSkeleton";
 import WitnessList from "@/components/document/WitnessList.vue";
 
-import { http_with_auth } from "@/modules/http-common";
+import PlaceWizardForm from "@/components/forms/wizards/PlaceWizardForm.vue";
 
 export default {
   name: "Document",
@@ -163,6 +195,7 @@ export default {
     WitnessList,
     DocumentTitle,
     DocumentDateAttributes,
+    PlaceWizardForm,
   },
   props: {
     docId: { required: true, type: Number },
@@ -173,6 +206,10 @@ export default {
       isLoading: true,
 
       openWitnessModal: false,
+
+      placeInputData: null,
+      selectedPlace: null,
+      isPlaceWizardFormModalActive: false,
     };
   },
   computed: {
@@ -185,7 +222,8 @@ export default {
     ]),
     ...mapState("user", ["current_user", "jwt"]),
     ...mapState("locks", ["lockOwner"]),
-    ...mapGetters("document", ["getPreview"]),
+    ...mapGetters("document", ["locationDateFrom", "locationDateTo"]),
+    ...mapGetters("placenames", ["getRoleByLabel"]),
 
     collectionURL() {
       const baseUrl = window.location.origin
@@ -217,8 +255,11 @@ export default {
       );
     },
   },
+  watch: {},
   async created() {
     this.isLoading = true;
+    this.$store.dispatch("placenames/fetchRoles");
+
     this.$store.dispatch("document/fetch", this.docId).then(async (r) => {
       this.isLoading = false;
       this.setLastSeen(this.docId);
@@ -227,6 +268,53 @@ export default {
 
   methods: {
     ...mapActions("layout", ["setLastSeen"]),
+
+    addPlace(evt) {
+      console.log("document.addPlace:", evt);
+      this.placeInputData = evt;
+      this.isPlaceWizardFormModalActive = true;
+    },
+    deletePlace(evt) {
+      this.placeInputData = null;
+    },
+
+    linkPlacenameToDoc(placename) {
+      const placenameId = placename.id;
+      const role = this.getRoleByLabel(this.placenamesForm);
+      const roleId = role && role.id ? role.id : null;
+      this.$store
+        .dispatch("placenames/linkToDocument", {
+          placenameId,
+          roleId,
+          func: placename.function,
+        })
+        .then((placenameHasRole) => {
+          if (placenameHasRole) {
+            const corrData = {
+              placename,
+              placenameId,
+              relationId: placenameHasRole.id,
+              role,
+              roleId,
+            };
+            this.$store.dispatch("document/addPlacename", corrData);
+            //this.closePlacenameChoice();
+          }
+        });
+    },
+    unlinkPlacenameFromDoc(placename) {
+      const placenameId = placename.placenameId;
+      const roleId = placename.roleId;
+      this.$store
+        .dispatch("placenames/unlinkFromDocument", {
+          relationId: placename.relationId,
+          placenameId,
+          roleId,
+        })
+        .then((response) => {
+          //this.closePlacenameChoice();
+        });
+    },
   },
 };
 </script>

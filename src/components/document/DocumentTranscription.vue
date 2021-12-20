@@ -1,13 +1,19 @@
 <template>
   <div class="document__transcription">
     <div class="panel">
-      <div class="panel-block" style="display: inline-block; width: 100%">
-        <h3 class="heading mt-3">Adresse</h3>
+      <div
+        class="panel-block"
+        style="display: inline-block; width: 100%"
+      >
+        <h3 class="heading mt-3">
+          Adresse
+        </h3>
 
         <rich-text-editor
           v-if="editable"
           v-model="addressContent"
-          :formats="[['italic', 'superscript'], ['note']]"
+          :formats="[['italic', 'superscript'], ['person', 'location'], ['note']]"
+          @add-place="addPlace($event, 'address')"
         >
           <editor-save-button
             :doc-id="document.id"
@@ -15,18 +21,25 @@
             :value="addressContent"
           />
         </rich-text-editor>
-        <div v-else class="document__transcription--content" v-html="addressContent" />
+        <div
+          v-else
+          class="document__transcription--content"
+          v-html="addressContent"
+        />
       </div>
 
       <div
         class="panel-block document__transcription--tr-content"
         style="display: inline-block; width: 100%"
       >
-        <h3 class="heading mt-3">Lettre</h3>
+        <h3 class="heading mt-3">
+          Lettre
+        </h3>
         <rich-text-editor
           v-if="editable"
           v-model="transcriptionContent"
           :formats="[['italic', 'superscript', 'page'], ['person', 'location'], ['note']]"
+          @add-place="addPlace($event, 'transcription')"
         >
           <editor-save-button
             :doc-id="document.id"
@@ -42,7 +55,10 @@
       </div>
     </div>
 
-    <document-notes :editable="editable" />
+    <document-notes
+      :editable="editable"
+      @add-place="addPlace($event, 'note')"
+    />
   </div>
 </template>
 
@@ -61,6 +77,7 @@ export default {
       default: false,
     },
   },
+  emits: ["add-place"],
   data() {
     return {
       transcriptionContent: "",
@@ -68,13 +85,17 @@ export default {
     };
   },
   mounted() {
-    console.log("@@ init transcription content", this.document.id);
     this.transcriptionContent = this.document.transcription || "";
     this.addressContent = this.document.address || "";
   },
-  methods: {},
+  methods: {
+    addPlace(evt, source) {
+      this.$emit("add-place", { ...evt, source });
+    },
+    deletePlace() {},
+  },
   computed: {
-    ...mapState("document", ["document", "witnesses"]),
+    ...mapState("document", ["document"]),
   },
   watch: {},
 };

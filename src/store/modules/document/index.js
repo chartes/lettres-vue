@@ -20,6 +20,9 @@ const TRANSLATION_MAPPING = {
   'address': 'Adresse'
 };
 
+const placenameRegexp = /(?:class="placeName" id=")(\d+)/gmi;
+const personRegexp = /(?:class="persName" id=")(\d+)/gmi;
+
 const state = {
 
   documentLoading: false,
@@ -178,7 +181,7 @@ const actions = {
     })
   },
 
-  async save ({ commit, rootState, dispatch }, data) {
+  async save ({ commit, state, rootState, dispatch }, data) {
     const modifiedData = data.attributes || data.relationships;
     console.log('document/save', data)
     data.type = 'document';
@@ -191,39 +194,49 @@ const actions = {
 
     console.log('@@saving inlined: seeking for tags in content')
     /* 
-      seek for placenames and persons in the doc attributes (argument, transcription) 
+      seek for placenames and persons in the doc attributes (address, transcription and notes) 
       and update the placename_has_role and person_has_role tables accordingly. 
     */
-    const placenameRegexp = /(?:class="placeName" id=")(\d+)/gmi;
-    const personRegexp = /(?:class="persName" id=")(\d+)/gmi;
+
     const attrs = response.data.data.attributes;
 
     /* =========== find placenames =========== */
+    let IdsInAddress= [...attrs.address.matchAll(placenameRegexp)].map(m => parseInt(m[1]))
     let IdsInArgument = [...attrs.argument.matchAll(placenameRegexp)].map(m => parseInt(m[1]))
     let IdsInTranscription = [...attrs.transcription.matchAll(placenameRegexp)].map(m => parseInt(m[1]))
-  
-    let uniqIds = [... new Set(IdsInArgument.concat(IdsInTranscription))]
+
+    let noteContents = state.notes.map(n => n.content)
+    let IdsInNotes = []
+    noteContents.forEach(n => {
+      IdsInNotes = IdsInNotes.concat([...n.matchAll(placenameRegexp)].map(m => parseInt(m[1])))
+    })
+
+    let uniqIds = [... new Set(IdsInAddress.concat(IdsInArgument).concat(IdsInTranscription).concat(IdsInNotes))]
     let inlined = {}
     
     for (let _id of uniqIds) {
-      let field = ""
-      if (IdsInArgument.indexOf(_id) > -1) {
-        field = "argument"
+      let field = []
+
+      if (IdsInAddress.indexOf(_id) > -1) {
+        field.push("address")
+      }
+      if (IdsInAddress.indexOf(_id) > -1) {
+        field.push("argument")
+      }
+      if (IdsInNotes.indexOf(_id) > -1) {
+        field.push("note")
       }
       if (IdsInTranscription.indexOf(_id) > -1) {
-        if (field === "argument") {
-          field = "argument,transcription"
-        } else {
-          field = "transcription"
-        }
+        field.push("transcription")
       }
-      inlined[parseInt(_id)] = field
+
+      inlined[parseInt(_id)] = field.join(',')
     }
     console.log('@@saving inlined placenames:', inlined);
         
     // s'il y a des matches
     // ajout / mise à jour / suppression
-    if (IdsInTranscription.length > 0 || IdsInArgument.length > 0) {
+    if (IdsInTranscription.length > 0 || IdsInAddress.length > 0) {
       await this.dispatch('placenames/updateInlinedRole', {inlined})
     }
     let placenamesHavingRoles = await http.get(`/documents/${rootState.document.document.id}/placenames-having-roles`);
@@ -237,30 +250,40 @@ const actions = {
     })
 
     /* =========== find persons =========== */
-    IdsInArgument = [...attrs.argument.matchAll(personRegexp)].map(m => parseInt(m[1]))
+    IdsInAddress = [...attrs.address.matchAll(personRegexp)].map(m => parseInt(m[1]))
+     IdsInArgument = [...attrs.argument.matchAll(personRegexp)].map(m => parseInt(m[1]))
+
     IdsInTranscription = [...attrs.transcription.matchAll(personRegexp)].map(m => parseInt(m[1]))
-    uniqIds = [... new Set(IdsInArgument.concat(IdsInTranscription))]
+    IdsInNotes = []
+    noteContents.forEach(n => {
+      IdsInNotes = IdsInNotes.concat([...n.matchAll(personRegexp)].map(m => parseInt(m[1])))
+    })
+    uniqIds = [... new Set(IdsInAddress.concat(IdsInArgument).concat(IdsInTranscription).concat(IdsInNotes))]
     inlined = {}
     
     for (let _id of uniqIds) {
-      let field = ""
-      if (IdsInArgument.indexOf(_id) > -1) {
-        field = "argument"
+      let field = []
+
+      if (IdsInAddress.indexOf(_id) > -1) {
+        field.push("address")
+      }
+      if (IdsInAddress.indexOf(_id) > -1) {
+        field.push("argument")
+      }
+      if (IdsInNotes.indexOf(_id) > -1) {
+        field.push("note")
       }
       if (IdsInTranscription.indexOf(_id) > -1) {
-        if (field === "argument") {
-          field = "argument,transcription"
-        } else {
-          field = "transcription"
-        }
+        field.push("transcription")
       }
-      inlined[parseInt(_id)] = field
+
+      inlined[parseInt(_id)] = field.join(',')
     }
     console.log('@@saving inlined persons:', inlined);
         
     // s'il y a des matches
     // ajout / mise à jour / suppression
-    if (IdsInTranscription.length > 0 || IdsInArgument.length > 0) {
+    if (IdsInTranscription.length > 0 || IdsInAddress.length > 0) {
       await this.dispatch('persons/updateInlinedRole', {inlined})
     }
 

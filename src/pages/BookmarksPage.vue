@@ -26,7 +26,11 @@
         </section>
       </template>
       <b-table-column v-slot="props" field="id" label="Document" sortable width="400">
-        <document-tag-bar :key="props.row.id" :doc-id="props.row.id" />
+        <document-tag-bar
+          :key="props.row.id"
+          :doc-id="props.row.id"
+          :with-status="false"
+        />
       </b-table-column>
       <b-table-column v-slot="props" field="title" label="Titre" width="500" sortable>
         <span v-html="props.row.title" />

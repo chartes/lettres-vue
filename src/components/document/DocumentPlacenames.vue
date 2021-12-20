@@ -4,12 +4,7 @@
       <div class="document-placenames__senders column is-one-third">
         <h3 class="document-placenames__subtitle heading">
           Dates de lieu d'expédition
-          <a
-            v-if="editable"
-            class="tag"
-            href="#"
-            @click="openAddPlacename('location-date-from')"
-          >
+          <a v-if="editable" class="tag" href="#" @click="openAddPlace('from')">
             <icon-add />
           </a>
         </h3>
@@ -28,11 +23,7 @@
                 }}
               </a>
             </span>
-            <a
-              v-if="editable"
-              class="tag is-delete"
-              @click.prevent="unlinkPlacenameFromDoc(c)"
-            />
+            <a v-if="editable" class="tag is-delete" />
           </div>
         </div>
         <div v-if="locationDateFrom.length === 0">
@@ -45,12 +36,7 @@
       <div class="document-placenames__recipients column is-one-third">
         <h3 class="document-placenames__subtitle heading">
           Dates de lieu de destination
-          <a
-            v-if="editable"
-            class="tag"
-            href="#"
-            @click="openAddPlacename('location-date-to')"
-          >
+          <a v-if="editable" class="tag" href="#" @click="openAddPlace('to')">
             <icon-add />
           </a>
         </h3>
@@ -69,11 +55,7 @@
                 }}
               </a>
             </span>
-            <a
-              v-if="editable"
-              class="tag is-delete"
-              @click.prevent="unlinkPlacenameFromDoc(c)"
-            />
+            <a v-if="editable" class="tag is-delete" />
           </div>
         </div>
         <div v-if="locationDateTo.length === 0">
@@ -82,33 +64,24 @@
           </p>
         </div>
       </div>
-
-      <placename-list-form
-        v-if="placenamesForm && editable"
-        title="Sélectionner un lieu"
-        :submit="linkPlacenameToDoc"
-        :cancel="closePlacenameChoice"
-      />
     </div>
   </section>
 </template>
 
 <script>
 import { mapState, mapGetters } from "vuex";
-import IconBin from "../ui/icons/IconBin";
-import PlacenameListForm from "../forms/PlacenameListForm";
-import LauchButton from "../forms/LaunchButton";
 import IconAdd from "../ui/icons/IconAdd";
 
 export default {
   name: "DocumentPlacenames",
-  components: { PlacenameListForm, IconAdd },
+  components: { IconAdd },
   props: {
     editable: {
       type: Boolean,
       default: false,
     },
   },
+  emits: ["add-place", "delete-place"],
   data() {
     return {
       placenamesForm: null,
@@ -118,48 +91,11 @@ export default {
     this.$store.dispatch("placenames/fetchRoles");
   },
   methods: {
-    openAddPlacename(role) {
-      this.placenamesForm = role;
+    openAddPlace(role) {
+      this.$emit("add-place", { role });
     },
     closePlacenameChoice() {
       this.placenamesForm = null;
-    },
-    linkPlacenameToDoc(placename) {
-      const placenameId = placename.id;
-      const role = this.getRoleByLabel(this.placenamesForm);
-      const roleId = role && role.id ? role.id : null;
-      this.$store
-        .dispatch("placenames/linkToDocument", {
-          placenameId,
-          roleId,
-          func: placename.function,
-        })
-        .then((placenameHasRole) => {
-          if (placenameHasRole) {
-            const corrData = {
-              placename,
-              placenameId,
-              relationId: placenameHasRole.id,
-              role,
-              roleId,
-            };
-            this.$store.dispatch("document/addPlacename", corrData);
-            this.closePlacenameChoice();
-          }
-        });
-    },
-    unlinkPlacenameFromDoc(placename) {
-      const placenameId = placename.placenameId;
-      const roleId = placename.roleId;
-      this.$store
-        .dispatch("placenames/unlinkFromDocument", {
-          relationId: placename.relationId,
-          placenameId,
-          roleId,
-        })
-        .then((response) => {
-          this.closePlacenameChoice();
-        });
     },
   },
   computed: {

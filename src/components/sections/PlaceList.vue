@@ -13,13 +13,22 @@
                   type="text"
                   placeholder="Paris"
                   @keyup.enter="search"
-                />
+                >
               </div>
               <div class="control">
-                <a class="button pl-5 pr-5" @click="search">
+                <a
+                  class="button pl-5 pr-5"
+                  @click="search"
+                >
                   <span class="icon">
-                    <i v-if="loadingStatus" class="fas fa-spinner fa-pulse" />
-                    <i v-else class="fas fa-search" />
+                    <i
+                      v-if="loadingStatus"
+                      class="fas fa-spinner fa-pulse"
+                    />
+                    <i
+                      v-else
+                      class="fas fa-search"
+                    />
                   </span>
                 </a>
               </div>
@@ -28,20 +37,55 @@
 
           <b-field label="Dates de lieu">
             <b-field>
-              <b-checkbox v-model="fromPlace" type="is-info"> Expédition </b-checkbox>
+              <b-checkbox
+                v-model="fromPlace"
+                type="is-info"
+              >
+                Expédition
+              </b-checkbox>
             </b-field>
             <b-field>
-              <b-checkbox v-model="toPlace" type="is-info"> Réception </b-checkbox>
+              <b-checkbox
+                v-model="toPlace"
+                type="is-info"
+              >
+                Réception
+              </b-checkbox>
             </b-field>
           </b-field>
 
           <b-field label="Parties du document">
             <b-field>
-              <b-checkbox v-model="inArgument" type="is-info"> Analyse </b-checkbox>
+              <b-checkbox
+                v-model="inAddress"
+                type="is-info"
+              >
+                Adresse
+              </b-checkbox>
+            </b-field>
+
+            <b-field>
+              <b-checkbox
+                v-model="inTranscription"
+                type="is-info"
+              >
+                Transcription
+              </b-checkbox>
             </b-field>
             <b-field>
-              <b-checkbox v-model="inTranscription" type="is-info">
-                Transcription
+              <b-checkbox
+                v-model="inArgument"
+                type="is-info"
+              >
+                Analyse
+              </b-checkbox>
+            </b-field>
+            <b-field>
+              <b-checkbox
+                v-model="inNotes"
+                type="is-info"
+              >
+                Notes
               </b-checkbox>
             </b-field>
           </b-field>
@@ -50,13 +94,17 @@
 
       <section class="filterbox-container">
         <header>
-          <div class="heading divider is-left">Filtres</div>
+          <div class="heading divider is-left">
+            Filtres
+          </div>
         </header>
         Document, personne, date, collection
       </section>
     </div>
 
-    <p class="mt-4 mb-1">Environ {{ totalCount }} résultat(s)</p>
+    <p class="mt-4 mb-1">
+      Environ {{ totalCount }} résultat(s)
+    </p>
     <div class="result-container">
       <span class="pagination-goto">
         <span> Page : </span>
@@ -67,7 +115,7 @@
           type="text"
           placeholder="Page..."
           @change.prevent="currentPage = parseInt(p)"
-        />
+        >
       </span>
 
       <b-table
@@ -142,19 +190,25 @@
           :td-attrs="columnTdAttrs"
         >
           <span v-if="placenameCounts[props.row.id] === 0">-</span>
-          <span v-else
-            >{{ placenameCounts[props.row.id] }} document
+          <span
+            v-else
+          >{{ placenameCounts[props.row.id] }} document
             <span v-if="placenameCounts[props.row.id] > 1">(s)</span>
           </span>
         </b-table-column>
 
         <template #empty>
-          <div class="has-text-centered">Aucun résultat</div>
+          <div class="has-text-centered">
+            Aucun résultat
+          </div>
         </template>
 
         <template #detail="props">
           <div class="detail-td">
-            <div v-if="fromPlace" class="columns ref-section-heading">
+            <div
+              v-if="fromPlace"
+              class="columns ref-section-heading"
+            >
               <div class="column is-one-quarter section-title">
                 <span class="heading">
                   Dates de lieu d'expédition ({{ props.row.fromPlace.length }})
@@ -170,7 +224,10 @@
                 />
               </div>
             </div>
-            <div v-if="toPlace" class="columns ref-section-heading">
+            <div
+              v-if="toPlace"
+              class="columns ref-section-heading"
+            >
               <div class="column is-one-quarter section-title">
                 <span class="heading">
                   Dates de lieu de réception ({{ props.row.toPlace.length }})
@@ -186,9 +243,49 @@
                 />
               </div>
             </div>
-            <div v-if="inArgument" class="columns ref-section-heading">
+            <div
+              v-if="inAddress"
+              class="columns ref-section-heading"
+            >
               <div class="column is-one-quarter section-title">
-                <span class="heading"> Analyse({{ props.row.inArgument.length }}) </span>
+                <span class="heading"> Adresse ({{ props.row.inAddress.length }}) </span>
+              </div>
+              <div class="column">
+                <document-title-bar
+                  v-for="item in props.row.inAddress"
+                  :key="item.docId"
+                  :doc-id="item.docId"
+                  :title="item.docTitle"
+                  :creation-label="item.docCreationLabel"
+                />
+              </div>
+            </div>
+
+            <div
+              v-if="inTranscription"
+              class="columns ref-section-heading"
+            >
+              <div class="column is-one-quarter section-title">
+                <span class="heading">
+                  Transcription ({{ props.row.inTranscription.length }})
+                </span>
+              </div>
+              <div class="column">
+                <document-title-bar
+                  v-for="item in props.row.inTranscription"
+                  :key="item.docId"
+                  :doc-id="item.docId"
+                  :title="item.docTitle"
+                  :creation-label="item.docCreationLabel"
+                />
+              </div>
+            </div>
+            <div
+              v-if="inArgument"
+              class="columns ref-section-heading"
+            >
+              <div class="column is-one-quarter section-title">
+                <span class="heading"> Analyse ({{ props.row.inArgument.length }}) </span>
               </div>
               <div class="column">
                 <document-title-bar
@@ -200,15 +297,16 @@
                 />
               </div>
             </div>
-            <div v-if="inTranscription" class="columns ref-section-heading">
+            <div
+              v-if="inNotes"
+              class="columns ref-section-heading"
+            >
               <div class="column is-one-quarter section-title">
-                <span class="heading">
-                  Transcription ({{ props.row.inTranscription.length }})
-                </span>
+                <span class="heading"> Notes ({{ props.row.inNotes.length }}) </span>
               </div>
               <div class="column">
                 <document-title-bar
-                  v-for="item in props.row.inTranscription"
+                  v-for="item in props.row.inNotes"
                   :key="item.docId"
                   :doc-id="item.docId"
                   :title="item.docTitle"
@@ -244,7 +342,9 @@ export default {
       inputTerm: "Paris",
       fromPlace: true,
       toPlace: true,
+      inAddress: true,
       inArgument: true,
+      inNotes: true,
       inTranscription: true,
 
       isDocListOpen: false,
@@ -309,7 +409,13 @@ export default {
     toPlace() {
       this.recomputeCounts();
     },
+    inAddress() {
+      this.recomputeCounts();
+    },
     inArgument() {
+      this.recomputeCounts();
+    },
+    inNotes() {
       this.recomputeCounts();
     },
     inTranscription() {
@@ -335,6 +441,13 @@ export default {
     },
   },
   async created() {
+    if (this.$attrs.place && this.$attrs.place.id) {
+      const p = await this.getPlacenameById(this.$attrs.place.id);
+      this.inputTerm = p.attributes.label;
+    } else if (this.$attrs.place && this.$attrs.place.selection) {
+      this.inputTerm = this.$attrs.place.selection;
+    }
+
     await this.$store.dispatch("placenames/fetchRoles");
     this.setSearchTerm(this.labeledInputTerm);
     this.search();
@@ -345,6 +458,7 @@ export default {
       "performSearch",
       "setSorts",
       "setSearchTerm",
+      "getPlacenameById",
     ]),
 
     managePlaceData(evt) {
@@ -378,10 +492,28 @@ export default {
           countSet.add(elem);
         }
       }
+      // inAddress
+      if (this.placenamesHavingRoles.inAddress[s_pId] && this.inAddress) {
+        const argSet = new Set(
+          this.placenamesHavingRoles.inAddress[s_pId].map((i) => i.docId)
+        );
+        for (let elem of argSet) {
+          countSet.add(elem);
+        }
+      }
       // inArgument
       if (this.placenamesHavingRoles.inArgument[s_pId] && this.inArgument) {
         const argSet = new Set(
           this.placenamesHavingRoles.inArgument[s_pId].map((i) => i.docId)
+        );
+        for (let elem of argSet) {
+          countSet.add(elem);
+        }
+      }
+      // inNotes
+      if (this.placenamesHavingRoles.inNotes[s_pId] && this.inNotes) {
+        const argSet = new Set(
+          this.placenamesHavingRoles.inNotes[s_pId].map((i) => i.docId)
         );
         for (let elem of argSet) {
           countSet.add(elem);
@@ -461,7 +593,9 @@ export default {
               documents: this.placenamesHavingRoles.documents[p.id] || [],
               fromPlace: this.placenamesHavingRoles.fromPlace[p.id] || [],
               toPlace: this.placenamesHavingRoles.toPlace[p.id] || [],
+              inAddress: this.placenamesHavingRoles.inAddress[p.id] || [],
               inArgument: this.placenamesHavingRoles.inArgument[p.id] || [],
+              inNotes: this.placenamesHavingRoles.inNotes[p.id] || [],
               inTranscription: this.placenamesHavingRoles.inTranscription[p.id] || [],
 
               id: p.id,
