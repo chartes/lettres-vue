@@ -108,6 +108,9 @@ export default {
   components: {
     MyAwesomeMap,
   },
+  props: {
+    popupMode: { type: Boolean, default: true },
+  },
   emit: ["manage-place-data"],
   data() {
     return {

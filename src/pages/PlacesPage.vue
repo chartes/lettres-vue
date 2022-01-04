@@ -1,26 +1,16 @@
 <template>
   <div>
-    <b-tabs v-model="activeTab" :multiline="multiline">
-      <template v-for="tab in tabs">
-        <b-tab-item v-if="tab.displayed" :key="tab.id" :value="tab.id" :label="tab.label">
-          <keep-alive>
-            <component :is="tab.component" />
-          </keep-alive>
-        </b-tab-item>
-      </template>
-    </b-tabs>
+    <place-wizard-form :popup-mode="false" />
   </div>
 </template>
 
 <script>
-import PlaceList from "@/components/sections/PlaceList.vue";
-import CreatePlaceForm from "@/components/forms/place/CreatePlaceForm.vue";
+import PlaceWizardForm from "@/components/forms/wizards/PlaceWizardForm.vue";
 
 export default {
   name: "PlacePages",
   components: {
-    PlaceList,
-    CreatePlaceForm,
+    PlaceWizardForm,
   },
   data() {
     return {

@@ -13,22 +13,13 @@
                   type="text"
                   placeholder="Paris"
                   @keyup.enter="search"
-                >
+                />
               </div>
               <div class="control">
-                <a
-                  class="button pl-5 pr-5"
-                  @click="search"
-                >
+                <a class="button pl-5 pr-5" @click="search">
                   <span class="icon">
-                    <i
-                      v-if="loadingStatus"
-                      class="fas fa-spinner fa-pulse"
-                    />
-                    <i
-                      v-else
-                      class="fas fa-search"
-                    />
+                    <i v-if="loadingStatus" class="fas fa-spinner fa-pulse" />
+                    <i v-else class="fas fa-search" />
                   </span>
                 </a>
               </div>
@@ -37,74 +28,42 @@
 
           <b-field label="Dates de lieu">
             <b-field>
-              <b-checkbox
-                v-model="fromPlace"
-                type="is-info"
-              >
-                Expédition
-              </b-checkbox>
+              <b-checkbox v-model="fromPlace" type="is-info"> Expédition </b-checkbox>
             </b-field>
             <b-field>
-              <b-checkbox
-                v-model="toPlace"
-                type="is-info"
-              >
-                Réception
-              </b-checkbox>
+              <b-checkbox v-model="toPlace" type="is-info"> Réception </b-checkbox>
             </b-field>
           </b-field>
 
           <b-field label="Parties du document">
             <b-field>
-              <b-checkbox
-                v-model="inAddress"
-                type="is-info"
-              >
-                Adresse
-              </b-checkbox>
+              <b-checkbox v-model="inAddress" type="is-info"> Adresse </b-checkbox>
             </b-field>
 
             <b-field>
-              <b-checkbox
-                v-model="inTranscription"
-                type="is-info"
-              >
+              <b-checkbox v-model="inTranscription" type="is-info">
                 Transcription
               </b-checkbox>
             </b-field>
             <b-field>
-              <b-checkbox
-                v-model="inArgument"
-                type="is-info"
-              >
-                Analyse
-              </b-checkbox>
+              <b-checkbox v-model="inArgument" type="is-info"> Analyse </b-checkbox>
             </b-field>
             <b-field>
-              <b-checkbox
-                v-model="inNotes"
-                type="is-info"
-              >
-                Notes
-              </b-checkbox>
+              <b-checkbox v-model="inNotes" type="is-info"> Notes </b-checkbox>
             </b-field>
           </b-field>
         </div>
       </section>
 
-      <section class="filterbox-container">
+      <section v-if="!popupMode" class="filterbox-container">
         <header>
-          <div class="heading divider is-left">
-            Filtres
-          </div>
+          <div class="heading divider is-left">Filtres</div>
         </header>
         Document, personne, date, collection
       </section>
     </div>
 
-    <p class="mt-4 mb-1">
-      Environ {{ totalCount }} résultat(s)
-    </p>
+    <p class="mt-4 mb-1">Environ {{ totalCount }} résultat(s)</p>
     <div class="result-container">
       <span class="pagination-goto">
         <span> Page : </span>
@@ -115,7 +74,7 @@
           type="text"
           placeholder="Page..."
           @change.prevent="currentPage = parseInt(p)"
-        >
+        />
       </span>
 
       <b-table
@@ -132,7 +91,7 @@
         aria-previous-label="Page précédente"
         aria-page-label="Page"
         aria-current-label="Page courante"
-        detailed
+        :detailed="!popupMode"
         :backend-sorting="true"
         :sort-multiple="true"
         :sort-multiple-data="sortingPriority"
@@ -190,25 +149,19 @@
           :td-attrs="columnTdAttrs"
         >
           <span v-if="placenameCounts[props.row.id] === 0">-</span>
-          <span
-            v-else
-          >{{ placenameCounts[props.row.id] }} document
+          <span v-else
+            >{{ placenameCounts[props.row.id] }} document
             <span v-if="placenameCounts[props.row.id] > 1">(s)</span>
           </span>
         </b-table-column>
 
         <template #empty>
-          <div class="has-text-centered">
-            Aucun résultat
-          </div>
+          <div class="has-text-centered">Aucun résultat</div>
         </template>
 
         <template #detail="props">
           <div class="detail-td">
-            <div
-              v-if="fromPlace"
-              class="columns ref-section-heading"
-            >
+            <div v-if="fromPlace" class="columns ref-section-heading">
               <div class="column is-one-quarter section-title">
                 <span class="heading">
                   Dates de lieu d'expédition ({{ props.row.fromPlace.length }})
@@ -224,10 +177,7 @@
                 />
               </div>
             </div>
-            <div
-              v-if="toPlace"
-              class="columns ref-section-heading"
-            >
+            <div v-if="toPlace" class="columns ref-section-heading">
               <div class="column is-one-quarter section-title">
                 <span class="heading">
                   Dates de lieu de réception ({{ props.row.toPlace.length }})
@@ -243,10 +193,7 @@
                 />
               </div>
             </div>
-            <div
-              v-if="inAddress"
-              class="columns ref-section-heading"
-            >
+            <div v-if="inAddress" class="columns ref-section-heading">
               <div class="column is-one-quarter section-title">
                 <span class="heading"> Adresse ({{ props.row.inAddress.length }}) </span>
               </div>
@@ -261,10 +208,7 @@
               </div>
             </div>
 
-            <div
-              v-if="inTranscription"
-              class="columns ref-section-heading"
-            >
+            <div v-if="inTranscription" class="columns ref-section-heading">
               <div class="column is-one-quarter section-title">
                 <span class="heading">
                   Transcription ({{ props.row.inTranscription.length }})
@@ -280,10 +224,7 @@
                 />
               </div>
             </div>
-            <div
-              v-if="inArgument"
-              class="columns ref-section-heading"
-            >
+            <div v-if="inArgument" class="columns ref-section-heading">
               <div class="column is-one-quarter section-title">
                 <span class="heading"> Analyse ({{ props.row.inArgument.length }}) </span>
               </div>
@@ -297,10 +238,7 @@
                 />
               </div>
             </div>
-            <div
-              v-if="inNotes"
-              class="columns ref-section-heading"
-            >
+            <div v-if="inNotes" class="columns ref-section-heading">
               <div class="column is-one-quarter section-title">
                 <span class="heading"> Notes ({{ props.row.inNotes.length }}) </span>
               </div>
@@ -330,9 +268,10 @@ export default {
   components: {
     DocumentTitleBar,
   },
+  props: {
+    popupMode: { type: Boolean, default: true },
+  },
   emit: ["manage-place-data"],
-
-  props: {},
   data() {
     return {
       selected: null,
@@ -392,7 +331,7 @@ export default {
     },
 
     labeledInputTerm() {
-      return `label:*${this.inputTerm}*`;
+      return `label:*"${this.inputTerm}"*`;
     },
   },
   watch: {

@@ -1,19 +1,11 @@
 <template>
-  <div>
-    Home Page <br />
-
-    <place-wizard-form subtitle="d'expédition" :popup-mode="true" />
-  </div>
+  <div>Home Page <br /></div>
 </template>
 
 <script>
-import PlaceWizardForm from "@/components/forms/wizards/PlaceWizardForm.vue";
-
 export default {
   name: "HomePage",
-  components: {
-    PlaceWizardForm,
-  },
+  components: {},
   data() {
     return {
       isComponentModalActive: false,

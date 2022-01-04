@@ -349,7 +349,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @import "@/assets/sass/main.scss";
 
 .root-container {
@@ -402,10 +402,6 @@ export default {
   }
   .leftbar-content-area {
     grid-area: leftbar-content;
-
-    .tabs {
-      display: none !important;
-    }
   }
   .leftbar-footer-area {
     grid-area: leftbar-footer;
@@ -423,11 +419,9 @@ export default {
     grid-area: center-content;
     height: 100%;
 
-    .tabs {
-      display: none !important;
-    }
-    .b-tabs {
+    & > .b-tabs {
       height: 100%;
+
       .tab-content {
         padding: 0;
       }
@@ -458,5 +452,9 @@ export default {
       "leftbar-content center-content"
       "leftbar-footer center-footer";
   }
+}
+
+.root-container::v-deep .b-tabs .tabs:first-of-type {
+  display: none !important;
 }
 </style>

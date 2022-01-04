@@ -1,9 +1,7 @@
 <template>
-  <div class="root-container box modal-card">
-    <div class="root-grid-container">
-      <div class="leftbar-header-area">
-        @inputData@
-        {{ inputData }}
+  <div class="root-container" :class="popupMode ? 'box modal-card' : ''">
+    <div class="root-grid-container" :class="popupMode ? 'popup-mode' : ''">
+      <div v-if="popupMode" class="leftbar-header-area">
         <h1 class="step-label is-uppercase is-size-2">
           {{ wizardLabel }}
         </h1>
@@ -14,7 +12,7 @@
           {{ currentStep.label }}
         </h2>
       </div>
-      <div class="leftbar-content-area">
+      <div v-if="popupMode" class="leftbar-content-area">
         <b-tabs v-model="activeTab" :animated="false">
           <b-tab-item
             v-for="(stepItem, i) in stepItems"
@@ -32,7 +30,7 @@
           </b-tab-item>
         </b-tabs>
       </div>
-      <div class="leftbar-footer-area" />
+      <div v-if="popupMode" class="leftbar-footer-area" />
 
       <div class="center-content-area">
         <b-tabs v-model="activeTab">
@@ -52,7 +50,7 @@
           </b-tab-item>
         </b-tabs>
       </div>
-      <div class="center-footer-area">
+      <div v-if="popupMode" class="center-footer-area">
         <div class="buttons">
           <b-button type="is-primary" size="is-medium" @click="closeWizard">
             Annuler
@@ -110,6 +108,7 @@ export default {
   },
   props: {
     subtitle: { type: String, default: null },
+    popupMode: { type: Boolean, default: true },
     inputData: {
       type: Object,
       default: () => {
@@ -144,7 +143,7 @@ export default {
           center: {
             label: "center",
             component: "SelectOrCreatePlaceForm",
-            attributes: { place: this.place },
+            attributes: { place: this.place, popupMode: this.popupMode },
           },
         },
         {
@@ -168,17 +167,9 @@ export default {
     },
   },
   async created() {
-    //TODO: charger le place correctement
     if (this.$props.inputData) {
       const p = this.$props.inputData;
       const id = p.formats ? p.formats.location : null;
-      /*
-      this.place = {
-        id: p.id,
-        description: p.description,
-        // TODO label, ref, coords?, fromPlace, toPlace, inArgument, inTranscription
-      };
-      */
       let place = {};
 
       if (id !== null) {
@@ -266,7 +257,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @import "@/assets/sass/main.scss";
 
 .root-container {
@@ -319,10 +310,6 @@ export default {
   }
   .leftbar-content-area {
     grid-area: leftbar-content;
-
-    .tabs {
-      display: none !important;
-    }
   }
   .leftbar-footer-area {
     grid-area: leftbar-footer;
@@ -341,10 +328,6 @@ export default {
     height: 100%;
 
     & > .b-tabs {
-      & > .tabs {
-        display: none;
-      }
-
       height: 100%;
       .tab-content {
         padding: 0;
@@ -369,6 +352,11 @@ export default {
     min-height: inherit;
     height: 100%;
 
+    grid-template-columns: auto;
+    grid-template-rows: auto;
+    grid-template-areas: "center-content";
+  }
+  .popup-mode {
     grid-template-columns: 320px auto;
     grid-template-rows: 120px auto 80px;
     grid-template-areas:
@@ -376,5 +364,9 @@ export default {
       "leftbar-content center-content"
       "leftbar-footer center-footer";
   }
+}
+
+.root-container::v-deep .b-tabs .tabs:first-of-type {
+  display: none;
 }
 </style>

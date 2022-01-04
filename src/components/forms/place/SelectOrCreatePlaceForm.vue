@@ -1,12 +1,20 @@
 <template>
-  <div class="wizard-center-form">
+  <div class="place-wizard-center-form">
     <b-tabs v-model="activeTab">
       <b-tab-item id="search" label="Référentiel de l'application">
-        <place-list v-bind="$attrs" @manage-place-data="managePlaceData" />
+        <place-list
+          v-bind="$attrs"
+          :popup-mode="popupMode"
+          @manage-place-data="managePlaceData"
+        />
       </b-tab-item>
 
       <b-tab-item id="add" label="Nouveau lieu">
-        <create-place-form v-bind="$attrs" @manage-place-data="managePlaceData" />
+        <create-place-form
+          v-bind="$attrs"
+          :popup-mode="popupMode"
+          @manage-place-data="managePlaceData"
+        />
       </b-tab-item>
     </b-tabs>
   </div>
@@ -21,6 +29,9 @@ export default {
   components: {
     PlaceList,
     CreatePlaceForm,
+  },
+  props: {
+    popupMode: { type: Boolean, default: true },
   },
   emit: ["manage-place-data"],
   data() {
@@ -41,18 +52,23 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-.label {
-  color: inherit !important;
-}
-.wizard-center-form {
+<style lang="scss">
+.place-wizard-center-form {
   padding-top: 25px;
   padding-left: 12px;
   padding-right: 20px;
   margin-bottom: 60px;
-}
-.search-input {
-  max-width: 420px;
-  min-width: 400px;
+
+  .label {
+    color: inherit !important;
+  }
+  .search-input {
+    max-width: 420px;
+    min-width: 400px;
+  }
+
+  nav.tabs {
+    display: initial !important;
+  }
 }
 </style>
