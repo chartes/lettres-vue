@@ -4,7 +4,7 @@
       <section>
         <header />
         <div class="searchbox-container">
-          <b-field label="Lieu">
+          <b-field label="Lieu" class="term-search">
             <div class="field has-addons">
               <div class="control">
                 <input
@@ -273,20 +273,23 @@ export default {
   },
   emit: ["manage-place-data"],
   data() {
+    let inputTerm = null;
+    if (this.$attrs.place && this.$attrs.place.selection) {
+      inputTerm = this.$attrs.place.selection;
+    }
+
     return {
       selected: null,
       tableData: [],
       placenameCounts: {},
 
-      inputTerm: "Paris",
+      inputTerm,
       fromPlace: true,
       toPlace: true,
       inAddress: true,
       inArgument: true,
       inNotes: true,
       inTranscription: true,
-
-      isDocListOpen: false,
     };
   },
   computed: {
@@ -373,6 +376,9 @@ export default {
         this.$attrs.place.id === this.selected.id
       ) {
         console.log("keep selection", this.$attrs.place);
+        if (this.$attrs.place.selection) {
+          this.inputTerm = this.$attrs.place.selection;
+        }
       } else {
         console.log("unselect");
         this.selected = null;
@@ -386,6 +392,8 @@ export default {
     } else if (this.$attrs.place && this.$attrs.place.selection) {
       this.inputTerm = this.$attrs.place.selection;
     }
+
+    console.log("WIZARD CREATION", this.inputTerm, this.$attrs.place);
 
     await this.$store.dispatch("placenames/fetchRoles");
     this.setSearchTerm(this.labeledInputTerm);
@@ -612,7 +620,7 @@ export default {
     display: flex;
 
     .field {
-      margin-right: 32px;
+      margin-right: 24px;
     }
   }
   .ref-section-heading {

@@ -33,7 +33,7 @@
           <document-placenames
             :editable="canEdit"
             @add-place="addPlace"
-            @delete-place="deletePlace"
+            @unlink-place="unlinkPlace"
           />
         </div>
       </section>
@@ -152,8 +152,6 @@
           @close="
             () => {
               props.close();
-              selectedPlace = null;
-              //isPlaceWizardFormModalActive = false;
             }
           "
         />
@@ -208,8 +206,10 @@ export default {
       openWitnessModal: false,
 
       placeInputData: null,
-      selectedPlace: null,
       isPlaceWizardFormModalActive: false,
+
+      personInputData: null,
+      isPersonWizardFormModalActive: false,
     };
   },
   computed: {
@@ -224,6 +224,7 @@ export default {
     ...mapState("locks", ["lockOwner"]),
     ...mapGetters("document", ["locationDateFrom", "locationDateTo"]),
     ...mapGetters("placenames", ["getRoleByLabel"]),
+    ...mapGetters("persons", ["getRoleByLabel"]),
 
     collectionURL() {
       const baseUrl = window.location.origin
@@ -258,7 +259,6 @@ export default {
   watch: {},
   async created() {
     this.isLoading = true;
-    this.$store.dispatch("placenames/fetchRoles");
 
     this.$store.dispatch("document/fetch", this.docId).then(async (r) => {
       this.isLoading = false;
@@ -270,50 +270,27 @@ export default {
     ...mapActions("layout", ["setLastSeen"]),
 
     addPlace(evt) {
-      console.log("document.addPlace:", evt);
       this.placeInputData = evt;
       this.isPlaceWizardFormModalActive = true;
     },
-    deletePlace(evt) {
-      this.placeInputData = null;
+    unlinkPlace({ id, relationId, roleId }) {
+      this.$store.dispatch("placenames/unlinkFromDocument", {
+        id,
+        relationId,
+        roleId,
+      });
     },
 
-    linkPlacenameToDoc(placename) {
-      const placenameId = placename.id;
-      const role = this.getRoleByLabel(this.placenamesForm);
-      const roleId = role && role.id ? role.id : null;
-      this.$store
-        .dispatch("placenames/linkToDocument", {
-          placenameId,
-          roleId,
-          func: placename.function,
-        })
-        .then((placenameHasRole) => {
-          if (placenameHasRole) {
-            const corrData = {
-              placename,
-              placenameId,
-              relationId: placenameHasRole.id,
-              role,
-              roleId,
-            };
-            this.$store.dispatch("document/addPlacename", corrData);
-            //this.closePlacenameChoice();
-          }
-        });
+    addPerson(evt) {
+      this.personInputData = evt;
+      this.isPersonWizardFormModalActive = true;
     },
-    unlinkPlacenameFromDoc(placename) {
-      const placenameId = placename.placenameId;
-      const roleId = placename.roleId;
-      this.$store
-        .dispatch("placenames/unlinkFromDocument", {
-          relationId: placename.relationId,
-          placenameId,
-          roleId,
-        })
-        .then((response) => {
-          //this.closePlacenameChoice();
-        });
+    unlinkPerson({ id, relationId, roleId }) {
+      this.$store.dispatch("persons/unlinkFromDocument", {
+        id,
+        relationId,
+        roleId,
+      });
     },
   },
 };

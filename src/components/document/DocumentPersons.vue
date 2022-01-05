@@ -17,8 +17,8 @@
             <span class="tag">
               <a :href="c.person.ref" target="_blank">
                 {{
-                  !!c.person.function
-                    ? `${c.person.label}, ${c.person.function}`
+                  !!c.relation.function
+                    ? `${c.person.label}, ${c.relation.function}`
                     : c.person.label
                 }}
               </a>
@@ -52,8 +52,8 @@
             <span class="tag">
               <a :href="c.person.ref" target="_blank">
                 {{
-                  !!c.person.function
-                    ? `${c.person.label}, ${c.person.function}`
+                  !!c.relation.function
+                    ? `${c.person.label}, ${c.relation.function}`
                     : c.person.label
                 }}
               </a>
@@ -84,9 +84,7 @@
 
 <script>
 import { mapState, mapGetters } from "vuex";
-import IconBin from "../ui/icons/IconBin";
 import PersonListForm from "../forms/PersonListForm";
-import LauchButton from "../forms/LaunchButton";
 import IconAdd from "../ui/icons/IconAdd";
 export default {
   name: "DocumentPersons",

@@ -1,13 +1,8 @@
 <template>
   <div class="document__transcription">
     <div class="panel">
-      <div
-        class="panel-block"
-        style="display: inline-block; width: 100%"
-      >
-        <h3 class="heading mt-3">
-          Adresse
-        </h3>
+      <div class="panel-block" style="display: inline-block; width: 100%">
+        <h3 class="heading mt-3">Adresse</h3>
 
         <rich-text-editor
           v-if="editable"
@@ -21,20 +16,14 @@
             :value="addressContent"
           />
         </rich-text-editor>
-        <div
-          v-else
-          class="document__transcription--content"
-          v-html="addressContent"
-        />
+        <div v-else class="document__transcription--content" v-html="addressContent" />
       </div>
 
       <div
         class="panel-block document__transcription--tr-content"
         style="display: inline-block; width: 100%"
       >
-        <h3 class="heading mt-3">
-          Lettre
-        </h3>
+        <h3 class="heading mt-3">Lettre</h3>
         <rich-text-editor
           v-if="editable"
           v-model="transcriptionContent"
@@ -55,10 +44,7 @@
       </div>
     </div>
 
-    <document-notes
-      :editable="editable"
-      @add-place="addPlace($event, 'note')"
-    />
+    <document-notes :editable="editable" @add-place="addPlace($event, 'note')" />
   </div>
 </template>
 

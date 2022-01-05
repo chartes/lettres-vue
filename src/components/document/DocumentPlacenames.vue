@@ -4,7 +4,12 @@
       <div class="document-placenames__senders column is-one-third">
         <h3 class="document-placenames__subtitle heading">
           Dates de lieu d'expédition
-          <a v-if="editable" class="tag" href="#" @click="openAddPlace('from')">
+          <a
+            v-if="editable"
+            class="tag"
+            href="#"
+            @click.prevent="openAddPlace('location-date-from')"
+          >
             <icon-add />
           </a>
         </h3>
@@ -17,13 +22,17 @@
             <span class="tag">
               <a :href="c.placename.ref" target="_blank">
                 {{
-                  !!c.placename.function
-                    ? `${c.placename.label}, ${c.placename.function}`
+                  !!c.relation.function
+                    ? `${c.placename.label}, ${c.relation.function}`
                     : c.placename.label
                 }}
               </a>
             </span>
-            <a v-if="editable" class="tag is-delete" />
+            <a
+              v-if="editable"
+              class="tag is-delete"
+              @click.prevent="unlinkPlace(c.placename.id, c.relation.id, c.role.id)"
+            />
           </div>
         </div>
         <div v-if="locationDateFrom.length === 0">
@@ -36,7 +45,12 @@
       <div class="document-placenames__recipients column is-one-third">
         <h3 class="document-placenames__subtitle heading">
           Dates de lieu de destination
-          <a v-if="editable" class="tag" href="#" @click="openAddPlace('to')">
+          <a
+            v-if="editable"
+            class="tag"
+            href="#"
+            @click.prevent="openAddPlace('location-date-to')"
+          >
             <icon-add />
           </a>
         </h3>
@@ -49,13 +63,17 @@
             <span class="tag">
               <a :href="c.placename.ref" target="_blank">
                 {{
-                  !!c.placename.function
-                    ? `${c.placename.label}, ${c.placename.function}`
+                  !!c.relation.function
+                    ? `${c.placename.label}, ${c.relation.function}`
                     : c.placename.label
                 }}
               </a>
             </span>
-            <a v-if="editable" class="tag is-delete" />
+            <a
+              v-if="editable"
+              class="tag is-delete"
+              @click.prevent="unlinkPlace(c.placename.id, c.relation.id, c.role.id)"
+            />
           </div>
         </div>
         <div v-if="locationDateTo.length === 0">
@@ -69,7 +87,7 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from "vuex";
+import { mapGetters } from "vuex";
 import IconAdd from "../ui/icons/IconAdd";
 
 export default {
@@ -81,28 +99,22 @@ export default {
       default: false,
     },
   },
-  emits: ["add-place", "delete-place"],
+  emits: ["add-place", "unlink-place"],
   data() {
-    return {
-      placenamesForm: null,
-    };
+    return {};
   },
-  mounted() {
-    this.$store.dispatch("placenames/fetchRoles");
-  },
+  mounted() {},
   methods: {
     openAddPlace(role) {
       this.$emit("add-place", { role });
     },
-    closePlacenameChoice() {
-      this.placenamesForm = null;
+    unlinkPlace(id, relationId, roleId) {
+      console.log("UNLINK", id, relationId, roleId);
+      this.$emit("unlink-place", { id, relationId, roleId });
     },
   },
   computed: {
-    ...mapState("document", ["placenames"]),
-    ...mapState("placenames", ["roles"]),
     ...mapGetters("document", ["locationDateFrom", "locationDateTo"]),
-    ...mapGetters("placenames", ["getRoleByLabel"]),
   },
 };
 </script>

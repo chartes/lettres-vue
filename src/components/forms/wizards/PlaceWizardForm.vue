@@ -82,6 +82,7 @@
                 :key="`button-${j}`"
                 :type="button.type ? button.type : 'is-primary'"
                 size="is-medium"
+                :loading="loading"
                 @click="button.action()"
               >
                 {{ button.label }}
@@ -95,6 +96,9 @@
 </template>
 
 <script>
+import { debounce } from "lodash";
+import { mapState, mapGetters } from "vuex";
+
 import SelectOrCreatePlaceForm from "@/components/forms/place/SelectOrCreatePlaceForm.vue";
 import PlaceInfoCard from "@/components/forms/place/PlaceInfoCard.vue";
 import FunctionPlaceForm from "@/components/forms/place/FunctionPlaceForm.vue";
@@ -120,10 +124,13 @@ export default {
     return {
       activeTab: 0,
       place: null,
-      collectedPages: [],
+      loading: false,
     };
   },
   computed: {
+    ...mapState("document", ["document"]),
+    ...mapGetters("placenames", ["getRoleByLabel"]),
+
     wizardLabel() {
       return "Date de lieu";
     },
@@ -167,6 +174,8 @@ export default {
     },
   },
   async created() {
+    await this.$store.dispatch("placenames/fetchRoles");
+
     if (this.$props.inputData) {
       const p = this.$props.inputData;
       const id = p.formats ? p.formats.location : null;
@@ -192,6 +201,15 @@ export default {
       }
       if (p.role !== null) {
         place.role = p.role;
+      }
+      if (p.restoreRangeCallback !== null) {
+        place.restoreRangeCallback = p.restoreRangeCallback;
+      }
+      if (p.insertTagCallback !== null) {
+        place.insertTagCallback = p.insertTagCallback;
+      }
+      if (p.removeTagCallback !== null) {
+        place.removeTagCallback = p.removeTagCallback;
       }
 
       this.place = place;
@@ -223,7 +241,19 @@ export default {
       console.log(`place[${action.name}]`, data);
       switch (action.name) {
         case "set-place":
-          this.place = data;
+          if (this.popupMode) {
+            this.place = {
+              role: this.place.role,
+              source: this.place.source,
+              restoreRangeCallback: this.place.restoreRangeCallback,
+              insertTagCallback: this.place.insertTagCallback,
+              removeTagCallback: this.place.removeTagCallback,
+            };
+          }
+          this.place = {
+            ...this.place,
+            ...data,
+          };
           break;
         case "set-description":
           this.place.description = data;
@@ -234,22 +264,63 @@ export default {
       this.place = { ...this.place };
     },
     closeWizard() {
+      if (this.place && this.place.restoreRangeCallback) {
+        this.place.restoreRangeCallback();
+      }
+
+      this.loading = false;
+
       if (this.$parent.close) {
         this.$parent.close();
       }
     },
     async savePlace() {
+      this.loading = true;
       if (this.place) {
-        let long = null;
-        let lat = null;
-        if (this.place.coords) {
-          long = this.place.coords[0];
-          lat = this.place.coords[1];
-        }
-        // TODO sauvegarder le place
-        //const response = await this.$store.dispatch("placenames/addOne", this.place);
+        let placeToSave = {
+          long: null,
+          lat: null,
+          ref: null,
+          label: this.place.label,
+        };
 
-        console.log("save place:", this.place);
+        if (this.place.coords) {
+          placeToSave.long = this.place.coords[0];
+          placeToSave.lat = this.place.coords[1];
+        }
+
+        if (this.place.id) {
+          placeToSave.id = this.place.id;
+        } else {
+          const response = await this.$store.dispatch("placenames/addPlace", placeToSave);
+          placeToSave.id = response.id;
+        }
+
+        // when editing a document
+        if (this.popupMode) {
+          console.log(this.place);
+          if (this.place.role && placeToSave.id) {
+            // link the place to the document
+            const role = this.getRoleByLabel(this.place.role);
+            const roleId = role && role.id ? role.id : null;
+            await this.$store.dispatch("placenames/linkToDocument", {
+              placenameId: placeToSave.id,
+              roleId,
+              func: this.place.description,
+            });
+
+            // and then insert the tag in the content
+            if (this.place.restoreRangeCallback) {
+              this.place.restoreRangeCallback();
+              this.place.insertTagCallback(placeToSave.id);
+            }
+
+            // if not inlined, refresh the places
+            if (!this.place.role !== "inlined") {
+              await this.$store.dispatch("document/fetch", this.document.id);
+            }
+          }
+        }
       }
       this.closeWizard();
     },

@@ -10,7 +10,8 @@ const state = {
     placenamesSearchResults: null,
     placenamesWikidataSearchResults: null,
     roles: [],
-    newPlacename: null,
+
+    editorContentSelection: null,
 
     // new stuff below
     ...searchStore.state,
@@ -93,7 +94,7 @@ const actions = {
             commit('SET_TOTALCOUNT', response.data.meta['total-count'])
         });
     },
-    addOne({rootState}, placename) {
+    addPlace({rootState}, placename) {
         const data = {type: 'placename', attributes: {...placename}}
         const http = http_with_auth(rootState.user.jwt);
         return http.post(`placenames`, {data})
@@ -342,6 +343,19 @@ const actions = {
 
 };
 
+function groupbyPlacename(phrList) {
+    let _d = {}
+    phrList.forEach(p => {
+        if (_d[p.placenameId] === undefined) {
+            _d[p.placenameId] = []
+        }
+        const id = p.placenameId
+        delete p.placenameId;
+        _d[id].push(p)
+    })
+    return _d
+}
+
 const getters = {
 
     getRoleByLabel: state => label => {
@@ -368,24 +382,11 @@ const getters = {
 
         let fromPlace = state.included.filter(phr => phr.attributes.role_id === fromRole.id).map(reformatPhr)
         let toPlace = state.included.filter(phr => phr.attributes.role_id === toRole.id).map(reformatPhr)
-        let inAddress = state.included.filter(phr => phr.attributes.role_id === inlinedRole.id && phr.attributes.field.indexOf('address') > -1).map(reformatPhr)
-        let inArgument = state.included.filter(phr => phr.attributes.role_id === inlinedRole.id && phr.attributes.field.indexOf('argument') > -1).map(reformatPhr)
-        let inNotes = state.included.filter(phr => phr.attributes.role_id === inlinedRole.id && phr.attributes.field.indexOf('note') > -1).map(reformatPhr)
-        let inTranscription = state.included.filter(phr => phr.attributes.role_id === inlinedRole.id && phr.attributes.field.indexOf('transcription') > -1).map(reformatPhr)
+        let inAddress = state.included.filter(phr => phr.attributes.role_id === inlinedRole.id && phr.attributes.field && phr.attributes.field.indexOf('address') > -1).map(reformatPhr)
+        let inArgument = state.included.filter(phr => phr.attributes.role_id === inlinedRole.id && phr.attributes.field && phr.attributes.field.indexOf('argument') > -1).map(reformatPhr)
+        let inNotes = state.included.filter(phr => phr.attributes.role_id === inlinedRole.id && phr.attributes.field && phr.attributes.field.indexOf('note') > -1).map(reformatPhr)
+        let inTranscription = state.included.filter(phr => phr.attributes.role_id === inlinedRole.id && phr.attributes.field && phr.attributes.field.indexOf('transcription') > -1).map(reformatPhr)
 
-        // TODO: groupby par placenameId
-        function groupbyPlacename(phrList) {
-            let _d = {}
-            phrList.forEach(p => {
-                if (_d[p.placenameId] === undefined) {
-                    _d[p.placenameId] = []
-                }
-                const id = p.placenameId
-                delete p.placenameId;
-                _d[id].push(p)
-            })
-            return _d
-        }
         const fromPlaceDict = groupbyPlacename(fromPlace)
         const toPlaceDict = groupbyPlacename(toPlace)
         const inAddressDict = groupbyPlacename(inAddress)

@@ -1,18 +1,9 @@
 <template>
-  <div
-    class="field rich-text-editor"
-    style="width: 100%"
-  >
-    <field-label
-      v-if="!!label"
-      :label="label"
-    />
+  <div class="field rich-text-editor" style="width: 100%">
+    <field-label v-if="!!label" :label="label" />
 
     <div class="editor-area">
-      <div
-        ref="controls"
-        class="editor-controls"
-      >
+      <div ref="controls" class="editor-controls">
         <div
           v-for="(group, gindex) in formats"
           :key="gindex"
@@ -27,10 +18,7 @@
             :format="format"
           />
         </div>
-        <div
-          v-if="slotNotEmpty"
-          class="editor-controls-group is-additional"
-        >
+        <div v-if="slotNotEmpty" class="editor-controls-group is-additional">
           <slot />
         </div>
       </div>
@@ -65,18 +53,8 @@
         :cancel="closePersonForm"
         :remove="removePersonForm"
       />
-      <placename-list-form
-        v-if="formLocation"
-        title="Sélectionner un lieu"
-        :submit="submitLocationForm"
-        :cancel="closeLocationForm"
-        :remove="removeLocationForm"
-      />
 
-      <pre
-        v-if="debug"
-        style="white-space: normal"
-      >{{ value }}</pre>
+      <pre v-if="debug" style="white-space: normal">{{ value }}</pre>
     </div>
   </div>
 </template>
@@ -93,7 +71,6 @@ import { getNewDelta } from "../../../modules/quill/DeltaUtils";
 import _isEmpty from "lodash/isEmpty";
 import NoteForm from "../NoteForm";
 import PersonListForm from "../PersonListForm";
-import PlacenameListForm from "../PlacenameListForm";
 
 const wrapPattern = /^<p>(.*)<\/p>$/im;
 let formatCallbacks = {};
@@ -101,7 +78,6 @@ let formatCallbacks = {};
 export default {
   name: "RichTextEditor",
   components: {
-    PlacenameListForm,
     PersonListForm,
     NoteForm,
     FieldLabel,
@@ -138,7 +114,6 @@ export default {
       currentSelection: null,
       formTextfield: null,
       formPerson: null,
-      formLocation: null,
       formNote: null,
       actionsPositions: {
         top: 0,
@@ -405,7 +380,6 @@ export default {
     removeNoteForm() {
       console.log("Note");
       this.editor.format("location", false);
-      this.closeLocationForm();
       let formats = this.editor.getFormat();
       this.updateButtons(formats);
     },
@@ -450,25 +424,33 @@ export default {
      */
 
     displayLocationForm() {
-      //this.formLocation = true
       const range = this.editor.getSelection();
       const selection = this.editor.getText(range.index, range.length);
       const formats = this.editor.getFormat();
-      this.$emit("add-place", { role: "inlined", selection, formats });
+
+      const _editor = this.editor;
+
+      function restoreRangeCallback() {
+        _editor.setSelection(range.index, range.length, Quill.sources.SILENT);
+      }
+
+      this.$emit("add-place", {
+        role: "inlined",
+        selection,
+        formats,
+        restoreRangeCallback,
+        insertTagCallback: this.submitLocationForm,
+        removeTagCallback: this.removeLocationForm,
+      });
     },
-    closeLocationForm() {
-      this.formLocation = false;
-    },
-    submitLocationForm(loc) {
-      this.editor.format("location", loc.id);
-      this.closeLocationForm();
+    submitLocationForm(placeId) {
+      this.editor.format("location", placeId);
       let formats = this.editor.getFormat();
       this.updateButtons(formats);
     },
     removeLocationForm() {
       console.log("removeLocationForm");
       this.editor.format("location", false);
-      this.closeLocationForm();
       let formats = this.editor.getFormat();
       this.updateButtons(formats);
     },

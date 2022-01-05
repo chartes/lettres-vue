@@ -142,7 +142,7 @@ const mutations = {
   },
   REMOVE_PERSON (state, payload) {
     if (state.persons) {
-      state.persons = state.persons.filter(corr => corr.relationId !== payload)
+      state.persons = state.persons.filter(corr => corr.relation.id !== payload)
     }
   },
   ADD_PERSON (state, payload) {
@@ -150,7 +150,7 @@ const mutations = {
   },
   REMOVE_PLACENAME(state, payload) {
     if (state.placenames) {
-      state.placenames = state.placenames.filter(corr => corr.relationId !== payload)
+      state.placenames = state.placenames.filter(corr => corr.relation.id !== payload)
     }
   },
   ADD_PLACENAME(state, payload) {
@@ -194,16 +194,16 @@ const actions = {
 
     console.log('@@saving inlined: seeking for tags in content')
     /* 
-      seek for placenames and persons in the doc attributes (address, transcription and notes) 
+      seek for placenames and persons in the doc attributes (address, argument, transcription and notes) 
       and update the placename_has_role and person_has_role tables accordingly. 
     */
 
     const attrs = response.data.data.attributes;
 
     /* =========== find placenames =========== */
-    let IdsInAddress= [...attrs.address.matchAll(placenameRegexp)].map(m => parseInt(m[1]))
-    let IdsInArgument = [...attrs.argument.matchAll(placenameRegexp)].map(m => parseInt(m[1]))
-    let IdsInTranscription = [...attrs.transcription.matchAll(placenameRegexp)].map(m => parseInt(m[1]))
+    let IdsInAddress= attrs.address ? [...attrs.address.matchAll(placenameRegexp)].map(m => parseInt(m[1])) : []
+    let IdsInArgument = attrs.argument ? [...attrs.argument.matchAll(placenameRegexp)].map(m => parseInt(m[1])) : []
+    let IdsInTranscription = attrs.transcription ? [...attrs.transcription.matchAll(placenameRegexp)].map(m => parseInt(m[1])) : []
 
     let noteContents = state.notes.map(n => n.content)
     let IdsInNotes = []
@@ -220,7 +220,7 @@ const actions = {
       if (IdsInAddress.indexOf(_id) > -1) {
         field.push("address")
       }
-      if (IdsInAddress.indexOf(_id) > -1) {
+      if (IdsInArgument.indexOf(_id) > -1) {
         field.push("argument")
       }
       if (IdsInNotes.indexOf(_id) > -1) {
@@ -244,16 +244,16 @@ const actions = {
     placenamesHavingRoles.data.data.forEach(async phr => {
         console.log(`looking if phr ${phr.id} is still in `)
         if (!inlined[phr.relationships.placename.data.id] && phr.relationships['placename-role'].data.id === inlinedRole.id) {
-            console.log(`phr ${phr.id} no longer exists in inlined data (argument, transcription), so delete it`)
+            console.log(`phr ${phr.id} no longer exists in inlined data (argument, address, transcription, notes), so delete it`)
             await http.delete(`/placenames-having-roles/${phr.id}`)
         }
     })
 
     /* =========== find persons =========== */
-    IdsInAddress = [...attrs.address.matchAll(personRegexp)].map(m => parseInt(m[1]))
-     IdsInArgument = [...attrs.argument.matchAll(personRegexp)].map(m => parseInt(m[1]))
-
-    IdsInTranscription = [...attrs.transcription.matchAll(personRegexp)].map(m => parseInt(m[1]))
+    IdsInAddress = attrs.address ? [...attrs.address.matchAll(personRegexp)].map(m => parseInt(m[1])) : []
+    IdsInArgument = attrs.argument ? [...attrs.argument.matchAll(personRegexp)].map(m => parseInt(m[1])) : []
+    IdsInTranscription = attrs.transcription ? [...attrs.transcription.matchAll(personRegexp)].map(m => parseInt(m[1])) : []
+    
     IdsInNotes = []
     noteContents.forEach(n => {
       IdsInNotes = IdsInNotes.concat([...n.matchAll(personRegexp)].map(m => parseInt(m[1])))
@@ -267,7 +267,7 @@ const actions = {
       if (IdsInAddress.indexOf(_id) > -1) {
         field.push("address")
       }
-      if (IdsInAddress.indexOf(_id) > -1) {
+      if (IdsInArgument.indexOf(_id) > -1) {
         field.push("argument")
       }
       if (IdsInNotes.indexOf(_id) > -1) {

@@ -1,13 +1,12 @@
 const getPersons = function (included) {
-
     const hasRoleById = {};
     const rolesById = {};
     const personsById = {};
     included.forEach(inc => {
       if (inc.type === 'person') {
-        personsById[inc.id] = {...inc.attributes}
+        personsById[inc.id] = {id: inc.id, ...inc.attributes}
       } else if (inc.type === 'person-role') {
-        rolesById[inc.id] = {...inc.attributes}
+        rolesById[inc.id] = {id: inc.id, ...inc.attributes}
       } else if (inc.type === 'person-has-role') {
         hasRoleById[inc.id] = {
           relationId: inc.id,
@@ -18,14 +17,15 @@ const getPersons = function (included) {
       }
     });
     return Object.values(hasRoleById).map(hasRole => {
-      personsById[hasRole.personId].function = hasRole.function;
       return {
-        personId: hasRole.personId,
-        roleId: hasRole.roleId,
         person: personsById[hasRole.personId],
         role: rolesById[hasRole.roleId],
-        relationId: hasRole.relationId
-      }
+        relation: {
+          id: hasRole.relationId,
+          field: hasRoleById[hasRole.relationId].field,
+          function: hasRoleById[hasRole.relationId].function
+        }
+    }
     })
   },
 
@@ -35,9 +35,9 @@ const getPersons = function (included) {
       const placenamesById = {};
       included.forEach(inc => {
           if (inc.type === 'placename') {
-              placenamesById[inc.id] = {...inc.attributes}
+              placenamesById[inc.id] = {id: inc.id, ...inc.attributes}
           } else if (inc.type === 'placename-role') {
-              rolesById[inc.id] = {...inc.attributes}
+              rolesById[inc.id] = {id: inc.id, ...inc.attributes}
           } else if (inc.type === 'placename-has-role') {
               hasRoleById[inc.id] = {
                   relationId: inc.id,
@@ -49,11 +49,13 @@ const getPersons = function (included) {
       });
       return Object.values(hasRoleById).map(hasRole => {
           return {
-              placenameId: hasRole.personId,
-              roleId: hasRole.roleId,
               placename: placenamesById[hasRole.placenameId],
               role: rolesById[hasRole.roleId],
-              relationId: hasRole.relationId
+              relation: {
+                id: hasRole.relationId,
+                field: hasRoleById[hasRole.relationId].field,
+                function: hasRoleById[hasRole.relationId].function
+              }
           }
       })
 
