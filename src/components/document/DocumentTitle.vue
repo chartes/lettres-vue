@@ -1,8 +1,6 @@
 <template>
   <div class="document-title__component">
     <header v-if="!preview">
-      <!-- <span class="heading">Titre</span> -->
-
       <title-field-in-place
         :tabulation-index="0"
         label="Titre"
@@ -13,6 +11,7 @@
         :status="titleStatus"
         specific-class="field-title__input"
         @changed="titleChanged"
+        @add-note="addNote($event)"
       />
     </header>
   </div>
@@ -24,6 +23,7 @@ import TitleFieldInPlace from "../forms/fields/TitleFieldInPlace";
 export default {
   name: "DocumentTitle",
   components: { TitleFieldInPlace },
+  emit: ["add-note"],
   props: {
     editable: {
       type: Boolean,
@@ -68,6 +68,9 @@ export default {
     titleSetStatusError() {
       this.titleStatus = "error";
     },
+    addNote(evt) {
+      this.$emit("add-note", { ...evt })
+    }
   },
   computed: {
     ...mapState("document", ["document"]),

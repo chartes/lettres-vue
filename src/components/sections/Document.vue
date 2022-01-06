@@ -16,6 +16,7 @@
           :editable="canEdit"
           :preview="preview"
           class="column is-three-quarters"
+          @add-note="addNote"
         />
         <document-languages
           :editable="canEdit"
@@ -268,7 +269,7 @@ import PersonWizardForm from "@/components/forms/wizards/PersonWizardForm.vue";
 
 export default {
   name: "Document",
-  emit: ["open-witness-modal"],
+  //emit: ["open-witness-modal"],
   components: {
     Changelog,
     DocumentSkeleton,
