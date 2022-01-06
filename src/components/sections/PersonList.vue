@@ -1,11 +1,11 @@
 <template>
-  <div class="place-list">
+  <div class="person-list">
     <div class="search-container">
       <section>
         <header />
         <div class="searchbox-container">
           <b-field
-            label="Lieu"
+            label="Nom"
             class="term-search"
           >
             <div class="field has-addons">
@@ -14,7 +14,7 @@
                   v-model="inputTerm"
                   class="input"
                   type="text"
-                  placeholder="Paris"
+                  placeholder="Catherine de Médics"
                   @keyup.enter="search"
                 >
               </div>
@@ -38,21 +38,21 @@
             </div>
           </b-field>
 
-          <b-field label="Dates de lieu">
+          <b-field label="Correspondants">
             <b-field>
               <b-checkbox
-                v-model="fromPlace"
+                v-model="sender"
                 type="is-info"
               >
-                Expédition
+                Expéditeur
               </b-checkbox>
             </b-field>
             <b-field>
               <b-checkbox
-                v-model="toPlace"
+                v-model="recipient"
                 type="is-info"
               >
-                Réception
+                Destinataire
               </b-checkbox>
             </b-field>
           </b-field>
@@ -182,24 +182,15 @@
 
         <b-table-column
           v-slot="props"
-          field="coords"
-          label="Localisation"
-          :td-attrs="columnTdAttrs"
-        >
-          {{ props.row.coords }}
-        </b-table-column>
-
-        <b-table-column
-          v-slot="props"
           field="documents"
           label="Documents"
           :td-attrs="columnTdAttrs"
         >
-          <span v-if="placenameCounts[props.row.id] === 0">-</span>
+          <span v-if="personCounts[props.row.id] === 0">-</span>
           <span
             v-else
-          >{{ placenameCounts[props.row.id] }} document
-            <span v-if="placenameCounts[props.row.id] > 1">(s)</span>
+          >{{ personCounts[props.row.id] }} document
+            <span v-if="personCounts[props.row.id] > 1">(s)</span>
           </span>
         </b-table-column>
 
@@ -212,17 +203,17 @@
         <template #detail="props">
           <div class="detail-td">
             <div
-              v-if="fromPlace"
+              v-if="sender"
               class="columns ref-section-heading"
             >
               <div class="column is-one-quarter section-title">
                 <span class="heading">
-                  Dates de lieu d'expédition ({{ props.row.fromPlace.length }})
+                  Dates de lieu d'expédition ({{ props.row.sender.length }})
                 </span>
               </div>
               <div class="column">
                 <document-title-bar
-                  v-for="item in props.row.fromPlace"
+                  v-for="item in props.row.sender"
                   :key="item.docId"
                   :doc-id="item.docId"
                   :title="item.docTitle"
@@ -231,17 +222,17 @@
               </div>
             </div>
             <div
-              v-if="toPlace"
+              v-if="recipient"
               class="columns ref-section-heading"
             >
               <div class="column is-one-quarter section-title">
                 <span class="heading">
-                  Dates de lieu de réception ({{ props.row.toPlace.length }})
+                  Dates de lieu de réception ({{ props.row.recipient.length }})
                 </span>
               </div>
               <div class="column">
                 <document-title-bar
-                  v-for="item in props.row.toPlace"
+                  v-for="item in props.row.recipient"
                   :key="item.docId"
                   :doc-id="item.docId"
                   :title="item.docTitle"
@@ -332,28 +323,28 @@ import { mapState, mapActions, mapGetters } from "vuex";
 import DocumentTitleBar from "../forms/place/DocumentTitleBar.vue";
 
 export default {
-  name: "PlaceList",
+  name: "PersonList",
   components: {
     DocumentTitleBar,
   },
   props: {
     popupMode: { type: Boolean, default: true },
   },
-  emit: ["manage-place-data"],
+  emit: ["manage-person-data"],
   data() {
     let inputTerm = null;
-    if (this.$attrs.place && this.$attrs.place.selection) {
-      inputTerm = this.$attrs.place.selection;
+    if (this.$attrs.person && this.$attrs.person.selection) {
+      inputTerm = this.$attrs.person.selection;
     }
 
     return {
       selected: null,
       tableData: [],
-      placenameCounts: {},
+      personCounts: {},
 
       inputTerm,
-      fromPlace: true,
-      toPlace: true,
+      sender: true,
+      recipient: true,
       inAddress: true,
       inArgument: true,
       inNotes: true,
@@ -361,10 +352,10 @@ export default {
     };
   },
   computed: {
-    ...mapState("placenames", {
-      placenames: "documents",
+    ...mapState("persons", {
+      persons: "documents",
     }),
-    ...mapState("placenames", [
+    ...mapState("persons", [
       "loadingStatus",
       "numPage",
       "pageSize",
@@ -373,8 +364,8 @@ export default {
       "searchTerm",
     ]),
 
-    ...mapGetters("placenames", {
-      placenamesHavingRoles: "getIncluded",
+    ...mapGetters("persons", {
+      personsHavingRoles: "getIncluded",
     }),
 
     sortingPriority: {
@@ -402,21 +393,21 @@ export default {
     },
 
     labeledInputTerm() {
-      return `label:*${this.inputTerm}*`;
+      return `label:*"${this.inputTerm}"*`;
     },
   },
   watch: {
-    placenames() {
+    persons() {
       this.loadAsyncData();
     },
     inputTerm() {
       this.setSearchTerm(this.labeledInputTerm);
     },
 
-    fromPlace() {
+    sender() {
       this.recomputeCounts();
     },
-    toPlace() {
+    recipient() {
       this.recomputeCounts();
     },
     inAddress() {
@@ -434,18 +425,18 @@ export default {
 
     selected() {
       if (this.selected) {
-        this.managePlaceData({ action: { name: "set-place" }, data: this.selected });
+        this.managePersonData({ action: { name: "set-person" }, data: this.selected });
       }
     },
-    "$attrs.place"() {
+    "$attrs.person"() {
       if (
-        !this.$attrs.place ||
+        !this.$attrs.person ||
         !this.selected ||
-        this.$attrs.place.id === this.selected.id
+        this.$attrs.person.id === this.selected.id
       ) {
-        console.log("keep selection", this.$attrs.place);
-        if (this.$attrs.place.selection) {
-          this.inputTerm = this.$attrs.place.selection;
+        console.log("keep selection", this.$attrs.person);
+        if (this.$attrs.person.selection) {
+          this.inputTerm = this.$attrs.person.selection;
         }
       } else {
         console.log("unselect");
@@ -454,30 +445,30 @@ export default {
     },
   },
   async created() {
-    if (this.$attrs.place && this.$attrs.place.id) {
-      const p = await this.getPlacenameById(this.$attrs.place.id);
+    if (this.$attrs.person && this.$attrs.person.id) {
+      const p = await this.getPersonById(this.$attrs.person.id);
       this.inputTerm = p.attributes.label;
-    } else if (this.$attrs.place && this.$attrs.place.selection) {
-      this.inputTerm = this.$attrs.place.selection;
+    } else if (this.$attrs.person && this.$attrs.person.selection) {
+      this.inputTerm = this.$attrs.person.selection;
     }
 
-    console.log("WIZARD CREATION", this.inputTerm, this.$attrs.place);
+    console.log("WIZARD CREATION", this.inputTerm, this.$attrs.person);
 
-    await this.$store.dispatch("placenames/fetchRoles");
+    await this.$store.dispatch("persons/fetchRoles");
     this.setSearchTerm(this.labeledInputTerm);
     this.search();
   },
   methods: {
-    ...mapActions("placenames", [
+    ...mapActions("persons", [
       "setNumPage",
       "performSearch",
       "setSorts",
       "setSearchTerm",
-      "getPlacenameById",
+      "getPersonById",
     ]),
 
-    managePlaceData(evt) {
-      this.$emit("manage-place-data", evt);
+    managePersonData(evt) {
+      this.$emit("manage-person-data", evt);
     },
 
     search() {
@@ -489,69 +480,69 @@ export default {
       const s_pId = pId.toString();
       let countSet = new Set([]);
 
-      // fromPlace
-      if (this.placenamesHavingRoles.fromPlace[s_pId] && this.fromPlace) {
+      // sender
+      if (this.personsHavingRoles.sender[s_pId] && this.sender) {
         const fromSet = new Set(
-          this.placenamesHavingRoles.fromPlace[s_pId].map((i) => i.docId)
+          this.personsHavingRoles.sender[s_pId].map((i) => i.docId)
         );
         for (let elem of fromSet) {
           countSet.add(elem);
         }
       }
-      // toPlace
-      if (this.placenamesHavingRoles.toPlace[s_pId] && this.toPlace) {
+      // recipient
+      if (this.personsHavingRoles.recipient[s_pId] && this.recipient) {
         const toSet = new Set(
-          this.placenamesHavingRoles.toPlace[s_pId].map((i) => i.docId)
+          this.personsHavingRoles.recipient[s_pId].map((i) => i.docId)
         );
         for (let elem of toSet) {
           countSet.add(elem);
         }
       }
       // inAddress
-      if (this.placenamesHavingRoles.inAddress[s_pId] && this.inAddress) {
+      if (this.personsHavingRoles.inAddress[s_pId] && this.inAddress) {
         const argSet = new Set(
-          this.placenamesHavingRoles.inAddress[s_pId].map((i) => i.docId)
+          this.personsHavingRoles.inAddress[s_pId].map((i) => i.docId)
         );
         for (let elem of argSet) {
           countSet.add(elem);
         }
       }
       // inArgument
-      if (this.placenamesHavingRoles.inArgument[s_pId] && this.inArgument) {
+      if (this.personsHavingRoles.inArgument[s_pId] && this.inArgument) {
         const argSet = new Set(
-          this.placenamesHavingRoles.inArgument[s_pId].map((i) => i.docId)
+          this.personsHavingRoles.inArgument[s_pId].map((i) => i.docId)
         );
         for (let elem of argSet) {
           countSet.add(elem);
         }
       }
       // inNotes
-      if (this.placenamesHavingRoles.inNotes[s_pId] && this.inNotes) {
+      if (this.personsHavingRoles.inNotes[s_pId] && this.inNotes) {
         const argSet = new Set(
-          this.placenamesHavingRoles.inNotes[s_pId].map((i) => i.docId)
+          this.personsHavingRoles.inNotes[s_pId].map((i) => i.docId)
         );
         for (let elem of argSet) {
           countSet.add(elem);
         }
       }
       // inTranscription
-      if (this.placenamesHavingRoles.inTranscription[s_pId] && this.inTranscription) {
+      if (this.personsHavingRoles.inTranscription[s_pId] && this.inTranscription) {
         const trSet = new Set(
-          this.placenamesHavingRoles.inTranscription[s_pId].map((i) => i.docId)
+          this.personsHavingRoles.inTranscription[s_pId].map((i) => i.docId)
         );
         for (let elem of trSet) {
           countSet.add(elem);
         }
       }
 
-      this.placenameCounts[s_pId] = countSet.size || 0;
+      this.personCounts[s_pId] = countSet.size || 0;
 
       return countSet.size;
     },
 
     recomputeCounts() {
-      this.placenameCounts = {};
-      for (let p of this.placenames) {
+      this.personCounts = {};
+      for (let p of this.persons) {
         this.count(p.id);
       }
     },
@@ -598,20 +589,17 @@ export default {
     },
 
     async loadAsyncData() {
-      if (this.placenames) {
+      if (this.persons) {
         this.tableData = await Promise.all(
-          this.placenames.map(async (p) => {
+          this.persons.map(async (p) => {
             return {
-              //placeFunction: d.attributes.function,
-              //placename: d.placename,
-              // placenameRole: d.role,
-              documents: this.placenamesHavingRoles.documents[p.id] || [],
-              fromPlace: this.placenamesHavingRoles.fromPlace[p.id] || [],
-              toPlace: this.placenamesHavingRoles.toPlace[p.id] || [],
-              inAddress: this.placenamesHavingRoles.inAddress[p.id] || [],
-              inArgument: this.placenamesHavingRoles.inArgument[p.id] || [],
-              inNotes: this.placenamesHavingRoles.inNotes[p.id] || [],
-              inTranscription: this.placenamesHavingRoles.inTranscription[p.id] || [],
+              documents: this.personsHavingRoles.documents[p.id] || [],
+              sender: this.personsHavingRoles.sender[p.id] || [],
+              recipient: this.personsHavingRoles.recipient[p.id] || [],
+              inAddress: this.personsHavingRoles.inAddress[p.id] || [],
+              inArgument: this.personsHavingRoles.inArgument[p.id] || [],
+              inNotes: this.personsHavingRoles.inNotes[p.id] || [],
+              inTranscription: this.personsHavingRoles.inTranscription[p.id] || [],
 
               id: p.id,
               label: p.attributes.label,
@@ -658,7 +646,7 @@ export default {
 <style lang="scss">
 @import "@/assets/sass/main.scss";
 
-.place-list {
+.person-list {
   .pagination-goto {
     display: flex;
     float: right;

@@ -1,27 +1,39 @@
 <template>
   <div>
-    <ol v-if="notes.length" class="note-list notes">
-      <li v-for="note in notes" :key="note.id">
-        <div class="note-item" :class="noteItemClass">
-          <div class="note-item__text" v-html="note.content" />
-          <a v-if="editable" class="note-item__edit" @click="openNoteEdit(note)">
+    <ol
+      v-if="notes.length"
+      class="note-list notes"
+    >
+      <li
+        v-for="note in notes"
+        :key="note.id"
+      >
+        <div
+          class="note-item"
+          :class="noteItemClass"
+        >
+          <div
+            class="note-item__text"
+            v-html="note.content"
+          />
+          <a
+            v-if="editable"
+            class="note-item__edit"
+            @click="openNoteEdit(note)"
+          >
             <icon-pen-edit />
           </a>
-          <a v-if="editable" class="note-item__delete" @click="noteId = note.id">
+          <a
+            v-if="editable"
+            class="note-item__delete"
+            @click="noteId = note.id"
+          >
             <icon-bin />
           </a>
         </div>
       </li>
     </ol>
-    <note-form
-      v-if="noteEdit"
-      title="Éditer la note"
-      :note="noteEdit"
-      :note-id="noteEditId"
-      :submit="updateNote"
-      :cancel="closeNoteEdit"
-      @add-place="addPlace($event)"
-    />
+   
     <modal-confirm-note-delete
       v-if="noteId"
       :note-id="noteId"
@@ -40,23 +52,20 @@ import {
 import IconBin from "../ui/icons/IconBin";
 import IconPenEdit from "../ui/icons/IconPenEdit";
 import ModalConfirmNoteDelete from "../forms/ModalConfirmNoteDelete";
-import NoteForm from "../forms/NoteForm";
 
 export default {
   name: "DocumentNotes",
-  components: { NoteForm, ModalConfirmNoteDelete, IconPenEdit, IconBin },
+  components: { ModalConfirmNoteDelete, IconPenEdit, IconBin },
   props: {
     editable: {
       type: Boolean,
       default: false,
     },
   },
-  emits: ["add-place"],
+  emits: ["add-note"],
   data() {
     return {
-      noteId: null,
-      noteEdit: false,
-      noteEditId: false,
+      noteId: null
     };
   },
   mounted() {},
@@ -71,25 +80,10 @@ export default {
     cancelNoteDelete() {
       this.noteId = false;
     },
-    updateNote(note) {
-      this.$store
-        .dispatch("document/updateNote", note)
-        .then(() => {
-          this.closeNoteEdit();
-        })
-        .catch((error) => {});
-    },
     openNoteEdit(note) {
-      this.noteEdit = note;
+      this.$emit('add-note', {note})
     },
-    closeNoteEdit() {
-      this.noteEdit = false;
-    },
-
-    addPlace(evt) {
-      this.$emit("add-place", evt);
-    },
-
+ 
     removeNoteFromDocument(noteId) {
       const pattern = new RegExp(
         '<a class="note" href="#' + noteId + '">\\[note\\]<\\/a>',

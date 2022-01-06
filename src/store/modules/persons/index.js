@@ -143,6 +143,11 @@ const actions = {
       .catch(error => console.log(error))
   },
 
+  async checkIfRefExists({rootState}, ref) {
+    const http = http_with_auth(rootState.user.jwt);
+    const response = await http.get(`persons?page[size]=1&without-relationships&filter[ref]=${ref}`)
+    return response.data.meta['total-count']
+  },
   async updateInlinedRole({state, rootState}, {inlined}) {
     const http = http_with_auth(rootState.user.jwt);
     const inlinedRole = state.roles.find(r => r.label === 'inlined')
@@ -204,126 +209,202 @@ const actions = {
         }
 
 
-    }
-},
-
-/* ======================
-    SEARCH ACTIONS
-   ======================*/
-...searchStore.actions,
-
-performSearch: debounce(async ({commit, state, rootState}) => {
-    commit('SET_LOADING_STATUS', true);
-
-    /* =========== filters =========== */
-    let query =  '*'; //`collections.id:${state.selectedCollectionId}`
-
-
-    if (state.searchTerm && state.searchTerm.length > 0) {
-      query = `(${query} AND (${state.searchTerm}))`
-    }
-
-
-    if (!query || query.length === 0) {
-      query = '*'
-    }
-    if (!rootState.user.current_user){
-      query = `${query} AND (is-published:true)`
-    }
-
-    /* =========== sorts ===========*/
-    let sorts = state.sorts.map(s => `${s.order === 'desc' ? '-' : ''}${s.field}`)
-    sorts = sorts.length ? sorts.join(',') : 'creation'
-  
-    /* =========== date ranges ===========*/
-    const cdf = state.creationDateFrom.selection
-    const cdt = state.creationDateTo.selection
-    let cdfFormatted = null
-    let cdtFormatted = null
-    console.log(state.creationDateFrom, state.creationDateTo)
-
-    try {
-      cdfFormatted = formatDate(cdf.year, cdf.month, cdf.day)
-      if (state.withDateRange) {
-        cdtFormatted = formatDate(cdt.year, cdt.month, cdt.day)
       }
-    } catch (e) {
-      cdfFormatted = null
-      cdtFormatted = null
-      console.log(e)
-    }
+  },
 
-    let creationDateRange = ''
+  async getPersonById({rootState}, id) {
+    const http = http_with_auth(rootState.user.jwt);
+    const resp = await http.get(`/persons/${id}?without-relationships`)
+    return resp.data.data;
+  },
 
-    try {
-      if (cdfFormatted) {
-        if (state.withDateRange && cdtFormatted) {
-          // between from and to 
-          let upperBound = cdtFormatted
-          let upperOp = 'lt'
-          if (cdt.month === null) {
-            upperBound = formatDate(parseInt(cdt.year) + 1, cdt.month, cdt.day)
-          }
-          else if (cdf.day === null) {
-            upperBound = formatDate(cdt.year, getNextMonthLabel(cdt.month), cdt.day)
-          } else {
-            upperOp = 'lte'
-          }
-          creationDateRange = `&range[creation]=gte:${cdfFormatted},${upperOp}:${upperBound}`
-        } else {
-          // single date (from)
-          let upperBound = cdfFormatted
-          let upperOp = 'lt'
-          if (cdf.month === null) {
-            // search a single and whole year
-            // between 1577 and 1578
-            upperBound = formatDate(parseInt(cdf.year) + 1, cdf.month, cdf.day)
-          } else if (cdf.day === null) {
-            // between 1577-01 and 1577-02
-            upperBound = formatDate(cdf.year, getNextMonthLabel(cdf.month), cdf.day)
-          } else {
-            // a single day: 1577-11-10
-            upperOp = 'lte'
-          }
-          creationDateRange = `&range[creation]=gte:${cdfFormatted},${upperOp}:${upperBound}`
-        }
+  /* ======================
+      SEARCH ACTIONS
+    ======================*/
+  ...searchStore.actions,
+
+  async performFunctionSearch({rootState}) {
+    const http = http_with_auth(rootState.user.jwt);
+    const response = await http.get(`/persons-functions`);
+    return response.data['person-functions']
+  },
+
+  performSearch: debounce(async ({commit, state, rootState}) => {
+      commit('SET_LOADING_STATUS', true);
+
+      /* =========== filters =========== */
+      let query =  '*'; //`collections.id:${state.selectedCollectionId}`
+
+
+      if (state.searchTerm && state.searchTerm.length > 0) {
+        query = `(${query} AND (${state.searchTerm}))`
       }
-    } catch (e) {
-      console.log(e)
-      creationDateRange = ''
-    }
+
+
+      if (!query || query.length === 0) {
+        query = '*'
+      }
+      if (!rootState.user.current_user){
+        query = `${query} AND (is-published:true)`
+      }
+
+      /* =========== sorts ===========*/
+      let sorts = state.sorts.map(s => `${s.order === 'desc' ? '-' : ''}${s.field}`)
+      sorts = sorts.length ? sorts.join(',') : 'creation'
     
-    let filters = `${creationDateRange}`
+      /* =========== date ranges ===========*/
+      const cdf = state.creationDateFrom.selection
+      const cdt = state.creationDateTo.selection
+      let cdfFormatted = null
+      let cdtFormatted = null
+      console.log(state.creationDateFrom, state.creationDateTo)
 
-    /* =========== execution =========== */
-    try {
-      const toInclude = ['roles-within-documents@placenameHasRoleWithIds'];
-      const includes = toInclude.length ? `&include=${[toInclude].join(',')}` : ''; 
+      try {
+        cdfFormatted = formatDate(cdf.year, cdf.month, cdf.day)
+        if (state.withDateRange) {
+          cdtFormatted = formatDate(cdt.year, cdt.month, cdt.day)
+        }
+      } catch (e) {
+        cdfFormatted = null
+        cdtFormatted = null
+        console.log(e)
+      }
+
+      let creationDateRange = ''
+
+      try {
+        if (cdfFormatted) {
+          if (state.withDateRange && cdtFormatted) {
+            // between from and to 
+            let upperBound = cdtFormatted
+            let upperOp = 'lt'
+            if (cdt.month === null) {
+              upperBound = formatDate(parseInt(cdt.year) + 1, cdt.month, cdt.day)
+            }
+            else if (cdf.day === null) {
+              upperBound = formatDate(cdt.year, getNextMonthLabel(cdt.month), cdt.day)
+            } else {
+              upperOp = 'lte'
+            }
+            creationDateRange = `&range[creation]=gte:${cdfFormatted},${upperOp}:${upperBound}`
+          } else {
+            // single date (from)
+            let upperBound = cdfFormatted
+            let upperOp = 'lt'
+            if (cdf.month === null) {
+              // search a single and whole year
+              // between 1577 and 1578
+              upperBound = formatDate(parseInt(cdf.year) + 1, cdf.month, cdf.day)
+            } else if (cdf.day === null) {
+              // between 1577-01 and 1577-02
+              upperBound = formatDate(cdf.year, getNextMonthLabel(cdf.month), cdf.day)
+            } else {
+              // a single day: 1577-11-10
+              upperOp = 'lte'
+            }
+            creationDateRange = `&range[creation]=gte:${cdfFormatted},${upperOp}:${upperBound}`
+          }
+        }
+      } catch (e) {
+        console.log(e)
+        creationDateRange = ''
+      }
       
-      const http = http_with_auth(rootState.user.jwt);
-      const response = await http.get(`/search?query=${query}${filters}${includes}&index=lettres__${process.env.NODE_ENV}__persons&sort=${sorts}&page[size]=${state.pageSize}&page[number]=${state.numPage}`);
-      const {data, links, meta, included} = response.data
+      let filters = `${creationDateRange}`
 
-      // TODO :  par exemple
-      // http://localhost:5004/lettres/api/1.0/search?query=relationships.person_function:donjon&index=lettres__development__persons&include=roles-within-documents
-      // http://localhost:9200/lettres__development__persons/_doc/_search?q=relationships.person_function:donjon
-      // TODO: par la suite, extraire le store "search" qui permet de chercher les documents pour le rendre davantage générique
-      // (ex: remplacer state.document par state.items)
+      /* =========== execution =========== */
+      try {
+        const toInclude = ['roles-within-documents@personHasRoleWithIds'];
+        const includes = toInclude.length ? `&include=${[toInclude].join(',')}` : ''; 
+        
+        const http = http_with_auth(rootState.user.jwt);
+        const response = await http.get(`/search?query=${query}${filters}${includes}&index=lettres__${process.env.NODE_ENV}__persons&sort=${sorts}&page[size]=${state.pageSize}&page[number]=${state.numPage}`);
+        const {data, links, meta, included} = response.data
 
-      commit('UPDATE_ALL', {documents: data, totalCount: meta['total-count'] , links, included: included || []});
-      commit('SET_LOADING_STATUS', false);
-    } catch (reason) {
-      console.warn('cant search:', reason);
-      commit('SET_LOADING_STATUS', false);
-    }
-   
-  }, 500)
+        // TODO :  par exemple
+        // http://localhost:5004/lettres/api/1.0/search?query=relationships.person_function:donjon&index=lettres__development__persons&include=roles-within-documents
+        // http://localhost:9200/lettres__development__persons/_doc/_search?q=relationships.person_function:donjon
+        // TODO: par la suite, extraire le store "search" qui permet de chercher les documents pour le rendre davantage générique
+        // (ex: remplacer state.document par state.items)
+
+        commit('UPDATE_ALL', {documents: data, totalCount: meta['total-count'] , links, included: included || []});
+        commit('SET_LOADING_STATUS', false);
+      } catch (reason) {
+        console.warn('cant search:', reason);
+        commit('SET_LOADING_STATUS', false);
+      }
+    
+    }, 500)
 };
+
+
+function groupByPerson(phrList) {
+  let _d = {}
+  phrList.forEach(p => {
+      if (_d[p.personId] === undefined) {
+          _d[p.personId] = []
+      }
+      const id = p.personId
+      delete p.personId;
+      _d[id].push(p)
+  })
+  return _d
+}
+
 
 const getters = {
 
   getRoleByLabel: state => label => {
     return state.roles.find(role => role.label === label)
+  },
+
+    /* used to build the 'person uses' section in the person search table rows */
+    getIncluded: (state)  => {
+      const roles = state.roles
+      let inlinedRole = roles.find(r => r.label === 'inlined')
+      let senderRole = roles.find(r => r.label === 'sender')
+      let toRole = roles.find(r => r.label === 'recipient')
+
+      function reformatPhr(phr) {
+              return {
+                  id: phr.id,
+                  personId: phr.attributes.person_id,
+                  docId: phr.attributes.document_id,
+                  docTitle: phr.attributes.document_title,
+                  docCreationLabel: phr.attributes.document_creation_label,
+                  personFunction: phr.attributes['function'],
+              }
+      }
+
+      let sender = state.included.filter(phr => phr.attributes.role_id === senderRole.id).map(reformatPhr)
+      let recipient = state.included.filter(phr => phr.attributes.role_id === toRole.id).map(reformatPhr)
+      let inAddress = state.included.filter(phr => phr.attributes.role_id === inlinedRole.id && phr.attributes.field && phr.attributes.field.indexOf('address') > -1).map(reformatPhr)
+      let inArgument = state.included.filter(phr => phr.attributes.role_id === inlinedRole.id && phr.attributes.field && phr.attributes.field.indexOf('argument') > -1).map(reformatPhr)
+      let inNotes = state.included.filter(phr => phr.attributes.role_id === inlinedRole.id && phr.attributes.field && phr.attributes.field.indexOf('note') > -1).map(reformatPhr)
+      let inTranscription = state.included.filter(phr => phr.attributes.role_id === inlinedRole.id && phr.attributes.field && phr.attributes.field.indexOf('transcription') > -1).map(reformatPhr)
+
+      const senderDict = groupByPerson(sender)
+      const recipientDict = groupByPerson(recipient)
+      const inAddressDict = groupByPerson(inAddress)
+      const inArgumentDict = groupByPerson(inArgument)
+      const inNotesDict = groupByPerson(inNotes)
+      const inTranscriptionDict = groupByPerson(inTranscription)
+      const docIds = state.included.map(phr => phr.attributes.document_id).filter(function(item, pos, self) {
+          return self.indexOf(item) == pos;
+      })
+      docIds.sort();
+
+      const documentsDict = groupByPerson(state.included.map(reformatPhr))
+
+      return {
+          sender: senderDict,
+          recipient: recipientDict,
+          inAddress: inAddressDict,
+          inArgument: inArgumentDict,
+          inNotes: inNotesDict,
+          inTranscription: inTranscriptionDict,
+          documents: documentsDict
+      } 
   },
 
   ...searchStore.getters

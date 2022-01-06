@@ -6,7 +6,10 @@
       :with-status="true"
     />
 
-    <article v-if="document && !isLoading" class="document__content">
+    <article
+      v-if="document && !isLoading"
+      class="document__content"
+    >
       <!-- titre et langue -->
       <section class="document-section columns">
         <document-title
@@ -14,7 +17,10 @@
           :preview="preview"
           class="column is-three-quarters"
         />
-        <document-languages :editable="canEdit" class="column" />
+        <document-languages
+          :editable="canEdit"
+          class="column"
+        />
       </section>
       <!-- dates de lieux et de temps -->
 
@@ -50,7 +56,11 @@
           </div>
         </div>
         <div>
-          <document-persons :editable="canEdit" />
+          <document-persons
+            :editable="canEdit"
+            @add-person="addPerson"
+            @unlink-person="unlinkPerson"
+          />
         </div>
       </section>
 
@@ -99,11 +109,19 @@
           </div>
         </div>
         <div>
-          <document-argument :editable="canEdit" @add-place="addPlace" />
+          <document-argument
+            :editable="canEdit"
+            @add-place="addPlace"
+            @add-person="addPerson"
+            @add-note="addNote"
+          />
         </div>
       </section>
       <!-- transcription -->
-      <section v-if="!preview" class="document-section">
+      <section
+        v-if="!preview"
+        class="document-section"
+      >
         <div class="heading is-size-5 is-uppercase">
           <span class="heading-content">Transcription</span>
           <div class="slope-container">
@@ -114,7 +132,12 @@
           </div>
         </div>
         <div>
-          <document-transcription :editable="canEdit" @add-place="addPlace" />
+          <document-transcription
+            :editable="canEdit"
+            @add-place="addPlace"
+            @add-person="addPerson"
+            @add-note="addNote"
+          />
         </div>
       </section>
       <!-- collections 
@@ -125,15 +148,52 @@
         class=""
         style="margin-left: 0; margin-top: 50px"
       >
-        <header class="subtitle mb-3">Historique des modifications</header>
-        <changelog :doc-id="docId" :per-page="10" />
+        <header class="subtitle mb-3">
+          Historique des modifications
+        </header>
+        <changelog
+          :doc-id="docId"
+          :per-page="10"
+        />
       </div>
     </article>
 
-    <document-skeleton v-if="isLoading" class="mt-5" />
+    <document-skeleton
+      v-if="isLoading"
+      class="mt-5"
+    />
 
     <!-- modals -->
     <b-modal
+      v-if="canEdit"
+      v-model="isNoteFormModalActive"
+      trap-focus
+      has-modal-card
+      :can-cancel="['escape', 'x']"
+      scroll="clip"
+      width="80%"
+      :destroy-on-hide="true"
+      aria-role="dialog"
+      aria-label="Note"
+      aria-modal
+    >
+      <template #default="props">
+        <note-form
+          title="Note"
+          :input-data="noteInputData"
+          @add-place="addPlace($event)"
+          @add-person="addPerson($event)"
+          @close="
+            () => {
+              props.close();
+            }
+          "
+        />
+      </template>
+    </b-modal>
+
+    <b-modal
+      v-if="canEdit"
       v-model="isPlaceWizardFormModalActive"
       trap-focus
       has-modal-card
@@ -147,8 +207,34 @@
     >
       <template #default="props">
         <place-wizard-form
-          subtitle="d'expédition"
+          subtitle=""
           :input-data="placeInputData"
+          @close="
+            () => {
+              props.close();
+            }
+          "
+        />
+      </template>
+    </b-modal>
+
+    <b-modal
+      v-if="canEdit"
+      v-model="isPersonWizardFormModalActive"
+      trap-focus
+      has-modal-card
+      :can-cancel="['escape', 'x']"
+      scroll="clip"
+      width="80%"
+      :destroy-on-hide="true"
+      aria-role="dialog"
+      aria-label="Expéditeur et destinataire"
+      aria-modal
+    >
+      <template #default="props">
+        <person-wizard-form
+          subtitle=""
+          :input-data="personInputData"
           @close="
             () => {
               props.close();
@@ -171,12 +257,14 @@ import { baseApiURL } from "../../modules/http-common";
 import DocumentArgument from "../document/DocumentArgument";
 import DocumentTitle from "../document/DocumentTitle";
 import DocumentLanguages from "../document/DocumentLanguages";
+import NoteForm from "@/components/forms/NoteForm";
 
 import DocumentDateAttributes from "../document/DocumentDateAttributes";
 import DocumentSkeleton from "@/components/ui/DocumentSkeleton";
 import WitnessList from "@/components/document/WitnessList.vue";
 
 import PlaceWizardForm from "@/components/forms/wizards/PlaceWizardForm.vue";
+import PersonWizardForm from "@/components/forms/wizards/PersonWizardForm.vue";
 
 export default {
   name: "Document",
@@ -194,6 +282,8 @@ export default {
     DocumentTitle,
     DocumentDateAttributes,
     PlaceWizardForm,
+    PersonWizardForm,
+    NoteForm
   },
   props: {
     docId: { required: true, type: Number },
@@ -210,6 +300,9 @@ export default {
 
       personInputData: null,
       isPersonWizardFormModalActive: false,
+
+      noteInputData: null,
+      isNoteFormModalActive: false
     };
   },
   computed: {
@@ -291,6 +384,11 @@ export default {
         relationId,
         roleId,
       });
+    },
+
+    addNote(evt) {
+      this.noteInputData = evt;
+      this.isNoteFormModalActive = true;
     },
   },
 };

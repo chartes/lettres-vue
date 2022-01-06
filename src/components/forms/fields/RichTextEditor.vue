@@ -1,9 +1,18 @@
 <template>
-  <div class="field rich-text-editor" style="width: 100%">
-    <field-label v-if="!!label" :label="label" />
+  <div
+    class="field rich-text-editor"
+    style="width: 100%"
+  >
+    <field-label
+      v-if="!!label"
+      :label="label"
+    />
 
     <div class="editor-area">
-      <div ref="controls" class="editor-controls">
+      <div
+        ref="controls"
+        class="editor-controls"
+      >
         <div
           v-for="(group, gindex) in formats"
           :key="gindex"
@@ -18,7 +27,10 @@
             :format="format"
           />
         </div>
-        <div v-if="slotNotEmpty" class="editor-controls-group is-additional">
+        <div
+          v-if="slotNotEmpty"
+          class="editor-controls-group is-additional"
+        >
           <slot />
         </div>
       </div>
@@ -31,12 +43,6 @@
           spellcheck="false"
         />
       </div>
-      <note-form
-        v-if="formNote"
-        title="Nouvelle note"
-        :submit="submitNoteForm"
-        :cancel="closeNoteForm"
-      />
       <textfield-form
         v-if="formTextfield"
         :title="formTextfield.title"
@@ -46,15 +52,10 @@
         :cancel="closeTextfieldForm"
         :remove="removeTextfieldForm"
       />
-      <person-list-form
-        v-if="formPerson"
-        title="Sélectionner une personne"
-        :submit="submitPersonForm"
-        :cancel="closePersonForm"
-        :remove="removePersonForm"
-      />
-
-      <pre v-if="debug" style="white-space: normal">{{ value }}</pre>
+      <pre
+        v-if="debug"
+        style="white-space: normal"
+      >{{ value }}</pre>
     </div>
   </div>
 </template>
@@ -69,17 +70,12 @@ import FieldLabel from "./FieldLabel";
 import Quill, { getNewQuill } from "../../../modules/quill/LettresQuill";
 import { getNewDelta } from "../../../modules/quill/DeltaUtils";
 import _isEmpty from "lodash/isEmpty";
-import NoteForm from "../NoteForm";
-import PersonListForm from "../PersonListForm";
 
 const wrapPattern = /^<p>(.*)<\/p>$/im;
-let formatCallbacks = {};
 
 export default {
   name: "RichTextEditor",
   components: {
-    PersonListForm,
-    NoteForm,
     FieldLabel,
     TextfieldForm,
     EditorButton,
@@ -103,7 +99,7 @@ export default {
     options: { type: Object, default: () => {} },
   },
   //mixins: [EditorNotesMixins],
-  emits: ["add-place"],
+  emits: ["add-place", "add-person"],
   data() {
     return {
       debug: false,
@@ -113,8 +109,6 @@ export default {
       editorHasFocus: false,
       currentSelection: null,
       formTextfield: null,
-      formPerson: null,
-      formNote: null,
       actionsPositions: {
         top: 0,
         left: 0,
@@ -365,20 +359,32 @@ export default {
 
     displayNoteForm() {
       console.log("displayNoteForm");
-      this.formNote = true;
+
+      const range = this.editor.getSelection();
+      const selection = this.editor.getText(range.index, range.length);
+      const formats = this.editor.getFormat();
+
+      const _editor = this.editor;
+
+      function restoreRangeCallback() {
+        _editor.setSelection(range.index, range.length, Quill.sources.SILENT);
+      }
+
+      this.$emit("add-note", {
+        role: "inlined",
+        selection,
+        formats,
+        restoreRangeCallback,
+        insertTagCallback: this.submitNoteForm,
+        removeTagCallback: this.removeNoteForm,
+      });
     },
-    closeNoteForm() {
-      this.formNote = false;
-    },
-    submitNoteForm(note) {
-      console.log("submitNoteForm", note);
-      this.insertEmbed("note", note.id);
-      this.closeNoteForm();
+    submitNoteForm(noteId) {
+      this.insertEmbed("note", noteId);
       let formats = this.editor.getFormat();
       this.updateButtons(formats);
     },
     removeNoteForm() {
-      console.log("Note");
       this.editor.format("location", false);
       let formats = this.editor.getFormat();
       this.updateButtons(formats);
@@ -449,7 +455,6 @@ export default {
       this.updateButtons(formats);
     },
     removeLocationForm() {
-      console.log("removeLocationForm");
       this.editor.format("location", false);
       let formats = this.editor.getFormat();
       this.updateButtons(formats);
@@ -495,21 +500,32 @@ export default {
      */
 
     displayPersonForm() {
-      this.formPerson = true;
+      const range = this.editor.getSelection();
+      const selection = this.editor.getText(range.index, range.length);
+      const formats = this.editor.getFormat();
+
+      const _editor = this.editor;
+
+      function restoreRangeCallback() {
+        _editor.setSelection(range.index, range.length, Quill.sources.SILENT);
+      }
+
+      this.$emit("add-person", {
+        role: "inlined",
+        selection,
+        formats,
+        restoreRangeCallback,
+        insertTagCallback: this.submitPersonForm,
+        removeTagCallback: this.removePersonForm,
+      });
     },
-    closePersonForm() {
-      this.formPerson = false;
-    },
-    submitPersonForm(pers) {
-      this.editor.format("person", pers.id);
-      this.closePersonForm();
+    submitPersonForm(persId) {
+      this.editor.format("person", persId);
       let formats = this.editor.getFormat();
       this.updateButtons(formats);
     },
     removePersonForm() {
-      console.log("removePersonForm");
       this.editor.format("person", false);
-      this.closePersonForm();
       let formats = this.editor.getFormat();
       this.updateButtons(formats);
     },

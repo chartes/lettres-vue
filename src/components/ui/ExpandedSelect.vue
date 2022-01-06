@@ -47,7 +47,7 @@ export default {
 @import "@/assets/sass/main.scss";
 
 .expanded-select {
-  height: auto;
+  height: 400px;
   min-width: 120px;
   min-height: 120px;
 
@@ -55,10 +55,8 @@ export default {
   flex-direction: column;
 
   overflow-y: auto;
-  max-height: 100%;
 
   dt {
-    min-height: 40px;
     padding: 5px 8px;
     border-bottom: 1px solid $beige-light;
 

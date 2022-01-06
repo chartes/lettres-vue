@@ -1,13 +1,22 @@
 <template>
   <div class="place-info-card">
-    <div v-if="$attrs.place" class="heading is-size-5">
+    <div
+      v-if="$attrs.place"
+      class="heading is-size-5"
+    >
       {{ $attrs.place.label }}
     </div>
-    <div v-if="$attrs.place && $attrs.place.description" class="heading is-size-7">
+    <div
+      v-if="$attrs.place && $attrs.place.description"
+      class="heading is-size-7"
+    >
       {{ $attrs.place.description }}
     </div>
     <div v-if="$attrs.place && $attrs.place.coords">
-      <my-awesome-map :key="$attrs.place.label" :lat-lng="$attrs.place.coords" />
+      <my-awesome-map
+        :key="$attrs.place.label"
+        :lat-lng="$attrs.place.coords"
+      />
     </div>
   </div>
 </template>
@@ -20,24 +29,10 @@ export default {
   components: {
     MyAwesomeMap,
   },
-  emit: ["manage-place-data"],
   data() {
     return {};
   },
-  watch: {},
-  created() {
-    /*
-    this.managePlaceData({
-      action: { name: "set-label" },
-      data: { label: "this is the label" },
-    });
-    */
-  },
-  methods: {
-    managePlaceData(evt) {
-      this.$emit("manage-place-data", evt);
-    },
-  },
+  
 };
 </script>
 

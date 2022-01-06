@@ -45,7 +45,7 @@
                 :is="stepItem.left.component"
                 v-bind="stepItem.left.attributes"
                 @goto-wizard-step="gotoStep"
-                @manage-place-data="managePlaceData"
+                @manage-person-data="managePersonData"
               />
             </keep-alive>
           </b-tab-item>
@@ -68,7 +68,7 @@
                 :is="stepItem.center.component"
                 v-bind="stepItem.center.attributes"
                 @goto-wizard-step="gotoStep"
-                @manage-place-data="managePlaceData"
+                @manage-person-data="managePersonData"
               />
             </keep-alive>
           </b-tab-item>
@@ -132,16 +132,16 @@
 <script>
 import { mapState, mapGetters } from "vuex";
 
-import SelectOrCreatePlaceForm from "@/components/forms/place/SelectOrCreatePlaceForm.vue";
-import PlaceInfoCard from "@/components/forms/place/PlaceInfoCard.vue";
-import FunctionPlaceForm from "@/components/forms/place/FunctionPlaceForm.vue";
+import SelectOrCreatePersonForm from "@/components/forms/person/SelectOrCreatePersonForm.vue";
+import PersonInfoCard from "@/components/forms/person/PersonInfoCard.vue";
+import FunctionPersonForm from "@/components/forms/person/FunctionPersonForm.vue";
 
 export default {
-  name: "PlaceWizardForm",
+  name: "PersonWizardForm",
   components: {
-    SelectOrCreatePlaceForm,
-    PlaceInfoCard,
-    FunctionPlaceForm,
+    SelectOrCreatePersonForm,
+    PersonInfoCard,
+    FunctionPersonForm,
   },
   props: {
     subtitle: { type: String, default: null },
@@ -156,16 +156,16 @@ export default {
   data() {
     return {
       activeTab: 0,
-      place: null,
+      person: null,
       loading: false,
     };
   },
   computed: {
     ...mapState("document", ["document"]),
-    ...mapGetters("placenames", ["getRoleByLabel"]),
+    ...mapGetters("persons", ["getRoleByLabel"]),
 
     wizardLabel() {
-      return "Date de lieu";
+      return "Correspondants";
     },
     currentStep() {
       return this.stepItems[this.activeTab > -1 ? this.activeTab : 0];
@@ -174,16 +174,16 @@ export default {
       return [
         {
           name: "select-or-create",
-          next: this.place ? "set-description" : null,
+          next: this.person ? "set-description" : null,
           left: {
             label: "left",
-            component: "PlaceInfoCard",
-            attributes: { place: this.place },
+            component: "PersonInfoCard",
+            attributes: { person: this.person },
           },
           center: {
             label: "center",
-            component: "SelectOrCreatePlaceForm",
-            attributes: { place: this.place, popupMode: this.popupMode },
+            component: "SelectOrCreatePersonForm",
+            attributes: { person: this.person, popupMode: this.popupMode },
           },
         },
         {
@@ -191,65 +191,62 @@ export default {
           prev: "select-or-create",
           left: {
             label: "left",
-            component: "PlaceInfoCard",
-            attributes: { place: this.place },
+            component: "PersonInfoCard",
+            attributes: { person: this.person },
           },
           center: {
             label: "center",
-            component: "FunctionPlaceForm",
-            attributes: { place: this.place },
+            component: "FunctionPersonForm",
+            attributes: { person: this.person },
           },
           footer: {
-            buttons: [{ label: "Terminer", type: "is-primary", action: this.savePlace }],
+            buttons: [{ label: "Terminer", type: "is-primary", action: this.savePerson }],
           },
         },
       ];
     },
   },
   async created() {
-    await this.$store.dispatch("placenames/fetchRoles");
+    await this.$store.dispatch("persons/fetchRoles");
 
     if (this.$props.inputData) {
       const p = this.$props.inputData;
-      const id = p.formats ? p.formats.location : null;
-      let place = {};
+      const id = p.formats ? p.formats.person : null;
+      let person = {};
 
       if (id !== null) {
-        place.id = id;
+        person.id = id;
       }
       if (p.label !== null) {
-        place.label = p.label;
+        person.label = p.label;
       }
       if (p.selection !== null) {
-        place.selection = p.selection;
+        person.selection = p.selection;
       }
       if (p.description !== null) {
-        place.description = p.description;
-      }
-      if (p.coords !== null) {
-        place.coords = p.coords;
+        person.description = p.description;
       }
       if (p.ref !== null) {
-        place.ref = p.ref;
+        person.ref = p.ref;
       }
       if (p.role !== null) {
-        place.role = p.role;
+        person.role = p.role;
       }
       if (p.restoreRangeCallback !== null) {
-        place.restoreRangeCallback = p.restoreRangeCallback;
+        person.restoreRangeCallback = p.restoreRangeCallback;
       }
       if (p.insertTagCallback !== null) {
-        place.insertTagCallback = p.insertTagCallback;
+        person.insertTagCallback = p.insertTagCallback;
       }
       if (p.removeTagCallback !== null) {
-        place.removeTagCallback = p.removeTagCallback;
+        person.removeTagCallback = p.removeTagCallback;
       }
 
-      this.place = place;
+      this.person = person;
     }
   },
   mounted() {
-    this.$store.dispatch("placenames/setPageSize", 5);
+    this.$store.dispatch("persons/setPageSize", 5);
   },
   methods: {
     gotoStep(stepName) {
@@ -270,35 +267,35 @@ export default {
         this.gotoStep(prevStep);
       }
     },
-    managePlaceData({ action, data }) {
-      console.log(`place[${action.name}]`, data);
+    managePersonData({ action, data }) {
+      console.log(`person[${action.name}]`, data);
       switch (action.name) {
-        case "set-place":
+        case "set-person":
           if (this.popupMode) {
-            this.place = {
-              role: this.place.role,
-              source: this.place.source,
-              restoreRangeCallback: this.place.restoreRangeCallback,
-              insertTagCallback: this.place.insertTagCallback,
-              removeTagCallback: this.place.removeTagCallback,
+            this.person = {
+              role: this.person.role,
+              source: this.person.source,
+              restoreRangeCallback: this.person.restoreRangeCallback,
+              insertTagCallback: this.person.insertTagCallback,
+              removeTagCallback: this.person.removeTagCallback,
             };
           }
-          this.place = {
-            ...this.place,
+          this.person = {
+            ...this.person,
             ...data,
           };
           break;
         case "set-description":
-          this.place.description = data;
+          this.person.description = data;
           break;
         default:
           break;
       }
-      this.place = { ...this.place };
+      this.person = { ...this.person };
     },
     closeWizard() {
-      if (this.place && this.place.restoreRangeCallback) {
-        this.place.restoreRangeCallback();
+      if (this.person && this.person.restoreRangeCallback) {
+        this.person.restoreRangeCallback();
       }
 
       this.loading = false;
@@ -307,49 +304,42 @@ export default {
         this.$parent.close();
       }
     },
-    async savePlace() {
+    async savePerson() {
       this.loading = true;
-      if (this.place) {
-        let placeToSave = {
-          long: null,
-          lat: null,
+      if (this.person) {
+        let personToSave = {
           ref: null,
-          label: this.place.label,
+          label: this.person.label,
         };
 
-        if (this.place.coords) {
-          placeToSave.long = this.place.coords[0];
-          placeToSave.lat = this.place.coords[1];
-        }
-
-        if (this.place.id) {
-          placeToSave.id = this.place.id;
+        if (this.person.id) {
+          personToSave.id = this.person.id;
         } else {
-          const response = await this.$store.dispatch("placenames/addPlace", placeToSave);
-          placeToSave.id = response.id;
+          const response = await this.$store.dispatch("persons/addPerson", personToSave);
+          personToSave.id = response.id;
         }
 
         // when editing a document
         if (this.popupMode) {
-          console.log(this.place);
-          if (this.place.role && placeToSave.id) {
-            // link the place to the document
-            const role = this.getRoleByLabel(this.place.role);
+          console.log(this.person);
+          if (this.person.role && personToSave.id) {
+            // link the person to the document
+            const role = this.getRoleByLabel(this.person.role);
             const roleId = role && role.id ? role.id : null;
-            await this.$store.dispatch("placenames/linkToDocument", {
-              placenameId: placeToSave.id,
+            await this.$store.dispatch("persons/linkToDocument", {
+              personId: personToSave.id,
               roleId,
-              func: this.place.description,
+              func: this.person.description,
             });
 
             // and then insert the tag in the content
-            if (this.place.restoreRangeCallback) {
-              this.place.restoreRangeCallback();
-              this.place.insertTagCallback(placeToSave.id);
+            if (this.person.restoreRangeCallback) {
+              this.person.restoreRangeCallback();
+              this.person.insertTagCallback(personToSave.id);
             }
 
-            // if not inlined, refresh the places
-            if (!this.place.role !== "inlined") {
+            // if not inlined, refresh the persons
+            if (!this.person.role !== "inlined") {
               await this.$store.dispatch("document/fetch", this.document.id);
             }
           }

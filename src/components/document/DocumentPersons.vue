@@ -4,7 +4,12 @@
       <div class="panel-block" style="display: inline-block; width: 100%">
         <div class="heading mb-2">
           Expéditeur{{ documentSender.length > 1 ? "s" : "" }}
-          <a v-if="editable" class="tag" href="#" @click="openAddPerson('sender')">
+          <a
+            v-if="editable"
+            class="tag"
+            href="#"
+            @click.prevent="openAddPerson('sender')"
+          >
             <icon-add />
           </a>
         </div>
@@ -26,7 +31,7 @@
             <a
               v-if="editable"
               class="tag is-delete"
-              @click.prevent="unlinkPersonFromDoc(c)"
+              @click.prevent="unlinkPerson(c.person.id, c.relation.id, c.role.id)"
             />
           </div>
         </div>
@@ -39,7 +44,12 @@
       <div class="panel-block" style="display: inline-block; width: 100%">
         <div class="heading mb-2">
           Destinataire{{ documentRecipients.length > 1 ? "s" : "" }}
-          <a v-if="editable" class="tag" href="#" @click="openAddPerson('recipient')">
+          <a
+            v-if="editable"
+            class="tag"
+            href="#"
+            @click.prevent="openAddPerson('recipient')"
+          >
             <icon-add />
           </a>
         </div>
@@ -61,7 +71,7 @@
             <a
               v-if="editable"
               class="tag is-delete"
-              @click.prevent="unlinkPersonFromDoc(c)"
+              @click.prevent="unlinkPerson(c.person.id, c.relation.id, c.role.id)"
             />
           </div>
         </div>
@@ -71,87 +81,38 @@
           </p>
         </div>
       </div>
-
-      <person-list-form
-        v-if="personsForm && editable"
-        title="Sélectionner une personne"
-        :submit="linkPersonToDoc"
-        :cancel="closePersonChoice"
-      />
     </div>
   </section>
 </template>
 
 <script>
-import { mapState, mapGetters } from "vuex";
-import PersonListForm from "../forms/PersonListForm";
+import { mapGetters } from "vuex";
 import IconAdd from "../ui/icons/IconAdd";
 export default {
   name: "DocumentPersons",
-  components: { PersonListForm, IconAdd },
+  components: { IconAdd },
   props: {
     editable: {
       type: Boolean,
       default: false,
     },
   },
+  emits: ["add-person", "unlink-person"],
   data() {
-    return {
-      personsForm: null,
-    };
+    return {};
   },
-  mounted() {
-    this.$store.dispatch("persons/fetchRoles");
-  },
+  mounted() {},
   methods: {
     openAddPerson(role) {
-      this.personsForm = role;
+      this.$emit("add-person", { role });
     },
-    closePersonChoice() {
-      this.personsForm = null;
-      console.log("close person choice");
-    },
-    linkPersonToDoc(person) {
-      const personId = person.id;
-      const role = this.getRoleByLabel(this.personsForm);
-      const roleId = role && role.id ? role.id : null;
-      this.$store
-        .dispatch("persons/linkToDocument", {
-          personId,
-          roleId,
-          func: person.function,
-        })
-        .then((personHasRole) => {
-          const corrData = {
-            person,
-            personId,
-            relationId: personHasRole.id,
-            role,
-            roleId,
-          };
-          this.$store.dispatch("document/addPerson", corrData);
-          this.closePersonChoice();
-        });
-    },
-    unlinkPersonFromDoc(person) {
-      const personId = person.personId;
-      const roleId = person.roleId;
-      this.$store
-        .dispatch("persons/unlinkFromDocument", {
-          relationId: person.relationId,
-          personId,
-          roleId,
-        })
-        .then((response) => {
-          this.closePersonChoice();
-        });
+    unlinkPerson(id, relationId, roleId) {
+      console.log("UNLINK", id, relationId, roleId);
+      this.$emit("unlink-person", { id, relationId, roleId });
     },
   },
   computed: {
-    ...mapState("document", ["persons"]),
-    ...mapState("persons", ["roles"]),
     ...mapGetters("document", ["documentSender", "documentRecipients"]),
-    ...mapGetters("persons", ["getRoleByLabel"]),
   },
 };
 </script>

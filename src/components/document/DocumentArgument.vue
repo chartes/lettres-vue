@@ -14,10 +14,20 @@
           ['note', 'link'],
         ]"
         @add-place="addPlace($event, 'argument')"
+        @add-person="addPerson($event, 'argument')"
+        @add-note="addNote($event)"
       >
-        <editor-save-button :doc-id="document.id" name="argument" :value="form" />
+        <editor-save-button
+          :doc-id="document.id"
+          name="argument"
+          :value="form"
+        />
       </rich-text-editor>
-      <div v-else class="argument__content" v-html="form" />
+      <div
+        v-else
+        class="argument__content"
+        v-html="form"
+      />
     </div>
   </div>
 </template>
@@ -36,7 +46,7 @@ export default {
       default: false,
     },
   },
-  emits: ["add-place"],
+  emits: ["add-place", "add-person", "add-note"],
   data() {
     return {
       editorEnabled: true,
@@ -53,6 +63,12 @@ export default {
     addPlace(evt, source) {
       this.$emit("add-place", { ...evt, source });
     },
+    addPerson(evt, source) {
+      this.$emit("add-person", { ...evt, source });
+    },
+    addNote(evt) {
+      this.$emit("add-note", {...evt})
+    }
   },
 };
 </script>

@@ -1,12 +1,9 @@
 <template>
-  <modal-form
-    :title="title"
-    :cancel="cancelAction"
-    :submit="submitAction"
-    :valid="isValid"
-    :submittin="null"
-  >
-    <div class="note-form">
+  <div class="modal-card note-form">
+    <header class="is-uppercase is-size-2 mb-5">
+      {{ $attrs.title }}
+    </header>
+    <div class="editor">
       <rich-text-editor
         v-model="form.content"
         :formats="[
@@ -14,28 +11,43 @@
           ['link', 'person', 'location', 'cite'],
         ]"
         @add-place="addPlace($event, 'note')"
+        @add-person="addPerson($event, 'note')"
       />
     </div>
-  </modal-form>
+    <div class="buttons">
+      <b-button
+        type="is-primary"
+        size="is-medium"
+        @click="cancelAction"
+      >
+        Annuler
+      </b-button>
+      <b-button
+        type="is-primary"
+        size="is-medium"
+        @click="submitAction"
+      >
+        Sauvegarder
+      </b-button>
+    </div>
+  </div>
 </template>
 
 <script>
-import ModalForm from "./ModalForm";
-import LoadingIndicator from "../ui/LoadingIndicator";
 
 export default {
   name: "NoteForm",
   components: {
-    ModalForm,
-    //RichTextEditor: () => import('./fields/RichTextEditor')
   },
   props: {
-    title: { type: String },
-    cancel: { type: Function },
-    submit: { type: Function },
-    note: { type: Object, default: () => {} },
+      inputData: {
+      type: Object,
+      default: () => {
+        return null;
+      },
+    },
   },
-  emits: ["add-place"],
+  emits: ["add-place", "add-person", "close"],
   data() {
     return {
       form: {},
@@ -52,23 +64,57 @@ export default {
     this.$options.components.RichTextEditor = require("./fields/RichTextEditor").default;
   },
   mounted() {
-    this.form = { ...this.$props.note };
+    if (this.inputData.note) {
+      this.form = {...this.inputData.note}
+    }
   },
   methods: {
     submitAction() {
       this.loading = true;
-      const action =
-        this.note && this.note.id ? "document/updateNote" : "document/addNote";
+      const action = this.form && this.form.id ? "document/updateNote" : "document/addNote";
       this.$store.dispatch(action, this.form).then((note) => {
-        this.submit(note);
+        if (action === "document/addNote") {
+          this.inputData.insertTagCallback(note.id);
+        }
+        this.$emit("close");
       });
     },
     cancelAction() {
-      this.$props.cancel();
+      this.$emit("close");
     },
     addPlace(evt, source) {
       this.$emit("add-place", { ...evt, source });
     },
+    addPerson(evt, source) {
+      this.$emit("add-person", { ...evt, source });
+    },
   },
 };
 </script>
+
+<style lang="scss" scoped>
+@import "@/assets/sass/main.scss";
+
+.note-form {
+  border-radius: 3px;
+  background-color: white;
+  
+  header {
+    font-family: $bitter-family;
+    background-color: $light !important;
+
+    padding: 2px 20px 2px;
+    border-bottom: 1px solid $coffee;
+  }
+
+  .editor {
+    padding: 20px;  
+  }
+
+  .buttons {
+    display: flex;
+    justify-content: end;
+    margin: 20px 20px 10px 20px;
+  }
+}
+</style>
