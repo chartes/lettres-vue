@@ -10,8 +10,15 @@
         @start="drag = true"
         @end="dragEnd"
       >
-        <transition-group type="transition" :name="!drag ? 'flip-list' : null">
-          <li v-for="witness in witnessTmpList" :key="witness.id" class="list-group-item">
+        <transition-group
+          type="transition"
+          :name="!drag ? 'flip-list' : null"
+        >
+          <li
+            v-for="witness in witnessTmpList"
+            :key="witness.id"
+            class="list-group-item"
+          >
             <span class="columns">
               <div class="column">
                 <div v-html="witness.content" />
@@ -19,7 +26,10 @@
               </div>
               <div class="column is-two-fifths">
                 <div class="witness-actions">
-                  <b-field grouped group-multiline>
+                  <b-field
+                    grouped
+                    group-multiline
+                  >
                     <div class="control">
                       <b-taglist attached>
                         <b-tag>status</b-tag>
@@ -28,7 +38,10 @@
                         </b-tag>
                       </b-taglist>
                     </div>
-                    <div v-if="witness.tradition" class="control">
+                    <div
+                      v-if="witness.tradition"
+                      class="control"
+                    >
                       <b-taglist attached>
                         <b-tag>tradition</b-tag>
                         <b-tag type="is-success is-light">
@@ -36,7 +49,10 @@
                         </b-tag>
                       </b-taglist>
                     </div>
-                    <div v-if="witness.institution" class="control">
+                    <div
+                      v-if="witness.institution"
+                      class="control"
+                    >
                       <b-taglist attached>
                         <b-tag>institution</b-tag>
                         <b-tag type="is-success is-light">
@@ -121,6 +137,7 @@
         <template #default="props">
           <witness-wizard-form
             :witness-input="selectedWitness"
+            @add-note="addNote"
             @close="
               () => {
                 props.close();
@@ -141,7 +158,6 @@ import draggable from "vuedraggable";
 
 export default {
   name: "WitnessList",
-  emits: ["close-witness-modal"],
   components: {
     draggable,
     WitnessWizardForm,
@@ -150,6 +166,7 @@ export default {
     openModal: { type: Boolean, default: false },
     editable: { type: Boolean, default: false },
   },
+  emits: ["close-witness-modal", "add-note"],
   data() {
     return {
       drag: false,
@@ -231,6 +248,10 @@ export default {
       this.drag = false;
       this.recomputeOrder();
     },
+    addNote(event) {
+      console.log('witness list')
+      this.$emit('add-note', event)
+    }
   },
 };
 </script>

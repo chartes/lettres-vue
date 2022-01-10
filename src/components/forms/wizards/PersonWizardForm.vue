@@ -174,7 +174,7 @@ export default {
       return [
         {
           name: "select-or-create",
-          next: this.person ? "set-description" : null,
+          next: this.person && this.person.label ? "set-description" : null,
           left: {
             label: "left",
             component: "PersonInfoCard",
@@ -308,7 +308,7 @@ export default {
       this.loading = true;
       if (this.person) {
         let personToSave = {
-          ref: null,
+          ref: this.person.ref,
           label: this.person.label,
         };
 

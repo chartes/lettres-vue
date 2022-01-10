@@ -94,7 +94,7 @@ const actions = {
         commit('SET_TOTALCOUNT', response.data.meta['total-count'])
     });
 },
-  addOne ({rootState, commit }, person) {
+  addPerson ({rootState, commit }, person) {
     const data = { type: 'person', attributes: { ...person }}
     const http = http_with_auth(rootState.user.jwt)
     return http.post(`persons`, {data})

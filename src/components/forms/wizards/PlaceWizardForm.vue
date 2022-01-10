@@ -174,7 +174,7 @@ export default {
       return [
         {
           name: "select-or-create",
-          next: this.place ? "set-description" : null,
+          next: this.place && this.place.label ? "set-description" : null,
           left: {
             label: "left",
             component: "PlaceInfoCard",
@@ -313,7 +313,7 @@ export default {
         let placeToSave = {
           long: null,
           lat: null,
-          ref: null,
+          ref: this.place.ref,
           label: this.place.label,
         };
 

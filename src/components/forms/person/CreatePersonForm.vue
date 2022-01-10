@@ -131,7 +131,10 @@ export default {
     },
     newPerson() {
       if (this.source === "wikidata") {
-        return this.selected;
+        return this.selected ? {
+          ...this.selected,
+          ref: this.selected.item
+        } : null;
       } else {
         return this.personName
           ? {

@@ -1,9 +1,19 @@
 <template>
-  <div class="person-info-card">
-    <div v-if="$attrs.person" class="heading is-size-5">
-      {{ $attrs.person.label }}
-    </div>
-    <div v-if="$attrs.person && $attrs.person.description" class="heading is-size-7">
+  <div
+    v-if="$attrs.person && $attrs.person.label"
+    class="person-info-card"
+  >
+    <div class="labels">
+      <div
+      
+        class="heading is-size-5"
+      >
+        {{ $attrs.person.label }}
+      </div>
+      <div
+        v-if="$attrs.person.description"
+        class="heading is-size-7"
+      />
       {{ $attrs.person.description }}
     </div>
   </div>
@@ -26,8 +36,12 @@ export default {
   color: inherit !important;
 }
 .person-info-card {
-  font-family: "Bitter", sans-serif;
-  color: $nice-blue;
+
+  .labels {
+    padding: 8px;
+    border-left: 2px solid $coffee;
+    margin-bottom: 20px;
+  }
 }
 .l-map {
   width: 270px;

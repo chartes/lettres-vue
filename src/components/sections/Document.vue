@@ -93,6 +93,7 @@
           <witness-list
             :editable="canEdit"
             :open-modal="openWitnessModal"
+            @add-note="addNote"
             @close-witness-modal="openWitnessModal = false"
           />
         </div>

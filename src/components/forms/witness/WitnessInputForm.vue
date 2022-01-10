@@ -10,6 +10,7 @@
         ]"
         :options="{ placeholder: 'Ex. Bibl. nat. Fr., Français 3512, fol. 53r' }"
         :multiline="false"
+        @add-note="addNote"
       />
     </div>
     <div class="editor">
@@ -22,7 +23,10 @@
       />
     </div>
 
-    <b-field label="Institution de conservation" class="institution-input">
+    <b-field
+      label="Institution de conservation"
+      class="institution-input"
+    >
       <b-autocomplete
         v-model="searchedInstitutionName"
         placeholder="e.g. BnF"
@@ -37,7 +41,10 @@
             <span> Ajouter une institution... </span>
           </a>
         </template>
-        <template v-if="searchedInstitutionName" #empty>
+        <template
+          v-if="searchedInstitutionName"
+          #empty
+        >
           Aucun résultat pour {{ searchedInstitutionName }}
         </template>
       </b-autocomplete>
@@ -53,8 +60,7 @@ export default {
   components: {
     RichTextEditor,
   },
-  emits: ["goto-wizard-step", "manage-witness-data"],
-
+  emits: ["goto-wizard-step", "manage-witness-data", "add-note"],
   data() {
     const witness = this.$attrs.witness;
     return {
@@ -129,6 +135,10 @@ export default {
     fetchInstitutions() {
       console.log("fetch institutions from api");
     },
+    addNote(event) {
+      console.log('witness input')
+      this.$emit('add-note', event)
+    }
   },
 };
 </script>

@@ -1,11 +1,14 @@
 <template>
-  <section class="document-placenames mb-3" style="width: 100%">
+  <section
+    class="document-placenames mb-3"
+    style="width: 100%"
+  >
     <div class="columns">
       <div class="document-placenames__senders column is-one-third">
         <h3 class="document-placenames__subtitle heading">
           Dates de lieu d'expédition
           <a
-            v-if="editable"
+            v-if="editable && locationDateFrom.length === 0"
             class="tag"
             href="#"
             @click.prevent="openAddPlace('location-date-from')"
@@ -20,7 +23,10 @@
             class="tags has-addons are-medium document-placenames__senders-list mb-1"
           >
             <span class="tag">
-              <a :href="c.placename.ref" target="_blank">
+              <a
+                :href="c.placename.ref"
+                target="_blank"
+              >
                 {{
                   !!c.relation.function
                     ? `${c.placename.label}, ${c.relation.function}`
@@ -46,7 +52,7 @@
         <h3 class="document-placenames__subtitle heading">
           Dates de lieu de destination
           <a
-            v-if="editable"
+            v-if="editable && locationDateTo.length === 0"
             class="tag"
             href="#"
             @click.prevent="openAddPlace('location-date-to')"
@@ -61,7 +67,10 @@
             class="tags has-addons are-medium document-placenames__senders-list mb-1"
           >
             <span class="tag">
-              <a :href="c.placename.ref" target="_blank">
+              <a
+                :href="c.placename.ref"
+                target="_blank"
+              >
                 {{
                   !!c.relation.function
                     ? `${c.placename.label}, ${c.relation.function}`

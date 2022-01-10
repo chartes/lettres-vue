@@ -393,7 +393,7 @@ export default {
     },
 
     labeledInputTerm() {
-      return `label:*"${this.inputTerm}"*`;
+      return `label:*${this.inputTerm}*`;
     },
   },
   watch: {

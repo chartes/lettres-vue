@@ -99,7 +99,7 @@ export default {
     options: { type: Object, default: () => {} },
   },
   //mixins: [EditorNotesMixins],
-  emits: ["add-place", "add-person"],
+  emits: ["add-place", "add-person", "add-note"],
   data() {
     return {
       debug: false,

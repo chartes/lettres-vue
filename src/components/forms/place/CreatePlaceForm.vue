@@ -4,10 +4,20 @@
       <div class="column">
         <div class="block">
           <b-field label="Source">
-            <b-radio v-model="source" name="source" native-value="wikidata" expanded>
+            <b-radio
+              v-model="source"
+              name="source"
+              native-value="wikidata"
+              expanded
+            >
               Wikidata
             </b-radio>
-            <b-radio v-model="source" name="source" native-value="user" expanded>
+            <b-radio
+              v-model="source"
+              name="source"
+              native-value="user"
+              expanded
+            >
               Saisie
             </b-radio>
           </b-field>
@@ -34,11 +44,17 @@
                 </div>
               </template>
 
-              <template v-if="inputTerm" #empty>
+              <template
+                v-if="inputTerm"
+                #empty
+              >
                 Aucun résultat pour {{ inputTerm }}
               </template>
             </b-autocomplete>
-            <a class="button pl-5 pr-5" @click="fetchWikidataItems">
+            <a
+              class="button pl-5 pr-5"
+              @click="fetchWikidataItems"
+            >
               <span class="icon">
                 <i class="fas fa-search" />
               </span>
@@ -47,7 +63,12 @@
         </div>
         <div v-else>
           <b-field label="Nom du lieu">
-            <b-input v-model="placeName" type="text" required placeholder="Montpellier" />
+            <b-input
+              v-model="placeName"
+              type="text"
+              required
+              placeholder="Montpellier"
+            />
           </b-field>
           <b-field label="Identifiant de référence">
             <b-input
@@ -69,7 +90,10 @@
       </div>
       <div class="column">
         <article class="selected-placename">
-          <div v-if="selected" class="is-light">
+          <div
+            v-if="selected"
+            class="is-light"
+          >
             <my-awesome-map
               v-if="selected.coords"
               :key="inputTerm"
@@ -91,7 +115,11 @@
         </article>
       </div>
     </div>
-    <b-message v-if="existsCount > 0" type="is-warning is-small" has-icon>
+    <b-message
+      v-if="existsCount > 0"
+      type="is-warning is-small"
+      has-icon
+    >
       Un lieu possédant l'identifiant <b>{{ selected.item }}</b> existe déjà dans
       l'application.
     </b-message>
@@ -132,7 +160,10 @@ export default {
     },
     newPlace() {
       if (this.source === "wikidata") {
-        return this.selected;
+        return this.selected ? {
+          ...this.selected,
+          ref: this.selected.item
+        } : null ;
       } else {
         return this.placeName
           ? {
