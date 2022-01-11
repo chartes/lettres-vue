@@ -156,7 +156,7 @@ export default {
   data() {
     return {
       activeTab: 0,
-      place: null,
+      place: {},
       loading: false,
     };
   },
@@ -208,15 +208,12 @@ export default {
   },
   async created() {
     await this.$store.dispatch("placenames/fetchRoles");
+    let place = {};
 
     if (this.$props.inputData) {
       const p = this.$props.inputData;
-      const id = p.formats ? p.formats.location : null;
-      let place = {};
+      const id = p.formats && p.formats.location ? p.formats.location : null;
 
-      if (id !== null) {
-        place.id = id;
-      }
       if (p.label !== null) {
         place.label = p.label;
       }
@@ -245,8 +242,25 @@ export default {
         place.removeTagCallback = p.removeTagCallback;
       }
 
-      this.place = place;
+      if (id !== null) {
+        place.id = id;
+
+        //load existing data
+        const item = await this.$store.dispatch("placenames/getInlinedPlacenameWithRoleById", {docId: this.document.id, placeId: place.id});
+        place = {
+          ...place,
+          ...item.place,
+          ...item.phr,
+          description: item.phr.function,
+          phrId: item.phrId
+        }
+        
+        console.log("ITEM", place)
+      }
+
     }
+
+    this.place = place;
   },
   mounted() {
     this.$store.dispatch("placenames/setPageSize", 5);
@@ -336,10 +350,12 @@ export default {
             // link the place to the document
             const role = this.getRoleByLabel(this.place.role);
             const roleId = role && role.id ? role.id : null;
+
             await this.$store.dispatch("placenames/linkToDocument", {
               placenameId: placeToSave.id,
               roleId,
               func: this.place.description,
+              phrId: this.place.phrId
             });
 
             // and then insert the tag in the content

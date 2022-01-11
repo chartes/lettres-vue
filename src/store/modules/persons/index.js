@@ -103,7 +103,7 @@ const actions = {
       })
   },
 
-  linkToDocument ({ commit, rootState }, {roleId, personId, func}) {
+  linkToDocument ({ commit, rootState }, {roleId, personId, func, phrId}) {
     const data = { data: {
         type: 'person-has-role',
         attributes: {
@@ -130,11 +130,18 @@ const actions = {
           }
         }
       }}
-    const http = http_with_auth(rootState.user.jwt);
-    return http.post(`/persons-having-roles`, data).then( response => {
-        return response.data.data
-      })
-      .catch(error => console.log(error))
+      const http = http_with_auth(rootState.user.jwt);
+
+      if (phrId) {
+        data.data.id = phrId
+        return http.patch(`/persons-having-roles/${phrId}`, data).then(response => {
+            return response.data.data
+        }).catch(error => console.log(error))
+    } else {
+        return http.post(`/persons-having-roles`, data).then(response => {
+            return response.data.data
+        }).catch(error => console.log(error))
+    }
   },
   unlinkFromDocument ({ commit, rootState }, {relationId, personId, roleId}) {
     const http = http_with_auth(rootState.user.jwt)
@@ -334,7 +341,29 @@ const actions = {
         commit('SET_LOADING_STATUS', false);
       }
     
-    }, 500)
+    }, 500),
+
+
+    async getInlinedPersonsWithRoleById({rootState, state}, {docId, personId}) {
+      const http = http_with_auth(rootState.user.jwt);
+      const response = await http.get(`/documents/${docId}?without-relationships&include=persons-having-roles`)
+      const phr = response.data.included.find(
+          phr => phr.relationships.person.data.id === parseInt(personId) &&
+                 phr.relationships['person-role'].data.id === state.roles.find(r => r.label === 'inlined').id
+      )
+
+      if (phr) {
+          const person = await http.get(`/persons/${personId}?without-relationships`)
+          return {
+              person: person.data.data.attributes,
+              phr: phr.attributes,
+              phrId: phr.id
+          }
+      }
+      else {
+          return null
+      }
+    }
 };
 
 

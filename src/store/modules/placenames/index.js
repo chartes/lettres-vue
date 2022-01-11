@@ -108,8 +108,8 @@ const actions = {
         return response.data.meta['total-count']
     },
 
-    linkToDocument({commit, rootState}, {roleId, placenameId, func}) {
-        const data = {
+    linkToDocument({commit, rootState}, {roleId, placenameId, func, phrId}) {
+        let data = {
             data: {
                 type: 'placename-has-role',
                 attributes: {
@@ -137,11 +137,19 @@ const actions = {
                 }
             }
         }
+
         const http = http_with_auth(rootState.user.jwt);
-        return http.post(`/placenames-having-roles`, data).then(response => {
-            return response.data.data
-        })
-            .catch(error => console.log(error))
+
+        if (phrId) {
+            data.data.id = phrId
+            return http.patch(`/placenames-having-roles/${phrId}`, data).then(response => {
+                return response.data.data
+            }).catch(error => console.log(error))
+        } else {
+            return http.post(`/placenames-having-roles`, data).then(response => {
+                return response.data.data
+            }).catch(error => console.log(error))
+        }
     },
     unlinkFromDocument({commit, rootState}, {relationId}) {
         const http = http_with_auth(rootState.user.jwt);
@@ -339,6 +347,27 @@ const actions = {
         const http = http_with_auth(rootState.user.jwt);
         const resp = await http.get(`/placenames/${id}?without-relationships`)
         return resp.data.data;
+      },
+
+      async getInlinedPlacenameWithRoleById({rootState, state}, {docId, placeId}) {
+        const http = http_with_auth(rootState.user.jwt);
+        const response = await http.get(`/documents/${docId}?without-relationships&include=placenames-having-roles`)
+        const phr = response.data.included.find(
+            phr => phr.relationships.placename.data.id === parseInt(placeId) &&
+                   phr.relationships['placename-role'].data.id === state.roles.find(r => r.label === 'inlined').id
+        )
+
+        if (phr) {
+            const place = await http.get(`/placenames/${placeId}?without-relationships`)
+            return {
+                place: place.data.data.attributes,
+                phr: phr.attributes,
+                phrId: phr.id
+            }
+        }
+        else {
+            return null
+        }
       }
 
 };

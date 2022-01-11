@@ -4,94 +4,117 @@
       <section>
         <header />
         <div class="searchbox-container">
-          <b-field
-            label="Nom"
-            class="term-search"
+          <div
+            v-show="showExistingEntity"
+            class="mt-3"
           >
-            <div class="field has-addons">
-              <div class="control">
-                <input
-                  v-model="inputTerm"
-                  class="input"
-                  type="text"
-                  placeholder="Catherine de Médics"
-                  @keyup.enter="search"
-                >
-              </div>
-              <div class="control">
-                <a
-                  class="button pl-5 pr-5"
-                  @click="search"
-                >
-                  <span class="icon">
-                    <i
-                      v-if="loadingStatus"
-                      class="fas fa-spinner fa-pulse"
-                    />
-                    <i
-                      v-else
-                      class="fas fa-search"
-                    />
-                  </span>
-                </a>
-              </div>
+            <div><u>Personne :</u> <span class=""> {{ $attrs.person.label }}</span></div>
+            <div v-if="$attrs.person.ref">
+              <u>Identifant de référence :</u> <span>{{ $attrs.person.ref }}</span>
             </div>
-          </b-field>
+            <div><u>Identifant technique :</u> <span>{{ $attrs.person.id }}</span></div>
+         
+            <b-button
+              type="is-primary is-light is-pulled-right mt-3"
+              @click="itemModification = true"
+            >
+              Changer de personne
+            </b-button>
+          </div>
 
-          <b-field label="Correspondants">
-            <b-field>
-              <b-checkbox
-                v-model="sender"
-                type="is-info"
-              >
-                Expéditeur
-              </b-checkbox>
+          <div
+            v-show="!showExistingEntity"
+            class="searchbox-container"
+          >
+            <b-field
+              label="Nom"
+              class="term-search"
+            >
+              <div class="field has-addons">
+                <div class="control">
+                  <input
+                    v-model="inputTerm"
+                    class="input"
+                    type="text"
+                    placeholder="Catherine de Médics"
+                    @keyup.enter="search"
+                  >
+                </div>
+                <div class="control">
+                  <a
+                    class="button pl-5 pr-5"
+                    @click="search"
+                  >
+                    <span class="icon">
+                      <i
+                        v-if="loadingStatus"
+                        class="fas fa-spinner fa-pulse"
+                      />
+                      <i
+                        v-else
+                        class="fas fa-search"
+                      />
+                    </span>
+                  </a>
+                </div>
+              </div>
             </b-field>
-            <b-field>
-              <b-checkbox
-                v-model="recipient"
-                type="is-info"
-              >
-                Destinataire
-              </b-checkbox>
-            </b-field>
-          </b-field>
 
-          <b-field label="Parties du document">
-            <b-field>
-              <b-checkbox
-                v-model="inAddress"
-                type="is-info"
-              >
-                Adresse
-              </b-checkbox>
+            <b-field label="Correspondants">
+              <b-field>
+                <b-checkbox
+                  v-model="sender"
+                  type="is-info"
+                >
+                  Expéditeur
+                </b-checkbox>
+              </b-field>
+              <b-field>
+                <b-checkbox
+                  v-model="recipient"
+                  type="is-info"
+                >
+                  Destinataire
+                </b-checkbox>
+              </b-field>
             </b-field>
 
-            <b-field>
-              <b-checkbox
-                v-model="inTranscription"
-                type="is-info"
-              >
-                Transcription
-              </b-checkbox>
+            <b-field label="Parties du document">
+              <b-field>
+                <b-checkbox
+                  v-model="inAddress"
+                  type="is-info"
+                >
+                  Adresse
+                </b-checkbox>
+              </b-field>
+
+              <b-field>
+                <b-checkbox
+                  v-model="inTranscription"
+                  type="is-info"
+                >
+                  Transcription
+                </b-checkbox>
+              </b-field>
+              <b-field>
+                <b-checkbox
+                  v-model="inArgument"
+                  type="is-info"
+                >
+                  Analyse
+                </b-checkbox>
+              </b-field>
+              <b-field>
+                <b-checkbox
+                  v-model="inNotes"
+                  type="is-info"
+                >
+                  Notes
+                </b-checkbox>
+              </b-field>
             </b-field>
-            <b-field>
-              <b-checkbox
-                v-model="inArgument"
-                type="is-info"
-              >
-                Analyse
-              </b-checkbox>
-            </b-field>
-            <b-field>
-              <b-checkbox
-                v-model="inNotes"
-                type="is-info"
-              >
-                Notes
-              </b-checkbox>
-            </b-field>
-          </b-field>
+          </div>
         </div>
       </section>
 
@@ -108,212 +131,214 @@
       </section>
     </div>
 
-    <p class="mt-4 mb-1">
-      Environ {{ totalCount }} résultat(s)
-    </p>
-    <div class="result-container">
-      <span class="pagination-goto">
-        <span> Page : </span>
-        <input
-          v-model="currentPage"
-          name="page"
-          class="input"
-          type="text"
-          placeholder="Page..."
-          @change.prevent="currentPage = parseInt(p)"
+    <div v-show="!showExistingEntity">
+      <p class="mt-4 mb-1">
+        Environ {{ totalCount }} résultat(s)
+      </p>
+      <div class="result-container">
+        <span class="pagination-goto">
+          <span> Page : </span>
+          <input
+            v-model="currentPage"
+            name="page"
+            class="input"
+            type="text"
+            placeholder="Page..."
+            @change.prevent="currentPage = parseInt(p)"
+          >
+        </span>
+
+        <b-table
+          ref="multiSortTable"
+          :data="tableData"
+          :loading="loadingStatus"
+          paginated
+          backend-pagination
+          :total="totalCount"
+          :per-page="pageSize"
+          :current-page.sync="currentPage"
+          pagination-position="both"
+          aria-next-label="Page suivante"
+          aria-previous-label="Page précédente"
+          aria-page-label="Page"
+          aria-current-label="Page courante"
+          :detailed="!popupMode"
+          :backend-sorting="true"
+          :sort-multiple="true"
+          :sort-multiple-data="sortingPriority"
+          detail-key="id"
+          show-detail-icon
+          :narrowed="true"
+          :mobile-cards="true"
+          :selected.sync="selected"
+          focusable
+          @sort="sortPressed"
+          @sorting-priority-removed="sortingPriorityRemoved"
+          @page-change="onPageChange"
         >
-      </span>
+          <b-table-column
+            v-slot="props"
+            field="id"
+            label="Id"
+            :td-attrs="columnTdAttrs"
+            sortable
+          >
+            {{ props.row.id }}
+          </b-table-column>
+          <b-table-column
+            v-slot="props"
+            field="label.keyword"
+            label="Lieu"
+            :td-attrs="columnTdAttrs"
+            sortable
+          >
+            {{ props.row.label }}
+          </b-table-column>
 
-      <b-table
-        ref="multiSortTable"
-        :data="tableData"
-        :loading="loadingStatus"
-        paginated
-        backend-pagination
-        :total="totalCount"
-        :per-page="pageSize"
-        :current-page.sync="currentPage"
-        pagination-position="both"
-        aria-next-label="Page suivante"
-        aria-previous-label="Page précédente"
-        aria-page-label="Page"
-        aria-current-label="Page courante"
-        :detailed="!popupMode"
-        :backend-sorting="true"
-        :sort-multiple="true"
-        :sort-multiple-data="sortingPriority"
-        detail-key="id"
-        show-detail-icon
-        :narrowed="true"
-        :mobile-cards="true"
-        :selected.sync="selected"
-        focusable
-        @sort="sortPressed"
-        @sorting-priority-removed="sortingPriorityRemoved"
-        @page-change="onPageChange"
-      >
-        <b-table-column
-          v-slot="props"
-          field="id"
-          label="Id"
-          :td-attrs="columnTdAttrs"
-          sortable
-        >
-          {{ props.row.id }}
-        </b-table-column>
-        <b-table-column
-          v-slot="props"
-          field="label.keyword"
-          label="Lieu"
-          :td-attrs="columnTdAttrs"
-          sortable
-        >
-          {{ props.row.label }}
-        </b-table-column>
+          <b-table-column
+            v-slot="props"
+            field="ref"
+            label="Identifiant de référence"
+            :td-attrs="columnTdAttrs"
+          >
+            {{ props.row.ref }}
+          </b-table-column>
 
-        <b-table-column
-          v-slot="props"
-          field="ref"
-          label="Identifiant de référence"
-          :td-attrs="columnTdAttrs"
-        >
-          {{ props.row.ref }}
-        </b-table-column>
+          <b-table-column
+            v-slot="props"
+            field="documents"
+            label="Documents"
+            :td-attrs="columnTdAttrs"
+          >
+            <span v-if="personCounts[props.row.id] === 0">-</span>
+            <span
+              v-else
+            >{{ personCounts[props.row.id] }} document
+              <span v-if="personCounts[props.row.id] > 1">(s)</span>
+            </span>
+          </b-table-column>
 
-        <b-table-column
-          v-slot="props"
-          field="documents"
-          label="Documents"
-          :td-attrs="columnTdAttrs"
-        >
-          <span v-if="personCounts[props.row.id] === 0">-</span>
-          <span
-            v-else
-          >{{ personCounts[props.row.id] }} document
-            <span v-if="personCounts[props.row.id] > 1">(s)</span>
-          </span>
-        </b-table-column>
+          <template #empty>
+            <div class="has-text-centered">
+              Aucun résultat
+            </div>
+          </template>
 
-        <template #empty>
-          <div class="has-text-centered">
-            Aucun résultat
-          </div>
-        </template>
-
-        <template #detail="props">
-          <div class="detail-td">
-            <div
-              v-if="sender"
-              class="columns ref-section-heading"
-            >
-              <div class="column is-one-quarter section-title">
-                <span class="heading">
-                  Dates de lieu d'expédition ({{ props.row.sender.length }})
-                </span>
+          <template #detail="props">
+            <div class="detail-td">
+              <div
+                v-if="sender"
+                class="columns ref-section-heading"
+              >
+                <div class="column is-one-quarter section-title">
+                  <span class="heading">
+                    Dates de lieu d'expédition ({{ props.row.sender.length }})
+                  </span>
+                </div>
+                <div class="column">
+                  <document-title-bar
+                    v-for="item in props.row.sender"
+                    :key="item.docId"
+                    :doc-id="item.docId"
+                    :title="item.docTitle"
+                    :creation-label="item.docCreationLabel"
+                  />
+                </div>
               </div>
-              <div class="column">
-                <document-title-bar
-                  v-for="item in props.row.sender"
-                  :key="item.docId"
-                  :doc-id="item.docId"
-                  :title="item.docTitle"
-                  :creation-label="item.docCreationLabel"
-                />
+              <div
+                v-if="recipient"
+                class="columns ref-section-heading"
+              >
+                <div class="column is-one-quarter section-title">
+                  <span class="heading">
+                    Dates de lieu de réception ({{ props.row.recipient.length }})
+                  </span>
+                </div>
+                <div class="column">
+                  <document-title-bar
+                    v-for="item in props.row.recipient"
+                    :key="item.docId"
+                    :doc-id="item.docId"
+                    :title="item.docTitle"
+                    :creation-label="item.docCreationLabel"
+                  />
+                </div>
+              </div>
+              <div
+                v-if="inAddress"
+                class="columns ref-section-heading"
+              >
+                <div class="column is-one-quarter section-title">
+                  <span class="heading"> Adresse ({{ props.row.inAddress.length }}) </span>
+                </div>
+                <div class="column">
+                  <document-title-bar
+                    v-for="item in props.row.inAddress"
+                    :key="item.docId"
+                    :doc-id="item.docId"
+                    :title="item.docTitle"
+                    :creation-label="item.docCreationLabel"
+                  />
+                </div>
+              </div>
+
+              <div
+                v-if="inTranscription"
+                class="columns ref-section-heading"
+              >
+                <div class="column is-one-quarter section-title">
+                  <span class="heading">
+                    Transcription ({{ props.row.inTranscription.length }})
+                  </span>
+                </div>
+                <div class="column">
+                  <document-title-bar
+                    v-for="item in props.row.inTranscription"
+                    :key="item.docId"
+                    :doc-id="item.docId"
+                    :title="item.docTitle"
+                    :creation-label="item.docCreationLabel"
+                  />
+                </div>
+              </div>
+              <div
+                v-if="inArgument"
+                class="columns ref-section-heading"
+              >
+                <div class="column is-one-quarter section-title">
+                  <span class="heading"> Analyse ({{ props.row.inArgument.length }}) </span>
+                </div>
+                <div class="column">
+                  <document-title-bar
+                    v-for="item in props.row.inArgument"
+                    :key="item.docId"
+                    :doc-id="item.docId"
+                    :title="item.docTitle"
+                    :creation-label="item.docCreationLabel"
+                  />
+                </div>
+              </div>
+              <div
+                v-if="inNotes"
+                class="columns ref-section-heading"
+              >
+                <div class="column is-one-quarter section-title">
+                  <span class="heading"> Notes ({{ props.row.inNotes.length }}) </span>
+                </div>
+                <div class="column">
+                  <document-title-bar
+                    v-for="item in props.row.inNotes"
+                    :key="item.docId"
+                    :doc-id="item.docId"
+                    :title="item.docTitle"
+                    :creation-label="item.docCreationLabel"
+                  />
+                </div>
               </div>
             </div>
-            <div
-              v-if="recipient"
-              class="columns ref-section-heading"
-            >
-              <div class="column is-one-quarter section-title">
-                <span class="heading">
-                  Dates de lieu de réception ({{ props.row.recipient.length }})
-                </span>
-              </div>
-              <div class="column">
-                <document-title-bar
-                  v-for="item in props.row.recipient"
-                  :key="item.docId"
-                  :doc-id="item.docId"
-                  :title="item.docTitle"
-                  :creation-label="item.docCreationLabel"
-                />
-              </div>
-            </div>
-            <div
-              v-if="inAddress"
-              class="columns ref-section-heading"
-            >
-              <div class="column is-one-quarter section-title">
-                <span class="heading"> Adresse ({{ props.row.inAddress.length }}) </span>
-              </div>
-              <div class="column">
-                <document-title-bar
-                  v-for="item in props.row.inAddress"
-                  :key="item.docId"
-                  :doc-id="item.docId"
-                  :title="item.docTitle"
-                  :creation-label="item.docCreationLabel"
-                />
-              </div>
-            </div>
-
-            <div
-              v-if="inTranscription"
-              class="columns ref-section-heading"
-            >
-              <div class="column is-one-quarter section-title">
-                <span class="heading">
-                  Transcription ({{ props.row.inTranscription.length }})
-                </span>
-              </div>
-              <div class="column">
-                <document-title-bar
-                  v-for="item in props.row.inTranscription"
-                  :key="item.docId"
-                  :doc-id="item.docId"
-                  :title="item.docTitle"
-                  :creation-label="item.docCreationLabel"
-                />
-              </div>
-            </div>
-            <div
-              v-if="inArgument"
-              class="columns ref-section-heading"
-            >
-              <div class="column is-one-quarter section-title">
-                <span class="heading"> Analyse ({{ props.row.inArgument.length }}) </span>
-              </div>
-              <div class="column">
-                <document-title-bar
-                  v-for="item in props.row.inArgument"
-                  :key="item.docId"
-                  :doc-id="item.docId"
-                  :title="item.docTitle"
-                  :creation-label="item.docCreationLabel"
-                />
-              </div>
-            </div>
-            <div
-              v-if="inNotes"
-              class="columns ref-section-heading"
-            >
-              <div class="column is-one-quarter section-title">
-                <span class="heading"> Notes ({{ props.row.inNotes.length }}) </span>
-              </div>
-              <div class="column">
-                <document-title-bar
-                  v-for="item in props.row.inNotes"
-                  :key="item.docId"
-                  :doc-id="item.docId"
-                  :title="item.docTitle"
-                  :creation-label="item.docCreationLabel"
-                />
-              </div>
-            </div>
-          </div>
-        </template>
-      </b-table>
+          </template>
+        </b-table>
+      </div>
     </div>
   </div>
 </template>
@@ -333,11 +358,9 @@ export default {
   emit: ["manage-person-data"],
   data() {
     let inputTerm = null;
-    if (this.$attrs.person && this.$attrs.person.selection) {
-      inputTerm = this.$attrs.person.selection;
-    }
 
     return {
+      itemModification: false,
       selected: null,
       tableData: [],
       personCounts: {},
@@ -395,6 +418,11 @@ export default {
     labeledInputTerm() {
       return `label:*${this.inputTerm}*`;
     },
+
+    showExistingEntity() {
+      return this.$attrs.person && this.$attrs.person.id && this.inputTerm === null && !this.itemModification
+    }
+
   },
   watch: {
     persons() {
@@ -434,8 +462,8 @@ export default {
         !this.selected ||
         this.$attrs.person.id === this.selected.id
       ) {
-        console.log("keep selection", this.$attrs.person);
-        if (this.$attrs.person.selection) {
+        // console.log("keep selection", this.$attrs.person);
+        if (this.$attrs.person.selection  && !this.$attrs.person.id) {
           this.inputTerm = this.$attrs.person.selection;
         }
       } else {

@@ -156,7 +156,7 @@ export default {
   data() {
     return {
       activeTab: 0,
-      person: null,
+      person: {},
       loading: false,
     };
   },
@@ -208,15 +208,12 @@ export default {
   },
   async created() {
     await this.$store.dispatch("persons/fetchRoles");
+    let person = {};
 
     if (this.$props.inputData) {
       const p = this.$props.inputData;
-      const id = p.formats ? p.formats.person : null;
-      let person = {};
+      const id = p.formats && p.formats.person ? p.formats.person : null;
 
-      if (id !== null) {
-        person.id = id;
-      }
       if (p.label !== null) {
         person.label = p.label;
       }
@@ -242,8 +239,26 @@ export default {
         person.removeTagCallback = p.removeTagCallback;
       }
 
-      this.person = person;
+       if (id !== null) {
+        person.id = id;
+
+        //load existing data
+        const item = await this.$store.dispatch("persons/getInlinedPersonsWithRoleById", {docId: this.document.id, personId: person.id});
+        person = {
+          ...person,
+          ...item.person,
+          ...item.phr,
+          description: item.phr.function,
+          phrId: item.phrId
+        }
+        
+        console.log("ITEM", person)
+      }
+
     }
+    
+    this.person = person;
+
   },
   mounted() {
     this.$store.dispatch("persons/setPageSize", 5);
@@ -326,10 +341,12 @@ export default {
             // link the person to the document
             const role = this.getRoleByLabel(this.person.role);
             const roleId = role && role.id ? role.id : null;
+            
             await this.$store.dispatch("persons/linkToDocument", {
               personId: personToSave.id,
               roleId,
               func: this.person.description,
+              phrId: this.person.phrId
             });
 
             // and then insert the tag in the content

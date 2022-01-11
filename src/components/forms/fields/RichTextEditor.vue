@@ -358,8 +358,6 @@ export default {
      */
 
     displayNoteForm() {
-      console.log("displayNoteForm");
-
       const range = this.editor.getSelection();
       const selection = this.editor.getText(range.index, range.length);
       const formats = this.editor.getFormat();

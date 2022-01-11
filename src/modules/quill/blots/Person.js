@@ -18,7 +18,7 @@ class PersonBlot extends Inline {
   }
 
   static formats(domNode) {
-    let ref = domNode.getAttribute('href');
+    let ref = domNode.getAttribute('id');
     return ref || true;
   }
 
