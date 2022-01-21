@@ -37,11 +37,11 @@ WHERE
   service wikibase:label {bd:serviceParam wikibase:language  "fr","en".}
 }
 ORDER BY ?label ?pays 
-LIMIT 50`;
+LIMIT 35`;
 //  FILTER CONTAINS(?label, "${name}")
 
 
-const getPersonQuery = name => `SELECT DISTINCT ?item ?label 
+const getPersonQuery = name => `SELECT DISTINCT ?human ?humanLabel ?lastnameLabel ?nationalityLabel ?humanDescription ?humanAltLabel
 WHERE
 {
   SERVICE wikibase:mwapi
@@ -51,15 +51,21 @@ WHERE
                     mwapi:generator "search";
                     mwapi:gsrsearch "inlabel:${name}";
                     mwapi:gsrlimit "max".
-    ?item wikibase:apiOutputItem mwapi:title.
+    ?human wikibase:apiOutputItem mwapi:title.
   }
-  ?item rdfs:label ?label;
+ ?human wdt:P31 wd:Q5 .
+    optional { ?human wdt:P734 ?lastname . }
+    optional { ?human wdt:P569 ?birthdate . }
+    optional { ?human wdt:P570 ?deathdate . }
+    optional { ?human wdt:P27 ?nationality . }
+  
+      SERVICE wikibase:label {
+        bd:serviceParam wikibase:language "fr", "en", "it", "es" .
+    }
 
-  FILTER(LANG(?label) = "fr")
-  service wikibase:label {bd:serviceParam wikibase:language  "fr","en".}
 }
-ORDER BY ?label 
-LIMIT 50`;
+ORDER BY ?humanLabel 
+LIMIT 25`;
 
 const queryDispatcher = new SPARQLQueryDispatcher(endpointUrl);
 

@@ -41,6 +41,12 @@
                   <div class="heading">
                     {{ props.option.label }}
                   </div>
+                  <div class="">
+                    {{ props.option.item }}
+                  </div>
+                  <div class="">
+                    {{ props.option.description }}
+                  </div>
                 </div>
               </template>
 
@@ -183,9 +189,11 @@ export default {
 
         if (response.results.bindings) {
           this.autocompleteData = response.results.bindings.map((b) => {
+            console.log(b)
             return {
-              item: b.item.value,
-              label: b.label.value,
+              item: b.human.value,
+              label: b.humanLabel.value,
+              description: b.humanDescription ? b.humanDescription.value : null
             };
           });
         }
