@@ -1,99 +1,116 @@
 <template>
-  <div class="container">
-    <div v-if="isAuthenticated" class="welcome">
-      Bienvenue {{ current_user.username }}
-    </div>
-    <form v-else class="login-form" @submit.prevent="authenticate">
-      <div class="field">
-        <p class="control has-icons-left has-icons-right">
-          <input v-model="email" class="input" type="email" placeholder="Email" />
-          <span class="icon is-small is-left">
-            <i class="fas fa-envelope" />
-          </span>
-          <span class="icon is-small is-right">
-            <i class="fas fa-check" />
-          </span>
-        </p>
+  <form
+    class="container login-form"
+    @submit.prevent="authenticate"
+  >
+    <article class="message m-t-xxl">
+      <div class="message-header">
+        Connexion
       </div>
-      <div class="field">
-        <p class="control has-icons-left">
-          <input
-            v-model="password"
-            class="input"
-            type="password"
-            placeholder="Mot de passe"
-            value
-            name="password"
-          />
-          <span class="icon is-small is-left">
-            <i class="fas fa-lock" />
+      <div class="message-body">
+        <div
+          v-if="current_user"
+          class="welcome"
+        >
+          Bienvenue {{ current_user.username }}
+        </div>
+
+        <div class="field">
+          <p class="control has-icons-left has-icons-right">
+            <input
+              v-model="email"
+              class="input"
+              type="text"
+              placeholder="Nom d'utilisateur ou email"
+            >
+            <span class="icon is-small is-left">
+              <i class="fas fa-envelope" />
+            </span>
+          </p>
+        </div>
+        <div class="field">
+          <p class="control has-icons-left">
+            <input
+              v-model="password"
+              class="input"
+              type="password"
+              placeholder="Mot de passe"
+            >
+            <span class="icon is-small is-left">
+              <i class="fas fa-lock" />
+            </span>
+          </p>
+        </div>
+        <router-link :to="{name: 'forgot-password'}">
+          Mot de passe oublié
+        </router-link>
+        <div class="field">
+          <span class="control">
+            <button
+              class="button  is-success"
+            >
+              Valider
+            </button>
+            <span
+              v-show="error"
+              class="control has-text-danger is-pulled-right p-t-sm"
+            >Nom d'utilisateur ou mot de passe incorrect(s)</span>
           </span>
-        </p>
+        </div>
       </div>
-      <div class="field">
-        <p class="control">
-          <button class="button is-primary">Connexion</button>
-        </p>
-      </div>
-    </form>
-  </div>
+    </article>
+  </form>
 </template>
 
 <script>
-import { mapGetters, mapState } from "vuex";
-import { EventBus } from "@/modules/http-common";
+
+import {mapState, mapGetters} from 'vuex'
 
 export default {
-  name: "LoginPage",
-  components: {},
-  data() {
-    return {
-      email: "",
-      password: "",
-    };
-  },
-  computed: {
-    ...mapGetters("user", ["isAuthenticated"]),
-    ...mapState("user", ["current_user"]),
-  },
-  watch: {},
-  created() {
-    if (this.isAuthenticated) {
-      console.log(this.$route.query.from);
-      this.$router.push({ path: this.$route.query.from });
-    }
-  },
-  mounted() {
-    EventBus.$on("failedRegistering", (msg) => {
-      this.errorMsg = msg;
-    });
-    EventBus.$on("failedAuthentication", (msg) => {
-      this.errorMsg = msg;
-    });
-  },
-  methods: {
-    authenticate() {
-      this.$store
-        .dispatch("user/login", { email: this.email, password: this.password })
-        .then(() => {
-          this.$router.push({ name: "home" });
-        });
+    name: "LoginPage",
+    components: {
+        
     },
-    register() {
-      this.$store
-        .dispatch("user/register", { email: this.email, password: this.password })
-        .then(() => {
-          this.$router.push({ name: "home" });
-        });
+    data () {
+        return {
+          email: '',
+          password: '',
+          error: false
+        }
     },
-  },
-};
+    computed: {
+      ...mapState("user", ["current_user"]),
+      ...mapGetters("user", [
+      "isAuthenticated"
+    ]),
+    },
+    created() {
+      if (this.isAuthenticated) {
+        this.$router.push({path: this.$route.query.from})
+      }
+    },
+    mounted() {
+      this.error = false
+    },
+    methods: {
+        authenticate () {
+          this.error = false
+          return this.$store
+            .dispatch('user/login', {
+              email: this.email,
+              password: this.password
+            })
+            .then(() => { 
+	      this.$router.push({name: "home"})
+            }).catch(() => {
+              this.error=true
+            })
+        }
+      }
+
+}
 </script>
 
-<style scoped lang="scss">
-@import "@/assets/sass/main.scss";
-.login-form {
-  margin-top: 30px;
-  width: 400px;
-}
+<style>
+
 </style>

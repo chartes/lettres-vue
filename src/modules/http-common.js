@@ -1,5 +1,6 @@
 import axios from 'axios';
 import Vue from 'vue'
+import store from '../store'
 
 const _baseApiURL = `${process.env.VUE_APP_API_URL}/api/1.0`;
 const _baseAppURL = `/lettres`;
@@ -7,6 +8,20 @@ const _baseAppURL = `/lettres`;
 
 export const baseApiURL = _baseApiURL;
 export const baseAppURL = _baseAppURL;
+
+
+export const http = axios.create({
+  baseURL: _baseApiURL,
+  withCredentials: true
+});
+
+http.interceptors.request.use((config) => {
+  const jwt = store.state.user.jwt;
+  if (jwt) {
+    config.headers['Authorization'] = `Bearer ${jwt}`
+  }
+  return config
+})
 
 /*
 export const http = axios.create({
@@ -16,18 +31,7 @@ export const http = axios.create({
 */
 
 export function http_with_auth(jwt) {
-  if (jwt) {
-    return axios.create({
-      baseURL: _baseApiURL,
-      headers: { Authorization: `Bearer: ${jwt}` },
-      withCredentials: true
-    })
-  } else {
-    return axios.create({
-      baseURL: _baseApiURL,
-      headers: {}
-    });
-  }
+  return http;
 }
 
 export default http_with_auth;
@@ -48,9 +52,8 @@ export function authenticate (userData) {
   return axios.post(`${_baseApiURL}/login`, userData)
 }
 
-export function getCurrentUser (jwt) {
-  const http = http_with_auth(jwt)
-  return http.get(`${_baseApiURL}/current-user`)
+export function getCurrentUser() {
+  return http.get(`${_baseApiURL}/current-user`);
 }
 
 export function register (userData) {

@@ -36,7 +36,7 @@ const actions = {
     const config = { auth: { username: rootState.user.authToken, password: undefined }};
     const theNote = {
       data: [{
-        "username": rootState.user.currentUser.username,
+        "username": rootState.user.current_user.username,
         "id": note.id,
         "type_id": note.type_id,
         "content": note.content
@@ -49,7 +49,7 @@ const actions = {
     const config = { auth: { username: rootState.user.authToken, password: undefined }};
     const theNote = {
       data: [{
-        "username": rootState.user.currentUser.username,
+        "username": rootState.user.current_user.username,
         "id": note.id,
         "type_id": note.type_id,
         "content": note.content

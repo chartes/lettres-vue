@@ -12,24 +12,26 @@ const state = {
 
 const mutations = {
 
+ 
   SET_USER_DATA (state, userData) {
-    //console.log('setUserData payload = ', userData)
+
     if (userData) {
       state.current_user = {
         ...userData,
         isAdmin: userData.roles.indexOf("admin") > -1
       }
-    }
-    else {
+      console.log('THEEEEEEEN', state)
+
+    } else {
       state.current_user = null
     }
   },
-  SET_JWT_TOKEN (state, token) {
-    //console.log('setJwtToken payload = ', token)
+
+  SET_JWT_TOKEN(state, token) {
     if (token) {
-      localStorage.tokenLettres = token
+      localStorage.tokenLettres = token;
     } else {
-      localStorage.removeItem('tokenLettres')
+      localStorage.removeItem("tokenLettres");
     }
     state.jwt = token
   },
@@ -49,53 +51,70 @@ const mutations = {
 };
 
 const actions = {
-
-  fetchCurrent ({ commit }) {
-    /*
-    commit('RESET_USER');
-    const http = http_with_auth();
-    return http.get("token/refresh")
-      .then(response => {
-        if (response.data && response.data.user) {
-          const user_api_url = response.data.user.replace(baseApiURL, '');
-          return http.get(`${user_api_url}?include=roles&without-relationships`).then( response => {
-            commit('UPDATE_USER', response.data);
-          })
-        } else {
-          commit('UPDATE_USER', {data: null});
-        }
-      }).catch(error => {
-        console.warn(error);
-        commit('UPDATE_USER', {data: null});
-      });
-      */
-  },
-  setUserData({commit}, userData) {
+  setUserData({ commit }, userData) {
     commit('SET_USER_DATA', userData)
   },
-  login ({commit}, userData) {
-    return authenticate(userData)
-      .then(response => {
-        commit('SET_USER_DATA', response.data.user_data)
-        commit('SET_JWT_TOKEN', response.data.token)
-      })
-      .catch(error => {
-        console.log('Error Authenticating: ', error)
-        EventBus.$emit('failedAuthentication', error)
-      })
-  },
-  logout({commit}) {
-    console.log("logout")
-    commit('SET_JWT_TOKEN', null)
+  login ({ commit }, credentials) { 
+    return http
+      .post('login', credentials)
+      .then(({ data }) => {
+        commit('SET_USER_DATA', data.user_data)
+        commit('SET_JWT_TOKEN', data.token)
+        return data
+      })  },
+
+  async logout({commit}) {
+    await http.get('logout')
     commit('SET_USER_DATA', null)
+    commit('SET_JWT_TOKEN', null)
   },
-  register ({dispatch}, userData) {
-    return register(userData)
-      .then(dispatch('login', userData))
-      .catch(error => {
-        console.log('Error Registering: ', error)
-        EventBus.$emit('failedRegistering: ', error)
+
+  register({commit}) {
+    console.log("Register: not yet implemented")
+  },
+
+  async save({dispatch}, userData) {
+    try {
+      const newData = await http.post('update-user', userData)
+      const loginResponse = await dispatch('login', {
+        email: newData.data.email,
+        password: userData.password
       })
+      if (loginResponse.errors) {
+        return {
+          error: loginResponse.errors.details
+        }
+      } else {
+        return {
+          error : null,
+        } 
+      }
+    } catch (e) {
+      return {
+        error : e,
+      } 
+    }
+  },
+
+  async inviteUser({state}, {email, role}) {
+    try {
+      const response = await http.post('invite-user', {email, role})  
+      return {
+        error: response.error
+      }
+    } catch (e) {
+      return {
+        error: e
+      }
+    }
+  },
+
+  async sendPasswordResetLink(_, {email}) {
+    await http.post('send-password-reset-link', {email})
+  },
+
+  async resetPassword({commit}, {token, password, password2}) {
+    return await http.post('reset-password', {token, password, password2})
   },
 
   search({commit, state}, what) {
@@ -110,9 +129,9 @@ const actions = {
 };
 
 const getters = {
-  isAuthenticated (state) {
-    return state.current_user && isValidJwt(state.jwt)
-  }
+  isAuthenticated(state) {
+    return !!state.current_user && isValidJwt(state.jwt)
+  },
 };
 const userModule = {
   namespaced: true,

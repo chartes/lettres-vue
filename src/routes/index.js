@@ -7,7 +7,8 @@ const SearchPage = () => import('@/pages/SearchPage.vue')
 
 const LoginPage = () => import('@/pages/LoginPage.vue')
 const RegisterPage = () => import('@/pages/RegisterPage.vue')
-
+const ForgotPasswordPage = () => import('@/pages/ForgotPasswordPage.vue')
+const PasswordResetPage = () => import('@/pages/PasswordResetPage.vue')
 const DocumentPage = () => import('@/pages/DocumentPage.vue')
 
 const DocumentCreationPage = () => import('@/pages/DocumentCreationPage.vue')
@@ -55,6 +56,16 @@ const router = new VueRouter({
       path: '/login',
       component: LoginPage,
       name: 'login'
+    },
+    {
+      path: '/forgot-password',
+      component: ForgotPasswordPage,
+      name: 'forgot-password',
+    },
+    {
+      path: '/reset-password',
+      component: PasswordResetPage,
+      name: 'reset-password',
     },
     {
       path: '/documents/:docId',
@@ -123,7 +134,6 @@ const router = new VueRouter({
 })
 
 router.beforeEach(async (to, from, next) => {
-  console.log('USER', store.state.user.current_user)
   
   if (to.fullPath.indexOf("/edit") > -1 || ['history', 'bookmarks', 'locks', 'persons', 'places', 'users'].indexOf(to.name) > -1) {
       if (!store.state.user.current_user) {
@@ -131,20 +141,15 @@ router.beforeEach(async (to, from, next) => {
       }
   }
   
-
-  const jwt = store.state.user.jwt
-  if (jwt) {
-      try {
-        const response = await getCurrentUser(jwt);
-        //console.log("trying to log back with jwt:", jwt, response.data)
-        store.dispatch("user/setUserData", response.data.user_data)
-      } catch (e) {
-        console.log(e)
-        store.dispatch('user/logout')
-      }
-
+  if (store.state.user.jwt) {
+    try {
+      const response = await getCurrentUser();
+      store.dispatch("user/setUserData", response.data.user_data)
+    } catch (e) {
+      console.log(e)
+      store.dispatch("user/logout")
+    }
   }
- 
   next();
 });
 
