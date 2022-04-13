@@ -239,24 +239,16 @@ const actions = {
         commit('SET_LOADING_STATUS', true);
     
         /* =========== filters =========== */
-        let query =  '*'; //`collections.id:${state.selectedCollectionId}`
+        let query =  state.searchTerm || '***'; //`collections.id:${state.selectedCollectionId}`
     
     
-        if (state.searchTerm && state.searchTerm.length > 0) {
-          query = `(${query} AND (${state.searchTerm}))`
-        }
-
-    
-        if (!query || query.length === 0) {
-          query = '*'
-        }
         if (!rootState.user.current_user){
           query = `${query} AND (is-published:true)`
         }
     
         /* =========== sorts ===========*/
         let sorts = state.sorts.map(s => `${s.order === 'desc' ? '-' : ''}${s.field}`)
-        sorts = sorts.length ? sorts.join(',') : 'creation'
+        sorts = sorts.length ? sorts.join(',') :  'label.keyword'
       
         /* =========== date ranges ===========*/
         const cdf = state.creationDateFrom.selection

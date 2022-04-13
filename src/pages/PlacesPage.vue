@@ -14,27 +14,11 @@ export default {
   },
   data() {
     return {
-      activeTab: "search",
-      multiline: true,
+     
     };
   },
   computed: {
-    tabs() {
-      return [
-        {
-          id: "search",
-          label: "Référentiel de l'application",
-          component: "PlaceList",
-          displayed: true,
-        },
-        {
-          id: "add",
-          label: "Nouveau lieu",
-          component: "CreatePlaceForm",
-          displayed: true,
-        },
-      ];
-    },
+   
   },
   mounted() {
     this.$store.dispatch("placenames/setPageSize", 20);

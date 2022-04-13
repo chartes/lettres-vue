@@ -14,27 +14,11 @@ export default {
   },
   data() {
     return {
-      activeTab: "search",
-      multiline: true,
+    
     };
   },
   computed: {
-    tabs() {
-      return [
-        {
-          id: "search",
-          label: "Référentiel de l'application",
-          component: "PersonList",
-          displayed: true,
-        },
-        {
-          id: "add",
-          label: "Nouvelle Person",
-          component: "CreatePersonForm",
-          displayed: true,
-        },
-      ];
-    },
+   
   },
   mounted() {
     this.$store.dispatch("persons/setPageSize", 20);

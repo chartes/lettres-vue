@@ -136,7 +136,7 @@ const router = new VueRouter({
 router.beforeEach(async (to, from, next) => {
   
   if (to.fullPath.indexOf("/edit") > -1 || ['history', 'bookmarks', 'locks', 'persons', 'places', 'users'].indexOf(to.name) > -1) {
-      if (!store.state.user.current_user) {
+      if (!store.state.user.jwt) {
         next({ name: 'login', query: { from: window.location.pathname } });
       }
   }

@@ -9,7 +9,7 @@
         />
       </b-tab-item>
 
-      <b-tab-item id="add" label="Nouveau lieu">
+      <b-tab-item id="add" label="Nouveau lieu" v-if="popupMode">
         <create-place-form
           v-bind="$attrs"
           :popup-mode="popupMode"

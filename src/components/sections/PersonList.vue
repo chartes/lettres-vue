@@ -60,7 +60,7 @@
               </div>
             </b-field>
 
-            <b-field label="Correspondants">
+            <b-field label="Correspondants" v-if="false">
               <b-field>
                 <b-checkbox
                   v-model="sender"
@@ -79,7 +79,7 @@
               </b-field>
             </b-field>
 
-            <b-field label="Parties du document">
+            <b-field label="Parties du document" v-if="false">
               <b-field>
                 <b-checkbox
                   v-model="inAddress"
@@ -119,7 +119,7 @@
       </section>
 
       <section
-        v-if="!popupMode"
+        v-if="!popupMode && false"
         class="filterbox-container"
       >
         <header>
@@ -176,6 +176,7 @@
           @sorting-priority-removed="sortingPriorityRemoved"
           @page-change="onPageChange"
         >
+        <!--
           <b-table-column
             v-slot="props"
             field="id"
@@ -185,10 +186,11 @@
           >
             {{ props.row.id }}
           </b-table-column>
+          -->
           <b-table-column
             v-slot="props"
             field="label.keyword"
-            label="Lieu"
+            label="Nom"
             :td-attrs="columnTdAttrs"
             sortable
           >
@@ -203,7 +205,7 @@
           >
             {{ props.row.ref }}
           </b-table-column>
-
+<!--
           <b-table-column
             v-slot="props"
             field="documents"
@@ -217,6 +219,7 @@
               <span v-if="personCounts[props.row.id] > 1">(s)</span>
             </span>
           </b-table-column>
+          -->
 
           <template #empty>
             <div class="has-text-centered">
@@ -416,7 +419,7 @@ export default {
     },
 
     labeledInputTerm() {
-      return `label:*${this.inputTerm}*`;
+      return this.inputTerm ? `label:*${this.inputTerm}*` : null;
     },
 
     showExistingEntity() {
@@ -431,7 +434,7 @@ export default {
     inputTerm() {
       this.setSearchTerm(this.labeledInputTerm);
     },
-
+/*
     sender() {
       this.recomputeCounts();
     },
@@ -450,6 +453,7 @@ export default {
     inTranscription() {
       this.recomputeCounts();
     },
+    */
 
     selected() {
       if (this.selected) {
@@ -503,7 +507,7 @@ export default {
       this.performSearch();
       this.loadAsyncData();
     },
-
+    /*
     count(pId) {
       const s_pId = pId.toString();
       let countSet = new Set([]);
@@ -567,14 +571,14 @@ export default {
 
       return countSet.size;
     },
-
+    
     recomputeCounts() {
       this.personCounts = {};
       for (let p of this.persons) {
         this.count(p.id);
       }
     },
-
+    */
     resetPriority() {
       console.log("reset");
       this.$refs.multiSortTable.resetMultiSorting();
@@ -639,7 +643,7 @@ export default {
             };
           })
         );
-        this.recomputeCounts();
+        //this.recomputeCounts();
       }
     },
     columnTdAttrs(row, column) {
@@ -698,7 +702,7 @@ export default {
     display: inline-flex;
   }
   .search-container {
-    margin-bottom: 70px;
+    margin-bottom: 40px;
   }
   .searchbox-container {
     display: flex;

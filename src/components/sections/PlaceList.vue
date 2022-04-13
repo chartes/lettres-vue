@@ -66,7 +66,7 @@
             </div>
           </b-field>
 
-          <b-field label="Dates de lieu">
+          <b-field label="Dates de lieu" v-if="false">
             <b-field>
               <b-checkbox
                 v-model="fromPlace"
@@ -85,7 +85,7 @@
             </b-field>
           </b-field>
 
-          <b-field label="Parties du document">
+          <b-field label="Parties du document" v-if="false">
             <b-field>
               <b-checkbox
                 v-model="inAddress"
@@ -124,8 +124,8 @@
       </section>
 
       <section
-        v-if="!popupMode"
-        class="filterbox-container"
+        v-if="!popupMode && false"
+        class="filterbox-container" 
       >
         <header>
           <div class="heading divider is-left">
@@ -181,6 +181,7 @@
           @sorting-priority-removed="sortingPriorityRemoved"
           @page-change="onPageChange"
         >
+        <!--
           <b-table-column
             v-slot="props"
             field="id"
@@ -190,6 +191,7 @@
           >
             {{ props.row.id }}
           </b-table-column>
+          -->
           <b-table-column
             v-slot="props"
             field="label.keyword"
@@ -208,7 +210,7 @@
           >
             {{ props.row.ref }}
           </b-table-column>
-
+<!--
           <b-table-column
             v-slot="props"
             field="coords"
@@ -231,7 +233,7 @@
               <span v-if="placenameCounts[props.row.id] > 1">(s)</span>
             </span>
           </b-table-column>
-
+-->
           <template #empty>
             <div class="has-text-centered">
               Aucun résultat
@@ -431,7 +433,7 @@ export default {
     },
 
     labeledInputTerm() {
-      return `label:*${this.inputTerm}*`;
+      return this.inputTerm ? `label:*${this.inputTerm}*` : null;
     },
 
     showExistingEntity() {
@@ -446,7 +448,7 @@ export default {
     inputTerm() {
       this.setSearchTerm(this.labeledInputTerm);
     },
-
+    /*
     fromPlace() {
       this.recomputeCounts();
     },
@@ -465,6 +467,7 @@ export default {
     inTranscription() {
       this.recomputeCounts();
     },
+    */
 
     selected() {
       if (this.selected) {
@@ -518,7 +521,7 @@ export default {
       this.performSearch();
       this.loadAsyncData();
     },
-
+    /*
     count(pId) {
       const s_pId = pId.toString();
       let countSet = new Set([]);
@@ -589,7 +592,7 @@ export default {
         this.count(p.id);
       }
     },
-
+    */
     resetPriority() {
       console.log("reset");
       this.$refs.multiSortTable.resetMultiSorting();
@@ -657,7 +660,7 @@ export default {
             };
           })
         );
-        this.recomputeCounts();
+        //this.recomputeCounts();
       }
     },
     columnTdAttrs(row, column) {
@@ -716,7 +719,7 @@ export default {
     display: inline-flex;
   }
   .search-container {
-    margin-bottom: 70px;
+    margin-bottom: 40px;
   }
   .searchbox-container {
     display: flex;
