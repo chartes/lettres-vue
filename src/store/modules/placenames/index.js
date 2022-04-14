@@ -383,6 +383,12 @@ const getters = {
         return state.roles.find(role => role.label === label)
     },
 
+    getFunctionsByPlacename: (state) => {
+        return groupbyPlacename(state.included.filter(phr => phr.attributes.function).map(phr => { 
+            return {placenameId: phr.attributes.placename_id, function: phr.attributes.function}
+        }))
+    },
+
     /* used to build the 'placename uses' section in the placename search table rows */
     getIncluded: (state)  => {
         const roles = state.roles

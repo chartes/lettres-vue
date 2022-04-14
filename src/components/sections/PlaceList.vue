@@ -4,38 +4,17 @@
       <section>
         <header />
 
-        <div
-          v-show="showExistingEntity"
-          class="mt-3"
-        >
-          <div><u>Lieu :</u> <span class=""> {{ $attrs.place.label }}</span></div>
-          <div v-if="$attrs.place.ref">
-            <u>Identifant de référence :</u> <span>{{ $attrs.place.ref }}</span>
-          </div>
-          <div><u>Identifant technique :</u> <span>{{ $attrs.place.id }}</span></div>
+        <!--
           <my-awesome-map
-            v-if=" $attrs.place.lat && $attrs.place.long"
+            v-if="$attrs.place.lat && $attrs.place.long"
             :key="$attrs.place.label"
-            :lat-lng="[ $attrs.place.lat, $attrs.place.long]"
+            :lat-lng="[$attrs.place.lat, $attrs.place.long]"
             class="mt-2"
           />
-         
-          <b-button
-            type="is-primary is-light is-pulled-right mt-3"
-            @click="itemModification = true"
-          >
-            Changer de lieu
-          </b-button>
-        </div>
+          -->
 
-        <div
-          v-show="!showExistingEntity"
-          class="searchbox-container"
-        >
-          <b-field
-            label="Lieu"
-            class="term-search"
-          >
+        <div class="searchbox-container">
+          <b-field label="Lieu" class="term-search">
             <div class="field has-addons">
               <div class="control">
                 <input
@@ -44,102 +23,58 @@
                   type="text"
                   placeholder="Paris"
                   @keyup.enter="search"
-                >
+                />
               </div>
               <div class="control">
-                <a
-                  class="button pl-5 pr-5"
-                  @click="search"
-                >
+                <a class="button pl-5 pr-5" @click="search">
                   <span class="icon">
-                    <i
-                      v-if="loadingStatus"
-                      class="fas fa-spinner fa-pulse"
-                    />
-                    <i
-                      v-else
-                      class="fas fa-search"
-                    />
+                    <i v-if="loadingStatus" class="fas fa-spinner fa-pulse" />
+                    <i v-else class="fas fa-search" />
                   </span>
                 </a>
               </div>
             </div>
           </b-field>
 
-          <b-field label="Dates de lieu" v-if="false">
+          <b-field v-if="false" label="Dates de lieu">
             <b-field>
-              <b-checkbox
-                v-model="fromPlace"
-                type="is-info"
-              >
-                Expédition
-              </b-checkbox>
+              <b-checkbox v-model="fromPlace" type="is-info"> Expédition </b-checkbox>
             </b-field>
             <b-field>
-              <b-checkbox
-                v-model="toPlace"
-                type="is-info"
-              >
-                Réception
-              </b-checkbox>
+              <b-checkbox v-model="toPlace" type="is-info"> Réception </b-checkbox>
             </b-field>
           </b-field>
 
-          <b-field label="Parties du document" v-if="false">
+          <b-field v-if="false" label="Parties du document">
             <b-field>
-              <b-checkbox
-                v-model="inAddress"
-                type="is-info"
-              >
-                Adresse
-              </b-checkbox>
+              <b-checkbox v-model="inAddress" type="is-info"> Adresse </b-checkbox>
             </b-field>
 
             <b-field>
-              <b-checkbox
-                v-model="inTranscription"
-                type="is-info"
-              >
+              <b-checkbox v-model="inTranscription" type="is-info">
                 Transcription
               </b-checkbox>
             </b-field>
             <b-field>
-              <b-checkbox
-                v-model="inArgument"
-                type="is-info"
-              >
-                Analyse
-              </b-checkbox>
+              <b-checkbox v-model="inArgument" type="is-info"> Analyse </b-checkbox>
             </b-field>
             <b-field>
-              <b-checkbox
-                v-model="inNotes"
-                type="is-info"
-              >
-                Notes
-              </b-checkbox>
+              <b-checkbox v-model="inNotes" type="is-info"> Notes </b-checkbox>
             </b-field>
           </b-field>
         </div>
       </section>
 
-      <section
-        v-if="!popupMode && false"
-        class="filterbox-container" 
-      >
+      <section v-if="!popupMode && false" class="filterbox-container">
         <header>
-          <div class="heading divider is-left">
-            Filtres
-          </div>
+          <div class="heading divider is-left">Filtres</div>
         </header>
         Document, personne, date, collection
       </section>
     </div>
 
-    <div v-show="!showExistingEntity">
-      <p class="mt-4 mb-1">
-        Environ {{ totalCount }} résultat(s)
-      </p>
+    <div>
+      <p class="mt-4 mb-1">Environ {{ totalCount }} résultat(s)</p>
       <div class="result-container">
         <span class="pagination-goto">
           <span> Page : </span>
@@ -150,7 +85,7 @@
             type="text"
             placeholder="Page..."
             @change.prevent="currentPage = parseInt(p)"
-          >
+          />
         </span>
 
         <b-table
@@ -176,12 +111,11 @@
           :narrowed="true"
           :mobile-cards="true"
           :selected.sync="selected"
-          focusable
           @sort="sortPressed"
           @sorting-priority-removed="sortingPriorityRemoved"
           @page-change="onPageChange"
         >
-        <!--
+          <!--
           <b-table-column
             v-slot="props"
             field="id"
@@ -204,13 +138,27 @@
 
           <b-table-column
             v-slot="props"
+            field="functions"
+            label="Description additionnelle"
+            :td-attrs="columnTdAttrs"
+          >
+            <span class="tags">
+              <span v-for="func in props.row.functions" class="tag is-light" :key="func">
+                {{ func }}
+              </span>
+            </span>
+          </b-table-column>
+
+          <b-table-column
+            v-slot="props"
             field="ref"
             label="Identifiant de référence"
             :td-attrs="columnTdAttrs"
           >
             {{ props.row.ref }}
           </b-table-column>
-<!--
+
+          <!--
           <b-table-column
             v-slot="props"
             field="coords"
@@ -235,15 +183,23 @@
           </b-table-column>
 -->
           <template #empty>
-            <div class="has-text-centered">
-              Aucun résultat
-            </div>
+            <div class="has-text-centered">Aucun résultat</div>
           </template>
 
           <template #detail="props">
-            <div class="detail-td">
+            <div
+              v-if="
+                (fromPlace && props.row.fromPlace.length > 0) ||
+                (toPlace && props.row.toPlace.length > 0) ||
+                (inNotes && props.row.inNotes.length > 0) ||
+                (inAddress && props.row.inAddress.length > 0) ||
+                (inTranscription && props.row.inTranscription.length > 0) ||
+                (inArgument && props.row.inArgument.length > 0)
+              "
+              class="detail-td"
+            >
               <div
-                v-if="fromPlace"
+                v-if="fromPlace && props.row.fromPlace.length > 0"
                 class="columns ref-section-heading"
               >
                 <div class="column is-one-quarter section-title">
@@ -262,7 +218,7 @@
                 </div>
               </div>
               <div
-                v-if="toPlace"
+                v-if="toPlace && props.row.toPlace.length > 0"
                 class="columns ref-section-heading"
               >
                 <div class="column is-one-quarter section-title">
@@ -281,11 +237,13 @@
                 </div>
               </div>
               <div
-                v-if="inAddress"
+                v-if="inAddress && props.row.inAddress.length > 0"
                 class="columns ref-section-heading"
               >
                 <div class="column is-one-quarter section-title">
-                  <span class="heading"> Adresse ({{ props.row.inAddress.length }}) </span>
+                  <span class="heading">
+                    Adresse ({{ props.row.inAddress.length }})
+                  </span>
                 </div>
                 <div class="column">
                   <document-title-bar
@@ -299,7 +257,7 @@
               </div>
 
               <div
-                v-if="inTranscription"
+                v-if="inTranscription && props.row.inTranscription.length > 0"
                 class="columns ref-section-heading"
               >
                 <div class="column is-one-quarter section-title">
@@ -318,11 +276,13 @@
                 </div>
               </div>
               <div
-                v-if="inArgument"
+                v-if="inArgument && props.row.inArgument.length > 0"
                 class="columns ref-section-heading"
               >
                 <div class="column is-one-quarter section-title">
-                  <span class="heading"> Analyse ({{ props.row.inArgument.length }}) </span>
+                  <span class="heading">
+                    Analyse ({{ props.row.inArgument.length }})
+                  </span>
                 </div>
                 <div class="column">
                   <document-title-bar
@@ -335,7 +295,7 @@
                 </div>
               </div>
               <div
-                v-if="inNotes"
+                v-if="inNotes && props.row.inNotes.length > 0"
                 class="columns ref-section-heading"
               >
                 <div class="column is-one-quarter section-title">
@@ -352,6 +312,9 @@
                 </div>
               </div>
             </div>
+            <div v-else class="detail-td is-flex is-align-items-center">
+              <div class="m-3 mx-auto">Aucune utilisation</div>
+            </div>
           </template>
         </b-table>
       </div>
@@ -362,12 +325,13 @@
 <script>
 import { mapState, mapActions, mapGetters } from "vuex";
 import DocumentTitleBar from "../forms/place/DocumentTitleBar.vue";
-import MyAwesomeMap from "@/components/MyAwesomeMap.vue";
+// import MyAwesomeMap from "@/components/MyAwesomeMap.vue";
 
 export default {
   name: "PlaceList",
   components: {
-    DocumentTitleBar, MyAwesomeMap
+    DocumentTitleBar,
+    // MyAwesomeMap,
   },
   props: {
     popupMode: { type: Boolean, default: true },
@@ -375,7 +339,7 @@ export default {
   emit: ["manage-place-data"],
   data() {
     let inputTerm = null;
-  
+
     return {
       itemModification: false,
       selected: null,
@@ -406,6 +370,7 @@ export default {
 
     ...mapGetters("placenames", {
       placenamesHavingRoles: "getIncluded",
+      functionsByPlacename: "getFunctionsByPlacename",
     }),
 
     sortingPriority: {
@@ -435,11 +400,6 @@ export default {
     labeledInputTerm() {
       return this.inputTerm ? `label:*${this.inputTerm}*` : null;
     },
-
-    showExistingEntity() {
-      return this.$attrs.place && this.$attrs.place.id && this.inputTerm === null && !this.itemModification
-    }
-
   },
   watch: {
     placenames() {
@@ -638,6 +598,10 @@ export default {
       if (this.placenames) {
         this.tableData = await Promise.all(
           this.placenames.map(async (p) => {
+            const functions = this.functionsByPlacename[p.id]
+              ? [...new Set(this.functionsByPlacename[p.id].map((item) => item.function))]
+              : [];
+
             return {
               //placeFunction: d.attributes.function,
               //placename: d.placename,
@@ -657,6 +621,7 @@ export default {
                 p.attributes.long !== null && p.attributes.lat !== null
                   ? [p.attributes.long, p.attributes.lat]
                   : null,
+              functions,
             };
           })
         );
@@ -664,23 +629,7 @@ export default {
       }
     },
     columnTdAttrs(row, column) {
-      if (column.label === "Titre") {
-        return {
-          class: "",
-          style: {
-            "max-width": "550px",
-          },
-        };
-      } else if (column.label === "Date de rédaction") {
-        return {
-          class: "",
-          style: {
-            "max-width": "300px",
-          },
-        };
-      } else {
-        return null;
-      }
+      return null;
     },
     /*
      * Handle page-change event

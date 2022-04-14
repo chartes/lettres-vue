@@ -378,8 +378,14 @@ const getters = {
     return state.roles.find(role => role.label === label)
   },
 
-    /* used to build the 'person uses' section in the person search table rows */
-    getIncluded: (state)  => {
+  getFunctionsByPerson: (state) => {
+    return groupByPerson(state.included.filter(phr => phr.attributes.function).map(phr => { 
+        return {personId: phr.attributes.person_id, function: phr.attributes.function}
+    }))
+  },
+
+  /* used to build the 'person uses' section in the person search table rows */
+  getIncluded: (state)  => {
       const roles = state.roles
       let inlinedRole = roles.find(r => r.label === 'inlined')
       let senderRole = roles.find(r => r.label === 'sender')
