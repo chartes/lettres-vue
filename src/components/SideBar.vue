@@ -12,15 +12,23 @@
         Recherche avancée
       </b-button>
     </router-link>
-    <p class="menu-label">Général</p>
+    <p class="menu-label">
+      Général
+    </p>
     <ul class="menu-list">
       <li>
-        <router-link :to="{ name: 'home' }" exact-active-class="is-active">
+        <router-link
+          :to="{ name: 'home' }"
+          exact-active-class="is-active"
+        >
           <i class="fas fa-home" />Accueil
         </router-link>
       </li>
       <li>
-        <router-link :to="{ name: 'about' }" active-class="is-active">
+        <router-link
+          :to="{ name: 'about' }"
+          active-class="is-active"
+        >
           <i class="fas fa-question-circle" />À propos
         </router-link>
       </li>
@@ -34,43 +42,80 @@
       </li>
 
       <li>
-        <router-link :to="{ name: 'documentation' }" active-class="is-active">
+        <router-link
+          :to="{ name: 'documentation' }"
+          active-class="is-active"
+        >
           <i class="fas fa-info-circle" />Documentation
         </router-link>
       </li>
       <li>
-        <router-link :to="{ name: 'search' }" exact-active-class="is-active">
+        <router-link
+          :to="{ name: 'search' }"
+          exact-active-class="is-active"
+        >
           <i class="fas fa-search" />Documents
         </router-link>
       </li>
     </ul>
-    <p v-if="current_user" class="menu-label">Mes travaux</p>
-    <ul v-if="current_user" class="menu-list">
+    <p
+      v-if="current_user"
+      class="menu-label"
+    >
+      Mes travaux
+    </p>
+    <ul
+      v-if="current_user"
+      class="menu-list"
+    >
       <li>
-        <router-link :to="{ name: 'bookmarks' }" active-class="is-active">
+        <router-link
+          :to="{ name: 'bookmarks' }"
+          active-class="is-active"
+        >
           <i class="fas fa-bookmark" />Mes favoris
         </router-link>
       </li>
       <li>
-        <router-link :to="{ name: 'history' }" active-class="is-active">
+        <router-link
+          :to="{ name: 'history' }"
+          active-class="is-active"
+        >
           <i class="fas fa-history" />Mon historique
         </router-link>
       </li>
       <li>
-        <router-link :to="{ name: 'locks' }" active-class="is-active">
+        <router-link
+          :to="{ name: 'locks' }"
+          active-class="is-active"
+        >
           <i class="fas fa-lock" />Mes verrous
         </router-link>
       </li>
     </ul>
-    <p v-if="current_user" class="menu-label">Administration</p>
-    <ul v-if="current_user" class="menu-list">
+    <p
+      v-if="current_user"
+      class="menu-label"
+    >
+      Administration
+    </p>
+    <ul
+      v-if="current_user"
+      class="menu-list"
+    >
       <li>
-        <router-link :to="{ name: 'document-creation' }" active-class="is-active">
+        <router-link
+          :to="{ name: 'document-creation' }"
+          active-class="is-active"
+        >
           <i class="fas fa-file-alt" />Documents
         </router-link>
       </li>
       <li>
-        <router-link :to="{ name: 'collections' }" active-class="is-active">
+        <router-link
+          :to="{ name: 'collections' }"
+          active-class="is-active"
+        >
           <i class="fas fa-list" />Collections
         </router-link>
       </li>
@@ -78,12 +123,18 @@
         <a class="">Gestion des référentiels</a>
         <ul>
           <li>
-            <router-link :to="{ name: 'places' }" active-class="is-active">
+            <router-link
+              :to="{ name: 'places' }"
+              active-class="is-active"
+            >
               <i class="fas fa-map-marker-alt" />Lieux identifiés
             </router-link>
           </li>
           <li>
-            <router-link :to="{ name: 'persons' }" active-class="is-active">
+            <router-link
+              :to="{ name: 'persons' }"
+              active-class="is-active"
+            >
               <i class="fas fa-users" />Personnes identifiées
             </router-link>
           </li>
@@ -93,7 +144,10 @@
         <a class="">Gestion des témoins</a>
         <ul>
           <li>
-            <router-link :to="{ name: 'witnesses' }" active-class="is-active">
+            <router-link
+              :to="{ name: 'witnesses' }"
+              active-class="is-active"
+            >
               <i class="fas fa-book" />Témoins
             </router-link>
           </li>
@@ -103,7 +157,10 @@
         <a class="">Gestion des collaborateurs</a>
         <ul>
           <li>
-            <router-link :to="{ name: 'users' }" active-class="is-active">
+            <router-link
+              :to="{ name: 'users' }"
+              active-class="is-active"
+            >
               <i class="fas fa-users-cog" />Collaborateurs
             </router-link>
           </li>

@@ -90,7 +90,7 @@
         spellcheck="false"
       />
       <note-actions
-        v-show="selectedNoteId && this.editor.hasFocus()"
+        v-show="selectedNoteId && editor.hasFocus()"
         refs="noteActions"
         :style="actionsPosition"
         :new-note="setNoteEditModeNew"
@@ -118,64 +118,58 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
+import EditorButton from "./EditorButton.vue";
+import EditorMixins from "../editor/EditorMixins";
+import EditorNotesMixins from "../editor/EditorNotesMixins";
+import TextfieldForm from "../TextfieldForm";
+import NoteActions from "../editor/NoteActions";
+import NewNoteActions from "../editor/NewNoteActions";
 
-  import { mapState } from 'vuex'
-  import EditorButton from './EditorButton.vue';
-  import EditorMixins from '../editor/EditorMixins'
-  import EditorNotesMixins from '../editor/EditorNotesMixins'
-  import TextfieldForm from '../TextfieldForm';
-  import NoteActions from '../editor/NoteActions';
-  import NewNoteActions from '../editor/NewNoteActions';
-
-  export default {
-    name: "TranscriptionEditor",
-    components: {
-      NewNoteActions,
-      NoteActions,
-      TextfieldForm,
-      EditorButton,
-    },
-    mixins: [EditorMixins, EditorNotesMixins],
-    props: {initialContent: { type: String }},
-    data() {
-      return {
-        storeActions: {
-          changed: null//'transcription/changed'
-        },
-        delta: null,
-        buttons: {
-          bold: false,
-          italic: false,
-          superscript: false,
-          underline: false,
-          del: false,
-          person: false,
-          location: false,
-          note: false,
-          paragraph: false,
-        }
-      }
-    },
-    mounted () {
-
-      this.initEditor(this.$refs.editor, this.$props.initialContent);
-
-    },
-    beforeDestroy () {
-      this.deactivateEvents();
-    },
-    methods: {
-
-      updateContent () {
-        this.delta = this.editor.getContents().ops;
-
+export default {
+  name: "TranscriptionEditor",
+  components: {
+    NewNoteActions,
+    NoteActions,
+    TextfieldForm,
+    EditorButton,
+  },
+  mixins: [EditorMixins, EditorNotesMixins],
+  props: { initialContent: { type: String, default: "" } },
+  data() {
+    return {
+      storeActions: {
+        changed: null, //'transcription/changed'
       },
+      delta: null,
+      buttons: {
+        bold: false,
+        italic: false,
+        superscript: false,
+        underline: false,
+        del: false,
+        person: false,
+        location: false,
+        note: false,
+        paragraph: false,
+      },
+    };
+  },
 
+  computed: {
+    ...mapState("transcription", ["transcriptionSaved"]),
+    ...mapState("translation", ["translationSaved"]),
+  },
+  mounted() {
+    this.initEditor(this.$refs.editor, this.$props.initialContent);
+  },
+  beforeDestroy() {
+    this.deactivateEvents();
+  },
+  methods: {
+    updateContent() {
+      this.delta = this.editor.getContents().ops;
     },
-
-    computed: {
-      ...mapState('transcription', ['transcriptionSaved']),
-      ...mapState('translation', ['translationSaved']),
-    }
-  }
+  },
+};
 </script>

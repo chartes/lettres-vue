@@ -233,7 +233,8 @@ const actions = {
       inlined[parseInt(_id)] = field.join(',')
     }
     console.log('@@saving inlined placenames:', inlined);
-        
+    await this.dispatch("placenames/fetchRoles");
+
     // s'il y a des matches
     // ajout / mise à jour / suppression
     if (IdsInTranscription.length > 0 || IdsInAddress.length > 0) {
@@ -280,7 +281,8 @@ const actions = {
       inlined[parseInt(_id)] = field.join(',')
     }
     console.log('@@saving inlined persons:', inlined);
-        
+    await this.dispatch("persons/fetchRoles");
+    
     // s'il y a des matches
     // ajout / mise à jour / suppression
     if (IdsInTranscription.length > 0 || IdsInAddress.length > 0) {

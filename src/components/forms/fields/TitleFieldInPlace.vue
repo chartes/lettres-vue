@@ -91,6 +91,7 @@ export default {
     },
     specificClass: {
       default: null,
+      type: String,
     },
   },
   computed: {
@@ -147,8 +148,8 @@ export default {
       });
     },
     addNote(evt) {
-      this.$emit("add-note", { ...evt })
-    }
+      this.$emit("add-note", { ...evt });
+    },
   },
 };
 </script>

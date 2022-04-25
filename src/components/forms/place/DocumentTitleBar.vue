@@ -3,10 +3,14 @@
     <router-link :to="{ name: 'document', params: { docId } }">
       <div class="tags has-addons">
         <span class="tag doc-id is-primary"> Doc {{ docId }}</span>
-        <span class="tag doc-creation-label" v-html="creationLabel">{{
-          creationLabel
-        }}</span>
-        <span class="tag doc-title" v-html="title" />
+        <span
+          class="tag doc-creation-label"
+          v-html="creationLabel"
+        />
+        <span
+          class="tag doc-title"
+          v-html="title"
+        />
       </div>
     </router-link>
   </div>
@@ -15,7 +19,11 @@
 <script>
 export default {
   name: "DocumentTitleBar",
-  props: ["docId", "title", "creationLabel"],
+  props: {
+    docId: {type: Number, default: null},
+    title: {type: String, default: ''},
+    creationLabel: {type: String, default: ''}
+  }
 };
 </script>
 

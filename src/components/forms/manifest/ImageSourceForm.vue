@@ -21,9 +21,19 @@
     </div>
     <div class="division" />
 
-    <div v-if="selected" class="input-form">
-      <div v-if="selected.name === 'gallica'" class="gallica-form">
-        <b-field label="URL de la ressource" :message="loadingMsg" :type="loadingMsgType">
+    <div
+      v-if="selected"
+      class="input-form"
+    >
+      <div
+        v-if="selected.name === 'gallica'"
+        class="gallica-form"
+      >
+        <b-field
+          label="URL de la ressource"
+          :message="loadingMsg"
+          :type="loadingMsgType"
+        >
           <b-input
             v-model="inputGallicaUrl"
             class="url-input"
@@ -44,29 +54,42 @@
           </p>
         </b-field>
 
-        <b-message v-if="pagesHaveBeenCollected" type="is-warning is-small" has-icon>
+        <b-message
+          v-if="pagesHaveBeenCollected"
+          type="is-warning is-small"
+          has-icon
+        >
           Impossible de changer la source du document pour le moment. Supprimez toutes les
           pages collectées et réessayez.
         </b-message>
 
-        <div v-if="manifest" class="source-desc block">
+        <div
+          v-if="manifest"
+          class="source-desc block"
+        >
           <article class="media">
             <div class="media-left">
               <figure class="image is-64x64">
-                <img :src="manifest.logo" alt="Image" />
+                <img
+                  :src="manifest.logo"
+                  alt="Image"
+                >
               </figure>
             </div>
             <div class="media-content">
               <div class="content">
                 <p>
                   <strong>{{ manifest.label }}</strong>
-                  <br /><small>{{ manifest.attribution }}</small> <br /><br />
+                  <br><small>{{ manifest.attribution }}</small> <br><br>
                   {{ manifest.description }}
                 </p>
               </div>
               <nav class="level is-mobile">
                 <div class="level-left">
-                  <a class="level-item" aria-label="reply">
+                  <a
+                    class="level-item"
+                    aria-label="reply"
+                  >
                     {{ manifest.license }}
                   </a>
                 </div>

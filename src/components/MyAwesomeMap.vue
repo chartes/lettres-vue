@@ -1,9 +1,19 @@
 <template>
   <div class="l-map">
-    <l-map ref="map" :zoom="zoom" :center="center">
-      <l-tile-layer :url="url" :attribution="attribution" />
+    <l-map
+      ref="map"
+      :zoom="zoom"
+      :center="center"
+    >
+      <l-tile-layer
+        :url="url"
+        :attribution="attribution"
+      />
 
-      <l-marker :lat-lng="latLng" :icon="redIcon" />
+      <l-marker
+        :lat-lng="latLng"
+        :icon="redIcon"
+      />
     </l-map>
   </div>
 </template>

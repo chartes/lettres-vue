@@ -25,21 +25,43 @@
           </div>
         </section>
       </template>
-      <b-table-column v-slot="props" field="id" label="Document" sortable width="400">
+      <b-table-column
+        v-slot="props"
+        field="id"
+        label="Document"
+        sortable
+        width="400"
+      >
         <document-tag-bar
           :key="props.row.id"
           :doc-id="props.row.id"
           :with-status="false"
         />
       </b-table-column>
-      <b-table-column v-slot="props" field="title" label="Titre" width="500" sortable>
+      <b-table-column
+        v-slot="props"
+        field="title"
+        label="Titre"
+        width="500"
+        sortable
+      >
         <span v-html="props.row.title" />
       </b-table-column>
 
-      <b-table-column v-slot="props" field="witnesses" label="Témoins">
+      <b-table-column
+        v-slot="props"
+        field="witnesses"
+        label="Témoins"
+      >
         <ul>
-          <li v-for="witness in props.row.witnesses" :key="witness.id">
-            <span style="font-size: 0.8em" v-html="witness.attributes.content" />
+          <li
+            v-for="witness in props.row.witnesses"
+            :key="witness.id"
+          >
+            <span
+              style="font-size: 0.8em"
+              v-html="witness.attributes.content"
+            />
           </li>
         </ul>
       </b-table-column>

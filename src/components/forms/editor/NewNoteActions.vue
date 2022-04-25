@@ -61,45 +61,46 @@
 </template>
 
 <script>
-    import {mapState} from 'vuex'
-  export default {
-    name: "NewNoteActions",
-    props: {
-      modeNew: {
-        type: Function,
-        required: true
-      },
-      modeLink: {
-        type: Function,
-        required: true
-      },
-      cancel: {
-        type: Function,
-        //required: true
-      }
+import { mapState } from "vuex";
+export default {
+  name: "NewNoteActions",
+  props: {
+    modeNew: {
+      type: Function,
+      required: true,
     },
-    mounted () {
-      if (!this.notes || this.notes.length === 0) {
-          console.log('=> new and first')
-        this.chooseModeNew()
-      }
+    modeLink: {
+      type: Function,
+      required: true,
     },
-    methods: {
-      chooseModeNew () {
-        this.modeNew();
-      },
-      chooseModeLink () {
-        this.modeLink();
-      },
-      chooseModeAction () {
-        this.chooseMode();
-      },
-      cancelAction () {
-        this.cancel();
-      }
+    cancel: {
+      type: Function,
+      default: () => {},
+      //required: true
     },
-    computed: {
-      ...mapState('notes', ['notes'])
+  },
+  computed: {
+    ...mapState("notes", ["notes"]),
+  },
+  mounted() {
+    if (!this.notes || this.notes.length === 0) {
+      console.log("=> new and first");
+      this.chooseModeNew();
     }
-  }
+  },
+  methods: {
+    chooseModeNew() {
+      this.modeNew();
+    },
+    chooseModeLink() {
+      this.modeLink();
+    },
+    chooseModeAction() {
+      this.chooseMode();
+    },
+    cancelAction() {
+      this.cancel();
+    },
+  },
+};
 </script>

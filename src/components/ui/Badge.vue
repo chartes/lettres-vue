@@ -22,60 +22,66 @@
 </template>
 
 <script>
-  export default {
-    name: "Badge",
-    props: {
-        classesActive: {},
-        classesInactive: {},
-        actionWhenOn: {type: Function},
-        actionWhenOff: {type: Function},
-        startsOn: {default: false}
+export default {
+  name: "Badge",
+  props: {
+    classesActive: { type: String, default: "" },
+    classesInactive: { type: String, default: "" },
+    actionWhenOn: { type: Function, default: () => {} },
+    actionWhenOff: { type: Function, default: () => {} },
+    startsOn: { default: false, type: Boolean },
+  },
+  data() {
+    return {
+      isActive: this.startsOn,
+    };
+  },
+  computed: {
+    myclasses() {
+      return this.isActive ? this.classesActive : this.classesInactive;
     },
-    data() {
-        return {
-          isActive : this.startsOn
+  },
+  watch: {
+    startsOn: function () {
+      this.isActive = this.startsOn;
+    },
+  },
+  created() {},
+  methods: {
+    toggle() {
+      if (this.isActive) {
+        if (!this.actionWhenOff) {
+          this.isActive = false;
+          return;
         }
-    },
-    computed: {
-        myclasses() {return this.isActive ? this.classesActive: this.classesInactive},
-    },
-    watch: {
-        startsOn: function(){
-            this.isActive = this.startsOn;
+        this.actionWhenOff()
+          .then((resp) => {
+            this.isActive = resp;
+          })
+          .catch((resp) => {
+            console.warn(resp);
+          });
+      } else {
+        if (!this.actionWhenOn) {
+          this.isActive = true;
+          return;
         }
+        this.actionWhenOn()
+          .then((resp) => {
+            this.isActive = resp;
+          })
+          .catch((resp) => {
+            console.warn(resp);
+          });
+      }
     },
-    created(){
-    },
-    methods: {
-        toggle() {
-           if (this.isActive) {
-               if (!this.actionWhenOff) {
-                   this.isActive = false;
-                   return
-               }
-               this.actionWhenOff().then(resp => {
-                   this.isActive = resp;
-               }).catch(resp => {
-                   console.warn(resp);
-               });
-           } else {
-               if (!this.actionWhenOn) {
-                   this.isActive = true;
-                   return
-               }
-               this.actionWhenOn().then(resp => {
-                   this.isActive = resp;
-               }).catch(resp => {
-                   console.warn(resp);
-               });
-           }
-        }
-    }
-  }
+  },
+};
 </script>
 
 <style scoped>
-    .badge:hover, label:hover {
-        cursor: pointer;
-    }
+.badge:hover,
+label:hover {
+  cursor: pointer;
+}
 </style>

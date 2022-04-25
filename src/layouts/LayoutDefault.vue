@@ -1,16 +1,22 @@
 <template>
   <section class="main">
     <nav-bar />
-    <section class="section" style="height: 100%">
+    <section
+      class="section"
+      style="height: 100%"
+    >
       <div class="columns">
-        <div v-show="showLeftSideBar" class="column is-2">
+        <div
+          v-show="showLeftSideBar"
+          class="column is-2"
+        >
           <side-bar />
         </div>
         <div
           class="column main-column"
           :style="
             (showLeftSideBar ? 'padding-left: 0;' : '') +
-            (rightSideBarIsVisible ? 'padding-right: 0;' : '')
+              (rightSideBarIsVisible ? 'padding-right: 0;' : '')
           "
         >
           <div style="display: flex">
@@ -52,7 +58,7 @@
           <img
             class="enc-logo ml-5 pt-3"
             src="@/assets/images/logos/logo-ecole-nationale-des-chartes-header.png"
-          />
+          >
         </div>
       </nav>
     </footer>
@@ -83,7 +89,7 @@ export default {
     ...mapState("document", ["document", "witnesses"]),
 
     rightSideBarIsVisible() {
-      return this.showRightSideBar && ["document"].indexOf(this.$route.name) > -1;
+      return this.showRightSideBar;
     },
   },
   watch: {
@@ -94,8 +100,10 @@ export default {
         //this.$emit("refresh-viewer");
       }
     },
+    "document.id"() {
+      this.setDisplayedManifestUrl(null);
+    },
     witnesses() {
-      console.log("emission refresh-viewer");
       this.$emit("refresh-viewer");
     },
     showRightSideBar() {
@@ -110,6 +118,7 @@ export default {
       "toggleLeftSideBar",
       "toggleRightSideBar",
       "hideRightSideBar",
+      "setDisplayedManifestUrl",
     ]),
   },
 };

@@ -53,11 +53,11 @@ export default {
       form: "",
     };
   },
-  mounted() {
-    this.form = this.document.argument || "";
-  },
   computed: {
     ...mapState("document", ["document"]),
+  },
+  mounted() {
+    this.form = this.document.argument || "";
   },
   methods: {
     addPlace(evt, source) {
@@ -67,8 +67,8 @@ export default {
       this.$emit("add-person", { ...evt, source });
     },
     addNote(evt) {
-      this.$emit("add-note", {...evt})
-    }
+      this.$emit("add-note", { ...evt });
+    },
   },
 };
 </script>

@@ -1,5 +1,9 @@
 <template>
-  <div v-show="viewer" id="vue-mirador-container" @refresh-viewer="updateCurrentWindow" />
+  <div
+    v-show="viewer"
+    id="vue-mirador-container"
+    @refresh-viewer="updateCurrentWindow"
+  />
 </template>
 
 <script>

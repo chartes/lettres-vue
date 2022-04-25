@@ -33,7 +33,7 @@
         </div>
       </li>
     </ol>
-   
+
     <modal-confirm-note-delete
       v-if="noteId"
       :note-id="noteId"
@@ -65,10 +65,16 @@ export default {
   emits: ["add-note"],
   data() {
     return {
-      noteId: null
+      noteId: null,
     };
   },
-  mounted() {},
+
+  computed: {
+    ...mapState("document", ["document", "notes", "witnesses"]),
+    noteItemClass() {
+      return this.editable ? "note-item--editable" : false;
+    },
+  },
   methods: {
     confirmNoteDelete(noteId) {
       this.$store.dispatch("document/removeNote", noteId).then((noteId) => {
@@ -81,9 +87,9 @@ export default {
       this.noteId = false;
     },
     openNoteEdit(note) {
-      this.$emit('add-note', {note})
+      this.$emit("add-note", { note });
     },
- 
+
     removeNoteFromDocument(noteId) {
       const pattern = new RegExp(
         '<a class="note" href="#' + noteId + '">\\[note\\]<\\/a>',
@@ -181,13 +187,6 @@ export default {
       });
     },
   },
-  computed: {
-    ...mapState("document", ["document", "notes", "witnesses"]),
-    noteItemClass() {
-      return this.editable ? "note-item--editable" : false;
-    },
-  },
-  watch: {},
 };
 </script>
 

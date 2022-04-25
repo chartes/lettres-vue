@@ -26,41 +26,39 @@
 </template>
 
 <script>
+import ModalForm from "./ModalForm";
 
-  import ModalForm from './ModalForm';
-
-  export default {
-    name: "TextfieldForm",
-    components: {
-      ModalForm
+export default {
+  name: "TextfieldForm",
+  components: {
+    ModalForm,
+  },
+  props: {
+    title: { type: String, default: "" },
+    label: { type: String, default: "" },
+    value: { type: String, default: "" },
+    cancel: { type: Function, default: () => {} },
+    submit: { type: Function, default: () => {} },
+    remove: { type: Function, default: () => {} },
+  },
+  data() {
+    return {
+      form: this.value,
+    };
+  },
+  mounted() {
+    this.$refs.field.focus();
+  },
+  methods: {
+    submitAction() {
+      this.$props.submit(this.form);
     },
-    props: {
-      title: { type: String, default: '' },
-      label: { type: String, default: '' },
-      value: { type: String, default: '' },
-      cancel: { type: Function },
-      submit: { type: Function },
-      remove: { type: Function },
+    cancelAction() {
+      this.$props.cancel();
     },
-    data() {
-      return {
-        form: this.value
-      }
+    removeAction() {
+      this.$props.cancel();
     },
-    mounted () {
-      this.$refs.field.focus()
-    },
-    methods: {
-
-      submitAction () {
-        this.$props.submit(this.form);
-      },
-      cancelAction () {
-        this.$props.cancel();
-      },
-      removeAction () {
-        this.$props.cancel();
-      }
-    }
-  }
+  },
+};
 </script>

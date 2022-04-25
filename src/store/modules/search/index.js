@@ -209,7 +209,7 @@ const actions = {
     } catch (e) {
       cdfFormatted = null
       cdtFormatted = null
-      console.log(e)
+      //console.log(e)
     }
 
     let creationDateRange = ''

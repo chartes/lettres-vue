@@ -68,11 +68,12 @@ const actions = {
   },
   fetchRoles ({ rootState, commit }) {
     const http = http_with_auth(rootState.user.jwt);
-    http.get(`/person-roles?without-relationships`).then( response => {
+    return http.get(`/person-roles?without-relationships`).then( response => {
       const roles = response.data.data.map( r =>  {
         return { id: r.id, ...r.attributes, }
       })
       commit('UPDATE_ROLES', roles)
+      console.log('UPDATE ROLES', roles)
     });
   },
   fetchPersonsHavingRoles({commit, rootState}) {
@@ -155,8 +156,10 @@ const actions = {
     const response = await http.get(`persons?page[size]=1&without-relationships&filter[ref]=${ref}`)
     return response.data.meta['total-count']
   },
-  async updateInlinedRole({state, rootState}, {inlined}) {
+  async updateInlinedRole({state, rootState, dispatch}, {inlined}) {
     const http = http_with_auth(rootState.user.jwt);
+    await dispatch("fetchRoles");
+
     const inlinedRole = state.roles.find(r => r.label === 'inlined')
     
     console.log('foreach inlined found in argument and transcription...')
@@ -164,14 +167,12 @@ const actions = {
     for (let [personId, personField] of Object.entries(inlined)) {  
 
         personId = parseInt(personId)
-   
+
         let personsHavingRoles = await http.get(`/documents/${rootState.document.document.id}/persons-having-roles`)
         console.log('inlined:', [personId, personField])
         console.log('personsHavingRoles (db)', personsHavingRoles.data)
         console.log('inlinedRole:', inlinedRole)
-
         const found = personsHavingRoles.data.data.find(phr => {
-            console.log(phr.relationships['person-role'].data.id === inlinedRole.id, phr.relationships.document.data.id === rootState.document.document.id, phr.relationships.person.data.id === personId,  phr.relationships.person.data.id, personId   )
             return phr.relationships['person-role'].data.id === inlinedRole.id && phr.relationships.document.data.id === rootState.document.document.id && phr.relationships.person.data.id === personId                
         }) 
 

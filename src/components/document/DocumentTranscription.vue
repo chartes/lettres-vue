@@ -60,7 +60,7 @@
     </div>
 
     <document-notes
-      :editable="editable" 
+      :editable="editable"
       @add-place="addPlace($event, 'note')"
       @add-person="addPerson($event, 'note')"
       @add-note="addNote($event)"
@@ -90,6 +90,10 @@ export default {
       addressContent: "",
     };
   },
+
+  computed: {
+    ...mapState("document", ["document"]),
+  },
   mounted() {
     this.transcriptionContent = this.document.transcription || "";
     this.addressContent = this.document.address || "";
@@ -102,13 +106,9 @@ export default {
       this.$emit("add-person", { ...evt, source });
     },
     addNote(evt) {
-      this.$emit("add-note", { ...evt })
-    }
+      this.$emit("add-note", { ...evt });
+    },
   },
-  computed: {
-    ...mapState("document", ["document"]),
-  },
-  watch: {},
 };
 </script>
 

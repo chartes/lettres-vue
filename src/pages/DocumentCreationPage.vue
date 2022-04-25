@@ -12,8 +12,8 @@
       <b-button
         type="is-primary"
         label="Créer le document"
-        @click="createNewDocument"
         :loading="loading"
+        @click="createNewDocument"
       />
     </section>
   </div>

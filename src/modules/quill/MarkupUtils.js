@@ -201,7 +201,7 @@ String.prototype.insert = function (index, string) {
 
 const insertNotes = (text, notes) => {
 
-  console.group(`%c insertNotes`, 'color:orange')
+  //console.group(`%c insertNotes`, 'color:orange')
   const notePointers = computeQuillPointersFromTEIPointers(text, notes)
   console.log("%c notePointers =>", 'color:orange', notePointers)
 
@@ -213,7 +213,7 @@ const insertNotes = (text, notes) => {
     shadowQuill.formatText(note.ptr_start, note.ptr_end - note.ptr_start, 'note', note.id, 'api')
     console.log(`%c # ${shadowQuillElement.children[0].innerHTML}`, 'color:orange')
   })
-  console.groupEnd()
+  //console.groupEnd()
   return shadowQuillElement.children[0].innerHTML;
 
   /*let result = text;
@@ -275,7 +275,7 @@ const insertSegments = (text, segments, translationOrTranscription) => {
 };
 const insertNotesAndSegments  = (text, notes, segments, translationOrTranscription) => {
 
-  console.group(`%c insertNotesAndSegments ${translationOrTranscription}`, 'color:orange')
+  //console.group(`%c insertNotesAndSegments ${translationOrTranscription}`, 'color:orange')
   const notePointers = computeQuillPointersFromTEIPointers(text, notes)
   console.log("%c notePointers =>", 'color:orange', notePointers)
 
@@ -299,7 +299,7 @@ const insertNotesAndSegments  = (text, notes, segments, translationOrTranscripti
     indexCorrection++
   })
 
-  console.groupEnd()
+  //console.groupEnd()
   return shadowQuillElement.children[0].innerHTML;
 
   //return text
@@ -369,17 +369,17 @@ const computeQuillPointersFromTEIPointers = (text, teiPointer) => {
     return []
   }
 
-  console.group(`%c computeQuillPointersFromTEIPointers ${text}`, 'color:green')
+  //console.group(`%c computeQuillPointersFromTEIPointers ${text}`, 'color:green')
   console.log(text)
 
   // deals with space between beginning of the text and first note
-  const sanitizePattern = /<(([\/a-z])+\b[^>]*)>/gi
+  const sanitizePattern = /<(([/a-z])+\b[^>]*)>/gi
   let count = 0;
   let delta = 0;
   const quillPointers = teiPointer.map(pointer => {
 
     const start = count > 0 ? teiPointer[count-1].ptr_end : 0;
-    console.group("%c ###", 'color:green', count, pointer.ptr_start, pointer.ptr_end)
+    //console.group("%c ###", 'color:green', count, pointer.ptr_start, pointer.ptr_end)
 
     const startText = text.substring(start, pointer.ptr_start);
     const startTextSanitized = startText.replace(sanitizePattern, '')
@@ -398,11 +398,11 @@ const computeQuillPointersFromTEIPointers = (text, teiPointer) => {
 
     let quillPointer = { ...pointer, ptr_start: startIndex, ptr_end: endIndex}
     console.log("%c =>", 'color:green', startIndex, endIndex, quillPointer)
-    console.groupEnd()
+    //console.groupEnd()
     count++;
     return quillPointer
   });
-  console.groupEnd()
+  //console.groupEnd()
   return quillPointers
 }
 const computeQuillIndicesFromTEIIndices = (text, teiIndices) => {
@@ -412,17 +412,17 @@ const computeQuillIndicesFromTEIIndices = (text, teiIndices) => {
     return []
   }
 
-  console.group(`%c computeQuillIndicesFromTEIIndices ${text}`, 'color:pink')
+  //console.group(`%c computeQuillIndicesFromTEIIndices ${text}`, 'color:pink')
   console.log(text)
 
   // deals with space between beginning of the text and first note
-  const sanitizePattern = /<(([\/a-z])+\b[^>]*)>/gi
+  const sanitizePattern = /<(([/a-z])+\b[^>]*)>/gi
   let count = 0;
   let delta = 0;
   const quillPointers = teiIndices.map(index => {
 
     const start = count > 0 ? teiIndices[count-1] : 0;
-    console.group("%c ###", 'color:pink', count, start, index)
+    //console.group("%c ###", 'color:pink', count, start, index)
 
     const startText = text.substring(start, index);
     const startTextSanitized = startText.replace(sanitizePattern, '')
@@ -432,11 +432,11 @@ const computeQuillIndicesFromTEIIndices = (text, teiIndices) => {
     console.log(`%c before (${start} => ${index}): '${startTextSanitized}' =>${startIndex} delta=${delta}`, 'color:pink')
 
     console.log("%c =>", 'color:pink', startIndex)
-    console.groupEnd()
+    //console.groupEnd()
     count++;
     return startIndex
   });
-  console.groupEnd()
+  //console.groupEnd()
   return quillPointers
 }
 
@@ -500,7 +500,7 @@ const computeNotesPointers  = (htmlWithNotes) => {
   htmlWithNotes = sanitizeHtmlWithNotesForSave(htmlWithNotes)
 
 
-  console.group("%c ###########################################", 'color:DarkOrchid')
+  //console.group("%c ###########################################", 'color:DarkOrchid')
   console.log("%c computeNotesPointers", 'color:DarkOrchid', htmlWithNotes)
   console.log("%c ######", 'color:DarkOrchid')
 
@@ -525,7 +525,7 @@ const computeNotesPointers  = (htmlWithNotes) => {
   console.warn('%c computeNotesPointers', 'color:DarkOrchid', notes.length, notes)
 
   console.log("%c ###########################################", 'color:DarkOrchid')
-  console.groupEnd()
+  //console.groupEnd()
   return notes;
 }
 

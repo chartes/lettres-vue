@@ -27,34 +27,31 @@
 </template>
 
 <script>
-  import FieldLabel from './FieldLabel';
-  import IconPenEdit from '../../ui/icons/IconPenEdit';
-  import TextFieldMixins from './TextFieldMixins';
-  export default {
-    name: 'TextField',
-    components: {FieldLabel},
-    props: {
-      value: {},
-      label: { type: String },
-      type: { type: String, default: 'text' },
-      maxlength: { type: String, default: null },
-      minlength: { type: String, default: null },
-      pattern: { type: String, default: null },
-      placeholder: { type: String, default: null },
-      readonly: { type: Boolean, default: false },
-      size: { type: Number, default: null },
-      spellcheck: { type: Boolean, default: false },
-      required: { type: Boolean, default: false },
-      tabindex: {},
-	    disabled: {type: Boolean, default: false}
+import FieldLabel from "./FieldLabel";
+export default {
+  name: "TextField",
+  components: { FieldLabel },
+  props: {
+    value: { type: String, default: "" },
+    label: { type: String, default: "" },
+    type: { type: String, default: "text" },
+    maxlength: { type: String, default: null },
+    minlength: { type: String, default: null },
+    pattern: { type: String, default: null },
+    placeholder: { type: String, default: null },
+    readonly: { type: Boolean, default: false },
+    size: { type: Number, default: null },
+    spellcheck: { type: Boolean, default: false },
+    required: { type: Boolean, default: false },
+    tabindex: { type: Number, default: null },
+    disabled: { type: Boolean, default: false },
+  },
+  methods: {
+    updateField() {
+      this.$emit("input", this.$refs.field.value);
     },
-    methods: {
-      updateField() {
-        this.$emit('input', this.$refs.field.value)
-      }
-    }
-  }
+  },
+};
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

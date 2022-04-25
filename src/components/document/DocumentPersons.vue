@@ -1,7 +1,10 @@
 <template>
   <section class="document-correspondents">
     <div class="panel">
-      <div class="panel-block" style="display: inline-block; width: 100%">
+      <div
+        class="panel-block"
+        style="display: inline-block; width: 100%"
+      >
         <div class="heading mb-2">
           Expéditeur{{ documentSender.length > 1 ? "s" : "" }}
           <a
@@ -20,7 +23,10 @@
             class="tags has-addons are-medium correspondent-item mb-1"
           >
             <span class="tag">
-              <a :href="c.person.ref" target="_blank">
+              <a
+                :href="c.person.ref"
+                target="_blank"
+              >
                 {{
                   !!c.relation.function
                     ? `${c.person.label}, ${c.relation.function}`
@@ -41,7 +47,10 @@
           </p>
         </div>
       </div>
-      <div class="panel-block" style="display: inline-block; width: 100%">
+      <div
+        class="panel-block"
+        style="display: inline-block; width: 100%"
+      >
         <div class="heading mb-2">
           Destinataire{{ documentRecipients.length > 1 ? "s" : "" }}
           <a
@@ -60,7 +69,10 @@
             class="tags has-addons are-medium correspondent-item mb-1"
           >
             <span class="tag">
-              <a :href="c.person.ref" target="_blank">
+              <a
+                :href="c.person.ref"
+                target="_blank"
+              >
                 {{
                   !!c.relation.function
                     ? `${c.person.label}, ${c.relation.function}`
@@ -101,7 +113,9 @@ export default {
   data() {
     return {};
   },
-  mounted() {},
+  computed: {
+    ...mapGetters("document", ["documentSender", "documentRecipients"]),
+  },
   methods: {
     openAddPerson(role) {
       this.$emit("add-person", { role });
@@ -110,9 +124,6 @@ export default {
       console.log("UNLINK", id, relationId, roleId);
       this.$emit("unlink-person", { id, relationId, roleId });
     },
-  },
-  computed: {
-    ...mapGetters("document", ["documentSender", "documentRecipients"]),
   },
 };
 </script>

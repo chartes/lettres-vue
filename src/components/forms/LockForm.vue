@@ -15,8 +15,7 @@
       <div v-if="lock.id && !loading">
         <p>
           Le <b>document {{ docId }}</b> est actuellement verrouillé par
-          <b>{{ lockOwner.attributes.username }}</b
-          >.
+          <b>{{ lockOwner.attributes.username }}</b>.
         </p>
         <article class="message lock-form__description">
           <div class="message-body">
@@ -38,15 +37,23 @@
         </p>
         <div class="lock-form__textarea">
           <label for="description"><u>Raison du verrouillage :</u></label>
-          <textarea id="description" v-model="description" class="textarea" />
+          <textarea
+            id="description"
+            v-model="description"
+            class="textarea"
+          />
         </div>
       </div>
     </div>
     <!-- Admin features -->
     <div v-if="current_user.isAdmin">
       <loading-indicator :active="loading" />
-      <div v-if="!loading" class="">
+      <div
+        v-if="!loading"
+        class=""
+      >
         <form @submit.prevent="">
+          <!--
           <select-autocomplete-field
             v-model="nextLockOwner"
             label="Choisir le propriétaire du verrou"
@@ -55,6 +62,7 @@
             label-key="username"
             @search="searchUser"
           />
+          -->
         </form>
       </div>
     </div>
@@ -65,7 +73,6 @@
 import { mapState } from "vuex";
 
 import ModalForm from "./ModalForm";
-import SelectAutocompleteField from "./fields/SelectAutocompleteField";
 import LoadingIndicator from "../ui/LoadingIndicator";
 import http_with_auth from "../../modules/http-common";
 
@@ -73,14 +80,13 @@ export default {
   name: "LockForm",
   components: {
     LoadingIndicator,
-    SelectAutocompleteField,
     ModalForm,
   },
   props: {
-    docId: { required: true },
+    docId: {type: String, required: true },
     currentLock: { type: Object, default: null },
-    cancel: { type: Function },
-    submit: { type: Function },
+    cancel: { type: Function, default: () => {} },
+    submit: { type: Function, default: () => {} },
   },
   data() {
     return {

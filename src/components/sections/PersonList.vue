@@ -27,7 +27,7 @@
               </div>
             </b-field>
 
-            <b-field label="Correspondants" v-if="false">
+            <b-field v-if="false" label="Correspondants">
               <b-field>
                 <b-checkbox v-model="sender" type="is-info"> Expéditeur </b-checkbox>
               </b-field>
@@ -36,7 +36,7 @@
               </b-field>
             </b-field>
 
-            <b-field label="Parties du document" v-if="false">
+            <b-field v-if="false" label="Parties du document">
               <b-field>
                 <b-checkbox v-model="inAddress" type="is-info"> Adresse </b-checkbox>
               </b-field>
@@ -131,11 +131,11 @@
           <b-table-column
             v-slot="props"
             field="functions"
-            label="Fonction(s) occupée(s)"
+            label="Fonction occupée"
             :td-attrs="columnTdAttrs"
           >
             <span class="tags">
-              <span v-for="func in props.row.functions" class="tag is-light" :key="func">
+              <span v-for="func in props.row.functions" :key="func" class="tag is-light">
                 {{ func }}
               </span>
             </span>

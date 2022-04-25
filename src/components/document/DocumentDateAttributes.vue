@@ -1,10 +1,16 @@
 <template>
-  <div class="document-date__attributes" style="width: 100%">
+  <div
+    class="document-date__attributes"
+    style="width: 100%"
+  >
     <header class="document-date__attributes--title mb-3">
       <span class="heading">Dates de temps</span>
     </header>
 
-    <div v-if="editable" class="creation-date">
+    <div
+      v-if="editable"
+      class="creation-date"
+    >
       <b-field
         label="Date de rédaction"
         label-position="inside"
@@ -19,7 +25,10 @@
           expanded
         />
       </b-field>
-      <b-field label="Étiquette" label-position="inside">
+      <b-field
+        label="Étiquette"
+        label-position="inside"
+      >
         <b-input
           v-model="creationLabel"
           class="creation-date-input"
@@ -28,7 +37,10 @@
           expanded
         />
       </b-field>
-      <b-field label="Rédigée avant le" label-position="inside">
+      <b-field
+        label="Rédigée avant le"
+        label-position="inside"
+      >
         <b-input
           v-model="creationNotAfter"
           class="creation-date-input"
@@ -38,14 +50,26 @@
         />
       </b-field>
     </div>
-    <div v-else class="creation-date">
-      <b-field label="Date de rédaction" class="creation-date-input">
+    <div
+      v-else
+      class="creation-date"
+    >
+      <b-field
+        label="Date de rédaction"
+        class="creation-date-input"
+      >
         <span class="control">{{ creation }}</span>
       </b-field>
-      <b-field label="Étiquette" class="creation-date-input">
+      <b-field
+        label="Étiquette"
+        class="creation-date-input"
+      >
         <span class="control">{{ creationLabel }}</span>
       </b-field>
-      <b-field label="Rédigé avant le" class="creation-date-input">
+      <b-field
+        label="Rédigé avant le"
+        class="creation-date-input"
+      >
         <span class="control">{{ creationNotAfter }}</span>
       </b-field>
     </div>

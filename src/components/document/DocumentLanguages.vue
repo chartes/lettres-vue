@@ -1,22 +1,38 @@
 <template>
   <div class="component">
-    <multiselect-field
-      class="languages is-pulled-right"
-      :editable="editable"
-      :options-list="allLanguages"
-      :selected-items="languages"
-      :on-change="languagesChanged"
-    />
+    <b-field label="Langues">
+      <b-taginput
+        v-if="editable"
+        v-model="tags"
+        placeholder="Français"
+        :data="filteredTags"
+        :readonly="!editable"
+        autocomplete
+        field="label"
+        open-on-focus
+        @typing="getFilteredTags"
+      />
+      <div v-else>
+        <b-taglist>
+          <b-tag
+            v-for="tag in tags"
+            :key="tag.id"
+            type="is-light"
+          >
+            {{ tag.label }}
+          </b-tag>
+        </b-taglist>
+      </div>
+    </b-field>
   </div>
 </template>
 
 <script>
 import { mapState } from "vuex";
-import MultiselectField from "../forms/fields/MultiselectField";
 
 export default {
   name: "DocumentLanguages",
-  components: { MultiselectField },
+  components: {},
   props: {
     editable: {
       type: Boolean,
@@ -24,7 +40,10 @@ export default {
     },
   },
   data() {
-    return {};
+    return {
+      filteredTags: [],
+      tags: [],
+    };
   },
   computed: {
     ...mapState("document", ["document", "languages"]),
@@ -32,13 +51,13 @@ export default {
       allLanguages: (state) => state.languages.languages,
     }),
   },
-  methods: {
-    languagesChanged(langs) {
+  watch: {
+    tags() {
       const data = {
         id: this.document.id,
         relationships: {
           languages: {
-            data: langs.map((l) => {
+            data: this.tags.map((l) => {
               return {
                 id: l.id,
                 type: "language",
@@ -52,6 +71,17 @@ export default {
       console.log("lang data", data);
     },
   },
+  created() {
+    this.filteredTags = this.allLanguages;
+    this.tags = this.languages;
+  },
+  methods: {
+    getFilteredTags(text) {
+      this.filteredTags = this.allLanguages.filter((option) => {
+        return option.label.toString().toLowerCase().indexOf(text.toLowerCase()) >= 0;
+      });
+    },
+  },
 };
 </script>
 
@@ -59,5 +89,7 @@ export default {
 @import "@/assets/sass/main.scss";
 .component {
   align-self: center;
+  padding-left: 16px;
+  border-left: 1px solid $coffee;
 }
 </style>

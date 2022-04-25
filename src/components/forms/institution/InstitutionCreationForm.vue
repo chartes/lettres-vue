@@ -1,13 +1,23 @@
 <template>
   <div class="wizard-center-form">
     <b-field label="Nom de l'institution *">
-      <b-input v-model="name" placeholder="Paris, Bibl. nat. Fr." />
+      <b-input
+        v-model="name"
+        placeholder="Paris, Bibl. nat. Fr."
+      />
     </b-field>
     <b-field label="Identifiant de référence">
-      <b-input v-model="idRef" placeholder="https://data.bnf.fr/ark:/12148/cb123351707" />
+      <b-input
+        v-model="idRef"
+        placeholder="https://data.bnf.fr/ark:/12148/cb123351707"
+      />
     </b-field>
 
-    <b-button type="is-primary is-pulled-right" :disabled="!name" @click="addInstitution">
+    <b-button
+      type="is-primary is-pulled-right"
+      :disabled="!name"
+      @click="addInstitution"
+    >
       Ajouter
     </b-button>
   </div>

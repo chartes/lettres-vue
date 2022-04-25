@@ -1,6 +1,10 @@
 <template>
   <div class="field-date">
-    <div v-if="editable && editMode" ref="hover" class="field field-date__field">
+    <div
+      v-if="editable && editMode"
+      ref="hover"
+      class="field field-date__field"
+    >
       <div class="control">
         <input
           ref="input"
@@ -17,7 +21,7 @@
           @keyup.enter="checkAndExitEditMode"
           @blur="checkAndExitEditMode"
           @keyup.esc="cancelInput"
-        />
+        >
       </div>
     </div>
 
@@ -42,7 +46,10 @@
     </div>
 
     <div v-else>
-      <span :class="unknownClass" v-html="value || notSet" />
+      <span
+        :class="unknownClass"
+        v-html="value || notSet"
+      />
     </div>
   </div>
 </template>

@@ -1,7 +1,10 @@
 <template>
   <div class="place-wizard-center-form">
     <b-tabs v-model="activeTab">
-      <b-tab-item id="search" label="Référentiel de l'application">
+      <b-tab-item
+        id="search"
+        label="Référentiel de l'application"
+      >
         <place-list
           v-bind="$attrs"
           :popup-mode="popupMode"
@@ -9,7 +12,11 @@
         />
       </b-tab-item>
 
-      <b-tab-item id="add" label="Nouveau lieu" v-if="popupMode">
+      <b-tab-item
+        v-if="popupMode"
+        id="add"
+        label="Nouveau lieu"
+      >
         <create-place-form
           v-bind="$attrs"
           :popup-mode="popupMode"

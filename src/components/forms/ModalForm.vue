@@ -38,7 +38,7 @@
         </button>
         <div
           v-if="remove"
-          style="float: right;width: 100%;text-align: right;"
+          style="float: right; width: 100%; text-align: right"
         >
           <button
             class="button is-danger"
@@ -54,32 +54,30 @@
 </template>
 
 <script>
-
-  export default {
-    name: "ModalForm",
-    props: {
-      title: { type: String, default: ''},
-      cancel: { type: Function},
-      submit: { type: Function},
-      remove: { type: Function},
-      valid: { type: Boolean, required: true},
-      submitText: { type: String, default: 'Enregistrer'},
-      removeText: {type: String, default: 'Supprimer'},
-      submitting: { type: Boolean, default: false},
+export default {
+  name: "ModalForm",
+  props: {
+    title: { type: String, default: "" },
+    cancel: { type: Function, default: () => {} },
+    submit: { type: Function, default: () => {} },
+    remove: { type: Function, default: () => {} },
+    valid: { type: Boolean, required: true },
+    submitText: { type: String, default: "Enregistrer" },
+    removeText: { type: String, default: "Supprimer" },
+    submitting: { type: Boolean, default: false },
+  },
+  mounted() {
+    document.addEventListener("keyup", this.onKeyUp);
+  },
+  beforeDestroy() {
+    document.removeEventListener("keyup", this.onKeyUp);
+  },
+  methods: {
+    onKeyUp(e) {
+      if (!(e.target === document.body)) return;
+      if (e.code === "Enter") this.submit();
+      else if (e.code === "Escape") this.cancel();
     },
-    mounted () {
-      document.addEventListener('keyup', this.onKeyUp)
-    },
-    beforeDestroy () {
-      document.removeEventListener('keyup', this.onKeyUp)
-    },
-    methods: {
-      onKeyUp (e) {
-        if (!(e.target === document.body)) return;
-        if (e.code === 'Enter') this.submit()
-        else if (e.code === 'Escape') this.cancel()
-
-      }
-    }
-  }
+  },
+};
 </script>

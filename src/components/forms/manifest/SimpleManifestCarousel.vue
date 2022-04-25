@@ -1,6 +1,9 @@
 <template>
   <div>
-    <div v-if="items.length < 1" class="no-image-text is-size-4 has-text-centered">
+    <div
+      v-if="items.length < 1"
+      class="no-image-text is-size-4 has-text-centered"
+    >
       Aucune image pour le moment
     </div>
     <div
@@ -14,13 +17,15 @@
         v-show="showNavigation && items.length > 1"
         class="button is-light is-rounded navigation-left"
         @click="moveLeft"
-        ><i class="fas fa-chevron-left"
+      ><i
+        class="fas fa-chevron-left"
       /></span>
       <span
         v-show="showNavigation && items.length > 1"
         class="button is-light is-rounded navigation-right"
         @click="moveRight"
-        ><i class="fas fa-chevron-right"
+      ><i
+        class="fas fa-chevron-right"
       /></span>
 
       <div class="card-container">
@@ -33,9 +38,15 @@
         >
           <div class="card-image">
             <figure :class="`image`">
-              <img :src="item.thumbnail.url" :style="`min-width: ${itemWidth}px`" />
+              <img
+                :src="item.thumbnail.url"
+                :style="`min-width: ${itemWidth}px`"
+              >
             </figure>
-            <span v-show="showActions === item.num" class="page-actions">
+            <span
+              v-show="showActions === item.num"
+              class="page-actions"
+            >
               <button
                 class="button is-light is-danger page-action"
                 @click.prevent="deletePage(i)"
@@ -57,10 +68,9 @@
             </span>
           </div>
           <div class="card-content">
-            <span class="page-num"
-              ><span class="page-index">{{ i + 1 }}</span
-              ><span>p.{{ item.num }}</span></span
-            >
+            <span
+              class="page-num"
+            ><span class="page-index">{{ i + 1 }}</span><span>p.{{ item.num }}</span></span>
           </div>
         </div>
       </div>
@@ -69,7 +79,10 @@
         {{ items.length }} page{{ items.length > 1 ? "s" : "" }}
       </span>
 
-      <div v-show="toolTipImageFullUrl && displayPreview" class="tooltip-image-full">
+      <div
+        v-show="toolTipImageFullUrl && displayPreview"
+        class="tooltip-image-full"
+      >
         <b-image :src="toolTipImageFullUrl" />
       </div>
     </div>

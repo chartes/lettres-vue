@@ -14,7 +14,7 @@ class SPARQLQueryDispatcher {
 
 const endpointUrl = "https://query.wikidata.org/sparql";
 
-const getPlacenameQuery = name => `SELECT DISTINCT ?item ?label ?paysLabel ?coords
+const getPlacenameQuery = name => `SELECT DISTINCT ?item ?label ?paysLabel ?coords ?itemDescription
 WHERE
 {
   SERVICE wikibase:mwapi

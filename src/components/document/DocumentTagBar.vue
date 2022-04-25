@@ -60,7 +60,10 @@
         <a><i class="fas fa-lock" /></a>
       </template>
       <template #activeLabel>
-        <span v-if="lockOwner[docId]" class="badge-label">{{
+        <span
+          v-if="lockOwner[docId]"
+          class="badge-label"
+        >{{
           lockOwner[docId].attributes.username
         }}</span>
       </template>

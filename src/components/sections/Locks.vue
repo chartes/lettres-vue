@@ -23,9 +23,9 @@
                  <th style="min-width: 180px;">
                      <button class="button is-white " disabled>Date</button>
                  </th> -->
-            <th style="min-width: 180px;">
+            <th style="min-width: 180px">
               <button
-                class="button is-white "
+                class="button is-white"
                 disabled
               >
                 Date d'expiration
@@ -45,7 +45,7 @@
                 :action="filterDoc"
               />
             </th>
-            <th style="min-width: 130px;">
+            <th style="min-width: 130px">
               <input-filter
                 v-if="current_user.isAdmin"
                 label="Utilisateur"
@@ -54,7 +54,7 @@
               />
               <button
                 v-else
-                class="button is-white "
+                class="button is-white"
                 disabled
               >
                 Utilisateur
@@ -62,7 +62,7 @@
             </th>
             <th>
               <button
-                class="button is-white "
+                class="button is-white"
                 disabled
               >
                 Description
@@ -91,11 +91,14 @@
             <td v-if="!compact">
               <a :href="url(lock.data)">
                 <span class="tag">
-                  {{ lock.data.attributes["object-type"] }} {{ lock.data.attributes["object-id"] }}
+                  {{ lock.data.attributes["object-type"] }}
+                  {{ lock.data.attributes["object-id"] }}
                 </span>
               </a>
             </td>
-            <td><span class="tag">{{ lock.user.username }}</span></td>
+            <td>
+              <span class="tag">{{ lock.user.username }}</span>
+            </td>
             <td>{{ lock.data.attributes["description"] }}</td>
           </tr>
         </tbody>
@@ -105,116 +108,125 @@
 </template>
 
 <script>
-  import { mapState } from 'vuex';
+import { mapState } from "vuex";
 
-  import InputFilter from '../ui/InputFilter';
-  import Pagination from '../ui/Pagination';
+import InputFilter from "../ui/InputFilter";
+import Pagination from "../ui/Pagination";
 
-  import http_with_auth from "../../modules/http-common";
-  import {getUrlParameter} from "../../modules/utils";
+import http_with_auth from "../../modules/http-common";
+import { getUrlParameter } from "../../modules/utils";
 
-  export default {
-    name: "Locks",
-    components : {InputFilter, Pagination},
-    props: {
-      compact: {default: false},
-      pageSize : {required: true},
-    },
-    data() {
-      return {
-        filteredDocId: null,
-        filteredUsername: null,
-        filteredStatus: null,
+export default {
+  name: "Locks",
+  components: { InputFilter, Pagination },
+  props: {
+    compact: { default: false, type: Boolean },
+    pageSize: { required: true, type: Number },
+  },
+  data() {
+    return {
+      filteredDocId: null,
+      filteredUsername: null,
+      filteredStatus: null,
 
-        currentPage: 1
-      }
+      currentPage: 1,
+    };
+  },
+  computed: {
+    ...mapState("user", ["current_user", "jwt"]),
+    ...mapState("locks", ["fullLocks", "links"]),
+    nbPages() {
+      return parseInt(
+        this.links.last ? getUrlParameter(this.links.last, "page%5Bnumber%5D") : 1
+      );
     },
-    created() {
-      if (this.current_user.isAdmin) {
-        this.applyFilters();
-      }  else {
-        this.filterUsername(this.current_user.username);
-      }
-    },
-    computed: {
-      ...mapState('user', ['current_user', 'jwt']),
-      ...mapState('locks', ['fullLocks', 'links']),
-      nbPages() {
-        return parseInt(this.links.last ? getUrlParameter(this.links.last, "page%5Bnumber%5D") : 1);
-      }
-    },
-    methods: {
-       url: (entry) => `documents/${entry.attributes["object-id"]}`,
-       computeFilters() {
-           let _f = [];
-           /* compute the status filter */
-           if (this.filteredStatus) {
-              _f.push(this.filteredStatus.startsWith("E") ? `filter[!is-active]`: `filter[is-active]`);
-           }
-           /* compute the document filter */
-           if (this.filteredDocId) {
-              _f.push(`filter[object-type]=document&filter[object-id]=${this.filteredDocId}`);
-           }
-           /* compute the user filter by fetching the user id from a username */
-           if (this.filteredUsername) {
-             const http = http_with_auth(this.jwt);
-             return http.get(`users?filter[username]=${this.filteredUsername}&without-relationships`).then( response => {
-                try {
-                   const userId = response.data.data[0].id;
-                   _f.push(`filter[user_id]=${userId}`);
-                } catch(err) {
-                  console.warn(`username '${this.filteredUsername}' unknown`);
-                }
-                return _f.join('&');
-             });
-           }
-           return new Promise((resolve) => {resolve(_f.join('&'))});
-       },
-       applyFilters() {
-           this.computeFilters().then(filters => {
-             console.info(filters);
-             this.$store.dispatch('locks/fetchFullLocks', {
-               pageId: this.currentPage,
-               pageSize: this.pageSize,
-               filters :filters
-             });
-           });
-       },
-       filterDoc(docId) {
-           this.filteredDocId = parseInt(docId);
-           this.currentPage = 1;
-           this.applyFilters();
-       },
-       filterUsername(username) {
-           this.filteredUsername = username;
-           this.currentPage = 1;
-           this.applyFilters();
-       },
-       filterStatus(status) {
-           this.filteredStatus = status ? status.toUpperCase() : '';
-           this.currentPage = 1;
-           this.applyFilters();
-       },
-       goToLocksPage(num) {
-           this.currentPage = num;
-           this.applyFilters();
-       }
+  },
+  created() {
+    if (this.current_user.isAdmin) {
+      this.applyFilters();
+    } else {
+      this.filterUsername(this.current_user.username);
     }
-  }
+  },
+
+  methods: {
+    url: (entry) => `documents/${entry.attributes["object-id"]}`,
+    computeFilters() {
+      let _f = [];
+      /* compute the status filter */
+      if (this.filteredStatus) {
+        _f.push(
+          this.filteredStatus.startsWith("E") ? `filter[!is-active]` : `filter[is-active]`
+        );
+      }
+      /* compute the document filter */
+      if (this.filteredDocId) {
+        _f.push(`filter[object-type]=document&filter[object-id]=${this.filteredDocId}`);
+      }
+      /* compute the user filter by fetching the user id from a username */
+      if (this.filteredUsername) {
+        const http = http_with_auth(this.jwt);
+        return http
+          .get(`users?filter[username]=${this.filteredUsername}&without-relationships`)
+          .then((response) => {
+            try {
+              const userId = response.data.data[0].id;
+              _f.push(`filter[user_id]=${userId}`);
+            } catch (err) {
+              console.warn(`username '${this.filteredUsername}' unknown`);
+            }
+            return _f.join("&");
+          });
+      }
+      return new Promise((resolve) => {
+        resolve(_f.join("&"));
+      });
+    },
+    applyFilters() {
+      this.computeFilters().then((filters) => {
+        console.info(filters);
+        this.$store.dispatch("locks/fetchFullLocks", {
+          pageId: this.currentPage,
+          pageSize: this.pageSize,
+          filters: filters,
+        });
+      });
+    },
+    filterDoc(docId) {
+      this.filteredDocId = parseInt(docId);
+      this.currentPage = 1;
+      this.applyFilters();
+    },
+    filterUsername(username) {
+      this.filteredUsername = username;
+      this.currentPage = 1;
+      this.applyFilters();
+    },
+    filterStatus(status) {
+      this.filteredStatus = status ? status.toUpperCase() : "";
+      this.currentPage = 1;
+      this.applyFilters();
+    },
+    goToLocksPage(num) {
+      this.currentPage = num;
+      this.applyFilters();
+    },
+  },
+};
 </script>
 
 <style scoped>
-  .section__title {
-    margin-bottom: 20px;
-  }
-  td {
-    color: #962D3E;
-  }
-  td a:hover span{
-    background: #EBEBEB;
-    color: #348899 ;
-  }
-  span.status {
-      width: 80px;
-  }
+.section__title {
+  margin-bottom: 20px;
+}
+td {
+  color: #962d3e;
+}
+td a:hover span {
+  background: #ebebeb;
+  color: #348899;
+}
+span.status {
+  width: 80px;
+}
 </style>

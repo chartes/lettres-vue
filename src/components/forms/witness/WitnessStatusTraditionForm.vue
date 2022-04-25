@@ -1,15 +1,29 @@
 <template>
   <div>
     <b-field label="Statut">
-      <b-select v-model="selectedStatus" multiple native-size="4" expanded>
-        <option v-for="(status, i) in statuses" :key="`status-${i}`" :value="status.id">
+      <b-select
+        v-model="selectedStatus"
+        multiple
+        native-size="4"
+        expanded
+      >
+        <option
+          v-for="(status, i) in statuses"
+          :key="`status-${i}`"
+          :value="status.id"
+        >
           {{ status.label }}
         </option>
       </b-select>
     </b-field>
 
     <b-field label="Tradition">
-      <b-select v-model="selectedTradition" multiple native-size="4" expanded>
+      <b-select
+        v-model="selectedTradition"
+        multiple
+        native-size="4"
+        expanded
+      >
         <option
           v-for="(tradition, i) in traditions"
           :key="`status-${i}`"

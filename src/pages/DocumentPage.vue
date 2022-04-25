@@ -1,7 +1,7 @@
 <template>
   <document
     class="document-page"
-    :doc-id="parseInt(this.$route.params.docId)"
+    :doc-id="parseInt($route.params.docId)"
   />
 </template>
 

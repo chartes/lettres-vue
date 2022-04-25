@@ -112,7 +112,9 @@ export default {
   data() {
     return {};
   },
-  mounted() {},
+  computed: {
+    ...mapGetters("document", ["locationDateFrom", "locationDateTo"]),
+  },
   methods: {
     openAddPlace(role) {
       this.$emit("add-place", { role });
@@ -121,9 +123,6 @@ export default {
       console.log("UNLINK", id, relationId, roleId);
       this.$emit("unlink-place", { id, relationId, roleId });
     },
-  },
-  computed: {
-    ...mapGetters("document", ["locationDateFrom", "locationDateTo"]),
   },
 };
 </script>

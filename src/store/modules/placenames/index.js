@@ -158,8 +158,10 @@ const actions = {
             .catch(error => console.log(error))
     },
 
-    async updateInlinedRole({state, rootState}, {inlined}) {
+    async updateInlinedRole({state, rootState, dispatch}, {inlined}) {
         const http = http_with_auth(rootState.user.jwt);
+        await dispatch("fetchRoles");
+
         const inlinedRole = state.roles.find(r => r.label === 'inlined')
         
         console.log('foreach inlined found in adress and transcription...')
@@ -174,7 +176,7 @@ const actions = {
             console.log('inlinedRole:', inlinedRole)
 
             const found = placenamesHavingRoles.data.data.find(phr => {
-                console.log(phr.relationships['placename-role'].data.id === inlinedRole.id, phr.relationships.document.data.id === rootState.document.document.id, phr.relationships.placename.data.id === placenameId,  phr.relationships.placename.data.id, placenameId   )
+                console.log(phr, inlinedRole)
                 return phr.relationships['placename-role'].data.id === inlinedRole.id && phr.relationships.document.data.id === rootState.document.document.id && phr.relationships.placename.data.id === placenameId                
             }) 
 

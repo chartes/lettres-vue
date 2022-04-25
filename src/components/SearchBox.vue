@@ -1,12 +1,25 @@
 <template>
   <div class="search-container">
     <b-field>
-      <b-input v-model="inputTerm" placeholder="Catherine de Medicis" type="search" />
+      <b-input
+        v-model="inputTerm"
+        placeholder="Catherine de Medicis"
+        type="search"
+      />
       <div class="control">
-        <a class="button pl-5 pr-5" @click="search">
+        <a
+          class="button pl-5 pr-5"
+          @click="search"
+        >
           <span class="icon">
-            <i v-if="loadingStatus" class="fas fa-spinner fa-pulse" />
-            <i v-else class="fas fa-search" />
+            <i
+              v-if="loadingStatus"
+              class="fas fa-spinner fa-pulse"
+            />
+            <i
+              v-else
+              class="fas fa-search"
+            />
           </span>
         </a>
       </div>

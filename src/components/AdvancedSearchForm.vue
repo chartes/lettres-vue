@@ -1,17 +1,30 @@
 <template>
   <section class="advanced-search-form">
-    <span class="close-form" @click="hideAdvancedSearchForm">
+    <span
+      class="close-form"
+      @click="hideAdvancedSearchForm"
+    >
       <i class="far fa-times-circle" />
     </span>
     <div class="section grid-container">
-      <div class="divider is-left">Recherche</div>
+      <div class="divider is-left">
+        Recherche
+      </div>
       <section class="search-section">
-        <search-box v-if="!showLeftSideBar" class="mt-5 mb-2" />
+        <search-box
+          v-if="!showLeftSideBar"
+          class="mt-5 mb-2"
+        />
       </section>
 
-      <div class="divider is-left">Dates de temps</div>
+      <div class="divider is-left">
+        Dates de temps
+      </div>
       <section class="date-section">
-        <b-field label="Date de rédaction" grouped>
+        <b-field
+          label="Date de rédaction"
+          grouped
+        >
           <b-autocomplete
             v-model="creationDateFrom.day"
             :data="filteredCreationDateFromDay"
@@ -32,7 +45,9 @@
               }
             "
           >
-            <template #empty> Aucun résultat </template>
+            <template #empty>
+              Aucun résultat
+            </template>
           </b-autocomplete>
 
           <b-autocomplete
@@ -55,7 +70,9 @@
               }
             "
           >
-            <template #empty> Aucun résultat </template>
+            <template #empty>
+              Aucun résultat
+            </template>
           </b-autocomplete>
 
           <b-autocomplete
@@ -78,7 +95,9 @@
               }
             "
           >
-            <template #empty> Aucun résultat </template>
+            <template #empty>
+              Aucun résultat
+            </template>
           </b-autocomplete>
         </b-field>
 
@@ -87,7 +106,9 @@
         to
         -->
         <b-field>
-          <b-checkbox v-model="withDateRange"> Plage de dates (jusqu'au…) </b-checkbox>
+          <b-checkbox v-model="withDateRange">
+            Plage de dates (jusqu'au…)
+          </b-checkbox>
         </b-field>
 
         <b-field grouped>
@@ -112,7 +133,9 @@
               }
             "
           >
-            <template #empty> Aucun résultat </template>
+            <template #empty>
+              Aucun résultat
+            </template>
           </b-autocomplete>
 
           <b-autocomplete
@@ -136,7 +159,9 @@
               }
             "
           >
-            <template #empty> Aucun résultat </template>
+            <template #empty>
+              Aucun résultat
+            </template>
           </b-autocomplete>
 
           <b-autocomplete
@@ -160,12 +185,16 @@
               }
             "
           >
-            <template #empty> Aucun résultat </template>
+            <template #empty>
+              Aucun résultat
+            </template>
           </b-autocomplete>
         </b-field>
       </section>
 
-      <div class="divider is-left">Dates de lieu</div>
+      <div class="divider is-left">
+        Dates de lieu
+      </div>
       <section class="places-section">
         <b-field label="Expédition">
           <b-taginput
@@ -193,10 +222,16 @@
         </b-field>
       </section>
 
-      <div class="divider is-left">Correspondants</div>
+      <div class="divider is-left">
+        Correspondants
+      </div>
       <section class="correspondents-section">
         <!-- expéditeur -->
-        <b-field v-for="(c, i) in correspondentFrom" :key="`from_${i}`" grouped>
+        <b-field
+          v-for="(c, i) in correspondentFrom"
+          :key="`from_${i}`"
+          grouped
+        >
           <span :style="i === 0 ? '' : 'visibility: hidden'">De</span>
           <!-- person -->
           <b-autocomplete
@@ -209,7 +244,9 @@
             expanded
             @select="(option) => (correspondentFrom[i].selection.person = option)"
           >
-            <template #empty> Aucun résultat </template>
+            <template #empty>
+              Aucun résultat
+            </template>
           </b-autocomplete>
           <!-- function -->
           <b-autocomplete
@@ -222,7 +259,9 @@
             expanded
             @select="(option) => (c.selection.func = option)"
           >
-            <template #empty> Aucun résultat </template>
+            <template #empty>
+              Aucun résultat
+            </template>
           </b-autocomplete>
 
           <b-button
@@ -240,7 +279,11 @@
         </b-field>
 
         <!-- destinataire -->
-        <b-field v-for="(c, i) in correspondentTo" :key="`to_${i}`" grouped>
+        <b-field
+          v-for="(c, i) in correspondentTo"
+          :key="`to_${i}`"
+          grouped
+        >
           <span :style="i === 0 ? '' : 'visibility: hidden'">À</span>
           <!-- person -->
           <b-autocomplete
@@ -253,7 +296,9 @@
             expanded
             @select="(option) => (correspondentTo[i].selection.person = option)"
           >
-            <template #empty> Aucun résultat </template>
+            <template #empty>
+              Aucun résultat
+            </template>
           </b-autocomplete>
           <!-- function -->
           <b-autocomplete
@@ -266,7 +311,9 @@
             expanded
             @select="(option) => (c.selection.func = option)"
           >
-            <template #empty> Aucun résultat </template>
+            <template #empty>
+              Aucun résultat
+            </template>
           </b-autocomplete>
 
           <b-button
@@ -284,11 +331,15 @@
         </b-field>
       </section>
 
-      <div class="divider is-left">Options d'affichage</div>
+      <div class="divider is-left">
+        Options d'affichage
+      </div>
       <section class="display-section">
         <div class="with-status">
           <b-field>
-            <b-checkbox v-model="showStatuses"> Afficher les badges </b-checkbox>
+            <b-checkbox v-model="showStatuses">
+              Afficher les badges
+            </b-checkbox>
           </b-field>
         </div>
       </section>

@@ -1,7 +1,10 @@
 <template>
   <div class="person-wizard-center-form">
     <b-tabs v-model="activeTab">
-      <b-tab-item id="search" label="Référentiel de l'application">
+      <b-tab-item
+        id="search"
+        label="Référentiel de l'application"
+      >
         <person-list
           v-bind="$attrs"
           :popup-mode="popupMode"
@@ -9,7 +12,11 @@
         />
       </b-tab-item>
 
-      <b-tab-item id="add" label="Nouvelle personne" v-if="popupMode">
+      <b-tab-item
+        v-if="popupMode"
+        id="add"
+        label="Nouvelle personne"
+      >
         <create-person-form
           v-bind="$attrs"
           :popup-mode="popupMode"

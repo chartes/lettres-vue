@@ -43,6 +43,9 @@ export default {
       titleStatus: "normal",
     };
   },
+  computed: {
+    ...mapState("document", ["document"]),
+  },
   methods: {
     titleChanged(fieldProps) {
       const data = { id: this.document.id, attributes: {} };
@@ -69,11 +72,8 @@ export default {
       this.titleStatus = "error";
     },
     addNote(evt) {
-      this.$emit("add-note", { ...evt })
-    }
-  },
-  computed: {
-    ...mapState("document", ["document"]),
+      this.$emit("add-note", { ...evt });
+    },
   },
 };
 </script>

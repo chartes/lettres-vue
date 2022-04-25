@@ -37,19 +37,16 @@
 </template>
 
 <script>
-
-  export default {
-    name: "ModalForm",
-    props: {
-      type: {type: String},
-      title: {type: String},
-      submitText: {type: String},
-      submit: {type: Function},
-      cancel: {type: Function},
-    }
-  }
+export default {
+  name: "ModalForm",
+  props: {
+    type: { type: String, default: "" },
+    title: { type: String, default: "" },
+    submitText: { type: String, default: "" },
+    submit: { type: Function, default: () => {} },
+    cancel: { type: Function, default: () => {} },
+  },
+};
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>
