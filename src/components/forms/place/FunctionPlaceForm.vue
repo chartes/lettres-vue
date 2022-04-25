@@ -1,26 +1,21 @@
 <template>
   <div class="wizard-center-form function-place-form">
-    <div class="columns">
-      <div class="column">
-        <b-field label="Description additionnelle">
-          <b-input
-            v-model="functionInputTerm"
-            type="text"
-            placeholder="Sous les remparts"
-            icon-right="close-circle"
-            icon-right-clickable
-            @icon-right-click="functionInputTerm = ''"
-          />
-        </b-field>
-      </div>
-      <div class="column">
-        <expanded-select
-          :items="filteredFunctions"
-          class="mt-5"
-          @changed="selectionChanged"
-        />
-      </div>
-    </div>
+    <b-field label="Description additionnelle">
+      <b-input
+        v-model="functionInputTerm"
+        type="text"
+        placeholder="Sous les remparts"
+        icon-right="close-circle"
+        icon-right-clickable
+        @icon-right-click="functionInputTerm = ''"
+      />
+    </b-field>
+
+    <expanded-select
+      :items="filteredFunctions"
+      class="mt-5"
+      @changed="selectionChanged"
+    />
   </div>
 </template>
 

@@ -68,6 +68,20 @@ const actions = {
     }).finally(() => {
       commit('SET_LOADING', false);
     })
+  },
+  fetchFullChangelogForUser ({ rootState, commit }, {pageId=1, pageSize=15, user, filters}) {
+    commit('SET_LOADING', true)
+    const http = http_with_auth(rootState.user.jwt);
+    return http.get(`users/${user}/changes?include=user&sort=-event-date&page[size]=${pageSize}&page[number]=${pageId}${filters ? '&'+filters : ''}`)
+      .then( response => {
+        commit('UPDATE_FULL_CHANGELOG', {
+          changes: response.data.data,
+          included: response.data.included,
+          meta: response.data.meta
+        });
+    }).finally(() => {
+      commit('SET_LOADING', false);
+    })
   }
 };
 
