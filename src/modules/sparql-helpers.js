@@ -41,7 +41,7 @@ LIMIT 35`;
 //  FILTER CONTAINS(?label, "${name}")
 
 
-const getPersonQuery = name => `SELECT DISTINCT ?human ?humanLabel ?lastnameLabel ?nationalityLabel ?humanDescription ?humanAltLabel
+const getPersonQuery = name => `SELECT DISTINCT ?human ?humanLabel ?lastnameLabel ?humanDescription ?humanAltLabel
 WHERE
 {
   SERVICE wikibase:mwapi
