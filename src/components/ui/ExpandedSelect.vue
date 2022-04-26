@@ -16,6 +16,7 @@ export default {
   name: "ExpandedSelect",
   props: {
     items: { type: Array, default: () => [] },
+    selectedIndex: { type: Number, default: null },
   },
   emits: ["changed"],
   data() {
@@ -23,7 +24,20 @@ export default {
       selection: null,
     };
   },
+  watch: {
+    selectedIndex() {
+      if (this.selectedIndex !== this.selection) {
+        this.setSelection(this.selectedIndex);
+      }
+    },
+  },
+  created() {
+    this.setSelection(this.selectedIndex);
+  },
   methods: {
+    setSelection(i) {
+      this.selection = this.selectedIndex;
+    },
     toggleSelection(i) {
       this.selection = this.selection === i ? null : i;
       this.$emit(

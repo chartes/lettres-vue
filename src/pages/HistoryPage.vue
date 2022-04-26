@@ -13,14 +13,6 @@ export default {
   components: {
     Changelog,
   },
-  filters: {
-    /**
-     * Filter to truncate string, accepts a length parameter
-     */
-    truncate(value, length) {
-      return value.length > length ? value.substr(0, length) + "..." : value;
-    },
-  },
   data() {
     return {
       data: [],
@@ -62,21 +54,6 @@ export default {
         user: this.current_user.id,
         filters: "",
       });
-    },
-    /*
-     * Handle page-change event
-     */
-    onPageChange(page) {
-      this.page = page;
-      this.loadAsyncData();
-    },
-    /*
-     * Handle sort event
-     */
-    onSort(field, order) {
-      this.sortField = field;
-      this.sortOrder = order;
-      this.loadAsyncData();
     },
   },
 };

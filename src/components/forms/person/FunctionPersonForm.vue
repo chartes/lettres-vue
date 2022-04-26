@@ -1,6 +1,24 @@
 <template>
   <div class="wizard-center-form function-person-form">
-    <b-field label="Description additionnelle">
+    <b-field
+      label="Sélectionner une description déjà employée pour cette personne"
+      class="mb-5"
+      v-if="$attrs.person && $attrs.person.functions"
+    >
+      <span class="tags">
+        <span
+          v-for="(func, index) in $attrs.person.functions"
+          :key="func"
+          class="tag is-light"
+          :class="index === selectedTagIndex ? 'is-dark' : ''"
+          @click="selectTag(func, index)"
+        >
+          {{ func }}
+        </span>
+      </span>
+    </b-field>
+
+    <b-field label="Ajouter une nouvelle description" class="mt-5">
       <b-input
         v-model="functionInputTerm"
         type="text"
@@ -12,8 +30,9 @@
     </b-field>
     <expanded-select
       :items="filteredFunctions"
-      class="mt-5"
+      class="mt-2"
       @changed="selectionChanged"
+      :selected-index="selectedTagIndex ? null : selectedListIndex"
     />
   </div>
 </template>
@@ -32,11 +51,8 @@ export default {
     return {
       functionInputTerm: "",
       functionTableData: [],
-      selected: null,
-
-      selectedOptions: [],
-
-      descriptionIsOk: true,
+      selectedTagIndex: null,
+      selectedListIndex: null,
     };
   },
   computed: {
@@ -67,14 +83,25 @@ export default {
 
     selectionChanged(evt) {
       this.functionInputTerm = "";
+      this.selectedListIndex = evt.index;
+
       this.setDescription(evt.item);
     },
     setDescription(desc) {
       desc = desc === "" ? null : desc;
+      this.selectedTagIndex = null;
+
       this.managePersonData({
         action: { name: "set-description" },
         data: desc,
       });
+    },
+    selectTag(func, index) {
+      this.functionInputTerm = "";
+      this.selectedListIndex = null;
+
+      this.setDescription(func);
+      this.selectedTagIndex = index;
     },
   },
 };
@@ -90,7 +117,6 @@ export default {
   padding-left: 12px;
   padding-right: 32px;
   margin-bottom: 60px;
-
 }
 </style>
 
@@ -98,6 +124,9 @@ export default {
 .function-person-form {
   .icon {
     top: -4px !important;
+  }
+  .tag:hover {
+    cursor: pointer;
   }
 }
 </style>

@@ -53,9 +53,15 @@
         </b-table-column>
 
         <b-table-column v-slot="props" field="ref" label="Identifiant de référence">
-          <a v-if="props.row.item" :href="props.row.item" target="_blank">{{
-            props.row.item
-          }}</a>
+          <span v-if="props.row.item">
+            <a
+              v-if="props.row.item.startsWith('http')"
+              :href="props.row.item"
+              target="_blank"
+              >{{ props.row.item }}</a
+            >
+            <span v-else>{{ props.row.item }}</span>
+          </span>
         </b-table-column>
 
         <template #empty>
