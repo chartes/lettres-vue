@@ -139,6 +139,13 @@ const actions = {
         }
 
         const http = http_with_auth(rootState.user.jwt);
+        if (!phrId) {
+            const response = await http.get(`/documents/${rootState.document.document.id}/placenames-having-roles`)   
+            const foundPhr = response.data.data.find(phr => phr.relationships.placename.data.id === placenameId && phr.relationships['placename-role'].data.id === roleId) 
+            if (foundPhr) {
+              phrId = foundPhr.id
+            }
+          }
 
         if (phrId) {
             data.data.id = phrId

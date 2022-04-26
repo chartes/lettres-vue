@@ -104,7 +104,7 @@ const actions = {
       })
   },
 
-  linkToDocument ({ commit, rootState }, {roleId, personId, func, phrId}) {
+  async linkToDocument ({ commit, rootState }, {roleId, personId, func, phrId}) {
     const data = { data: {
         type: 'person-has-role',
         attributes: {
@@ -132,6 +132,14 @@ const actions = {
         }
       }}
       const http = http_with_auth(rootState.user.jwt);
+      
+      if (!phrId) {
+        const response = await http.get(`/documents/${rootState.document.document.id}/persons-having-roles`)   
+        const foundPhr = response.data.data.find(phr => phr.relationships.person.data.id === personId && phr.relationships['person-role'].data.id === roleId) 
+        if (foundPhr) {
+          phrId = foundPhr.id
+        }
+      }
 
       if (phrId) {
         data.data.id = phrId
