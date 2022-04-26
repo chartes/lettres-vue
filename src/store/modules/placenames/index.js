@@ -108,7 +108,7 @@ const actions = {
         return response.data.meta['total-count']
     },
 
-    linkToDocument({commit, rootState}, {roleId, placenameId, func, phrId}) {
+    async linkToDocument({commit, rootState}, {roleId, placenameId, func, phrId}) {
         let data = {
             data: {
                 type: 'placename-has-role',
