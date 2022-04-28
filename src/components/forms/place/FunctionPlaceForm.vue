@@ -32,6 +32,7 @@
     <expanded-select
       :items="filteredFunctions"
       class="mt-2"
+      style="max-height: 320px"
       @changed="selectionChanged"
       :selected-index="selectedTagIndex ? null : selectedListIndex"
     />
@@ -71,14 +72,6 @@ export default {
       this.setDescription(this.functionInputTerm);
     },
   },
-  created() {
-    /*
-    this.managePlaceData({
-      action: { name: "set-label" },
-      data: { label: "this is the label" },
-    });
-    */
-  },
   async mounted() {
     this.functionTableData = await this.performFunctionSearch();
   },
@@ -90,7 +83,6 @@ export default {
     },
 
     selectionChanged(evt) {
-      this.functionInputTerm = "";
       this.selectedListIndex = evt.index;
       this.setDescription(evt.item);
     },

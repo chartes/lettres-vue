@@ -142,7 +142,7 @@
             label="Description"
             :td-attrs="columnTdAttrs"
           >
-            <span class="tags">
+            <span class="tags is-flex-direction-column is-align-items-flex-start">
               <span v-for="func in props.row.functions" :key="func" class="tag is-light">
                 {{ func }}
               </span>
@@ -155,7 +155,15 @@
             label="Identifiant de référence"
             :td-attrs="columnTdAttrs"
           >
-            {{ props.row.ref }}
+            <span v-if="props.row.ref">
+              <a
+                v-if="props.row.ref.startsWith('http')"
+                :href="props.row.ref"
+                target="_blank"
+                >{{ props.row.ref }}</a
+              >
+              <span v-else>{{ props.row.ref }}</span>
+            </span>
           </b-table-column>
 
           <!--

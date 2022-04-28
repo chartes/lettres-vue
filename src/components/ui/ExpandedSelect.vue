@@ -61,7 +61,6 @@ export default {
 @import "@/assets/sass/main.scss";
 
 .expanded-select {
-  height: 400px;
   min-width: 120px;
   min-height: 120px;
 

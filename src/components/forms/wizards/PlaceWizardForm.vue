@@ -2,39 +2,22 @@
   <div
     class="root-container"
     :class="popupMode ? 'box modal-card' : ''"
+    style="width: 1024px !important"
   >
-    <div
-      class="root-grid-container"
-      :class="popupMode ? 'popup-mode' : ''"
-    >
-      <div
-        v-if="popupMode"
-        class="leftbar-header-area"
-      >
+    <div class="root-grid-container" :class="popupMode ? 'popup-mode' : ''">
+      <div v-if="popupMode" class="leftbar-header-area">
         <h1 class="step-label is-uppercase is-size-2">
           {{ wizardLabel }}
         </h1>
-        <h2
-          v-if="subtitle"
-          class="step-label is-uppercase is-size-5 mb-3"
-        >
+        <h2 v-if="subtitle" class="step-label is-uppercase is-size-5 mb-3">
           {{ subtitle }}
         </h2>
-        <h2
-          v-if="currentStep.label"
-          class="step-label is-uppercase is-size-5"
-        >
+        <h2 v-if="currentStep.label" class="step-label is-uppercase is-size-5">
           {{ currentStep.label }}
         </h2>
       </div>
-      <div
-        v-if="popupMode"
-        class="leftbar-content-area"
-      >
-        <b-tabs
-          v-model="activeTab"
-          :animated="false"
-        >
+      <div v-if="popupMode" class="leftbar-content-area">
+        <b-tabs v-model="activeTab" :animated="false">
           <b-tab-item
             v-for="(stepItem, i) in stepItems"
             :key="`left-step-${i}`"
@@ -51,10 +34,7 @@
           </b-tab-item>
         </b-tabs>
       </div>
-      <div
-        v-if="popupMode"
-        class="leftbar-footer-area"
-      />
+      <div v-if="popupMode" class="leftbar-footer-area" />
 
       <div class="center-content-area">
         <b-tabs v-model="activeTab">
@@ -74,16 +54,9 @@
           </b-tab-item>
         </b-tabs>
       </div>
-      <div
-        v-if="popupMode"
-        class="center-footer-area"
-      >
+      <div v-if="popupMode" class="center-footer-area">
         <div class="buttons">
-          <b-button
-            type="is-primary"
-            size="is-medium"
-            @click="closeWizard"
-          >
+          <b-button type="is-primary" size="is-medium" @click="closeWizard">
             Annuler
           </b-button>
 
@@ -106,10 +79,7 @@
             <span>Suivant</span>
           </b-button>
 
-          <span
-            v-for="(stepItem, i) in stepItems"
-            :key="`footer-buttons-step-${i}`"
-          >
+          <span v-for="(stepItem, i) in stepItems" :key="`footer-buttons-step-${i}`">
             <span v-if="stepItem.footer && activeTab === i">
               <b-button
                 v-for="(button, j) in stepItem.footer.buttons"
@@ -207,6 +177,7 @@ export default {
     },
   },
   async created() {
+    await this.$store.dispatch("placenames/fetchAllPlacenames");
     await this.$store.dispatch("placenames/fetchRoles");
     let place = {};
 
@@ -246,18 +217,19 @@ export default {
         place.id = id;
 
         //load existing data
-        const item = await this.$store.dispatch("placenames/getInlinedPlacenameWithRoleById", {docId: this.document.id, placeId: place.id});
+        const item = await this.$store.dispatch(
+          "placenames/getInlinedPlacenameWithRoleById",
+          { docId: this.document.id, placeId: place.id }
+        );
+
         place = {
           ...place,
           ...item.place,
           ...item.phr,
           description: item.phr.function,
-          phrId: item.phrId
-        }
-        
-        console.log("ITEM", place)
+          phrId: item.phrId,
+        };
       }
-
     }
 
     this.place = place;
@@ -355,7 +327,7 @@ export default {
               placenameId: placeToSave.id,
               roleId,
               func: this.place.description,
-              phrId: this.place.phrId
+              phrId: this.place.phrId,
             });
 
             // and then insert the tag in the content
@@ -384,9 +356,7 @@ export default {
   overflow: hidden;
 
   min-height: 720px;
-  min-width: 960px;
 
-  width: 100%;
   height: inherit;
 
   padding: 0px !important;

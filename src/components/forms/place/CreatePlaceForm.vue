@@ -1,24 +1,15 @@
 <template>
-  <div class="create-place-form">
-    <div class="block">
-      <b-field label="Source">
-        <b-radio v-model="source" name="source" native-value="wikidata" expanded>
-          Wikidata
-        </b-radio>
-        <b-radio v-model="source" name="source" native-value="user" expanded>
-          Saisie
-        </b-radio>
-      </b-field>
-    </div>
-    <div v-if="source === 'wikidata'">
+  <div class="create-place-form is-flex-direction-column">
+    <div class="mb-5">
+      <span class="label">Chercher sur Wikidata</span>
       <b-field class="term-search">
         <div class="field has-addons">
           <div class="control">
             <input
-              v-model="inputTerm"
+              v-model="placeNameWikidataInput"
               class="input"
               type="text"
-              placeholder="Paris"
+              placeholder="Turin"
               @keyup.enter="fetchWikidataItems"
             />
           </div>
@@ -77,11 +68,29 @@
         </template>
       </b-table>
     </div>
-    <div v-else>
-      <b-field label="Nom du lieu">
-        <b-input v-model="placeName" type="text" required placeholder="Montpellier" />
+
+    <div>
+      <b-field label="Aucun résultat ? Ajoutez un nouveau lieu :" class="mt-2">
+        <b-input
+          v-model="placeNameInput"
+          type="text"
+          placeholder="Turin"
+          icon-right="close-circle"
+          icon-right-clickable
+          @icon-right-click="placeNameInput = ''"
+          style="max-width: 360px"
+        />
       </b-field>
-      <b-field label="Identifiant de référence">
+
+      <expanded-select
+        :items="filteredPlacenames"
+        class="mt-2"
+        @changed="selectionChanged"
+        :selected-index="selectedPlaceName"
+        style="max-height: 120px"
+      />
+
+      <b-field label="Identifiant de référence" v-show="false">
         <b-input
           v-model="refId"
           type="text"
@@ -98,38 +107,41 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
 import debounce from "lodash/debounce";
 import { searchWikidataPlacename } from "@/modules/sparql-helpers";
+import ExpandedSelect from "@/components/ui/ExpandedSelect.vue";
 
 export default {
   name: "CreatePlaceForm",
+  components: { ExpandedSelect },
   props: {
     popupMode: { type: Boolean, default: true },
   },
   emit: ["manage-place-data"],
   data() {
     return {
-      source: "wikidata",
-
-      placeName: null,
+      placeName: "",
+      placeNameInput: "",
       refId: null,
 
       autocompleteData: [],
       selected: null,
       existsCount: 0,
       isFetching: false,
-      inputTerm: "",
+      placeNameWikidataInput: "",
 
       //table
       tableData: [],
+
+      //manual
+      selectedPlaceName: null,
     };
   },
   computed: {
-    canAdd() {
-      return this.newPlace;
-    },
+    ...mapState("placenames", { allPlaces: "placenames" }),
     newPlace() {
-      if (this.source === "wikidata") {
+      if (this.selected) {
         return this.selected
           ? {
               ...this.selected,
@@ -145,12 +157,20 @@ export default {
           : null;
       }
     },
+
+    filteredPlacenames() {
+      return this.allPlaces.filter((option) => {
+        return (
+          option.toString().toLowerCase().indexOf(this.placeNameInput.toLowerCase()) >= 0
+        );
+      });
+    },
   },
   watch: {
-    inputTerm() {},
     async selected() {
       if (this.selected) {
         if (this.selected.item) {
+          this.selectedPlaceName = null;
           this.existsCount = await this.$store.dispatch(
             "placenames/checkIfRefExists",
             this.selected.item
@@ -163,27 +183,34 @@ export default {
         }
       }
     },
-    source() {
-      if (this.source !== "wikidata") {
-        this.selected = null;
-        this.inputTerm = null;
-      }
+    placeNameInput() {
+      this.placeName = this.placeNameInput;
+      this.placeNameWikidataInput = "";
+      this.selected = null;
+      this.selectNewPlace();
     },
   },
   methods: {
-    selectNewPlace() {
+    selectNewPlace: debounce(function () {
       this.managePlaceData({
         action: { name: "set-place" },
         data: this.newPlace,
       });
+    }, 75),
+
+    selectionChanged(evt) {
+      this.placeName = evt.item;
+      this.selectedPlaceName = evt.index;
+      this.selected = null;
+      this.selectNewPlace();
     },
 
     fetchWikidataItems: debounce(async function () {
-      if (this.inputTerm && this.inputTerm.length >= 2) {
+      if (this.placeNameWikidataInput && this.placeNameWikidataInput.length >= 2) {
         this.tableData = [];
         this.isFetching = true;
         this.selected = null;
-        const response = await searchWikidataPlacename(this.inputTerm);
+        const response = await searchWikidataPlacename(this.placeNameWikidataInput);
 
         if (response.results.bindings) {
           this.tableData = response.results.bindings.map((b) => {
@@ -192,7 +219,6 @@ export default {
               coordsTmp = coordsTmp.slice(0, coordsTmp.length - 1).split(" ");
               coordsTmp = [parseFloat(coordsTmp[1]), parseFloat(coordsTmp[0])];
             }
-            console.log(b);
             return {
               item: b.item.value,
               coords: coordsTmp,
@@ -215,9 +241,6 @@ export default {
 
 <style lang="scss">
 .create-place-form {
-  padding-left: 12px;
-  min-width: 800px;
-
   .place-table {
     overflow-y: auto;
     max-height: 320px;

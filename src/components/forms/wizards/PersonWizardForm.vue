@@ -2,39 +2,22 @@
   <div
     class="root-container"
     :class="popupMode ? 'box modal-card' : ''"
+    style="width: 1024px !important"
   >
-    <div
-      class="root-grid-container"
-      :class="popupMode ? 'popup-mode' : ''"
-    >
-      <div
-        v-if="popupMode"
-        class="leftbar-header-area"
-      >
+    <div class="root-grid-container" :class="popupMode ? 'popup-mode' : ''">
+      <div v-if="popupMode" class="leftbar-header-area">
         <h1 class="step-label is-uppercase is-size-2">
           {{ wizardLabel }}
         </h1>
-        <h2
-          v-if="subtitle"
-          class="step-label is-uppercase is-size-5 mb-3"
-        >
+        <h2 v-if="subtitle" class="step-label is-uppercase is-size-5 mb-3">
           {{ subtitle }}
         </h2>
-        <h2
-          v-if="currentStep.label"
-          class="step-label is-uppercase is-size-5"
-        >
+        <h2 v-if="currentStep.label" class="step-label is-uppercase is-size-5">
           {{ currentStep.label }}
         </h2>
       </div>
-      <div
-        v-if="popupMode"
-        class="leftbar-content-area"
-      >
-        <b-tabs
-          v-model="activeTab"
-          :animated="false"
-        >
+      <div v-if="popupMode" class="leftbar-content-area">
+        <b-tabs v-model="activeTab" :animated="false">
           <b-tab-item
             v-for="(stepItem, i) in stepItems"
             :key="`left-step-${i}`"
@@ -51,10 +34,7 @@
           </b-tab-item>
         </b-tabs>
       </div>
-      <div
-        v-if="popupMode"
-        class="leftbar-footer-area"
-      />
+      <div v-if="popupMode" class="leftbar-footer-area" />
 
       <div class="center-content-area">
         <b-tabs v-model="activeTab">
@@ -74,16 +54,9 @@
           </b-tab-item>
         </b-tabs>
       </div>
-      <div
-        v-if="popupMode"
-        class="center-footer-area"
-      >
+      <div v-if="popupMode" class="center-footer-area">
         <div class="buttons">
-          <b-button
-            type="is-primary"
-            size="is-medium"
-            @click="closeWizard"
-          >
+          <b-button type="is-primary" size="is-medium" @click="closeWizard">
             Annuler
           </b-button>
 
@@ -106,10 +79,7 @@
             <span>Suivant</span>
           </b-button>
 
-          <span
-            v-for="(stepItem, i) in stepItems"
-            :key="`footer-buttons-step-${i}`"
-          >
+          <span v-for="(stepItem, i) in stepItems" :key="`footer-buttons-step-${i}`">
             <span v-if="stepItem.footer && activeTab === i">
               <b-button
                 v-for="(button, j) in stepItem.footer.buttons"
@@ -207,6 +177,7 @@ export default {
     },
   },
   async created() {
+    await this.$store.dispatch("persons/fetchAllPersons");
     await this.$store.dispatch("persons/fetchRoles");
     let person = {};
 
@@ -239,26 +210,27 @@ export default {
         person.removeTagCallback = p.removeTagCallback;
       }
 
-       if (id !== null) {
+      if (id !== null) {
         person.id = id;
 
         //load existing data
-        const item = await this.$store.dispatch("persons/getInlinedPersonsWithRoleById", {docId: this.document.id, personId: person.id});
+        const item = await this.$store.dispatch("persons/getInlinedPersonsWithRoleById", {
+          docId: this.document.id,
+          personId: person.id,
+        });
         person = {
           ...person,
           ...item.person,
           ...item.phr,
           description: item.phr.function,
-          phrId: item.phrId
-        }
-        
-        console.log("ITEM", person)
+          phrId: item.phrId,
+        };
+
+        console.log("ITEM", person);
       }
-
     }
-    
-    this.person = person;
 
+    this.person = person;
   },
   mounted() {
     this.$store.dispatch("persons/setPageSize", 5);
@@ -341,12 +313,12 @@ export default {
             // link the person to the document
             const role = this.getRoleByLabel(this.person.role);
             const roleId = role && role.id ? role.id : null;
-            
+
             await this.$store.dispatch("persons/linkToDocument", {
               personId: personToSave.id,
               roleId,
               func: this.person.description,
-              phrId: this.person.phrId
+              phrId: this.person.phrId,
             });
 
             // and then insert the tag in the content

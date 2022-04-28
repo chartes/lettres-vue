@@ -31,6 +31,7 @@
     <expanded-select
       :items="filteredFunctions"
       class="mt-2"
+      style="max-height: 320px"
       @changed="selectionChanged"
       :selected-index="selectedTagIndex ? null : selectedListIndex"
     />
@@ -82,9 +83,7 @@ export default {
     },
 
     selectionChanged(evt) {
-      this.functionInputTerm = "";
       this.selectedListIndex = evt.index;
-
       this.setDescription(evt.item);
     },
     setDescription(desc) {

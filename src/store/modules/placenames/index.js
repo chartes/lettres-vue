@@ -19,6 +19,8 @@ const state = {
 
     placenamesHavingRoles: [], //obsolete?
 
+    placenames: [],
+
 };
 
 const mutations = {
@@ -42,6 +44,9 @@ const mutations = {
     },
     SET_PLACENAMES_HAVING_ROLES(state, payload) {
         state.placenamesHavingRoles = payload;
+    },
+    SET_PLACENAMES(state, payload) {
+        state.placenames = payload;
     },
     ...searchStore.mutations
 };
@@ -101,6 +106,12 @@ const actions = {
             .then(response => {
                 return response.data.data
             })
+    },
+    async fetchAllPlacenames({commit}) {
+        const http = http_with_auth();
+        const response = await http.get(`all-placenames`);
+        const placenames = response.data.data;
+        commit('SET_PLACENAMES', placenames)
     },
     async checkIfRefExists({rootState}, ref) {
         const http = http_with_auth(rootState.user.jwt);

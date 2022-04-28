@@ -1,21 +1,12 @@
 <template>
-  <div class="create-person-form">
-    <div class="block">
-      <b-field label="Source">
-        <b-radio v-model="source" name="source" native-value="wikidata" expanded>
-          Wikidata
-        </b-radio>
-        <b-radio v-model="source" name="source" native-value="user" expanded>
-          Saisie
-        </b-radio>
-      </b-field>
-    </div>
-    <div v-if="source === 'wikidata'">
+  <div class="create-person-form is-flex-direction-column">
+    <div class="mb-5">
+      <span class="label">Chercher sur Wikidata</span>
       <b-field class="term-search">
         <div class="field has-addons">
           <div class="control">
             <input
-              v-model="inputTerm"
+              v-model="personNameWikidataInput"
               class="input"
               type="text"
               placeholder="Henri IV"
@@ -73,16 +64,29 @@
         </template>
       </b-table>
     </div>
-    <div v-else>
-      <b-field label="Nom">
+
+    <div>
+      <b-field label="Aucun résultat ? Ajoutez une nouvelle personne :" class="mt-2">
         <b-input
-          v-model="personName"
+          v-model="personNameInput"
           type="text"
-          required
-          placeholder="Catherine de Médicis"
+          placeholder="Henri IV"
+          icon-right="close-circle"
+          icon-right-clickable
+          @icon-right-click="personNameInput = ''"
+          style="max-width: 360px"
         />
       </b-field>
-      <b-field label="Identifiant de référence">
+
+      <expanded-select
+        :items="filteredPersons"
+        class="mt-2"
+        @changed="selectionChanged"
+        :selected-index="selectedPersonName"
+        style="max-height: 120px"
+      />
+
+      <b-field label="Identifiant de référence" v-show="false">
         <b-input
           v-model="refId"
           type="text"
@@ -92,46 +96,50 @@
     </div>
 
     <b-message v-if="existsCount > 0" type="is-warning is-small" has-icon>
-      Une personne possédant l'identifiant <b>{{ selected.item }}</b> existe déjà dans
+      Un lieu possédant l'identifiant <b>{{ selected.item }}</b> existe déjà dans
       l'application.
     </b-message>
   </div>
 </template>
 
 <script>
+import { mapState } from "vuex";
 import debounce from "lodash/debounce";
 import { searchWikidataPerson } from "@/modules/sparql-helpers";
+import ExpandedSelect from "@/components/ui/ExpandedSelect.vue";
 
 export default {
   name: "CreatePersonForm",
-  components: {},
+  components: { ExpandedSelect },
   props: {
     popupMode: { type: Boolean, default: true },
   },
   emit: ["manage-person-data"],
   data() {
     return {
-      source: "wikidata",
+      personName: "",
+      personNameInput: "",
 
-      personName: null,
       refId: null,
 
       autocompleteData: [],
       selected: null,
       existsCount: 0,
       isFetching: false,
-      inputTerm: "",
+      personNameWikidataInput: "",
 
       //table
       tableData: [],
+
+      //manual
+      selectedPersonName: null,
     };
   },
   computed: {
-    canAdd() {
-      return this.newPerson;
-    },
+    ...mapState("persons", { allPersons: "persons" }),
+
     newPerson() {
-      if (this.source === "wikidata") {
+      if (this.selected) {
         return this.selected
           ? {
               ...this.selected,
@@ -147,12 +155,19 @@ export default {
           : null;
       }
     },
+    filteredPersons() {
+      return this.allPersons.filter((option) => {
+        return (
+          option.toString().toLowerCase().indexOf(this.personNameInput.toLowerCase()) >= 0
+        );
+      });
+    },
   },
   watch: {
-    inputTerm() {},
     async selected() {
       if (this.selected) {
         if (this.selected.item) {
+          this.selectedPersonName = null;
           this.existsCount = await this.$store.dispatch(
             "persons/checkIfRefExists",
             this.selected.item
@@ -165,11 +180,11 @@ export default {
         }
       }
     },
-    source() {
-      if (this.source !== "wikidata") {
-        this.selected = null;
-        this.inputTerm = null;
-      }
+    personNameInput() {
+      this.personName = this.personNameInput;
+      this.personNameWikidataInput = "";
+      this.selected = null;
+      this.selectNewPerson();
     },
   },
   methods: {
@@ -180,12 +195,19 @@ export default {
       });
     },
 
+    selectionChanged(evt) {
+      this.personName = evt.item;
+      this.selectedPersonName = evt.index;
+      this.selected = null;
+      this.selectNewPerson();
+    },
+
     fetchWikidataItems: debounce(async function () {
-      if (this.inputTerm && this.inputTerm.length >= 2) {
+      if (this.personNameWikidataInput && this.personNameWikidataInput.length >= 2) {
         this.tableData = [];
         this.isFetching = true;
         this.selected = null;
-        const response = await searchWikidataPerson(this.inputTerm);
+        const response = await searchWikidataPerson(this.personNameWikidataInput);
 
         if (response.results.bindings) {
           this.tableData = response.results.bindings.map((b) => {
@@ -210,9 +232,6 @@ export default {
 
 <style lang="scss">
 .create-person-form {
-  padding-left: 12px;
-  min-width: 800px;
-
   .person-table {
     overflow-y: auto;
     max-height: 320px;

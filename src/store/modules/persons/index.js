@@ -19,7 +19,7 @@ const state = {
    sorts: [{field: 'label.keyword', order: 'asc'}],
 
    personsHavingRoles: [], //obsolete?
-
+   persons: [],
 };
 
 const mutations = {
@@ -41,7 +41,9 @@ const mutations = {
   ADD_ONE (state, payload) {
     state.personsHavingRoles = payload;
   },
-
+  SET_PERSONS(state, payload) {
+    state.persons = payload;
+},
   SET_PERSONS_HAVING_ROLES(state, payload) {
     state.personsHavingRoles = payload;
   },
@@ -103,7 +105,12 @@ const actions = {
         return response.data.data
       })
   },
-
+  async fetchAllPersons({commit}) {
+    const http = http_with_auth();
+    const response = await http.get(`all-persons`);
+    const persons = response.data.data;
+    commit('SET_PERSONS', persons)
+},
   async linkToDocument ({ commit, rootState }, {roleId, personId, func, phrId}) {
     const data = { data: {
         type: 'person-has-role',

@@ -134,7 +134,9 @@
             label="Fonction occupée"
             :td-attrs="columnTdAttrs"
           >
-            <span class="tags">
+            <span
+              class="tags is-flex-direction-column is-align-items-flex-start is-flex-wrap-wrap"
+            >
               <span v-for="func in props.row.functions" :key="func" class="tag is-light">
                 {{ func }}
               </span>
@@ -147,7 +149,15 @@
             label="Identifiant de référence"
             :td-attrs="columnTdAttrs"
           >
-            {{ props.row.ref }}
+            <span v-if="props.row.ref">
+              <a
+                v-if="props.row.ref.startsWith('http')"
+                :href="props.row.ref"
+                target="_blank"
+                >{{ props.row.ref }}</a
+              >
+              <span v-else>{{ props.row.ref }}</span>
+            </span>
           </b-table-column>
           <!--
           <b-table-column
@@ -527,7 +537,7 @@ export default {
 
       return countSet.size;
     },
-    
+
     recomputeCounts() {
       this.personCounts = {};
       for (let p of this.persons) {
@@ -620,6 +630,13 @@ export default {
           class: "",
           style: {
             "max-width": "300px",
+          },
+        };
+      } else if (column.label === "Fonction occupée") {
+        return {
+          class: "",
+          style: {
+            "max-width": this.popupMode ? "120px" : null,
           },
         };
       } else {

@@ -6,22 +6,17 @@
       :with-status="true"
     />
 
-    <article
-      v-if="document && !isLoading"
-      class="document__content"
-    >
+    <article v-if="document && !isLoading" class="document__content">
       <!-- titre et langue -->
       <section class="document-section columns">
         <document-title
+          v-if="!preview"
           :editable="canEdit"
           :preview="preview"
           class="column is-three-quarters"
           @add-note="addNote"
         />
-        <document-languages
-          :editable="canEdit"
-          class="column"
-        />
+        <document-languages :editable="canEdit" class="column" />
       </section>
       <!-- dates de lieux et de temps -->
 
@@ -120,10 +115,7 @@
         </div>
       </section>
       <!-- transcription -->
-      <section
-        v-if="!preview"
-        class="document-section"
-      >
+      <section v-if="!preview" class="document-section">
         <div class="heading is-size-5 is-uppercase">
           <span class="heading-content">Transcription</span>
           <div class="slope-container">
@@ -150,20 +142,12 @@
         class=""
         style="margin-left: 0; margin-top: 50px"
       >
-        <header class="subtitle mb-3">
-          Historique des modifications
-        </header>
-        <changelog
-          :doc-id="docId"
-          :per-page="10"
-        />
+        <header class="subtitle mb-3">Historique des modifications</header>
+        <changelog :doc-id="docId" :per-page="10" />
       </div>
     </article>
 
-    <document-skeleton
-      v-if="isLoading"
-      class="mt-5"
-    />
+    <document-skeleton v-if="isLoading" class="mt-5" />
 
     <!-- modals -->
     <b-modal
@@ -285,7 +269,7 @@ export default {
     DocumentDateAttributes,
     PlaceWizardForm,
     PersonWizardForm,
-    NoteForm
+    NoteForm,
   },
   props: {
     docId: { required: true, type: Number },
@@ -304,7 +288,7 @@ export default {
       isPersonWizardFormModalActive: false,
 
       noteInputData: null,
-      isNoteFormModalActive: false
+      isNoteFormModalActive: false,
     };
   },
   computed: {
