@@ -14,11 +14,7 @@
       />
       <div v-else>
         <b-taglist>
-          <b-tag
-            v-for="tag in tags"
-            :key="tag.id"
-            type="is-light"
-          >
+          <b-tag v-for="tag in tags" :key="tag.id" type="is-light">
             {{ tag.label }}
           </b-tag>
         </b-taglist>
@@ -43,6 +39,7 @@ export default {
     return {
       filteredTags: [],
       tags: [],
+      init: false,
     };
   },
   computed: {
@@ -53,22 +50,26 @@ export default {
   },
   watch: {
     tags() {
-      const data = {
-        id: this.document.id,
-        relationships: {
-          languages: {
-            data: this.tags.map((l) => {
-              return {
-                id: l.id,
-                type: "language",
-              };
-            }),
+      if (this.init) {
+        const data = {
+          id: this.document.id,
+          relationships: {
+            languages: {
+              data: this.tags.map((l) => {
+                return {
+                  id: l.id,
+                  type: "language",
+                };
+              }),
+            },
           },
-        },
-      };
+        };
 
-      this.$store.dispatch("document/save", data);
-      console.log("lang data", data);
+        this.$store.dispatch("document/save", data);
+        console.log("lang data", data);
+      } else {
+        this.init = true;
+      }
     },
   },
   created() {

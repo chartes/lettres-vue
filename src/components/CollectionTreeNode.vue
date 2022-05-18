@@ -1,45 +1,35 @@
 <template>
-  <div :id="`collection-${collection.id}`">
-    <b-collapse
-      class="collection-tree"
-      :class="depth > 0 ? 'with-border' : ''"
-      animation="none"
-      :open.sync="isOpen"
-    >
-      <div
-        slot="trigger"
-        class="collection tag is-medium is-white"
-        :class="collection.id === selectedCollectionId ? 'is-active' : ''"
+  <b-menu :activable="false">
+    <b-menu-list>
+      <b-menu-item
+        @click="setSelectedCollectionId(collection.id)"
+        class="collection collection-title"
+        :class="selectedCollectionId === collection.id ? 'is-active' : ''"
+        :label="collection.titleWithCount"
+        :animation="null"
       >
-        <span
-          class="collection-title is-pulled-left is-unselectable"
-          role="button"
-          @click.prevent="selectCollection"
-        >
-          {{ collection.titleWithCount }}
-        </span>
-        <span class="arrow">
-          <i
-            v-if="collection.children"
-            class="is-pulled-right"
-            :class="isOpen ? 'fas fa-caret-down' : 'fas fa-caret-up'"
-          />
-        </span>
-      </div>
-      <div style="height: 100%">
-        <collection-tree-node
-          v-for="child in collection.children"
-          :key="child.id"
-          :collection="child"
-          :depth="depth + 1"
-        />
-      </div>
-    </b-collapse>
-  </div>
+      </b-menu-item>
+      <b-menu-item
+        v-for="child in collection.children"
+        class="collection"
+        :class="selectedCollectionId === child.id ? 'is-active' : ''"
+        :label="`•  ${child.titleWithCount}`"
+        :key="child.id"
+        @click="setSelectedCollectionId(child.id)"
+        :animation="null"
+      >
+        <ul class="collection-children">
+          <li v-for="c in child.children" :key="c.id">
+            <collection-tree-node :collection="child" :depth="depth + 1" />
+          </li>
+        </ul>
+      </b-menu-item>
+    </b-menu-list>
+  </b-menu>
 </template>
 
 <script>
-import { mapState, mapActions, mapGetters } from "vuex";
+import { mapState, mapActions } from "vuex";
 
 export default {
   name: "CollectionTreeNode",
@@ -49,9 +39,7 @@ export default {
     depth: { type: Number, default: 0 },
   },
   data() {
-    return {
-      isOpen: true,
-    };
+    return {};
   },
   computed: {
     ...mapState("search", ["selectedCollectionId"]),
@@ -70,42 +58,28 @@ export default {
 <style lang="scss">
 @import "@/assets/sass/main.scss";
 
-.collection-tree {
-  padding-left: 24px;
-  padding-right: 24px;
-}
-.collection-tree.collapse {
-  width: 100%;
-  .with-border {
-    /*
-    border: 1px solid lightgrey;
-    border-right: none;
-    border-top: none;
-    border-bottom: none;
-    */
-  }
-  .collection {
-    padding-left: 20px;
-    &:hover {
-      border-radius: 2px;
-      color: $menu-item-active-color;
-      background-color: lightgrey;
-    }
-  }
-  .is-active {
-    border-radius: 2px;
-    color: $menu-item-active-color;
-    background-color: $primary;
-  }
+.collection {
+  padding-left: 12px;
+  margin-left: 0px;
+  display: block;
+  white-space: pre;
 
-  .tag {
-    width: 100%;
-    padding-top: 10px;
-    padding-bottom: 10px;
-    height: 35px;
+  border-radius: 2px;
+
+  &:hover {
+    border-radius: 2px;
+    cursor: pointer;
   }
-  .collection-title {
-    width: 100%;
-  }
+}
+.is-active {
+  font-weight: bold;
+  background-color: $coffee-light !important;
+}
+.collection-title {
+  padding-left: 0px;
+  text-transform: uppercase;
+}
+.collection-children {
+  border-left: 1px solid $coffee;
 }
 </style>
