@@ -1,22 +1,16 @@
 <template>
   <section class="main">
     <nav-bar />
-    <section
-      class="section"
-      style="height: 100%"
-    >
+    <section class="section" style="height: 100%">
       <div class="columns">
-        <div
-          v-show="showLeftSideBar"
-          class="column is-2"
-        >
+        <div v-show="showLeftSideBar" class="column is-2">
           <side-bar />
         </div>
         <div
           class="column main-column"
           :style="
             (showLeftSideBar ? 'padding-left: 0;' : '') +
-              (rightSideBarIsVisible ? 'padding-right: 0;' : '')
+            (rightSideBarIsVisible ? 'padding-right: 0;' : '')
           "
         >
           <div style="display: flex">
@@ -27,10 +21,6 @@
             <div class="main-column-content">
               <slot />
             </div>
-            <div
-              v-show="displayedManifestUrl"
-              class="hide-button is-vertical divider-right"
-            />
           </div>
         </div>
         <div
@@ -58,7 +48,7 @@
           <img
             class="enc-logo ml-5 pt-3"
             src="@/assets/images/logos/logo-ecole-nationale-des-chartes-header.png"
-          >
+          />
         </div>
       </nav>
     </footer>

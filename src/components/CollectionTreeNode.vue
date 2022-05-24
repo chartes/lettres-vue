@@ -1,5 +1,5 @@
 <template>
-  <b-menu :activable="false">
+  <b-menu :activable="false" class="collection-tree-node">
     <b-menu-list>
       <b-menu-item
         @click="setSelectedCollectionId(collection.id)"
@@ -57,29 +57,29 @@ export default {
 
 <style lang="scss">
 @import "@/assets/sass/main.scss";
+.collection-tree-node {
+  .collection {
+    padding-left: 12px;
+    margin-left: 0px;
+    display: block;
+    white-space: pre;
 
-.collection {
-  padding-left: 12px;
-  margin-left: 0px;
-  display: block;
-  white-space: pre;
-
-  border-radius: 2px;
-
-  &:hover {
     border-radius: 2px;
-    cursor: pointer;
+
+    &:hover {
+      cursor: pointer;
+    }
   }
-}
-.is-active {
-  font-weight: bold;
-  background-color: $coffee-light !important;
-}
-.collection-title {
-  padding-left: 0px;
-  text-transform: uppercase;
-}
-.collection-children {
-  border-left: 1px solid $coffee;
+  .is-active {
+    font-weight: bold !important;
+    background-color: $coffee-light !important;
+  }
+  .collection-title {
+    padding-left: 0px;
+    text-transform: uppercase;
+  }
+  .collection-children {
+    border-left: 1px solid $coffee;
+  }
 }
 </style>
