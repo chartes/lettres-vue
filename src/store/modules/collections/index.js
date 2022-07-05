@@ -47,7 +47,7 @@ function searchId(tree, id) {
 const mutations = {
 
   RESET(state) {
-    state.collectionsWithParents = {};
+    state.collectionsWithParents = [];
     state.collectionsSearchResults = [];
     state.fullHierarchy = [];
     state.isLoading = false;
@@ -59,7 +59,7 @@ const mutations = {
 
   SET_ALL(state, collections) {
     // build full hierarchy tree
-    state.allCollectionsWithParents = Object.assign({}, state.allCollectionsWithParents, collections);
+    state.allCollectionsWithParents = collections;
     //state.fullHierarchy = [];
     state.fullHierarchy =  buildTree(collections, null, 0);
   },
@@ -79,26 +79,25 @@ const actions = {
     commit('SET_LOADING', true)
 
     const http = http_with_auth(rootState.user.jwt);
-    return http.get(`/collections?include=parents`).then(async response => {
+    return http.get(`/collections?include=parents,admin`).then(async response => {
 
-      let countPromises = [];
-      response.data.data.forEach(c => {
-        const newCountPromise = http.get(`/collections/${c.id}/relationships/documents`).then(docs => {
+      const collections = response.data.data.map(c => {
           return  {
             id: c.id,
+            admin: getIncludedRelation(c, response.data.included, "admin")[0],
+
             title: c.attributes.title,
+            titleWithCount: c.parents && c.parents.length === 0 ? c.attributes.title : `${c.attributes.title} (${c.attributes.nb_docs})`,
+
             description: c.attributes.description,
-            documentCount: docs.data.meta['total-count'],
-            titleWithCount: c.parents && c.parents.length === 0 ? c.attributes.title : `${c.attributes.title} (${docs.data.meta['total-count']})`,
+            documentCount: c.attributes.nb_docs,
+            dateMin: c.attributes.date_min,
+            dateMax: c.attributes.date_max,
             //documents: getIncludedRelation(c, included, "documents"),
             parents: getIncludedRelation(c, response.data.included, "parents"),
           }
-        })
+        })      
 
-        countPromises.push(newCountPromise);
-      });
-
-      const collections = await Promise.all(countPromises)
       commit('SET_ALL', collections)
       commit('SET_LOADING', false)
      

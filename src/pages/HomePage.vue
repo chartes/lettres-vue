@@ -1,11 +1,11 @@
 <template>
-  <div>Home Page <br></div>
+  <div>Home Page <br /></div>
 </template>
 
 <script>
 export default {
   name: "HomePage",
-  components: {},
+
   data() {
     return {
       isComponentModalActive: false,
