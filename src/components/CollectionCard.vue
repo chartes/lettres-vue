@@ -67,7 +67,16 @@ export default {
   }
 
   &__selected {
-    background-color: $coffee-light !important;
+    background-color: $primary !important;
+    color: white !important;
+    .title,
+    a {
+      color: white !important;
+    }
+    &:hover {
+      background-color: $primary !important;
+      cursor: initial;
+    }
   }
 
   &__dates {
