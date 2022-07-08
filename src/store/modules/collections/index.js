@@ -1,5 +1,6 @@
 import {http_with_auth} from '../../../modules/http-common';
 import {getIncludedRelation} from "../../../modules/document-helpers";
+import { debounce } from "lodash";
 
 const state = {
 
@@ -79,7 +80,7 @@ const actions = {
     commit('SET_LOADING', true)
 
     const http = http_with_auth(rootState.user.jwt);
-    return http.get(`/collections?include=parents,admin`).then(async response => {
+    return http.get(`/collections?include=parents,children,admin`).then(async response => {
 
       const collections = response.data.data.map(c => {
           return  {
@@ -95,6 +96,8 @@ const actions = {
             dateMax: c.attributes.date_max,
             //documents: getIncludedRelation(c, included, "documents"),
             parents: getIncludedRelation(c, response.data.included, "parents"),
+            children: getIncludedRelation(c, response.data.included, "children"),
+
           }
         })      
 
@@ -106,6 +109,22 @@ const actions = {
       commit('RESET');
     });
   },
+
+  saveCollection: async function({ rootState, commit }, collection) {
+    const http = http_with_auth(rootState.user.jwt);
+    const data = {
+      data: {
+        type: 'collection',
+        id: collection.id,
+        attributes: {
+          title: collection.title,
+          description: collection.description
+        }
+      }
+    }
+    return await http.patch(`collections/${collection.id}`, data);
+  }
+
   /*
   search ({ commit }, what) {
     state.isLoading = true;

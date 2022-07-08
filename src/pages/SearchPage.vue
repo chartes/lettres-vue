@@ -8,11 +8,7 @@
       </div>
       <div class="column">
         <div class="collection-selection mb-5">
-          <div v-show="!isCollectionLoading" class="columns">
-            <span class="column" v-for="c in allCollectionsWithParents" :key="c.id">
-              <collection-card :collection-id="c.id" class="m-3" />
-            </span>
-          </div>
+          <collection-card :collection-id="selectedCollectionId" class="m-3" />
         </div>
 
         <document-list />

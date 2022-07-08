@@ -10,6 +10,7 @@ const RegisterPage = () => import('@/pages/RegisterPage.vue')
 const ForgotPasswordPage = () => import('@/pages/ForgotPasswordPage.vue')
 const PasswordResetPage = () => import('@/pages/PasswordResetPage.vue')
 const DocumentPage = () => import('@/pages/DocumentPage.vue')
+const CollectionPage = () => import('@/pages/CollectionPage.vue')
 
 const DocumentCreationPage = () => import('@/pages/DocumentCreationPage.vue')
 const CollectionListPage = () => import('@/pages/CollectionListPage.vue')
@@ -83,6 +84,12 @@ const router = new VueRouter({
       path: '/collections',
       component: CollectionListPage,
       name: 'collections',
+      props: true
+    },
+    {
+      path: '/collections/:collectionId',
+      component: CollectionPage,
+      name: 'collection',
       props: true
     },
     {
