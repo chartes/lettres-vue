@@ -13,14 +13,14 @@
 
 <script>
 import CollectionCard from "@/components/CollectionCard.vue";
-import { mapState, mapActions, mapGetters } from "vuex";
+import { mapState, mapActions } from "vuex";
 
 export default {
   name: "CollectionsPage",
   components: { CollectionCard },
   props: {
     collectionId: {
-      type: String,
+      type: Object,
       required: true,
     },
   },
