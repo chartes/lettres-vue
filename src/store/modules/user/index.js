@@ -20,8 +20,6 @@ const mutations = {
         ...userData,
         isAdmin: userData.roles.indexOf("admin") > -1
       }
-      console.log('THEEEEEEEN', state)
-
     } else {
       state.current_user = null
     }
@@ -131,7 +129,7 @@ const actions = {
 const getters = {
   isAuthenticated(state) {
     return !!state.current_user && isValidJwt(state.jwt)
-  },
+  }
 };
 const userModule = {
   namespaced: true,

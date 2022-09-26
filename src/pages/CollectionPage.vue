@@ -1,25 +1,30 @@
 <template>
   <div>
-    <span class="column" v-for="c in allCollectionsWithParents" :key="c.id">
-      <collection-card :collection-id="c.id" :editable="true" class="m-3" />
-    </span>
+    <router-link :to="{ name: 'collections' }" class="mt-5 mb-5"
+      ><i class="fas fa-arrow-left ml-1 mr-3"></i>Toutes les collections</router-link
+    >
+    <collection-card
+      :collection-id="parseInt(collectionId)"
+      :editable="true"
+      class="m-3"
+    />
   </div>
 </template>
 
 <script>
 import CollectionCard from "@/components/CollectionCard.vue";
-import { mapState, mapActions, mapGetters } from "vuex";
+import { mapState, mapActions } from "vuex";
 
 export default {
   name: "CollectionsPage",
   components: { CollectionCard },
-  computed: {
-    ...mapState("collections", {
-      collectionTree: "fullHierarchy",
-      isCollectionLoading: "isLoading",
-      allCollectionsWithParents: "allCollectionsWithParents",
-    }),
+  props: {
+    collectionId: {
+      type: Object,
+      required: true,
+    },
   },
+  computed: {},
   created() {
     this.fetchCollections();
   },

@@ -7,29 +7,10 @@
         </aside>
       </div>
       <div class="column">
-        <div class="collection-selection">
-          <div class="columns">
-            <div class="column is-one-third">
-              <div v-if="!isCollectionLoading && collectionTree.length > 0">
-                <collection-tree-node
-                  v-for="rootCollection in collectionTree"
-                  :key="rootCollection.id"
-                  :collection="rootCollection"
-                />
-              </div>
-
-              <div v-else class="progress-container">
-                <progress class="progress">15%</progress>
-              </div>
-            </div>
-            <div class="column">
-              <p v-if="selectedCollection" class="collection-description">
-                {{ selectedCollection.description }} (paragraphe descriptif de la
-                collection)
-              </p>
-            </div>
-          </div>
+        <div class="collection-selection mb-5">
+          <collection-card :collection-id="selectedCollectionId" class="m-3" />
         </div>
+
         <document-list />
       </div>
     </div>
@@ -39,16 +20,16 @@
 <script>
 import { mapState, mapActions, mapGetters } from "vuex";
 
-import CollectionTreeNode from "@/components/CollectionTreeNode";
 import DocumentList from "@/components/sections/DocumentList";
 import AdvancedSearchForm from "@/components/AdvancedSearchForm.vue";
+import CollectionCard from "@/components/CollectionCard.vue";
 
 export default {
   name: "SearchPage",
   components: {
-    CollectionTreeNode,
     DocumentList,
     AdvancedSearchForm,
+    CollectionCard,
   },
   computed: {
     ...mapState("user", ["current_user"]),
@@ -56,6 +37,7 @@ export default {
     ...mapState("collections", {
       collectionTree: "fullHierarchy",
       isCollectionLoading: "isLoading",
+      allCollectionsWithParents: "allCollectionsWithParents",
     }),
     ...mapState("search", ["selectedCollectionId", "documents", "loadingStatus"]),
     ...mapGetters("collections", ["searchWithinTree"]),

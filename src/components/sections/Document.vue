@@ -94,6 +94,14 @@
         </div>
       </section>
 
+      <section class="document-section">
+        <!-- collections -->
+        <div class="heading is-size-5 is-uppercase">
+          <span class="heading-content">Collections</span>
+        </div>
+        <document-collections :editable="canEdit" />
+      </section>
+
       <!-- analyse -->
       <section class="document-section">
         <div class="heading is-size-5 is-uppercase">
@@ -134,9 +142,7 @@
           />
         </div>
       </section>
-      <!-- collections 
-      <document-collections :editable="canEdit" />
-      -->
+
       <div
         v-if="!preview && current_user"
         class=""
@@ -238,6 +244,7 @@ import Changelog from "@/components/sections/Changelog";
 import DocumentPersons from "../document/DocumentPersons";
 import DocumentTranscription from "../document/DocumentTranscription";
 import DocumentTagBar from "../document/DocumentTagBar";
+import DocumentCollections from "../document/DocumentCollections";
 import DocumentPlacenames from "../document/DocumentPlacenames";
 import { baseApiURL } from "../../modules/http-common";
 import DocumentArgument from "../document/DocumentArgument";
@@ -261,6 +268,7 @@ export default {
     DocumentPersons,
     DocumentPlacenames,
     DocumentArgument,
+    DocumentCollections,
     DocumentTranscription,
     DocumentTagBar,
     DocumentLanguages,

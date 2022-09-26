@@ -95,7 +95,8 @@ const getPersons = function (included) {
   },
 
   getIncludedRelation = function (data, included, relName) {
-    return data.relationships[relName].data.map(r => {
+    const d = Array.isArray(data.relationships[relName].data) ? data.relationships[relName].data : [data.relationships[relName].data]
+    return d.map(r => {
         let found = included.find(item => item.type === r.type && item.id === r.id);
         return found ? {id: found.id, ...found.attributes} : null;
     })
