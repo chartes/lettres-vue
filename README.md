@@ -1,24 +1,19 @@
-# lettres-vue
+# Lettres-vue
 
 ## Project setup
+Dans un répertoire dédié au projet :
+- Cloner le repository GitHub : `git clone https://github.com/chartes/lettres-app.git`
+
+NB : après avoir lancé l'API et paramétré Elasticsearch
+Voir [Readme de l'API] (https://github.com/chartes/lettres-app/blob/dev/README.md)
+
+Dans le sous-répertoire de l'application (lettres-vue) :
 ```
-npm install
+yarn
+yarn serve
 ```
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+- Ouvrir l'application dans un navigateur et se connecter.
 
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
+## Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
