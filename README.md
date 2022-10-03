@@ -2,7 +2,7 @@
 
 ## Project setup
 Dans un répertoire dédié au projet :
-- Cloner le repository GitHub : `git clone https://github.com/chartes/lettres-app.git`
+- Cloner le repository GitHub : `git clone https://github.com/chartes/lettres-vue.git`
 
 **NB : après avoir lancé l'API et installé Elasticsearch :**
 
