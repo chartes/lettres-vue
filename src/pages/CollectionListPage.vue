@@ -1,7 +1,7 @@
 <template>
   <div>
     <span class="column" v-for="c in allCollectionsWithParents" :key="c.id">
-      <collection-card :collection-id="c.id" :editable="true" class="m-3" />
+      <collection-card :collection-id="String(c.id)" :editable="true" class="m-3" />
     </span>
   </div>
 </template>

@@ -120,24 +120,18 @@ export default {
   name: "CollectionCard",
   components: { TitleFieldInPlace, SaveButtonIcon },
   props: {
-    collectionId: { type: Number, required: true },
+    collectionId: { type: String, required: true },
     editable: { type: Boolean, default: false },
   },
   data() {
     return {
       saving: "normal",
+      collection: null,
     };
   },
   computed: {
-    ...mapState("collections", ["allCollectionsWithParents"]),
     ...mapState("search", ["selectedCollectionId"]),
     ...mapState("user", ["current_user"]),
-
-    collection() {
-      return this.allCollectionsWithParents.find(
-        (c) => c.id === this.$props.collectionId
-      );
-    },
 
     editMode() {
       return (
@@ -152,16 +146,28 @@ export default {
     "collection.title"() {
       this.saving = "normal";
     },
+    collectionId: async function () {
+      await this.load();
+    },
   },
-  created() {},
+  async created() {
+    await this.load();
+  },
   methods: {
     ...mapActions("search", ["setSelectedCollectionId"]),
-    ...mapActions("collections", ["saveCollection", "fetchAll"]),
+    ...mapActions("collections", ["saveCollection", "fetchOne"]),
 
     descriptionFormats() {
       return [["superscript"]];
     },
 
+    async load() {
+      const data = await this.fetchOne({
+        id: this.$props.collectionId,
+        numPage: null,
+      });
+      this.collection = data.collection;
+    },
     async save() {
       this.saving = "loading";
       await this.saveCollection({
@@ -169,7 +175,7 @@ export default {
         title: this.collection.title,
         description: this.collection.description,
       });
-      await this.fetchAll();
+      await this.load();
       this.saving = "normal";
     },
 

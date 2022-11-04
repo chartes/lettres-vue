@@ -9,6 +9,8 @@ const state = {
   allCollectionsWithParents: [],
   fullHierarchy: [],
 
+  fetchDocuments: [],
+
   isLoading: false
 };
 
@@ -62,7 +64,7 @@ const mutations = {
     // build full hierarchy tree
     state.allCollectionsWithParents = collections;
     //state.fullHierarchy = [];
-    state.fullHierarchy =  buildTree(collections, null, 0);
+    //state.fullHierarchy =  buildTree(collections, null, 0);
   },
   SEARCH_RESULTS (state, payload) {
     state.collectionsSearchResults = payload;
@@ -78,29 +80,9 @@ const actions = {
 
   fetchAll({rootState, commit}) {
     commit('SET_LOADING', true)
-
     const http = http_with_auth(rootState.user.jwt);
-    return http.get(`/collections?include=parents,children,admin`).then(async response => {
-
-      const collections = response.data.data.map(c => {
-          return  {
-            id: c.id,
-            admin: getIncludedRelation(c, response.data.included, "admin")[0],
-
-            title: c.attributes.title,
-            titleWithCount: c.parents && c.parents.length === 0 ? c.attributes.title : `${c.attributes.title} (${c.attributes.nb_docs})`,
-
-            description: c.attributes.description,
-            documentCount: c.attributes.nb_docs,
-            dateMin: c.attributes.date_min,
-            dateMax: c.attributes.date_max,
-            //documents: getIncludedRelation(c, included, "documents"),
-            parents: getIncludedRelation(c, response.data.included, "parents"),
-            children: getIncludedRelation(c, response.data.included, "children"),
-
-          }
-        })      
-
+    return http.get(`/collections?without-relationships`).then(async response => {
+      const collections = response.data.data;
       commit('SET_ALL', collections)
       commit('SET_LOADING', false)
      
@@ -108,6 +90,45 @@ const actions = {
       console.error('issue with collections loading', e)
       commit('RESET');
     });
+  },
+
+  fetchOne: async function({rootState, commit}, {id, numPage, pageSize, sortingPriority}) {
+    commit('SET_LOADING', true)
+    const http = http_with_auth(rootState.user.jwt);
+
+    // collection
+    let response = await http.get(`/collections?facade=search&filter[id]=${id}&include=parents,children,admin`)
+    const c = response.data.data[0];
+    const collection = {
+      id: c.id,
+      admin: getIncludedRelation(c, response.data.included, "admin")[0],
+
+      title: c.attributes.title,
+      titleWithCount: c.parents && c.parents.length === 0 ? c.attributes.title : `${c.attributes.title} (${c.attributes.nb_docs})`,
+
+      description: c.attributes.description,
+      documentCount: c.attributes.nb_docs,
+      dateMin: c.attributes.date_min,
+      dateMax: c.attributes.date_max,
+      //documents: getIncludedRelation(c, included, "documents"),
+      parents: getIncludedRelation(c, response.data.included, "parents"),
+      children: getIncludedRelation(c, response.data.included, "children"),
+
+    }
+
+    // documents
+    let documents = []
+    if (numPage !== null) {
+      let sorts = sortingPriority ? sortingPriority.map(s => `${s.order === 'desc' ? '-' : ''}${s.field}`) : []
+      sorts = `&sort=${sorts.length ? sorts.join(',') : 'creation'}`
+
+      response = await http.get(`/search?query=collections.id:${id}&page[number]=${numPage}&page[size]=${pageSize||50}${sorts}&without-relationships`);
+      documents = response.data.data;
+    } 
+    console.log('COLLECTION DATA FETCHED', documents, collection, response.data.meta)
+
+    commit('SET_LOADING', false)
+    return {documents, collection, totalCount: response.data.meta['total-count']} 
   },
 
   saveCollection: async function({ rootState, commit }, collection) {
@@ -123,7 +144,7 @@ const actions = {
       }
     }
     return await http.patch(`collections/${collection.id}`, data);
-  }
+  },
 
   /*
   search ({ commit }, what) {

@@ -8,7 +8,7 @@
       </div>
       <div class="column">
         <div class="collection-selection mb-5">
-          <collection-card :collection-id="selectedCollectionId" class="m-3" />
+          <collection-card :collection-id="String(selectedCollectionId)" class="m-3" />
         </div>
 
         <document-list />
