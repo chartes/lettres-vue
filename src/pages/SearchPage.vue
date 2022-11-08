@@ -7,10 +7,6 @@
         </aside>
       </div>
       <div class="column">
-        <div class="collection-selection mb-5">
-          <collection-card :collection-id="String(selectedCollectionId)" class="m-3" />
-        </div>
-
         <document-list />
       </div>
     </div>
@@ -22,45 +18,24 @@ import { mapState, mapActions, mapGetters } from "vuex";
 
 import DocumentList from "@/components/sections/DocumentList";
 import AdvancedSearchForm from "@/components/AdvancedSearchForm.vue";
-import CollectionCard from "@/components/CollectionCard.vue";
 
 export default {
   name: "SearchPage",
   components: {
     DocumentList,
     AdvancedSearchForm,
-    CollectionCard,
   },
   computed: {
     ...mapState("user", ["current_user"]),
     ...mapState("layout", ["showAdvancedSearchForm"]),
-    ...mapState("collections", {
-      collectionTree: "fullHierarchy",
-      isCollectionLoading: "isLoading",
-      allCollectionsWithParents: "allCollectionsWithParents",
-    }),
-    ...mapState("search", ["selectedCollectionId", "documents", "loadingStatus"]),
-    ...mapGetters("collections", ["searchWithinTree"]),
-
-    selectedCollection() {
-      if (this.selectedCollectionId) {
-        return this.searchWithinTree(this.selectedCollectionId);
-      } else {
-        return null;
-      }
-    },
+    ...mapState("search", ["documents", "loadingStatus"]),
   },
-  watch: {
-    selectedCollection() {
-      this.performSearch();
-    },
-  },
+  watch: {},
   created() {
-    this.fetchCollections();
+    if (!this.documents && !this.loadingStatus) this.performSearch();
   },
   methods: {
-    ...mapActions("search", ["performSearch", "setSelectedCollectionId"]),
-    ...mapActions("collections", { fetchCollections: "fetchAll" }),
+    ...mapActions("search", ["performSearch"]),
   },
 };
 </script>

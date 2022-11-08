@@ -24,7 +24,7 @@ export default {
     this.fetchCollections();
   },
   methods: {
-    ...mapActions("search", ["performSearch", "setSelectedCollectionId"]),
+    ...mapActions("search", ["performSearch"]),
     ...mapActions("collections", { fetchCollections: "fetchAll" }),
   },
 };

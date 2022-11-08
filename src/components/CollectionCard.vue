@@ -1,14 +1,6 @@
 <template>
   <div v-if="collection">
-    <div class="collection-card card" @click="setSelectedCollectionId(collection.id)">
-      <div
-        class="collection-card__head-border"
-        :class="
-          selectedCollectionId === collection.id
-            ? 'collection-card__head-border__selected'
-            : ''
-        "
-      ></div>
+    <div class="collection-card card">
       <div class="card-content">
         <div class="is-flex is-justify-content-space-between mb-4">
           <span class="title is-flex is-justify-content-space-between">
@@ -130,7 +122,6 @@ export default {
     };
   },
   computed: {
-    ...mapState("search", ["selectedCollectionId"]),
     ...mapState("user", ["current_user"]),
 
     editMode() {
@@ -154,7 +145,6 @@ export default {
     await this.load();
   },
   methods: {
-    ...mapActions("search", ["setSelectedCollectionId"]),
     ...mapActions("collections", ["saveCollection", "fetchOne"]),
 
     descriptionFormats() {
@@ -196,11 +186,6 @@ export default {
   -webkit-box-shadow: none !important;
   border: 1px solid $coffee;
 
-  &:hover {
-    cursor: pointer;
-    background-color: $coffee-light !important;
-  }
-
   &__actions {
     width: 50px;
   }
@@ -212,9 +197,6 @@ export default {
   .collection-card__head-border {
     height: 10px;
     width: 100%;
-    &:hover {
-      cursor: initial;
-    }
     &__selected {
       background-color: $primary !important;
     }

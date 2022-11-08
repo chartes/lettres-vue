@@ -84,7 +84,7 @@ const state = {
   withStatus: false,
   withDateRange: false,
 
-  selectedCollectionId: 1,
+  selectedCollections: [],
 
   numPage: 1,
   pageSize: 30,
@@ -126,8 +126,8 @@ const mutations = {
   SET_LOADING_STATUS(state, s) {
     state.loadingStatus = s;
   },
-  SET_SELECTED_COLLECTION_ID(state, id) {
-    state.selectedCollectionId = id > 0 ? id : 1;
+  SET_SELECTED_COLLECTIONS(state, colls) {
+    state.selectedCollections = colls;
   },
   UPDATE_ALL (state, {documents, totalCount, links, included}) {
     state.documents = documents;
@@ -160,23 +160,26 @@ const actions = {
   },
   setWithDateRange({commit}, status) {
     commit('SET_WITH_DATE_RANGE', status)
+    commit('SET_NUM_PAGE', 1)
   },
   setCreationDateFrom({commit}, from) {
     commit('SET_CREATION_DATE_FROM', from)
+    commit('SET_NUM_PAGE', 1)
   },
   setCreationDateTo({commit}, to) {
     commit('SET_CREATION_DATE_TO', to)
+    commit('SET_NUM_PAGE', 1)
   },
-  setSelectedCollectionId({commit}, id) {
-    commit('SET_SELECTED_COLLECTION_ID', id)
+  setSelectedCollections({commit}, colls) {
+    commit('SET_SELECTED_COLLECTIONS', colls)
     commit('SET_NUM_PAGE', 1)
   },
   performSearch: debounce(async ({commit, state, rootState}) => {
     commit('SET_LOADING_STATUS', true);
 
     /* =========== filters =========== */
-    let query = `collections.id:${state.selectedCollectionId}`
-
+    let query =  '' + state.selectedCollections.map(c => `collections.id:${c.id}`).join(' OR ');
+    //let query = `collections.id:${state.selectedCollectionId}`
 
     if (state.searchTerm && state.searchTerm.length > 0) {
       query = `(${query} AND (${state.searchTerm}))`
