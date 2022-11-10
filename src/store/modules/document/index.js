@@ -182,12 +182,26 @@ const actions = {
   },
 
   async save ({ commit, state, rootState, dispatch }, data) {
+    const http = http_with_auth(rootState.user.jwt);
+
     const modifiedData = data.attributes || data.relationships;
     console.log('document/save', data)
     data.type = 'document';
     removeContentEditableAttributesFromObject(data.attributes)
-    //
-    const http = http_with_auth(rootState.user.jwt);
+    
+    // check that dates are null rather than empty strings
+    if (data.attributes)
+    {
+      if (data.attributes['creation'] && data.attributes['creation'].trim() === '') {
+        data.attributes['creation'] =  null;
+      }
+      if (data.attributes['creation-not-after'] && data.attributes['creation-not-after'].trim() === '') {
+        data.attributes['creation-not-after'] =  null;
+      }
+      if (data.attributes['creation-label'] && data.attributes['creation-label'].trim() === '') {
+        data.attributes['creation-label'] =  null;
+      }
+    } 
 
     const response = await http.patch(`/documents/${data.id}`, { data })
     commit('UPDATE_DOCUMENT_DATA', response.data.data);
