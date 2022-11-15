@@ -168,119 +168,68 @@
       <div class="divider is-left">Dates de lieu</div>
       <section class="places-section">
         <b-field label="Expédition">
-          <b-taginput
-            v-model="placesTagsFrom"
-            :data="filteredPlacesFromTags"
-            autocomplete
-            open-on-focus
-            field="user.first_name"
-            icon="map-marker-alt"
+          <b-autocomplete
+            :data="placeFromData"
             placeholder="Montpellier"
-            @typing="getFilteredTags"
-          />
+            field="attributes.label"
+            :loading="isFetchingPlaceFrom"
+            @typing="getAsyncPlaceFromData"
+            @select="(option) => (selectedPlaceFrom = option)"
+            clearable
+          >
+            <template slot-scope="props">
+              {{ props.option.attributes.label }}
+            </template>
+          </b-autocomplete>
         </b-field>
         <b-field label="Destination">
-          <b-taginput
-            v-model="placesTagsTo"
-            :data="filteredPlacesToTags"
-            autocomplete
-            open-on-focus
-            field="user.first_name"
-            icon="map-marker-alt"
-            placeholder="Venise"
-            @typing="getFilteredTags"
-          />
+          <b-autocomplete
+            :data="placeToData"
+            placeholder="Genève"
+            field="attributes.label"
+            :loading="isFetchingPlaceTo"
+            @typing="getAsyncPlaceToData"
+            @select="(option) => (selectedPlaceTo = option)"
+            clearable
+          >
+            <template slot-scope="props">
+              {{ props.option.attributes.label }}
+            </template>
+          </b-autocomplete>
         </b-field>
       </section>
 
       <div class="divider is-left">Correspondants</div>
       <section class="correspondents-section">
-        <!-- expéditeur -->
-        <b-field v-for="(c, i) in correspondentFrom" :key="`from_${i}`" grouped>
-          <span :style="i === 0 ? '' : 'visibility: hidden'">De</span>
-          <!-- person -->
+        <b-field label="Expéditeur">
           <b-autocomplete
-            v-model="correspondentFrom[i].person"
-            :data="filteredCorrespondentsFrom.persons[i]"
-            placeholder="Expéditeur"
-            open-on-focus
+            :data="personFromData"
+            placeholder="Henri IV"
+            field="label"
+            :loading="isFetchingPersonFrom"
+            @typing="getAsyncPersonFromData"
+            @select="(option) => (selectedPersonFrom = option)"
             clearable
-            class="year-search"
-            expanded
-            @select="(option) => (correspondentFrom[i].selection.person = option)"
           >
-            <template #empty> Aucun résultat </template>
+            <template slot-scope="props">
+              {{ props.option.label }}
+            </template>
           </b-autocomplete>
-          <!-- function -->
-          <b-autocomplete
-            v-model="c.func"
-            :data="filteredCorrespondentsFrom.functions[i]"
-            placeholder="Fonction"
-            open-on-focus
-            clearable
-            class="year-search"
-            expanded
-            @select="(option) => (c.selection.func = option)"
-          >
-            <template #empty> Aucun résultat </template>
-          </b-autocomplete>
-
-          <b-button
-            v-if="i === correspondentFrom.length - 1"
-            icon-left="plus"
-            type="is-light"
-            @click="addCorrespondentFrom"
-          />
-          <b-button
-            v-else
-            icon-left="minus"
-            type="is-light"
-            @click="removeCorrespondentFrom(i)"
-          />
         </b-field>
-
-        <!-- destinataire -->
-        <b-field v-for="(c, i) in correspondentTo" :key="`to_${i}`" grouped>
-          <span :style="i === 0 ? '' : 'visibility: hidden'">À</span>
-          <!-- person -->
+        <b-field label="Destinataire">
           <b-autocomplete
-            v-model="correspondentTo[i].person"
-            :data="filteredCorrespondentsTo.persons[i]"
-            placeholder="Destinataire"
-            open-on-focus
+            :data="personToData"
+            placeholder="Catherine de Médicis"
+            field="label"
+            :loading="isFetchingPersonTo"
+            @typing="getAsyncPersonToData"
+            @select="(option) => (selectedPersonTo = option)"
             clearable
-            class="year-search"
-            expanded
-            @select="(option) => (correspondentTo[i].selection.person = option)"
           >
-            <template #empty> Aucun résultat </template>
+            <template slot-scope="props">
+              {{ props.option.label }}
+            </template>
           </b-autocomplete>
-          <!-- function -->
-          <b-autocomplete
-            v-model="c.func"
-            :data="filteredCorrespondentsTo.functions[i]"
-            placeholder="Fonction"
-            open-on-focus
-            clearable
-            class="year-search"
-            expanded
-            @select="(option) => (c.selection.func = option)"
-          >
-            <template #empty> Aucun résultat </template>
-          </b-autocomplete>
-
-          <b-button
-            v-if="i === correspondentTo.length - 1"
-            icon-left="plus"
-            type="is-light"
-            @click="addCorrespondentTo"
-          />
-          <b-button
-            v-else
-            icon-left="minus"
-            type="is-light"
-            @click="removeCorrespondentTo(i)"
-          />
         </b-field>
       </section>
 
@@ -297,7 +246,7 @@
 </template>
 
 <script>
-import { cloneDeep as _cloneDeep } from "lodash";
+import debounce from "lodash/debounce";
 
 import { mapState, mapActions } from "vuex";
 import SearchBox from "@/components/SearchBox";
@@ -312,16 +261,6 @@ export default {
     CollectionSearchBox,
   },
   data() {
-    const availablePlacesTags = ["Nice", "Brest", "Montpellier"];
-    const correspondentTemplate = {
-      person: "",
-      func: "",
-      selection: {
-        person: null,
-        func: null,
-      },
-    };
-
     return {
       availableYears: [].concat(
         Array.from({ length: 400 }, (x, i) => (1300 + i).toString())
@@ -330,24 +269,22 @@ export default {
       availableDays: [].concat(
         Array.from({ length: 31 }, (x, i) => (1 + i).toString().padStart(2, "0"))
       ),
-      availableCorrespondents: ["Caterine", "Robert de la Mark", "Salviati"].sort(),
-      availableFunctions: [
-        "Duc",
-        "Prince héritier",
-        "Régente",
-        "Comte",
-        "Cardinal",
-      ].sort(),
-      availablePlacesTags: availablePlacesTags,
 
-      correspondentTemplate,
-      correspondentFrom: [this.cloneDeep(correspondentTemplate)],
-      correspondentTo: [this.cloneDeep(correspondentTemplate)],
+      placeFromData: [],
+      isFetchingPlaceFrom: false,
+      selectedPlaceFrom: null,
 
-      filteredPlacesFromTags: availablePlacesTags,
-      filteredPlacesToTags: availablePlacesTags,
-      placesTagsFrom: [],
-      placesTagsTo: [],
+      placeToData: [],
+      isFetchingPlaceTo: false,
+      selectedPlaceTo: null,
+
+      personFromData: [],
+      isFetchingPersonFrom: false,
+      selectedPersonFrom: null,
+
+      personToData: [],
+      isFetchingPersonTo: false,
+      selectedPersonTo: null,
     };
   },
   computed: {
@@ -358,6 +295,8 @@ export default {
       _creationDateFrom: "creationDateFrom",
       _creationDateTo: "creationDateTo",
     }),
+    ...mapState("placenames", ["placenamesSearchResults"]),
+    ...mapState("persons", ["personsSearchResults"]),
 
     showStatuses: {
       get: function () {
@@ -418,13 +357,6 @@ export default {
     filteredCreationDateToDay() {
       return this.filteredDataArray(this.availableDays, this.creationDateTo.day);
     },
-
-    filteredCorrespondentsFrom() {
-      return this.filterCorrespondent(this.correspondentFrom);
-    },
-    filteredCorrespondentsTo() {
-      return this.filterCorrespondent(this.correspondentTo);
-    },
   },
   watch: {
     withDateRange() {
@@ -441,7 +373,7 @@ export default {
       this.performSearch();
     },
   },
-  created() {},
+  async created() {},
   methods: {
     ...mapActions("search", [
       "performSearch",
@@ -451,6 +383,9 @@ export default {
       "setCreationDateTo",
     ]),
     ...mapActions("layout", ["hideAdvancedSearchForm"]),
+
+    ...mapActions("placenames", { searchPlacename: "search" }),
+    ...mapActions("persons", { searchPerson: "search" }),
 
     capitalize(s) {
       return s[0].toUpperCase() + s.slice(1);
@@ -462,46 +397,65 @@ export default {
       });
     },
 
-    getFilteredTags(text) {
-      this.filteredPlacesTagsFrom = this.availablePlacesTags.filter((option) => {
-        return option.toString().toLowerCase().startsWith(text.toLowerCase());
-      });
-    },
-
-    cloneDeep(obj) {
-      return _cloneDeep(obj);
-    },
-
-    filterCorrespondent(correspondents) {
-      let persons = [];
-      let functions = [];
-      for (let i = 0; i < correspondents.length; i++) {
-        persons.push(
-          this.filteredDataArray(this.availableCorrespondents, correspondents[i].person)
-        );
-        functions.push(
-          this.filteredDataArray(this.availableFunctions, correspondents[i].func)
-        );
+    getAsyncPlaceFromData: debounce(async function (input) {
+      if (input.length < 2) {
+        this.placeFromData = [];
+        return;
       }
+      this.isFetchingPlaceFrom = true;
+      await this.searchPlacename(input);
+      this.placeFromData = [];
+      this.placenamesSearchResults.map((item) => {
+        this.placeFromData.push(item);
+      });
 
-      return {
-        persons,
-        functions,
-      };
-    },
+      this.isFetchingPlaceFrom = false;
+    }, 300),
 
-    addCorrespondentFrom() {
-      this.correspondentFrom.push(this.cloneDeep(this.correspondentTemplate));
-    },
-    removeCorrespondentFrom(i) {
-      this.correspondentFrom.splice(i, 1);
-    },
-    addCorrespondentTo() {
-      this.correspondentTo.push(this.cloneDeep(this.correspondentTemplate));
-    },
-    removeCorrespondentTo(i) {
-      this.correspondentTo.splice(i, 1);
-    },
+    getAsyncPlaceToData: debounce(async function (input) {
+      if (input.length < 2) {
+        this.placeToData = [];
+        return;
+      }
+      this.isFetchingPlaceTo = true;
+      await this.searchPlacename(input);
+      this.placeToData = [];
+      this.placenamesSearchResults.map((item) => {
+        this.placeToData.push(item);
+      });
+
+      this.isFetchingPlaceTo = false;
+    }, 300),
+
+    getAsyncPersonFromData: debounce(async function (input) {
+      if (input.length < 2) {
+        this.personFromData = [];
+        return;
+      }
+      this.isFetchingPersonFrom = true;
+      await this.searchPerson(input);
+      this.personFromData = [];
+      this.personsSearchResults.map((item) => {
+        this.personFromData.push(item);
+      });
+
+      this.isFetchingPersonFrom = false;
+    }, 300),
+
+    getAsyncPersonToData: debounce(async function (input) {
+      if (input.length < 2) {
+        this.personToData = [];
+        return;
+      }
+      this.isFetchingPersonTo = true;
+      await this.searchPerson(input);
+      this.personToData = [];
+      this.personsSearchResults.map((item) => {
+        this.personToData.push(item);
+      });
+
+      this.isFetchingPersonTo = false;
+    }, 300),
   },
 };
 </script>
@@ -541,21 +495,11 @@ export default {
   }
 
   .date-section,
-  .correspondents-section,
-  .places-section,
   .display-section,
   .search-section {
     margin-top: 16px;
     .input {
       width: 250px;
-    }
-  }
-
-  .correspondents-section {
-    span {
-      align-self: center;
-      margin-right: 12px;
-      width: 24px;
     }
   }
 
