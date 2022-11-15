@@ -140,6 +140,11 @@ const mutations = {
       state.collections = state.collections.filter(coll => coll.id !== payload.id)
     }
   },
+  REMOVE_DOCUMENT (state, payload) {
+    if (state.documents) {
+      state.documents = state.documents.filter(doc => doc.id !== payload.id)
+    }
+  },
   REMOVE_PERSON (state, payload) {
     if (state.persons) {
       state.persons = state.persons.filter(corr => corr.relation.id !== payload)
@@ -587,6 +592,16 @@ const actions = {
     return http.delete(`/documents/${state.document.id}/relationships/collections?without-relationships`, {data})
       .then(response => {
         commit('REMOVE_COLLECTION', collection);
+        return true
+      })
+  },
+  removeDocument ({commit, state, rootState}, document) {
+    const data = { data: { id : document.id, type: "document" } };
+
+    const http = http_with_auth(rootState.user.jwt);
+    return http.delete(`/documents/${state.document.id}`, {data})
+      .then(response => {
+        commit('REMOVE_DOCUMENT', document);
         return true
       })
   },

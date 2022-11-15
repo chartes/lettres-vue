@@ -1,115 +1,17 @@
 <template>
-  <span class="tags has-addons document-tag-bar">
-    <router-link
-      :to="{ name: 'document', params: { docId } }"
-      class="tag document-status-card__doc-tag"
-    >
-      <span>Document {{ docId }}</span>
-    </router-link>
-
-    <!--
-      Published
-    -->
-    <badge
-      v-if="withStatus && current_user && status"
-      classes-active="is-published tag"
-      classes-inactive="tag"
-      :action-when-on="publishDocument"
-      :action-when-off="unpublishDocument"
-      :starts-on="status.isPublished"
-    >
-      <template #active>
-        <a><i class="fas fa-check-circle" /></a>
-      </template>
-      <template #inactive>
-        <a><i class="far fa-check-circle" /></a>
-      </template>
-    </badge>
-
-    <!--
-      Bookmark
-    -->
-    <badge
-      v-if="withStatus && current_user && status"
-      classes-active="is-bookmarked tag"
-      classes-inactive="tag"
-      :action-when-on="addBookmark"
-      :action-when-off="removeBookmark"
-      :starts-on="status.isBookmarked"
-    >
-      <template #active>
-        <a><i class="fas fa-bookmark" /></a>
-      </template>
-      <template #inactive>
-        <a><i class="far fa-bookmark" /></a>
-      </template>
-    </badge>
-
-    <!--
-      Lock
-    -->
-    <badge
-      v-if="withStatus && current_user && status"
-      classes-active="is-locked tag"
-      classes-inactive="tag"
-      :action-when-on="startLockEditor"
-      :action-when-off="startLockEditor"
-      :starts-on="lockOwner[docId]"
-    >
-      <template #active>
-        <a><i class="fas fa-lock" /></a>
-      </template>
-      <template #activeLabel>
-        <span
-          v-if="lockOwner[docId]"
-          class="badge-label"
-        >{{
-          lockOwner[docId].attributes.username
-        }}</span>
-      </template>
-      <template #inactive>
-        <a><i class="fas fa-unlock" /></a>
-      </template>
-    </badge>
-
-    <lock-form
-      v-if="withStatus && lockEditMode & status"
-      :doc-id="docId"
-      :current-lock="status.currentLock"
-      :cancel="stopLockEditor"
-      :submit="stopLockEditor"
-    />
+  <span class="tags has-addons document-deletion">
     <!--
       Delete
     -->
-    <badge
-      v-if="withStatus && current_user && status"
-      classes-active="is-locked tag"
-      classes-inactive="tag is-danger is-light"
-      :action-when-on="deleteDocument"
-    >
-      <template #active>
-        <a><i class="fas fa-trash-alt" /></a>
-      </template>
-      <template #activeLabel>
-        <span>{{}}</span>
-      </template>
-      <template #inactive>
-        <a><i class="fas fa-trash-alt has-text-danger" /></a>
-      </template>
-      <template #inactiveLabel>
-        <span>Supprimer le document {{ docId }} </span>
-      </template>
-    </badge>
     <a
-      v-if="this.current_user.isAdmin"
-      class="document-deletion"
+      v-if="current_user.isAdmin"
+      class="tag"
       @click="delete_documentId = docId"
-    >
+    >Supprimer le document {{docId}}
       <icon-bin />
-    </a>
+      </a>
     <modal-confirm-document-delete
-      v-if="delete_documentId && this.current_user.isAdmin"
+      v-if="delete_documentId && current_user.isAdmin"
       :doc-id="delete_documentId"
       :cancel="cancelDocumentDelete"
       :submit="confirmDocumentDelete"
@@ -120,14 +22,12 @@
 
 <script>
 import { mapState, mapGetters } from "vuex";
-import Badge from "../ui/Badge";
-import LockForm from "../forms/LockForm";
 import ModalConfirmDocumentDelete from "../forms/ModalConfirmDocumentDelete";
 import IconBin from "@/components/ui/icons/IconBin";
 
 export default {
-  name: "DocumentTagBar",
-  components: { Badge, LockForm, IconBin, ModalConfirmDocumentDelete},
+  name: "DocumentDeletion",
+  components: { IconBin, ModalConfirmDocumentDelete},
   props: {
     docId: { required: true, type: Number },
     withStatus: { required: true, type: Boolean, default: false },
@@ -169,7 +69,7 @@ export default {
     cancelDocumentDelete() {
       this.delete_documentId = false;
     },
-    addBookmark() {
+    /*addBookmark() {
       return this.$store
         .dispatch("bookmarks/postUserBookmark", {
           userId: this.current_user.id,
@@ -213,7 +113,7 @@ export default {
       // TODO: mettre à jour l'affichage du lock
       console.warn("DocumentTagBar (lock): affichage du lock non mis à jour");
       return Promise.resolve(!!this.lockOwner[this.docId]);
-    },
+    },*/
     async deleteDocument() {
       if (this.docId == this.docId) {
         await this.$store.dispatch("document/removeDocument", document);
