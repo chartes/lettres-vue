@@ -32,7 +32,7 @@ export default {
   },
   watch: {},
   created() {
-    if (!this.documents && !this.loadingStatus) this.performSearch();
+    if (!this.loadingStatus) this.performSearch();
   },
   methods: {
     ...mapActions("search", ["performSearch"]),

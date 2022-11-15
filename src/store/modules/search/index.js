@@ -85,6 +85,10 @@ const state = {
   withDateRange: false,
 
   selectedCollections: [],
+  selectedPlaceFrom: null,
+  selectedPlaceTo: null,
+  selectedPersonFrom: null,
+  selectedPersonTo: null,
 
   numPage: 1,
   pageSize: 30,
