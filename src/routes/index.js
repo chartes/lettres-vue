@@ -108,15 +108,25 @@ const router = new VueRouter({
       name: 'history'
     },
     {
+      path: '/persons',
+      component: PersonsPage,
+      name: 'persons'
+    },
+    {
       path: '/persons/:personId',
       component: PersonsPage,
-      name: 'persons',
+      name: 'person',
       props: true
+    },
+    {
+      path: '/places',
+      component: PlacesPage,
+      name: 'places'
     },
     {
       path: '/places/:placeId',
       component: PlacesPage,
-      name: 'places',
+      name: 'place',
       props: true
     },
     {
