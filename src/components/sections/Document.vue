@@ -1,11 +1,18 @@
 <template>
   <div class="document">
-    <document-tag-bar
-      v-if="!preview && current_user"
+    <div class="columns">
+      <document-tag-bar
+      class="column is-three-quarters"
+      v-if="!preview && !isLoading && current_user"
       :doc-id="docId"
       :with-status="true"
     />
-
+    <document-deletion
+      class="column"
+      v-if="!preview && current_user && current_user.isAdmin"
+      :doc-id="docId"
+    />
+    </div>
     <article v-if="document && !isLoading" class="document__content">
       <!-- titre et langue -->
       <section class="document-section columns">
@@ -235,6 +242,12 @@
         />
       </template>
     </b-modal>
+    <!--<modal-confirm-document-delete
+      v-if="delete_documentId && this.current_user.isAdmin"
+      :doc-id="delete_documentId"
+      :cancel="cancelDocumentDelete"
+      :submit="confirmDocumentDelete"
+    />-->
   </div>
 </template>
 
@@ -244,6 +257,7 @@ import Changelog from "@/components/sections/Changelog";
 import DocumentPersons from "../document/DocumentPersons";
 import DocumentTranscription from "../document/DocumentTranscription";
 import DocumentTagBar from "../document/DocumentTagBar";
+import DocumentDeletion from "../document/DocumentDeletion";
 import DocumentCollections from "../document/DocumentCollections";
 import DocumentPlacenames from "../document/DocumentPlacenames";
 import { baseApiURL } from "../../modules/http-common";
@@ -271,6 +285,7 @@ export default {
     DocumentCollections,
     DocumentTranscription,
     DocumentTagBar,
+    DocumentDeletion,
     DocumentLanguages,
     WitnessList,
     DocumentTitle,
@@ -344,13 +359,15 @@ export default {
     },
   },
   watch: {},
-  async created() {
+   async created() {
     this.isLoading = true;
-
-    this.$store.dispatch("document/fetch", this.docId).then(async (r) => {
-      this.isLoading = false;
+    try {
+      await this.$store.dispatch("document/fetch", this.docId);
       this.setLastSeen(this.docId);
-    });
+    } catch (e) {
+      await this.$router.push({name: "home"});
+    }
+    this.isLoading = false;
   },
 
   methods: {
