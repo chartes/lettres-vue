@@ -367,6 +367,11 @@ const actions = {
         })
   },
 
+  delete({rootState}, docId) {
+    const http = http_with_auth(rootState.user.jwt);
+    return http.delete(`/documents/${docId}`)
+  },
+
   publish({commit, state}, docId) {
     return this.dispatch('document/save', {
         type: 'document',
@@ -592,16 +597,6 @@ const actions = {
     return http.delete(`/documents/${state.document.id}/relationships/collections?without-relationships`, {data})
       .then(response => {
         commit('REMOVE_COLLECTION', collection);
-        return true
-      })
-  },
-  removeDocument ({commit, state, rootState}, document) {
-    const data = { data: { id : document.id, type: "document" } };
-
-    const http = http_with_auth(rootState.user.jwt);
-    return http.delete(`/documents/${state.document.id}`, {data})
-      .then(response => {
-        commit('REMOVE_DOCUMENT', document);
         return true
       })
   },

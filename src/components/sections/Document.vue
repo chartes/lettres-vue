@@ -3,7 +3,7 @@
     <div class="columns">
       <document-tag-bar
       class="column is-three-quarters"
-      v-if="!preview && current_user"
+      v-if="!preview && !isLoading && current_user"
       :doc-id="docId"
       :with-status="true"
     />
@@ -11,7 +11,6 @@
       class="column"
       v-if="!preview && current_user && current_user.isAdmin"
       :doc-id="docId"
-      :with-status="true"
     />
     </div>
     <article v-if="document && !isLoading" class="document__content">
@@ -360,13 +359,15 @@ export default {
     },
   },
   watch: {},
-  async created() {
+   async created() {
     this.isLoading = true;
-
-    this.$store.dispatch("document/fetch", this.docId).then(async (r) => {
-      this.isLoading = false;
+    try {
+      await this.$store.dispatch("document/fetch", this.docId);
       this.setLastSeen(this.docId);
-    });
+    } catch (e) {
+      await this.$router.push({name: "home"});
+    }
+    this.isLoading = false;
   },
 
   methods: {
