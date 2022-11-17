@@ -55,7 +55,7 @@ const actions = {
   search ({ rootState, commit }, what) {
     commit('SEARCH_RESULTS', [])
     const http = http_with_auth(rootState.user.jwt);
-    return http.get(`/search?query=*${what}*&index=lettres__${process.env.NODE_ENV}__persons&without-relationships`)
+    return http.get(`/search?query=*${what}*&index=lettres__${process.env.NODE_ENV}__persons&without-relationships&sort=label.keyword`)
       .then( response => {
         const persons = response.data.data.map(inst => { return { id: inst.id, ...inst.attributes}});
         commit('SEARCH_RESULTS', persons)
