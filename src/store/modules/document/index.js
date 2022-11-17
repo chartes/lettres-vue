@@ -140,6 +140,11 @@ const mutations = {
       state.collections = state.collections.filter(coll => coll.id !== payload.id)
     }
   },
+  REMOVE_DOCUMENT (state, payload) {
+    if (state.documents) {
+      state.documents = state.documents.filter(doc => doc.id !== payload.id)
+    }
+  },
   REMOVE_PERSON (state, payload) {
     if (state.persons) {
       state.persons = state.persons.filter(corr => corr.relation.id !== payload)
@@ -360,6 +365,11 @@ const actions = {
           commit('UPDATE_DOCUMENT_DATA', response.data.data);
           return response.data.data
         })
+  },
+
+  delete({rootState}, docId) {
+    const http = http_with_auth(rootState.user.jwt);
+    return http.delete(`/documents/${docId}`)
   },
 
   publish({commit, state}, docId) {
