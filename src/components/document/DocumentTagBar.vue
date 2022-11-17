@@ -79,42 +79,6 @@
       :cancel="stopLockEditor"
       :submit="stopLockEditor"
     />
-    <!--
-      Delete
-    -->
-    <badge
-      v-if="withStatus && current_user && status"
-      classes-active="is-locked tag"
-      classes-inactive="tag is-danger is-light"
-      :action-when-on="deleteDocument"
-    >
-      <template #active>
-        <a><i class="fas fa-trash-alt" /></a>
-      </template>
-      <template #activeLabel>
-        <span>{{}}</span>
-      </template>
-      <template #inactive>
-        <a><i class="fas fa-trash-alt has-text-danger" /></a>
-      </template>
-      <template #inactiveLabel>
-        <span>Supprimer le document {{ docId }} </span>
-      </template>
-    </badge>
-    <a
-      v-if="this.current_user.isAdmin"
-      class="document-deletion"
-      @click="delete_documentId = docId"
-    >
-      <icon-bin />
-    </a>
-    <modal-confirm-document-delete
-      v-if="delete_documentId && this.current_user.isAdmin"
-      :doc-id="delete_documentId"
-      :cancel="cancelDocumentDelete"
-      :submit="confirmDocumentDelete"
-    />
-
   </span>
 </template>
 
@@ -122,12 +86,10 @@
 import { mapState, mapGetters } from "vuex";
 import Badge from "../ui/Badge";
 import LockForm from "../forms/LockForm";
-import ModalConfirmDocumentDelete from "../forms/ModalConfirmDocumentDelete";
-import IconBin from "@/components/ui/icons/IconBin";
 
 export default {
   name: "DocumentTagBar",
-  components: { Badge, LockForm, IconBin, ModalConfirmDocumentDelete},
+  components: { Badge, LockForm },
   props: {
     docId: { required: true, type: Number },
     withStatus: { required: true, type: Boolean, default: false },
@@ -137,7 +99,6 @@ export default {
       baseUrl: `${process.env.VUE_APP_APP_ROOT_URL}`,
       lockEditMode: false,
       status: null,
-      delete_documentId: false,
     };
   },
   computed: {
@@ -161,13 +122,6 @@ export default {
     async fetchStatus() {
       this.status = await this.getDocumentStatus(this.docId);
       console.log("status", this.docId, this.status);
-    },
-    confirmDocumentDelete(docId) {
-        this.deleteDocument();
-        this.cancelDocumentDelete();
-    },
-    cancelDocumentDelete() {
-      this.delete_documentId = false;
     },
     addBookmark() {
       return this.$store
@@ -213,12 +167,6 @@ export default {
       // TODO: mettre à jour l'affichage du lock
       console.warn("DocumentTagBar (lock): affichage du lock non mis à jour");
       return Promise.resolve(!!this.lockOwner[this.docId]);
-    },
-    async deleteDocument() {
-      if (this.docId == this.docId) {
-        await this.$store.dispatch("document/removeDocument", document);
-        console.warn("DocumentTagBar (delete): suppression du document"+this.docId);
-      }
     },
   },
 };
