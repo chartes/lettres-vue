@@ -1,18 +1,18 @@
 <template>
   <div>
     <span class="column" v-for="c in allCollectionsWithParents" :key="c.id">
-      <collection-card :collection-id="String(c.id)" :editable="true" class="m-3" />
+      <collection-card-list :collection-id="String(c.id)" :editable="true" class="m-3" />
     </span>
   </div>
 </template>
 
 <script>
-import CollectionCard from "@/components/CollectionCard.vue";
+import CollectionCardList from "@/components/CollectionCardList.vue";
 import { mapState, mapActions, mapGetters } from "vuex";
 
 export default {
   name: "CollectionsPage",
-  components: { CollectionCard },
+  components: { CollectionCardList },
   computed: {
     ...mapState("collections", {
       collectionTree: "fullHierarchy",
