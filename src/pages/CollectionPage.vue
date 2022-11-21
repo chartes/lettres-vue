@@ -4,6 +4,9 @@
       <i class="fas fa-arrow-left ml-1 mr-3"></i>
       Toutes les collections
     </router-link>
+    <router-link to="create" custom v-slot="{ navigate }" append>
+      <b-button @click="navigate" type="is-primary" label="Créer une collection"/>
+    </router-link>
 
     <collection-card :collection-id="String(collectionId)" :editable="true" class="m-3" />
 

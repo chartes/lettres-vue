@@ -145,6 +145,32 @@ const actions = {
     return await http.patch(`collections/${collection.id}`, data);
   },
 
+  addCollection: async function({ rootState, commit }, collection) {
+    const http = http_with_auth(rootState.user.jwt);
+    const data = {
+      data: {
+        type: 'collection',
+        attributes: {
+          title: collection.title,
+          description: collection.description
+        },
+      }
+    }
+    if (collection.parentId !== undefined) {
+      data.data.relationships = {
+        parent: {
+          data: [
+            {
+              type: "collection",
+              id: collection.parentId,
+            }
+          ]
+        }
+      }
+    }
+    return http.post(`collections`, data).then(response => {return response.data.data})
+  },
+
   /*
   search ({ commit }, what) {
     state.isLoading = true;

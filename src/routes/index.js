@@ -25,6 +25,7 @@ const PlacesPage = () => import('@/pages/PlacesPage.vue')
 const UsersPage = () => import('@/pages/UsersPage.vue')
 const WitnessesPage = () => import('@/pages/WitnessesPage.vue')
 
+const CollectionCreationPage = () => import('@/pages/CollectionCreationPage.vue')
 
 import store from '@/store/index';
 import { getCurrentUser } from '@/modules/http-common';
@@ -87,9 +88,21 @@ const router = new VueRouter({
       props: true
     },
     {
+      path: '/collections/create',
+      component: CollectionCreationPage,
+      name: 'collection-creation',
+      props: true
+    },
+    {
       path: '/collections/:collectionId',
       component: CollectionPage,
       name: 'collection',
+      props: true
+    },
+    {
+      path: '/collections/:collectionId/create',
+      component: CollectionCreationPage,
+      name: 'subcollection-creation',
       props: true
     },
     {

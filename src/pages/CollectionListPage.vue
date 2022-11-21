@@ -1,5 +1,10 @@
 <template>
   <div>
+    <span class="column">
+      <router-link to="/collections/create" custom v-slot="{ navigate }">
+        <b-button @click="navigate" type="is-primary" label="Créer une collection"/>
+      </router-link>
+    </span>
     <span class="column" v-for="c in allCollectionsWithParents" :key="c.id">
       <collection-card :collection-id="String(c.id)" :editable="true" class="m-3" />
     </span>
