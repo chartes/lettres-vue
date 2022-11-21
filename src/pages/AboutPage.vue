@@ -1,6 +1,6 @@
 <template>
   <section>
-    <div class="hero-body">
+    <div class="container m-5">
       <div class="container">
         <p class="title">
           Le portail
@@ -49,8 +49,6 @@
 </template>
 
 <script>
-/*import PresentationSection from '@/components/pages/about/PresentationSection'
-import HistorySection from '@/components/pages/about/HistorySection'*/
 import ContentsSection from '../pages/about/ContentsSection'
 import ProjectSection from '../pages/about/ProjectSection'
 import MembersSection from '../pages/about/MembersSection'
@@ -60,38 +58,7 @@ import EditionsSection from '../pages/about/EditionsSection'
 export default {
   name: "AboutPage",
   components: {ContentsSection, ProjectSection, MembersSection, CollectionsSection, EditionsSection
-
-
   },
-  /*data() {
-    return {
-      isMenuOpened: false
-    }
-  },
-  computed: {
-    menuCsscClass() {
-      return this.isMenuOpened ? 'opened' : ''
-    }
-  },
-  mounted() {
-    document.body.addEventListener('click', this.closeMenu)
-  },
-  beforeDestroy() {
-    document.body.removeEventListener('click', this.closeMenu)
-  },
-  methods: {
-    scrollToTop() {
-      window.scrollTo(0, 0)
-    },
-    toggleMenu($event) {
-      $event.preventDefault()
-      $event.stopImmediatePropagation()
-      this.isMenuOpened = !this.isMenuOpened
-    },
-    closeMenu() {
-      this.isMenuOpened = false
-    }
-  }*/
 }
 </script>
 
