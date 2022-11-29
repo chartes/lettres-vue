@@ -3,9 +3,9 @@
     <nav-bar />
     <section class="section" style="height: 100%">
       <div class="columns">
-        <div v-show="showLeftSideBar" class="column is-2">
+        <!--<div v-show="showLeftSideBar" class="column is-2">
           <side-bar />
-        </div>
+        </div>-->
         <div
           class="column main-column"
           :style="
@@ -58,14 +58,14 @@
 <script>
 import { mapState, mapActions } from "vuex";
 import NavBar from "@/components/NavBar.vue";
-import SideBar from "@/components/SideBar.vue";
+/*import SideBar from "@/components/SideBar.vue";*/
 
 export default {
   name: "LayoutDefault",
   emit: ["refresh-viewer"],
   components: {
     NavBar,
-    SideBar,
+    /*SideBar,*/
     MiradorViewer: () => import("@/components/MiradorViewer"),
   },
 

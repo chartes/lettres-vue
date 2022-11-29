@@ -74,7 +74,10 @@
                     :editable="true"
                     :formats="descriptionFormats"
                     @changed="saveDescription"
-                  />
+                  /> ({{
+                    collection.documentCount
+                  }}
+                  documents)
                 </p>
 
                 <div class="collection-card__children mt-2 mb-2 pl-3 ml-3">
