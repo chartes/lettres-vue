@@ -186,7 +186,11 @@ const actions = {
     //let query = `collections.id:${state.selectedCollectionId}`
 
     if (state.searchTerm && state.searchTerm.length > 0) {
-      query = `(${query} AND (${state.searchTerm}))`
+      if (query.length === 0) {
+        query = `(${state.searchTerm})`
+      } else {
+        query = `(${query} AND (${state.searchTerm}))`
+      }
     }
  
 
