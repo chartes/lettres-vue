@@ -5,7 +5,7 @@
       Toutes les collections
     </router-link>
 
-    <collection-card :collection-id="String(collectionId)" :editable="true" class="m-3" />
+    <collection-interactive-card :collection-id="String(collectionId)" :editable="true" class="m-3" />
 
     <section>
       <span class="pagination-goto">
@@ -79,13 +79,13 @@
 </template>
 
 <script>
-import CollectionCard from "@/components/CollectionCard.vue";
+import CollectionInteractiveCard from "@/components/CollectionInteractiveCard.vue";
 import { mapActions } from "vuex";
 
 export default {
   name: "CollectionPage",
   components: {
-    CollectionCard,
+    CollectionInteractiveCard,
     DocumentTagBar: () => import("@/components/document/DocumentTagBar"),
     Document: () => import("@/components/sections/Document"),
   },
