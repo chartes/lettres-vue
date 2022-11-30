@@ -3,24 +3,15 @@
     <nav-bar />
     <section class="section" style="height: 100%">
       <div class="columns">
-        <!--<div v-show="showLeftSideBar" class="column is-2">
-          <side-bar />
-        </div>-->
-        <div
-          class="column main-column"
-          :style="
-            (showLeftSideBar ? 'padding-left: 0;' : '') +
-            (rightSideBarIsVisible ? 'padding-right: 0;' : '')
-          "
-        >
-          <div style="display: flex">
-            <div
-              class="hide-button is-vertical divider-left"
-              @click="toggleLeftSideBar"
-            />
-            <div class="main-column-content">
-              <slot />
-            </div>
+        <div v-if="showLeftSideBar" class="column is-3">
+          <div @click="hideLeftSideBar" class="hide-left-bar">
+            <i class="far fa-times-circle" />
+          </div>
+          <advanced-search-form v-if="$route.name === 'search'" />
+        </div>
+        <div class="column main-column">
+          <div class="main-column-content">
+            <slot />
           </div>
         </div>
         <div
@@ -59,6 +50,7 @@
 import { mapState, mapActions } from "vuex";
 import NavBar from "@/components/NavBar.vue";
 /*import SideBar from "@/components/SideBar.vue";*/
+//import AdvancedSearchForm from ;
 
 export default {
   name: "LayoutDefault",
@@ -66,6 +58,7 @@ export default {
   components: {
     NavBar,
     /*SideBar,*/
+    AdvancedSearchForm: () => import("@/components/AdvancedSearchForm.vue"),
     MiradorViewer: () => import("@/components/MiradorViewer"),
   },
 
@@ -106,6 +99,7 @@ export default {
   methods: {
     ...mapActions("layout", [
       "toggleLeftSideBar",
+      "hideLeftSideBar",
       "toggleRightSideBar",
       "hideRightSideBar",
       "setDisplayedManifestUrl",
@@ -144,8 +138,18 @@ export default {
 .main-column-content {
   padding: 18px;
   width: 100%;
+  height: 100%;
   background-color: white;
 }
+
+.hide-left-bar {
+  float: right;
+  width: 32px;
+  height: 32px;
+  margin-top: 20px;
+  cursor: pointer;
+}
+
 .hide-button {
   width: 15px;
   min-height: 100vh;
@@ -171,10 +175,12 @@ export default {
 
 .section {
   padding: 0;
+  .columns {
+    margin: 0;
+  }
 }
 footer {
   background-color: $nice-grey !important;
-  margin-top: 12px;
   padding: 15px 0px 25px !important;
   z-index: 100;
 

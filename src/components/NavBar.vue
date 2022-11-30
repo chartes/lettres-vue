@@ -11,7 +11,10 @@
         <router-link :to="{ name: 'about' }" class="navbar-start-item">
           À propos
         </router-link>
-        <search-box class="ml-5 navbar-start-item" />
+        <search-box
+          v-show="!showLeftSideBar || $route.name !== 'search'"
+          class="ml-5 navbar-start-item"
+        />
       </div>
 
       <div class="navbar-end is-align-items-center">
@@ -130,6 +133,7 @@ export default {
   },
   computed: {
     ...mapState("user", ["current_user"]),
+    ...mapState("layout", ["showLeftSideBar"]),
     ...mapGetters("user", ["isAuthenticated"]),
   },
   methods: {
