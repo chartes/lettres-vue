@@ -1,35 +1,40 @@
 <template>
-  <div>
-    <span class="column" v-for="c in allCollectionsWithParents" :key="c.id">
-      <collection-card :collection-id="String(c.id)" :editable="true" class="m-3" />
-    </span>
+  <div v-if="!isLoading">
+    <div
+      v-for="rootCollection of rootCollections"
+      :key="rootCollection.id"
+      class="column"
+    >
+      <!-- Collection card -->
+      <collection-list-item
+        :collection-id="rootCollection.id"
+      />
+    </div>
   </div>
 </template>
 
 <script>
-import CollectionCard from "@/components/CollectionCard.vue";
-import { mapState, mapActions, mapGetters } from "vuex";
+
+import { mapActions, mapGetters, mapState} from "vuex";
+import CollectionListItem from "@/components/CollectionListItem.vue"
 
 export default {
   name: "CollectionsPage",
-  components: { CollectionCard },
+  components: {CollectionListItem},
   computed: {
-    ...mapState("collections", {
-      collectionTree: "fullHierarchy",
-      isCollectionLoading: "isLoading",
-      allCollectionsWithParents: "allCollectionsWithParents",
-    }),
+    ...mapState("collections", ["isLoading"]),
+    ...mapGetters("collections", ["rootCollections"]),
   },
   created() {
     this.fetchCollections();
   },
   methods: {
-    ...mapActions("search", ["performSearch"]),
     ...mapActions("collections", { fetchCollections: "fetchAll" }),
   },
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
 @import "@/assets/sass/main.scss";
+@import "@/assets/sass/objects/collection.scss"
 </style>
