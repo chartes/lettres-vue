@@ -109,7 +109,7 @@ import TitleFieldInPlace from "@/components/forms/fields/TitleFieldInPlace";
 import SaveButtonIcon from "@/components/ui/SaveButtonIcon";
 
 export default {
-  name: "CollectionCard",
+  name: "CollectionInteractiveCard",
   components: { TitleFieldInPlace, SaveButtonIcon },
   props: {
     collectionId: { type: String, required: true },
@@ -181,3 +181,4 @@ export default {
 @import "@/assets/sass/main.scss";
 @import "@/assets/sass/objects/collection.scss";
 </style>
+
