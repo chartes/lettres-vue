@@ -31,12 +31,15 @@
                     <save-button-icon />
                   </a>
                 </div>
-                <router-link
-                  tag="button"
-                  class="button control ml-2 is-primary"
-                  :to="{ name: 'collection', params: { collectionId: collection.id } }"
-                  ><i class="fas fa-arrow-right"></i
-                ></router-link>
+                <div class="control">
+                  <a
+                    @click.stop="deleteCollectionUI"
+                    class="button is-primary"
+                    :class="deleting === 'loading' ? 'is-loading' : ''"
+                  >
+                    <delete-button-icon />
+                  </a>
+                </div>
               </div>
             </span>
           </span>
@@ -107,10 +110,11 @@
 import { mapState, mapActions } from "vuex";
 import TitleFieldInPlace from "@/components/forms/fields/TitleFieldInPlace";
 import SaveButtonIcon from "@/components/ui/SaveButtonIcon";
+import DeleteButtonIcon from "@/components/ui/DeleteButtonIcon";
 
 export default {
   name: "CollectionInteractiveCard",
-  components: { TitleFieldInPlace, SaveButtonIcon },
+  components: { TitleFieldInPlace, SaveButtonIcon, DeleteButtonIcon },
   props: {
     collectionId: { type: String, required: true },
     editable: { type: Boolean, default: false },
@@ -118,6 +122,7 @@ export default {
   data() {
     return {
       saving: "normal",
+      deleting: "normal",
       collection: null,
     };
   },
@@ -129,7 +134,7 @@ export default {
         this.editable &&
         this.collection &&
         this.current_user &&
-        this.current_user.id === this.collection.admin.id
+        this.current_user.isAdmin
       );
     },
   },
@@ -145,7 +150,7 @@ export default {
     await this.load();
   },
   methods: {
-    ...mapActions("collections", ["saveCollection", "fetchOne"]),
+    ...mapActions("collections", ["saveCollection", "fetchOne", "deleteCollection"]),
 
     descriptionFormats() {
       return [["superscript"]];
@@ -167,6 +172,14 @@ export default {
       });
       await this.load();
       this.saving = "normal";
+    },
+    async deleteCollectionUI() {
+      this.deleting = "loading";
+      await this.deleteCollection({
+        id: this.collection.id,
+      });
+      this.deleting = "normal";
+      this.$router.push({ name: "collections" });
     },
 
     saveDescription(evt) {

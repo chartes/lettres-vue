@@ -144,6 +144,10 @@ const actions = {
     }
     return await http.patch(`collections/${collection.id}`, data);
   },
+  deleteCollection: async function({rootState, commit}, collection) {
+    const http = http_with_auth(rootState.user.jwt);
+    return await http.delete(`collections/${collection.id}`);
+  },
 
   /*
   search ({ commit }, what) {
