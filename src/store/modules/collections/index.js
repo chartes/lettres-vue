@@ -192,6 +192,21 @@ const getters = {
   },
   rootCollections: (state) => {
     return state.rootCollectionsIds.map(collectionId => state.collectionsById[collectionId])
+  },
+  search: (state) => (text) => {
+    const words = text.toLowerCase().trim().split(/\s+/)
+    if (words.length === 1 && words[0] === "") {
+      return [];
+    }
+    return Object.values(state.collectionsById).filter(({title, description}) => {
+      return words.every(word => {
+        let match = title.toLowerCase().includes(word);
+        if (!match && description !== null) {
+          match = description.toLowerCase().includes(word)
+        }
+        return match
+      })
+    })
   }
 };
 

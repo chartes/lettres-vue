@@ -5,7 +5,10 @@
       :key="collection.id"
       :style="`margin-left: ${ 20 * (collection.depth + 1) }px;`"
     >
-      <router-link :to="{name: 'collection', params: {collectionId: collection.id}}">
+      <router-link
+        :to="{name: 'collection', params: {collectionId: collection.id}}"
+        :class="collection.id === collectionId ? 'active' : ''"
+      >
         {{ collection.title }}
       </router-link>
     </div>
@@ -33,7 +36,7 @@ export default {
 
 <style scoped lang="scss">
 
-.router-link-active {
+.router-link-active, .active {
   color: black;
   text-decoration: underline;
 }
