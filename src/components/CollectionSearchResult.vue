@@ -3,6 +3,10 @@
     <div class="card-content">
       <div class="is-flex is-justify-content-space-between mb-4">
         <div>
+          <collection-breadcrumb
+            v-if="collection.parent !== null"
+            :collection-id="collection.id"
+          />
           <span class="title is-flex is-justify-content-space-between">
             <router-link
               :to="{ name: 'collection', params: { collectionId: collection.id } }"
@@ -58,11 +62,13 @@
 import escapeRegExp from "lodash/escapeRegExp"
 
 import CollectionHierarchy from "./CollectionHierarchy.vue";
+import CollectionBreadcrumb from "./CollectionBreadcrumb.vue";
 
 export default {
   name: "CollectionSearchResult",
   components: {
-    CollectionHierarchy
+    CollectionHierarchy,
+    CollectionBreadcrumb,
   },
   props: {
     collectionId: {

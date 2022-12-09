@@ -207,6 +207,15 @@ const getters = {
         return match
       })
     })
+  },
+  path: (state, getters) => (collectionId) => {
+    const collection = state.collectionsById[collectionId];
+    if (collection.parent === null) {
+      return []
+    } else {
+      const parentCollection = state.collectionsById[collection.parent]
+      return [...getters.path(collection.parent), parentCollection]
+    }
   }
 };
 
