@@ -129,7 +129,7 @@ export default {
         this.editable &&
         this.collection &&
         this.current_user &&
-        this.current_user.id === this.collection.admin.id
+        this.current_user.isAdmin
       );
     },
   },
