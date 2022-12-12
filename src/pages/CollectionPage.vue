@@ -4,7 +4,7 @@
       <i class="fas fa-arrow-left ml-1 mr-3"></i>
       Toutes les collections
     </router-link>
-    <router-link to="create" custom v-slot="{ navigate }" append>
+    <router-link v-if="current_user.isAdmin" to="create" custom v-slot="{ navigate }" append>
       <b-button @click="navigate" type="is-primary" label="Créer une collection"/>
     </router-link>
 
@@ -83,7 +83,7 @@
 
 <script>
 import CollectionInteractiveCard from "@/components/CollectionInteractiveCard.vue";
-import { mapActions } from "vuex";
+import { mapActions, mapState } from "vuex";
 
 export default {
   name: "CollectionPage",
@@ -117,6 +117,7 @@ export default {
         }
       },
     },
+    ...mapState("user", ["current_user"]),
   },
   watch: {
     collectionId: async function () {

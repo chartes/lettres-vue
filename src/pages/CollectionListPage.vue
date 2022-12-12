@@ -1,6 +1,6 @@
 <template>
   <div>
-    <span class="column">
+    <span v-if="current_user.isAdmin" class="column">
       <router-link to="/collections/create" custom v-slot="{ navigate }">
         <b-button @click="navigate" type="is-primary" label="Créer une collection"/>
       </router-link>
@@ -24,6 +24,7 @@ export default {
       isCollectionLoading: "isLoading",
       allCollectionsWithParents: "allCollectionsWithParents",
     }),
+    ...mapState("user", ["current_user"]),
   },
   created() {
     this.fetchCollections();
