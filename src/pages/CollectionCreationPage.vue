@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="current_user.isAdmin">
     <section>
       <b-field>
         <rich-text-editor
@@ -26,9 +26,15 @@
       />
     </section>
   </div>
+  <div v-else>
+    <section>
+      Page réservée aux administrateurs du site.
+    </section>
+  </div>
 </template>
 <script>
 import RichTextEditor from "@/components/forms/fields/RichTextEditor.vue";
+import { mapState } from "vuex";
 
 export default {
   name: "CollectionCreationPage",
@@ -41,6 +47,9 @@ export default {
       loading: false,
       error: {},
     }
+  },
+  computed: {
+    ...mapState("user", ["current_user"]),
   },
   methods: {
     async createNewCollection() {
