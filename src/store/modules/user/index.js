@@ -6,13 +6,27 @@ import { authenticate, register,  isValidJwt, EventBus } from '@/modules/http-co
 const state = {
   current_user: null,
   jwt: localStorage.getItem('tokenLettres'),
-
   usersSearchResults: [],
+  users: []
 };
 
 const mutations = {
 
- 
+  SET_USERS (state, users) {
+
+      // Convert JSON to collections
+      state.users = users.map(({
+        id,
+        attributes: {username},
+        relationships: {roles}
+      }) => ({
+        id,
+        username,
+        roles: roles.data.map(({id}) => id),
+        isAdmin: roles.data.map(({id}) => id).indexOf(1) > -1
+      }));
+  },
+
   SET_USER_DATA (state, userData) {
 
     if (userData) {
@@ -51,6 +65,15 @@ const mutations = {
 const actions = {
   setUserData({ commit }, userData) {
     commit('SET_USER_DATA', userData)
+  },
+  async fetchUsers({ commit }) {
+    try {
+      const response = await http.get(`/users`)
+      commit('SET_USERS', response.data.data);
+    } catch(e) {
+      console.log(e)
+      commit('SET_USERS', [])
+    }
   },
   login ({ commit }, credentials) { 
     return http

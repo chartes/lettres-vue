@@ -152,7 +152,8 @@ const actions = {
         type: 'collection',
         attributes: {
           title: collection.title,
-          description: collection.description
+          description: collection.description,
+          admin_id: collection.curatorId,
         },
       }
     }
@@ -168,7 +169,16 @@ const actions = {
         }
       }
     }
-    return http.post(`collections`, data).then(response => {return response.data.data})
+    try {
+        const response = await http.post(`collections`, data);
+        if (response.errors) {
+            return {error: response.errors.details}
+        }
+        return response.data.data
+    } catch(e) {
+      console.log(e);
+      return {error: e}
+    }
   },
 
   /*

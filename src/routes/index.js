@@ -28,7 +28,7 @@ const WitnessesPage = () => import('@/pages/WitnessesPage.vue')
 const CollectionCreationPage = () => import('@/pages/CollectionCreationPage.vue')
 
 import store from '@/store/index';
-import { getCurrentUser } from '@/modules/http-common';
+import { getCurrentUser, getUsers } from '@/modules/http-common';
 
 
 Vue.use(VueRouter)
@@ -166,7 +166,6 @@ const router = new VueRouter({
 })
 
 router.beforeEach(async (to, from, next) => {
-  
   if (to.fullPath.indexOf("/edit") > -1 || to.fullPath.indexOf("/create") > -1 || ['history', 'bookmarks', 'locks', 'persons', 'places', 'users'].indexOf(to.name) > -1) {
       if (!store.state.user.jwt) {
         next({ name: 'login', query: { from: window.location.pathname } });
