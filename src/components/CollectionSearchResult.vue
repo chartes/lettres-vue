@@ -5,7 +5,7 @@
         <div>
           <collection-breadcrumb
             v-if="collection.parent !== null"
-            :collection-id="collection.id"
+            :collection-id="collection.parent"
           />
           <span class="title is-flex is-justify-content-space-between">
             <router-link

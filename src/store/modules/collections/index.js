@@ -211,10 +211,9 @@ const getters = {
   path: (state, getters) => (collectionId) => {
     const collection = state.collectionsById[collectionId];
     if (collection.parent === null) {
-      return []
+      return [collection]
     } else {
-      const parentCollection = state.collectionsById[collection.parent]
-      return [...getters.path(collection.parent), parentCollection]
+      return [...getters.path(collection.parent), collection]
     }
   }
 };
