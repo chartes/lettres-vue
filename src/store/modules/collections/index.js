@@ -138,7 +138,8 @@ const actions = {
         id: collection.id,
         attributes: {
           title: collection.title,
-          description: collection.description
+          description: collection.description,
+          admin_id: collection.curatorId,
         }
       }
     }

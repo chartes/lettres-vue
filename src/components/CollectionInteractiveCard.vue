@@ -38,6 +38,16 @@
                   ><i class="fas fa-arrow-right"></i
                 ></router-link>
               </div>
+              <div class="control">
+                <b-field label="Curator">
+                  <select @change=updateCuratorId>
+                   <option :value="collection.admin.id">{{ collection.admin.username }}</option>
+                   <option v-for="option in users.filter((u) => u.isAdmin === true && u.id !== collection.admin.id)" :value="option.id" :key="option.id">
+                     {{ option.username }}
+                   </option>
+                  </select>
+                </b-field>
+              </div>
             </span>
           </span>
         </div>
@@ -119,10 +129,11 @@ export default {
     return {
       saving: "normal",
       collection: null,
+      curatorId: null
     };
   },
   computed: {
-    ...mapState("user", ["current_user"]),
+    ...mapState("user", ["current_user", "users"]),
 
     editMode() {
       return (
@@ -143,9 +154,11 @@ export default {
   },
   async created() {
     await this.load();
+    this.fetchUsers()
   },
   methods: {
     ...mapActions("collections", ["saveCollection", "fetchOne"]),
+    ...mapActions("user", ["fetchUsers"]),
 
     descriptionFormats() {
       return [["superscript"]];
@@ -164,6 +177,7 @@ export default {
         id: this.collection.id,
         title: this.collection.title,
         description: this.collection.description,
+        curatorId: this.curatorId,
       });
       await this.load();
       this.saving = "normal";
@@ -173,6 +187,9 @@ export default {
       this.collection.description = evt.value;
       this.save();
     },
+    updateCuratorId(evt) {
+      this.curatorId = evt.target.value;
+    }
   },
 };
 </script>
