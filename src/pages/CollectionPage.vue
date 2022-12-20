@@ -1,11 +1,18 @@
 <template>
   <div>
-    <router-link :to="{ name: 'collections' }" class="mt-5 mb-5">
-      <i class="fas fa-arrow-left ml-1 mr-3"></i>
+    <router-link
+      :to="{ name: 'collections' }"
+      class="mt-5 mb-5"
+    >
+      <i class="fas fa-arrow-left ml-1 mr-3" />
       Toutes les collections
     </router-link>
-
-    <collection-interactive-card :collection-id="String(collectionId)" :editable="true" class="m-3" />
+    <collection-interactive-card
+      :collection-id="collectionId"
+      :editable="true"
+      class="m-3"
+    />
+    <collection-hierarchy class="m-3" :collection-id="collectionId"/>
 
     <section>
       <span class="pagination-goto">
@@ -17,7 +24,7 @@
           type="text"
           placeholder="Page..."
           @change.prevent="currentPage = parseInt(p)"
-        />
+        >
       </span>
       <div class="">
         <b-table
@@ -46,7 +53,12 @@
           @sorting-priority-removed="sortingPriorityRemoved"
           @page-change="onPageChange"
         >
-          <b-table-column v-slot="props" field="id" label="Document" sortable>
+          <b-table-column
+            v-slot="props"
+            field="id"
+            label="Document"
+            sortable
+          >
             <document-tag-bar :doc-id="props.row.id" />
           </b-table-column>
 
@@ -59,18 +71,31 @@
             {{ props.row.creation }}
           </b-table-column>
 
-          <b-table-column v-slot="props" field="title" label="Titre">
+          <b-table-column
+            v-slot="props"
+            field="title"
+            label="Titre"
+          >
             <router-link :to="{ name: 'document', params: { docId: props.row.id } }">
-              <h2 class="document-preview-card__title" v-html="props.row.title" />
+              <h2
+                class="document-preview-card__title"
+                v-html="props.row.title"
+              />
             </router-link>
           </b-table-column>
 
           <template #empty>
-            <div class="has-text-centered">Aucun résultat</div>
+            <div class="has-text-centered">
+              Aucun résultat
+            </div>
           </template>
 
           <template #detail="props">
-            <document class="document-page" :doc-id="props.row.id" :preview="true" />
+            <document
+              class="document-page"
+              :doc-id="props.row.id"
+              :preview="true"
+            />
           </template>
         </b-table>
       </div>
@@ -80,16 +105,23 @@
 
 <script>
 import CollectionInteractiveCard from "@/components/CollectionInteractiveCard.vue";
+import CollectionHierarchy from "@/components/CollectionHierarchy.vue";
 import { mapActions } from "vuex";
 
 export default {
   name: "CollectionPage",
   components: {
     CollectionInteractiveCard,
+    CollectionHierarchy,
     DocumentTagBar: () => import("@/components/document/DocumentTagBar"),
     Document: () => import("@/components/sections/Document"),
   },
-  props: ["collectionId"],
+  props: {
+    "collectionId": {
+      type: Number,
+      required: true,
+    }
+  },
   data() {
     return {
       fetchedData: [],
@@ -124,10 +156,11 @@ export default {
     await this.fetchData();
   },
   methods: {
-    ...mapActions("collections", ["fetchOne"]),
+    ...mapActions("collections", ["fetchOne", "fetchAll"]),
 
     async fetchData() {
       this.isLoading = true;
+      await this.fetchAll();
       this.fetchedData = await this.fetchOne({
         id: this.collectionId,
         numPage: this.numPage,

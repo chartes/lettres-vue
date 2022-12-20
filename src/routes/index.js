@@ -90,7 +90,7 @@ const router = new VueRouter({
       path: '/collections/:collectionId',
       component: CollectionPage,
       name: 'collection',
-      props: true
+      props: route => ({collectionId: Number.parseInt(route.params.collectionId)})
     },
     {
       path: '/locks',
