@@ -50,52 +50,24 @@
           {{ collection.dateMax || "..." }}
         </div>
 
-        <div class="columns">
-          <div class="column">
-            <p v-if="!editMode">
-              <span v-html="collection.description"></span> ({{
-                collection.documentCount
-              }}
-              documents)
-            </p>
-            <p v-else>
-              <title-field-in-place
-                :tabulation-index="0"
-                label="Titre"
-                name="title"
-                not-set="Non renseigné"
-                :initial-value="collection.description"
-                :editable="true"
-                @changed="saveDescription"
-                :formats="descriptionFormats"
-              />
-            </p>
-
-            <div class="collection-card__children mt-2 mb-2 pl-3 ml-3">
-              <ul>
-                <li v-for="child in collection.children" :key="child.id">
-                  <router-link
-                    :to="{ name: 'collection', params: { collectionId: child.id } }"
-                    class="mt-5 mb-5"
-                    >{{ child.title }} ({{ child.nb_docs }} documents)</router-link
-                  >
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div v-if="collection.parents && collection.parents.length > 0" class="column">
-            <span>Collections parentes :</span>
-            <ul class="collection-card__children mt-2 mb-2 pl-3 ml-3">
-              <li v-for="parent in collection.parents" :key="parent.id">
-                <router-link
-                  :to="{ name: 'collection', params: { collectionId: parent.id } }"
-                  class="mt-5 mb-5"
-                  >{{ parent.title }}</router-link
-                >
-              </li>
-            </ul>
-          </div>
-        </div>
+        <p v-if="!editMode">
+          <span v-html="collection.description" /> ({{
+            collection.documentCount
+          }}
+          documents)
+        </p>
+        <p v-else>
+          <title-field-in-place
+            :tabulation-index="0"
+            label="Titre"
+            name="title"
+            not-set="Non renseigné"
+            :initial-value="collection.description"
+            :editable="true"
+            :formats="descriptionFormats"
+            @changed="saveDescription"
+          />
+        </p>
       </div>
       <footer class="card-footer is-flex is-justify-content-end">
         <p class="pt-2 pr-2 pb-2 pl-3">

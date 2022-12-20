@@ -2,29 +2,12 @@ import {http_with_auth} from '../../../modules/http-common';
 import {getIncludedRelation} from "../../../modules/document-helpers";
 
 const state = {
+  collectionsById: {},
+  rootCollectionsIds: [],
 
-  collectionsSearchResults: [],
-
-  allCollectionsWithParents: [],
-  fullHierarchy: [],
-
-  fetchDocuments: [],
-
-  isLoading: false
+  isLoading: true
 };
 
-function buildTree(collections, parent, depth) {
-  return collections.filter(c => c.parents.length === depth).map(c => {
-    const children = buildTree(collections, c, depth + 1).filter(child => c.id === child.parents[0].id);
-    if (children.length === 0)
-      return c;
-    else
-      return {
-        ...c,
-        children: children
-      }
-  });
-}
 
 function searchId(tree, id) {
     if (!tree){
@@ -49,9 +32,9 @@ function searchId(tree, id) {
 const mutations = {
 
   RESET(state) {
-    state.collectionsWithParents = [];
-    state.collectionsSearchResults = [];
-    state.fullHierarchy = [];
+    state.collectionsById = {};
+    state.rootCollectionsIds = [];
+
     state.isLoading = false;
   },
 
@@ -60,14 +43,23 @@ const mutations = {
   },
 
   SET_ALL(state, collections) {
-    // build full hierarchy tree
-    state.allCollectionsWithParents = collections;
-    //state.fullHierarchy = [];
-    //state.fullHierarchy =  buildTree(collections, null, 0);
+    const collectionsById = Object.fromEntries(collections.map((col) => ([col.id, col])));
+    state.rootCollectionsIds = collections.filter(({parent}) => parent === null).map(col => col.id);
+
+    function applyDepth(collectionId, depth) {
+      const collection = collectionsById[collectionId];
+      collection.depth = depth;
+      for (const childCollectionId of collection.children) {
+        applyDepth(childCollectionId, depth+1)
+      }
+    }
+
+    for (const rootCollectionId of state.rootCollectionsIds) {
+      applyDepth(rootCollectionId, 0)
+    }
+
+    state.collectionsById = collectionsById
   },
-  SEARCH_RESULTS (state, payload) {
-    state.collectionsSearchResults = payload;
-  }
 
 };
 
@@ -77,22 +69,42 @@ const actions = {
     commit('RESET');
   },
 
-  fetchAll({rootState, commit}) {
+  async fetchAll({rootState, commit}) {
     commit('SET_LOADING', true)
     const http = http_with_auth(rootState.user.jwt);
-    return http.get(`/collections?without-relationships`).then(async response => {
-      const collections = response.data.data;
+    try {
+      const response = await http.get(`/collections?facade=hierarchy&include=admin`)
+      const {data:collectionsJSON, included} = response.data;
+
+      // Convert JSON to collections
+      const collections = collectionsJSON.map(({
+        id,
+        attributes: {title, description, nb_docs, date_min, date_max},
+        relationships: {children, parents, admin}
+      }) => ({
+        id,
+        title,
+        documentCount: nb_docs,
+        dateMin: date_min,
+        dateMax: date_max,
+        description,
+        children: children.data.map((child) => child.id),
+        parent: parents.data[0] !== undefined ? parents.data[0].id : null,
+        admin: {
+          username: included.find(({type, id: adminId}) => type === "user" && adminId === admin.data.id).attributes.username
+        }
+      }));
+
       commit('SET_ALL', collections)
       commit('SET_LOADING', false)
-     
-    }).catch((e) => {
+
+    } catch(e) {
       console.error('issue with collections loading', e)
       commit('RESET');
-    });
+    }
   },
 
   fetchOne: async function({rootState, commit}, {id, numPage, pageSize, sortingPriority}) {
-    commit('SET_LOADING', true)
     const http = http_with_auth(rootState.user.jwt);
 
     // collection
@@ -123,11 +135,10 @@ const actions = {
 
       response = await http.get(`/search?query=collections.id:${id}&page[number]=${numPage}&page[size]=${pageSize||50}${sorts}&without-relationships`);
       documents = response.data.data;
-    } 
+    }
     console.log('COLLECTION DATA FETCHED', documents, collection, response.data.meta)
 
-    commit('SET_LOADING', false)
-    return {documents, collection, totalCount: response.data.meta['total-count']} 
+    return {documents, collection, totalCount: response.data.meta['total-count']}
   },
 
   saveCollection: async function({ rootState, commit }, collection) {
@@ -166,10 +177,63 @@ const actions = {
 };
 
 
-
 const getters = {
   searchWithinTree: (state) => (id) => {
     return !state.fullHierarchy ? null : searchId(state.fullHierarchy[0], id);
+  },
+  children: (state) => (collection) => {
+    return collection.children.map(childId => state.collectionsById[childId])
+  },
+  findRoot: (state) => (collectionId) => {
+    let collection = state.collectionsById[collectionId];
+    if (collection === undefined) {
+      return undefined;
+    }
+    while(collection.parent !== null) {
+      collection = state.collectionsById[collection.parent];
+    }
+    return collection;
+  },
+  flattenedCollectionsTree: (state, getters) => (collectionsIds, keepPredicate) => {
+    const result = [];
+    const collections = collectionsIds.map(collectionId => state.collectionsById[collectionId]);
+
+    for (const collection of collections) {
+      if (keepPredicate && !keepPredicate(collection)) {
+        continue;
+      }
+      result.push(collection);
+      for (const childCollection of getters.flattenedCollectionsTree(collection.children, keepPredicate)) {
+        result.push(childCollection);
+      }
+    }
+    return result;
+  },
+  rootCollections: (state) => {
+    return state.rootCollectionsIds.map(collectionId => state.collectionsById[collectionId])
+  },
+  search: (state) => (text) => {
+    const words = text.toLowerCase().trim().split(/\s+/)
+    if (words.length === 1 && words[0] === "") {
+      return [];
+    }
+    return Object.values(state.collectionsById).filter(({title, description}) => {
+      return words.every(word => {
+        let match = title.toLowerCase().includes(word);
+        if (!match && description !== null) {
+          match = description.toLowerCase().includes(word)
+        }
+        return match
+      })
+    })
+  },
+  path: (state, getters) => (collectionId) => {
+    const collection = state.collectionsById[collectionId];
+    if (collection.parent === null) {
+      return [collection]
+    } else {
+      return [...getters.path(collection.parent), collection]
+    }
   }
 };
 
