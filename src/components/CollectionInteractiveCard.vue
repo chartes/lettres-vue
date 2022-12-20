@@ -127,6 +127,7 @@ export default {
   async created() {
     await this.load();
     this.fetchUsers()
+    this.curatorId = this.collection.admin.id
   },
   methods: {
     ...mapActions("collections", ["saveCollection", "fetchOne"]),
