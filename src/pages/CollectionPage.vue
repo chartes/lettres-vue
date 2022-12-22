@@ -7,12 +7,33 @@
       <i class="fas fa-arrow-left ml-1 mr-3" />
       Toutes les collections
     </router-link>
-    <collection-interactive-card
-      :collection-id="collectionId"
-      :editable="true"
-      class="m-3"
-    />
-    <collection-hierarchy class="m-3" :collection-id="collectionId"/>
+    <b-button @click="showHierarchy = !showHierarchy" class="ml-auto">
+      Hiérachie
+    </b-button>
+    <div>
+      <collection-interactive-card
+        :collection-id="collectionId"
+        :editable="true"
+        class="m-3"
+      />
+      <b-sidebar
+        v-model="showHierarchy"
+        position="fixed"
+        :right="true"
+        :fullheight="true"
+        class="m-3"
+        style="width: 500px"
+      >
+        <div class="m-3">
+          <p class="menu-label">
+            Hiérarchie
+          </p>
+          <collection-hierarchy
+            :collection-id="collectionId"
+          />
+        </div>
+      </b-sidebar>
+    </div>
 
     <section>
       <span class="pagination-goto">
@@ -131,6 +152,7 @@ export default {
       pageSize: 25,
       totalCount: 0,
       isLoading: false,
+      showHierarchy: false
     };
   },
   computed: {
@@ -231,6 +253,10 @@ export default {
 
 <style scoped lang="scss">
 @import "@/assets/sass/main.scss";
+
+::v-deep .sidebar-content {
+  width: 500px;
+}
 
 .pagination-goto {
   display: flex;
