@@ -232,52 +232,7 @@ export default {
 
 <style lang="scss">
 @import "@/assets/sass/main.scss";
-#card_image {
-  max-width: 100px;
-}
-li:not(:last-child) {
-    margin-bottom: 5px;
-}
-.collection-card {
-  background-color: whitesmoke !important;
-  box-shadow: none !important;
-  -webkit-box-shadow: none !important;
-  border: 1px solid $coffee;
 
-  &__actions {
-    width: 50px;
-  }
+@import "@/assets/sass/objects/collection.scss";
 
-  &__children {
-    border-left: 1px solid $coffee;
-  }
-
-  .collection-card__head-border {
-    height: 10px;
-    width: 100%;
-    &__selected {
-      background-color: $primary !important;
-    }
-  }
-
-  &__title-input {
-    min-width: 420px;
-  }
-
-  &__dates {
-    line-height: 2rem;
-    white-space: nowrap;
-    font-weight: normal;
-    font-size: 1rem;
-    color: $brown;
-  }
-
-  .title {
-    font-size: 1.5rem;
-  }
-
-  .card-footer {
-    border-top: 1px solid $coffee;
-  }
-}
 </style>

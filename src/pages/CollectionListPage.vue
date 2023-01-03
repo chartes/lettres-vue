@@ -1,4 +1,5 @@
 <template>
+
   <div class="container">
     <div class="m-5">
       <p class="title">Les collections</p>
@@ -9,38 +10,74 @@
         Dans l’attente d’une présentation selon des regroupements thématiques, il est actuellement possible d’effectuer une recherche sur cette page selon une liste où les correspondances sont classées par ordre alphabétique du nom de l’individu expéditeur ou destinataire.
       </p>
     </div>
-    <div>
-      <span class="column" v-for="c in allCollectionsWithParents" :key="c.id">
-        <collection-card-list :collection-id="String(c.id)" :editable="true" class="m-3" />
-      </span>
+  </div>
+
+  <div v-if="!isLoading">
+    <div class="search-container">
+      <b-field>
+        <b-input
+          v-model="searchTerm"
+          placeholder="Rechercher..."
+          type="search"
+        />
+      </b-field>
+    </div>
+    <div v-if="searchTerm === ''">
+      <!-- Collection cards -->
+      <collection-list-item
+        v-for="rootCollection of rootCollections"
+        :key="rootCollection.id"
+        class="m-3"
+        :collection-id="rootCollection.id"
+      />
+    </div>
+    <div v-else>
+      <collection-search-result
+        v-for="collection of searchResults"
+        :key="collection.id"
+        class="m-3"
+        :collection-id="collection.id"
+        :search-term="searchTerm"
+      />
     </div>
   </div>
 </template>
 
 <script>
-import CollectionCardList from "@/components/CollectionCardList.vue";
-import { mapState, mapActions, mapGetters } from "vuex";
+
+import { mapActions, mapGetters, mapState} from "vuex";
+import CollectionListItem from "@/components/CollectionListItem.vue"
+import CollectionSearchResult from "@/components/CollectionSearchResult.vue"
 
 export default {
   name: "CollectionsPage",
-  components: { CollectionCardList },
+  components: {
+    CollectionListItem,
+    CollectionSearchResult,
+  },
+  data() {
+    return {
+      searchTerm: "",
+    }
+  },
+
   computed: {
-    ...mapState("collections", {
-      collectionTree: "fullHierarchy",
-      isCollectionLoading: "isLoading",
-      allCollectionsWithParents: "allCollectionsWithParents",
-    }),
+    ...mapState("collections", ["isLoading"]),
+    ...mapGetters("collections", ["rootCollections"]),
+    searchResults() {
+      return this.$store.getters['collections/search'](this.searchTerm)
+    }
   },
   created() {
     this.fetchCollections();
   },
   methods: {
-    ...mapActions("search", ["performSearch"]),
     ...mapActions("collections", { fetchCollections: "fetchAll" }),
   },
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
 @import "@/assets/sass/main.scss";
+@import "@/assets/sass/objects/collection.scss";
 </style>
