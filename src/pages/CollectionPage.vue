@@ -8,7 +8,7 @@
       Toutes les collections
     </router-link>
     <b-button @click="showHierarchy = !showHierarchy" class="ml-auto">
-      Hiérachie
+      Hiérarchie
     </b-button>
     <div>
       <collection-interactive-card
