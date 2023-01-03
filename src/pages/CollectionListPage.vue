@@ -1,5 +1,4 @@
 <template>
-
   <div class="container">
     <div class="m-5">
       <p class="title">Les collections</p>
@@ -10,7 +9,7 @@
         Dans l’attente d’une présentation selon des regroupements thématiques, il est actuellement possible d’effectuer une recherche sur cette page selon une liste où les correspondances sont classées par ordre alphabétique du nom de l’individu expéditeur ou destinataire.
       </p>
     </div>
-  </div>
+
 
   <div v-if="!isLoading">
     <div class="search-container">
@@ -41,8 +40,10 @@
       />
     </div>
   </div>
-</template>
 
+  </div>
+
+</template>
 <script>
 
 import { mapActions, mapGetters, mapState} from "vuex";
