@@ -88,7 +88,7 @@ export default {
   name: "CollectionInteractiveCard",
   components: { TitleFieldInPlace, SaveButtonIcon, DeleteButtonIcon },
   props: {
-    collectionId: { type: String, required: true },
+    collectionId: { type: Number, required: true },
     editable: { type: Boolean, default: false },
   },
   data() {
