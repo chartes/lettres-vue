@@ -37,7 +37,7 @@
                     class="button is-primary"
                     :class="deleting === 'loading' ? 'is-loading' : ''"
                   >
-                    <delete-button-icon />
+                    <delete-button-icon :status="deleting === 'error' ? 'error' : deleting === 'normal' ? 'normal' : ''" />
                   </a>
                 </div>
               </div>
@@ -147,11 +147,17 @@ export default {
     },
     async deleteCollectionUI() {
       this.deleting = "loading";
-      await this.deleteCollection({
+      const resp = await this.deleteCollection({
         id: this.collection.id,
       });
-      this.deleting = "normal";
-      this.$router.push({ name: "collections" });
+      if (resp.error) {
+        this.deleting = "error";
+        console.warn("failed to delete collection", this.collection.id, resp.error);
+      }
+      else {
+        this.deleting = "normal";
+        this.$router.push({ name: "collections" });
+      }
     },
 
     saveDescription(evt) {
