@@ -170,19 +170,6 @@ const actions = {
     }
   },
 
-  /*
-  search ({ commit }, what) {
-    state.isLoading = true;
-
-    console.log('collection search', what)
-    commit('SEARCH_RESULTS', [])
-    http.get(`/search?query=*${what}*&index=lettres__${process.env.NODE_ENV}__collections&include=parents&without-relationships`).then( response => {
-      const collections = response.data.data.map(coll => { return { id: coll.id, ...coll.attributes}});
-      commit('SEARCH_RESULTS', collections);
-      state.isLoading = false;
-    });
-  }
-  */
 
 };
 
