@@ -56,7 +56,7 @@
         <i
           :class="`fas fa-caret-${expandedById[collection.id] ? 'down': 'right'}`"
           class="caret"
-        />&nbsp;Parcourir les collections
+        />&nbsp;Parcourir la collection
       </button>
       <div v-if="expandedById[collection.id]">
         <div
@@ -112,7 +112,6 @@ export default {
       return collection.parent === null || this.expandedById[collection.parent]
     },
     getImgUrl: function (img) {
-      let defaultImage = "@/assets/images/collections/collection1.jpg" // just set default
       try {
         return require('@/assets/images/collections/collection' + img + '.jpg')
       }   catch (e) {
@@ -150,6 +149,9 @@ export default {
 
   .card-footer {
     padding: 10px;
+  }
+  .card-img-left {
+    max-height: 100px;
   }
 }
 </style>

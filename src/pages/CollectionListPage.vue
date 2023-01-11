@@ -1,48 +1,48 @@
 <template>
   <div class="container">
     <div class="m-5">
-      <p class="title">Les collections</p>
-      <p class="has-text-justified mb-2">
+      <p class="title">
+        Les collections
+      </p>
+      <!--<p class="has-text-justified mb-2">
         Les collections constituent des ensembles de taille variable constitués autour de logiques décidées par leurs responsables scientifiques. La plus répandue est celle qui consiste à éditer la correspondance active d’un individu. D’autres choix sont également recevables, comme les lettres reçues par un individu (correspondance passive) ou les lettres écrites par des groupes de personnes ayant entre elles un lien familial ou professionnel.
       </p>
       <p class="has-text-justified mb-2">
         Dans l’attente d’une présentation selon des regroupements thématiques, il est actuellement possible d’effectuer une recherche sur cette page selon une liste où les correspondances sont classées par ordre alphabétique du nom de l’individu expéditeur ou destinataire.
-      </p>
+      </p>-->
     </div>
 
 
-  <div v-if="!isLoading">
-    <div class="search-container">
-      <b-field>
-        <b-input
-          v-model="searchTerm"
-          placeholder="Rechercher..."
-          type="search"
+    <div v-if="!isLoading">
+      <div class="search-container">
+        <b-field>
+          <b-input
+            v-model="searchTerm"
+            placeholder="Rechercher..."
+            type="search"
+          />
+        </b-field>
+      </div>
+      <div v-if="searchTerm === ''">
+        <!-- Collection cards -->
+        <collection-list-item
+          v-for="rootCollection of rootCollections"
+          :key="rootCollection.id"
+          class="m-3"
+          :collection-id="rootCollection.id"
         />
-      </b-field>
-    </div>
-    <div v-if="searchTerm === ''">
-      <!-- Collection cards -->
-      <collection-list-item
-        v-for="rootCollection of rootCollections"
-        :key="rootCollection.id"
-        class="m-3"
-        :collection-id="rootCollection.id"
-      />
-    </div>
-    <div v-else>
-      <collection-search-result
-        v-for="collection of searchResults"
-        :key="collection.id"
-        class="m-3"
-        :collection-id="collection.id"
-        :search-term="searchTerm"
-      />
+      </div>
+      <div v-else>
+        <collection-search-result
+          v-for="collection of searchResults"
+          :key="collection.id"
+          class="m-3"
+          :collection-id="collection.id"
+          :search-term="searchTerm"
+        />
+      </div>
     </div>
   </div>
-
-  </div>
-
 </template>
 <script>
 

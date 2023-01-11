@@ -232,7 +232,6 @@ export default {
 
 <style lang="scss">
 @import "@/assets/sass/main.scss";
-
 @import "@/assets/sass/objects/collection.scss";
 
 </style>

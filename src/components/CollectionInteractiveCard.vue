@@ -2,69 +2,165 @@
   <div v-if="collection">
     <div class="collection-card card">
       <div class="card-content">
-        <div class="is-flex is-justify-content-space-between mb-4">
-          <span class="title is-flex is-justify-content-space-between">
-            <span v-if="!editMode">
-              <router-link
-                :to="{ name: 'collection', params: { collectionId: collection.id } }"
-                class="mt-3 mb-5"
+        <div class="container">
+          <div class="row is-flex is-justify-content-space-between mb-4">
+            <div class="col-5">
+              <span class="title">
+                <span v-if="!editMode">
+                  <router-link
+                    :to="{ name: 'collection', params: { collectionId: findRoot(collectionId).id } }"
+                    class="collection_title mt-3 mb-5"
+                  >
+                    <!--{{ collection.title }}-->
+                    {{ findRoot(collectionId).title }}
+                  </router-link>
+                </span>
+                <span v-else>
+                  <div class="field has-addons">
+                    <div class="control">
+                      <input
+                        v-model="collection.title"
+                        class="input collection-card__title-input"
+                        type="text"
+                        placeholder="Titre de la collection"
+                      >
+                    </div>
+                    <div class="control">
+                      <a
+                        class="button is-primary"
+                        :class="saving === 'loading' ? 'is-loading' : ''"
+                        @click.stop="save"
+                      >
+                        <save-button-icon />
+                      </a>
+                    </div>
+                    <router-link
+                      tag="button"
+                      class="button control ml-2 is-primary"
+                      :to="{ name: 'collection', params: { collectionId: collection.id } }"
+                    ><i class="fas fa-arrow-right" /></router-link>
+                  </div>
+                </span>
+              </span>
+            </div>
+            <div class="col-5">
+              <b-button
+                class="TOC-button ml-auto is-small"
+                @click="showHierarchy = !showHierarchy"
               >
-                {{ collection.title }}
-              </router-link>
-            </span>
-            <span v-else>
-              <div class="field has-addons">
-                <div class="control">
-                  <input
-                    class="input collection-card__title-input"
-                    type="text"
-                    placeholder="Titre de la collection"
-                    v-model="collection.title"
+                SOMMAIRE
+              </b-button>
+              <b-sidebar
+                v-model="showHierarchy"
+                position="fixed"
+                :right="true"
+                :fullheight="true"
+                class="m-3"
+                style="width: 500px"
+              >
+                <div class="m-3">
+                  <p class="menu-label">
+                    SOMMAIRE
+                  </p>
+                  <collection-hierarchy
+                    :collection-id="collectionId"
                   />
                 </div>
-                <div class="control">
-                  <a
-                    @click.stop="save"
-                    class="button is-primary"
-                    :class="saving === 'loading' ? 'is-loading' : ''"
+              </b-sidebar>
+            </div>
+          </div>
+          <div class="row is-flex" style="vertical-align: center">
+            <div class="column is-one-quarter">
+              <img
+                id="card_image"
+                class="card-img-left is-rounded"
+                :src="getImgUrl(collectionId)"
+                alt="Card image cap"
+              >
+            </div>
+            <div class="column is-three-quarters">
+              <span class="collection_title">{{ collection.title }}</span>
+              <p class="mt-3">
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor dolo incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis dolore.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="columns is-vcentered">
+        <img
+          id="card_image"
+          class="card-img-left m-6 is-inline-block is-rounded"
+          :src="getImgUrl(collectionId)"
+          alt="Card image cap"
+        >
+        <div class="column">
+          <div class="card-content">
+            <div class="is-flex is-justify-content-space-between mb-4">
+              <span class="title is-flex is-justify-content-space-between">
+                <span v-if="!editMode">
+                  <router-link
+                    :to="{ name: 'collection', params: { collectionId: collection.id } }"
+                    class="mt-3 mb-5"
                   >
-                    <save-button-icon />
-                  </a>
-                </div>
-                <router-link
-                  tag="button"
-                  class="button control ml-2 is-primary"
-                  :to="{ name: 'collection', params: { collectionId: collection.id } }"
-                  ><i class="fas fa-arrow-right"></i
-                ></router-link>
-              </div>
-            </span>
-          </span>
-        </div>
+                    {{ collection.title }}
+                  </router-link>
+                </span>
+                <span v-else>
+                  <div class="field has-addons">
+                    <div class="control">
+                      <input
+                        v-model="collection.title"
+                        class="input collection-card__title-input"
+                        type="text"
+                        placeholder="Titre de la collection"
+                      >
+                    </div>
+                    <div class="control">
+                      <a
+                        class="button is-primary"
+                        :class="saving === 'loading' ? 'is-loading' : ''"
+                        @click.stop="save"
+                      >
+                        <save-button-icon />
+                      </a>
+                    </div>
+                    <router-link
+                      tag="button"
+                      class="button control ml-2 is-primary"
+                      :to="{ name: 'collection', params: { collectionId: collection.id } }"
+                    ><i class="fas fa-arrow-right" /></router-link>
+                  </div>
+                </span>
+              </span>
+            </div>
 
-        <div class="collection-card__dates mb-2">
-          <u>Dates :</u> {{ collection.dateMin || "..." }} -
-          {{ collection.dateMax || "..." }}
-        </div>
+            <div class="collection-card__dates mb-2">
+              <u>Dates :</u> {{ collection.dateMin || "..." }} -
+              {{ collection.dateMax || "..." }}
+            </div>
 
-        <p v-if="!editMode">
-          <span v-html="collection.description" /> ({{
-            collection.documentCount
-          }}
-          documents)
-        </p>
-        <p v-else>
-          <title-field-in-place
-            :tabulation-index="0"
-            label="Titre"
-            name="title"
-            not-set="Non renseigné"
-            :initial-value="collection.description"
-            :editable="true"
-            :formats="descriptionFormats"
-            @changed="saveDescription"
-          />
-        </p>
+            <p v-if="!editMode">
+              <span v-html="collection.description" /> ({{
+                collection.documentCount
+              }}
+              documents)
+            </p>
+            <p v-else>
+              <title-field-in-place
+                :tabulation-index="0"
+                label="Titre"
+                name="title"
+                not-set="Non renseigné"
+                :initial-value="collection.description"
+                :editable="true"
+                :formats="descriptionFormats"
+                @changed="saveDescription"
+              />
+            </p>
+          </div>
+        </div>
       </div>
       <footer class="card-footer is-flex is-justify-content-end">
         <p class="pt-2 pr-2 pb-2 pl-3">
@@ -76,13 +172,15 @@
 </template>
 
 <script>
-import { mapState, mapActions } from "vuex";
+import {mapState, mapActions, mapGetters} from "vuex";
+import CollectionHierarchy from "@/components/CollectionHierarchy.vue";
 import TitleFieldInPlace from "@/components/forms/fields/TitleFieldInPlace";
 import SaveButtonIcon from "@/components/ui/SaveButtonIcon";
+import collectionHierarchy from "./CollectionHierarchy.vue";
 
 export default {
   name: "CollectionInteractiveCard",
-  components: { TitleFieldInPlace, SaveButtonIcon },
+  components: { TitleFieldInPlace, SaveButtonIcon, CollectionHierarchy },
   props: {
     collectionId: { type: Number, required: true },
     editable: { type: Boolean, default: false },
@@ -91,10 +189,16 @@ export default {
     return {
       saving: "normal",
       collection: null,
+      showHierarchy: false
     };
   },
   computed: {
+    collectionHierarchy() {
+      return collectionHierarchy
+    },
+    ...mapState("collections", ["collectionsById"]),
     ...mapState("user", ["current_user"]),
+    ...mapGetters("collections", ["findRoot"]),
 
     editMode() {
       return (
@@ -145,6 +249,18 @@ export default {
       this.collection.description = evt.value;
       this.save();
     },
+    getImgUrl: function (img) {
+      try {
+        return require('@/assets/images/collections/collection' + img + '.jpg')
+      } catch (e) {
+        //console.log('mon erreur : ',e)
+        try {
+          return require('@/assets/images/collections/collection' + this.findRoot(img).id + '.jpg')
+        } catch (e) {
+          return require('@/assets/images/collections/default.jpg')
+        }
+      }
+    },
   },
 };
 </script>
@@ -152,5 +268,21 @@ export default {
 <style lang="scss">
 @import "@/assets/sass/main.scss";
 @import "@/assets/sass/objects/collection.scss";
+.collection-card {
+  .card-img-left {
+    max-height: 200px;
+    border-radius: 5px;
+  }
+  .TOC-button {
+  color: #b9192f;
+  border-color: #b9192f;
+  border-radius: 10px;
+  }
+  .collection_title {
+    color: #b9192f !important;
+    font-weight: normal;
+  }
+}
+
 </style>
 

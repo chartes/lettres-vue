@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <router-link
+  <div class="container">
+    <!--<router-link
       :to="{ name: 'collections' }"
       class="mt-5 mb-5"
     >
@@ -9,7 +9,7 @@
     </router-link>
     <b-button @click="showHierarchy = !showHierarchy" class="ml-auto">
       Hiérarchie
-    </b-button>
+    </b-button>-->
     <div>
       <collection-interactive-card
         :collection-id="collectionId"

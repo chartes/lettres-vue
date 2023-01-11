@@ -1,12 +1,11 @@
 <template>
   <section>
-    <div class="container m-5">
+    <div class="container">
       <div class="container">
         <p class="title">
           Le portail
         </p>
-        <b-tabs
-        >
+        <b-tabs>
           <b-tab-item
             key="contents"
             label="La correspondance"
