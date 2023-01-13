@@ -221,7 +221,10 @@ export default {
   },
   methods: {
     logout() {
-      this.$store.dispatch("user/logout");
+      this.$store.dispatch("user/logout")
+      .then(() => {
+      this.$router.push('/login')
+    })
     },
   },
 };
@@ -257,14 +260,15 @@ export default {
 .navbar-dropdown div>span {
   color: $red !important;
 }
+.menu-label {
+  display: flex;
+}
 .menu-label:after {
   content:"";
-  position: absolute;
+  flex: 1;
   border-bottom:2px solid;
   border-bottom-color: $red !important;
-  width:100%;
   height:1em;
-  display: inline;
   margin-left: 1em;
 }
 .navbar-divider {

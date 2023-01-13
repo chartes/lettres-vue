@@ -14,6 +14,12 @@
 
 
     <div v-if="!isLoading">
+      <span v-if="current_user && current_user.isAdmin" class="column">
+        <router-link to="/collections/create" custom v-slot="{ navigate }">
+          <b-button @click="navigate" type="is-primary" label="Créer une collection"/>
+        </router-link>
+      </span>
+
       <div class="search-container">
         <b-field>
           <b-input
@@ -63,6 +69,7 @@ export default {
   },
 
   computed: {
+    ...mapState("user", ["current_user"]),
     ...mapState("collections", ["isLoading"]),
     ...mapGetters("collections", ["rootCollections"]),
     searchResults() {

@@ -25,9 +25,10 @@ const PlacesPage = () => import('@/pages/PlacesPage.vue')
 const UsersPage = () => import('@/pages/UsersPage.vue')
 const WitnessesPage = () => import('@/pages/WitnessesPage.vue')
 
+const CollectionCreationPage = () => import('@/pages/CollectionCreationPage.vue')
 
 import store from '@/store/index';
-import { getCurrentUser } from '@/modules/http-common';
+import { getCurrentUser, getUsers } from '@/modules/http-common';
 
 
 Vue.use(VueRouter)
@@ -87,10 +88,22 @@ const router = new VueRouter({
       props: true
     },
     {
+      path: '/collections/create',
+      component: CollectionCreationPage,
+      name: 'collection-creation',
+      props: true
+    },
+    {
       path: '/collections/:collectionId',
       component: CollectionPage,
       name: 'collection',
       props: route => ({collectionId: Number.parseInt(route.params.collectionId)})
+    },
+    {
+      path: '/collections/:collectionId/create',
+      component: CollectionCreationPage,
+      name: 'subcollection-creation',
+      props: true
     },
     {
       path: '/locks',
@@ -153,8 +166,7 @@ const router = new VueRouter({
 })
 
 router.beforeEach(async (to, from, next) => {
-  
-  if (to.fullPath.indexOf("/edit") > -1 || ['history', 'bookmarks', 'locks', 'persons', 'places', 'users'].indexOf(to.name) > -1) {
+  if (to.fullPath.indexOf("/edit") > -1 || to.fullPath.indexOf("/create") > -1 || ['history', 'bookmarks', 'locks', 'persons', 'places', 'users'].indexOf(to.name) > -1) {
       if (!store.state.user.jwt) {
         next({ name: 'login', query: { from: window.location.pathname } });
       }
