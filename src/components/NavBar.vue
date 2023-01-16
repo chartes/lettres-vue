@@ -233,7 +233,7 @@ export default {
 <style scoped lang="scss">
 @import "@/assets/sass/main.scss";
 .navbar {
-  background-color: rgba(133, 18, 33, 0.9) !important;
+  background-color: rgba(127, 0, 56) !important;
   box-shadow: 0px 2px 3px 1px rgb(10 10 10 / 30%);
 }
 .navbar-brand a {

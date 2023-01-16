@@ -16,6 +16,15 @@
               de la Première Modernité
             </p>
           </div>
+          <div class="row is-flex is-justify-content-center mt-5">
+            <b-button
+              tag="router-link"
+              to="/about"
+              class="portail_button"
+            >
+              Le portail
+            </b-button>
+          </div>
           <!--<div class="row">
             <p class="title has-text-centered">
               Lettres
@@ -53,6 +62,11 @@
               </div>
             </div>
           </div>-->
+        </div>
+        <div class="row search_row">
+          <search-box
+            class="m-5"
+          />
         </div>
       </div>
     </section>
@@ -100,7 +114,7 @@
                 :to="{ name: 'persons' }"
                 class="navbar-start-item"
               >
-                <span class="metadata">{{ collectionsCount }}</span>
+                <span class="metadata">{{ personsCount }}</span>
               </router-link>
             </div>
           </div>
@@ -113,7 +127,7 @@
                 :to="{ name: 'places' }"
                 class="navbar-start-item"
               >
-                <span class="metadata">{{ collectionsCount }}</span>
+                <span class="metadata">{{ placesCount }}</span>
               </router-link>
             </div>
           </div>
@@ -155,7 +169,7 @@
             </p>-->
           </div>
         </div>
-        <!--<div class="row m-auto">
+        <div class="row m-auto">
           <div
             class="container columns is-vcentered m-5"
             v-for="featured in featured_collections"
@@ -193,7 +207,7 @@
               </div>
             </div>
           </div>
-        </div>-->
+        </div>
         <div class="row m-auto">
           <div class="container columns is-vcentered m-5">
             <div class="column is-4 padding-5">
@@ -290,15 +304,20 @@
 
 <script>
 import { mapState, mapActions, mapGetters } from "vuex";
+import SearchBox from "@/components/SearchBox";
 import background_image from "@/assets/images/about.jpg";
 
 
 export default {
   name: "HomePage",
+  components: {
+    SearchBox,
+  },
+
   data: function () {
     return {
       background_image: background_image,
-      featured_collectionIds : [73, 74, 75]
+      //featured_collectionIds : [73, 74, 75]
     }
   },
   computed: {
@@ -306,8 +325,21 @@ export default {
       collectionTree: "fullHierarchy",
       isCollectionLoading: "isLoading",
       allCollectionsWithParents: "allCollectionsWithParents",
-      allCollections: "collectionsById"
+      allCollections: "collectionsById",
     }),
+    /*...mapState("persons", {
+      persons: "documents",
+      allPersons : "totalCount"
+    }),*/
+    /*...mapState("persons", [
+      "loadingStatus",
+      "totalCount",
+    ]),*/
+    /*...mapGetters("persons", {
+      personsHavingRoles: "getIncluded",
+      functionsByPerson: "getFunctionsByPerson",
+    }),*/
+
     collectionsCount: function () {
       console.log('allCollections # keys : ', Object.keys(this.allCollections).length);
       return Object.keys(this.allCollections).length - 1;
@@ -319,31 +351,42 @@ export default {
       return Object.values(this.allCollections).reduce((sum, collection) => sum + collection.documentCount, 0);
     },
     personsCount: function () {
-      return Object.values(this.allCollections).reduce((sum, collection) => sum + collection.documentCount, 0);
+      console.log('All persons : ', this.$store.state.persons.persons);
+      return this.$store.state.persons.persons.length;
     },
     placesCount: function () {
-      return Object.values(this.allCollections).reduce((sum, collection) => sum + collection.documentCount, 0);
+      console.log('All places : ', this.$store.state.placenames.placenames);
+      return this.$store.state.placenames.placenames.length;
     },
-    /*featured_collections: function () {
-      console.log('featured_collectionIds : ', this.featured_collectionIds);
+    featured_collections: function () {
+      //console.log('featured_collectionIds : ', this.featured_collectionIds);
       let featured=[];
-      for (let i=0; i< Object.keys(this.allCollections).length; i++){
-        if (Object.keys(this.allCollections)[i].id in this.featured_collectionIds ) {
+      let featured_collectionIds=[73, 74, 75];
+      console.log('length keys : ', Object.keys(this.allCollections).length);
+      for (let i=1; i< Object.keys(this.allCollections).length; i++){
+        console.log('i : ', i);
+
+        if (featured_collectionIds.includes(parseInt(Object.values(this.allCollections)[i][0]))) {
+          console.log('Object i : ', i, Object.values(this.allCollections)[i][0] );
+          console.log('Object i : ', Object.values(this.allCollections[i]) );
           // here STATE selected in previous drop down, match it with state from json and get COUNTY
-          featured[i] = {featured};
+          featured = [Object.keys(this.allCollections[i])];
         }
       }
       return featured;
-    },*/
+    },
   },
-
   created() {
     this.fetchCollections();
+    this.fetchPersons();
+    this.fetchPlaces();
   },
   methods: {
     ...mapActions("search", ["performSearch"]),
     ...mapActions("collections", { fetchCollections: "fetchAll" }),
-    ...mapState("collections", ["collectionsById"])
+    //...mapState("collections", ["collectionsById"]),
+    ...mapActions("persons", { fetchPersons: "fetchAllPersons" }),
+    ...mapActions("placenames", { fetchPlaces: "fetchAllPlacenames"})
   },
 };
 </script>
@@ -360,6 +403,7 @@ export default {
   display:flex;
   flex-direction: column;
   justify-content: center;
+  margin-bottom: 0px !important;
 }
 #card_image {
   max-width: 200px;
@@ -380,18 +424,36 @@ export default {
   font-size: xx-large;
   font-width: bolder;
   text-shadow: 0px 2px, 2px 0px, 2px 2px;
-  color: $red;
+  color: rgb(255, 0, 83);
   text-align: center;
 }
 .col_meta:not(:last-of-type) {
   border-right: solid 5px;
-  border-right-color: rgba(133, 18, 33, 0.9);
+  border-right-color: rgba(180, 0, 80);
 }
 .card {
   overflow: hidden;
   border-radius: 0.5em;
 }
 .card-title {
-  color: $red;
+  color: rgb(255, 0, 83);
 }
+.portail_button {
+  background-color: transparent;
+  color: white;
+}
+.search_row {
+  background-color: rgba(35, 9, 20);
+  padding: 5px;
+}
+/*a.button {
+  border: none !important;
+  outline: none !important;
+}*/
+.search_button {
+  border-color: white !important;
+  outline: none !important;
+  box-shadow:none !important;
+  color: rgba(35, 9, 20) !important;
+ }
 </style>
