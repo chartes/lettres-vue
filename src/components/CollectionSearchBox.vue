@@ -7,7 +7,7 @@
           :data="filteredTags"
           autocomplete
           :open-on-focus="true"
-          field="attributes.title"
+          field="title"
           placeholder="Henri IV"
           @typing="getFilteredTags"
         >
@@ -23,7 +23,7 @@ import { mapState, mapActions } from "vuex";
 export default {
   data() {
     return {
-      filteredTags: this.allCollectionsWithParents,
+      filteredTags: null,
       isSelectOnly: false,
       tags: [],
 
@@ -31,7 +31,7 @@ export default {
     };
   },
   computed: {
-    ...mapState("collections", ["allCollectionsWithParents", "collectionsSearchResults"]),
+    ...mapState("collections", {allCollections: "collectionsById"}),
     ...mapState("search", ["selectedCollections"]),
   },
   watch: {
@@ -48,9 +48,9 @@ export default {
     ...mapActions("collections", ["fetchAll"]),
     ...mapActions("search", ["setSelectedCollections", "performSearch"]),
     getFilteredTags(text) {
-      this.filteredTags = this.allCollectionsWithParents.filter((option) => {
+      this.filteredTags = Object.values(this.allCollections).filter((option) => {
         return (
-          option.attributes.title.toString().toLowerCase().indexOf(text.toLowerCase()) >=
+          option.title.toString().toLowerCase().indexOf(text.toLowerCase()) >=
           0
         );
       });
