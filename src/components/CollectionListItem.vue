@@ -1,36 +1,49 @@
 <template>
   <div class="collection-card card">
-    <div class="card-content">
-      <div class="is-flex is-justify-content-space-between mb-4">
-        <div>
-          <span class="title is-flex is-justify-content-space-between">
-            <router-link
-              :to="{ name: 'collection', params: { collectionId: collection.id } }"
-              class="mb-5"
-            >
-              {{ collection.title }}
-            </router-link>
-          </span>
-        </div>
-        <div class="ml-auto">
-          Documents&nbsp;:&nbsp;{{
-            collection.documentCount
-          }}
-        </div>
-        <div class="ml-5">
-          {{ collection.dateMin || "..." }} -
-          {{ collection.dateMax || "..." }}
-        </div>
+    <div class="columns is-vcentered">
+      <div
+        class="column is-2 has-text-centered"
+      >
+        <img
+          id="card_image"
+          class="card-img-left m-2 is-inline-block"
+          :src="getImgUrl(collectionId)"
+          alt="Card image cap"
+        >
       </div>
+      <div class="column">
+        <div class="card-content">
+          <div class="is-flex is-justify-content-space-between mb-4">
+            <div>
+              <span class="title is-flex is-justify-content-space-between">
+                <router-link
+                  :to="{ name: 'collection', params: { collectionId: collection.id } }"
+                  class="mb-5"
+                >
+                  {{ collection.title }}
+                </router-link>
+              </span>
+            </div>
+            <div class="ml-auto">
+              Documents&nbsp;:&nbsp;{{
+                collection.documentCount
+              }}
+            </div>
+            <div class="ml-5">
+              {{ collection.dateMin || "..." }} -
+              {{ collection.dateMax || "..." }}
+            </div>
+          </div>
 
-      <span v-html="collection.description" />
-      <div class="is-flex">
-        <p class="pt-2 pr-2 pb-2 pl-3 ml-auto">
-          Gérée par&nbsp;<a>{{ collection.admin.username }}</a>
-        </p>
+          <span v-html="collection.description" />
+          <div class="is-flex">
+            <p class="pt-2 pr-2 pb-2 pl-3 ml-auto">
+              Gérée par&nbsp;<a>{{ collection.admin.username }}</a>
+            </p>
+          </div>
+        </div>
       </div>
     </div>
-
     <!-- Collection children -->
     <footer
       v-if="collection.children.length > 0"
@@ -43,7 +56,7 @@
         <i
           :class="`fas fa-caret-${expandedById[collection.id] ? 'down': 'right'}`"
           class="caret"
-        />&nbsp;Parcourir les collections
+        />&nbsp;Parcourir la collection
       </button>
       <div v-if="expandedById[collection.id]">
         <div
@@ -98,6 +111,14 @@ export default {
     parentExpanded(collection) {
       return collection.parent === null || this.expandedById[collection.parent]
     },
+    getImgUrl: function (img) {
+      try {
+        return require('@/assets/images/collections/collection' + img + '.jpg')
+      }   catch (e) {
+        //console.log('mon erreur : ',e)
+        return require('@/assets/images/collections/default.jpg')
+      }
+    },
   },
 };
 </script>
@@ -128,6 +149,9 @@ export default {
 
   .card-footer {
     padding: 10px;
+  }
+  .card-img-left {
+    max-height: 100px;
   }
 }
 </style>

@@ -149,12 +149,77 @@ const actions = {
         id: collection.id,
         attributes: {
           title: collection.title,
-          description: collection.description
+          description: collection.description,
+          admin_id: collection.curatorId,
         }
       }
     }
     return await http.patch(`collections/${collection.id}`, data);
   },
+
+  addCollection: async function({ rootState, commit }, collection) {
+    const http = http_with_auth(rootState.user.jwt);
+    const data = {
+      data: {
+        type: 'collection',
+        attributes: {
+          title: collection.title,
+          description: collection.description,
+          admin_id: collection.curatorId,
+        },
+      }
+    }
+    if (collection.parentId !== undefined) {
+      data.data.relationships = {
+        parent: {
+          data: [
+            {
+              type: "collection",
+              id: collection.parentId,
+            }
+          ]
+        }
+      }
+    }
+    try {
+        const response = await http.post(`collections`, data);
+        if (response.errors) {
+            return {error: response.errors.details}
+        }
+        return response.data.data
+    } catch(e) {
+      console.log(e);
+      return {error: e}
+    }
+  },
+  deleteCollection: async function({rootState, commit}, collection) {
+    const http = http_with_auth(rootState.user.jwt);
+    try {
+      const response = await http.delete(`collections/${collection.id}`);
+      if (response.errors) {
+        return {error: response.errors.details}
+      }
+      else {
+        return {}
+      }
+    } catch(e) {
+      return {error: e}
+    }
+  },
+
+  /*
+  search ({ commit }, what) {
+    state.isLoading = true;
+
+    console.log('collection search', what)
+    commit('SEARCH_RESULTS', [])
+    http.get(`/search?query=*${what}*&index=lettres__${process.env.NODE_ENV}__collections&include=parents&without-relationships`).then( response => {
+      const collections = response.data.data.map(coll => { return { id: coll.id, ...coll.attributes}});
+      commit('SEARCH_RESULTS', collections);
+      state.isLoading = false;
+    });
+  }
+  */
 };
 
 

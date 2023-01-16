@@ -1,15 +1,19 @@
 <template>
-  <div>
-    <router-link
+  <div class="container">
+    <!--<router-link
       :to="{ name: 'collections' }"
       class="mt-5 mb-5"
     >
       <i class="fas fa-arrow-left ml-1 mr-3" />
       Toutes les collections
+    </router-link>-->
+    <router-link v-if="current_user && current_user.isAdmin" to="create" custom v-slot="{ navigate }" append>
+      <b-button @click="navigate" type="is-primary" label="Créer une sous-collection"/>
     </router-link>
-    <b-button @click="showHierarchy = !showHierarchy" class="ml-auto">
+
+    <!--<b-button @click="showHierarchy = !showHierarchy" class="ml-auto">
       Hiérarchie
-    </b-button>
+    </b-button>-->
     <div>
       <collection-interactive-card
         :collection-id="collectionId"
@@ -126,8 +130,8 @@
 
 <script>
 import CollectionInteractiveCard from "@/components/CollectionInteractiveCard.vue";
+import { mapActions, mapState } from "vuex";
 import CollectionHierarchy from "@/components/CollectionHierarchy.vue";
-import { mapActions } from "vuex";
 
 export default {
   name: "CollectionPage",
@@ -168,6 +172,7 @@ export default {
         }
       },
     },
+    ...mapState("user", ["current_user"]),
   },
   watch: {
     collectionId: async function () {

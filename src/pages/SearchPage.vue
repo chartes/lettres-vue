@@ -1,12 +1,14 @@
 <template>
   <div class="search-page-container">
     <div class="columns">
-      <div v-if="showAdvancedSearchForm" class="column is-one-third search-form-column">
-        <aside class="advanced-search-form">
-          <advanced-search-form />
-        </aside>
-      </div>
       <div class="column">
+        <button
+          @click="toggleLeftSideBar"
+          v-show="!showLeftSideBar"
+          class="button is-text mt-3"
+        >
+          Recherche avancée
+        </button>
         <document-list />
       </div>
     </div>
@@ -17,17 +19,15 @@
 import { mapState, mapActions, mapGetters } from "vuex";
 
 import DocumentList from "@/components/sections/DocumentList";
-import AdvancedSearchForm from "@/components/AdvancedSearchForm.vue";
 
 export default {
   name: "SearchPage",
   components: {
     DocumentList,
-    AdvancedSearchForm,
   },
   computed: {
     ...mapState("user", ["current_user"]),
-    ...mapState("layout", ["showAdvancedSearchForm"]),
+    ...mapState("layout", ["showLeftSideBar"]),
     ...mapState("search", ["documents", "loadingStatus"]),
   },
   watch: {},
@@ -36,6 +36,7 @@ export default {
   },
   methods: {
     ...mapActions("search", ["performSearch"]),
+    ...mapActions("layout", ["toggleLeftSideBar"]),
   },
 };
 </script>
@@ -47,11 +48,6 @@ export default {
 }
 .column {
   padding-top: 0px;
-}
-.search-page-container {
-  margin-left: -30px;
-  margin-top: -30px;
-  height: calc(100% + 72px);
 }
 
 .collection-selection {

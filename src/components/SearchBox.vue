@@ -2,13 +2,14 @@
   <div class="search-container">
     <b-field>
       <b-input
+        class="search_input"
         v-model="inputTerm"
         placeholder="Catherine de Medicis"
         type="search"
       />
-      <div class="control">
+      <div>
         <a
-          class="button pl-5 pr-5"
+          class="button pl-5 pr-5 search_button"
           @click="search"
         >
           <span class="icon">
@@ -45,7 +46,7 @@ export default {
   watch: {
     inputTerm() {
       this.setSearchTerm(this.inputTerm);
-    },
+    }
   },
   created() {
     this.inputTerm = this.searchTerm;
@@ -57,10 +58,10 @@ export default {
         this.setSearchTerm(this.inputTerm);
         this.setNumPage(1);
         //this.performSearch()
+        this.performSearch();
+
         if (this.$route.name !== "search") {
           this.$router.push({ name: "search" });
-        } else {
-          this.performSearch();
         }
       }
     },
@@ -72,10 +73,22 @@ export default {
 @import "@/assets/sass/main.scss";
 
 .search-container input {
-  width: 100%;
+  width: 100% !important;
+}
+.control{
+  width: 100% !important;
 }
 .advanced-search {
   width: 100%;
   text-align: right;
 }
+.search_row .search_button {
+  border-color: white !important;
+  outline: none !important;
+  box-shadow: none !important;
+  color: rgba(127, 0, 56) !important;
+  border-bottom-left-radius: 0px !important;
+  border-top-left-radius: 0px !important;
+ }
+
 </style>

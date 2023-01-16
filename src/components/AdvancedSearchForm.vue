@@ -1,11 +1,8 @@
 <template>
   <section class="advanced-search-form">
-    <span class="close-form" @click="hideAdvancedSearchForm">
-      <i class="far fa-times-circle" />
-    </span>
     <div class="section grid-container">
+      <search-box />
       <section class="search-section">
-        <search-box v-if="!showLeftSideBar" class="mt-5 mb-2" />
         <collection-search-box />
       </section>
 
@@ -247,18 +244,19 @@
 
 <script>
 import debounce from "lodash/debounce";
+import { cloneDeep } from "lodash";
 
 import { mapState, mapActions } from "vuex";
-import SearchBox from "@/components/SearchBox";
 import CollectionSearchBox from "@/components/CollectionSearchBox";
+import SearchBox from "@/components/SearchBox";
 
 import { templates, labels } from "@/store/modules/search";
 
 export default {
   name: "AdvancedSearchForm",
   components: {
-    SearchBox,
     CollectionSearchBox,
+    SearchBox,
   },
   data() {
     return {
@@ -313,7 +311,6 @@ export default {
         return this._withDateRange;
       },
       set: function (value) {
-        //console.log('cdt', value)
         this.setWithDateRange(value);
       },
     },
@@ -323,7 +320,6 @@ export default {
         return this._creationDateFrom;
       },
       set: function (value) {
-        console.log("cdf", value);
         this.setCreationDateFrom(value);
       },
     },
@@ -333,7 +329,6 @@ export default {
         return this._creationDateTo;
       },
       set: function (value) {
-        console.log("cdt", value);
         this.setCreationDateTo(value);
       },
     },
@@ -365,7 +360,6 @@ export default {
         ? this.cloneDeep(this.creationDateFrom)
         : this.cloneDeep(templates.creationDateTemplate);
     },
-
     creationDateFrom() {
       this.performSearch();
     },
@@ -373,7 +367,6 @@ export default {
       this.performSearch();
     },
   },
-  async created() {},
   methods: {
     ...mapActions("search", [
       "performSearch",
@@ -382,7 +375,6 @@ export default {
       "setCreationDateFrom",
       "setCreationDateTo",
     ]),
-    ...mapActions("layout", ["hideAdvancedSearchForm"]),
 
     ...mapActions("placenames", { searchPlacename: "search" }),
     ...mapActions("persons", { searchPerson: "search" }),
