@@ -368,6 +368,7 @@ export default {
     },
   },
   methods: {
+    cloneDeep,
     ...mapActions("search", [
       "performSearch",
       "setWithStatus",
