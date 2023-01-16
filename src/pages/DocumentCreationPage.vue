@@ -21,7 +21,7 @@
 
 <script>
 import RichTextEditor from "@/components/forms/fields/RichTextEditor.vue";
-import { mapState } from "vuex";
+import { mapState, mapActions } from "vuex";
 
 export default {
   name: "DocumentCreationPage",
@@ -34,8 +34,10 @@ export default {
   },
   computed: {
     ...mapState("document", ["document", "documentLoading"]),
+    ...mapState("collections", ["collectionsById"])
   },
   methods: {
+    ...mapActions("collections", ["fetchAll"]),
     async createNewDocument() {
       this.loading = true;
       const defaultData = {
@@ -47,7 +49,7 @@ export default {
             data: [
               {
                 type: "collection",
-                id: 1, // TODO
+                id: Object.values(this.collectionsById).filter((col) => col.title === process.env.VUE_APP_UNSORTED_DOCUMENTS_COLLECTION_TITLE)[0].id,
               },
             ],
           },
@@ -61,6 +63,9 @@ export default {
       this.loading = false;
     },
   },
+  created(){
+    this.fetchAll();
+  }
 };
 </script>
 

@@ -192,6 +192,20 @@ const actions = {
       return {error: e}
     }
   },
+  deleteCollection: async function({rootState, commit}, collection) {
+    const http = http_with_auth(rootState.user.jwt);
+    try {
+      const response = await http.delete(`collections/${collection.id}`);
+      if (response.errors) {
+        return {error: response.errors.details}
+      }
+      else {
+        return {}
+      }
+    } catch(e) {
+      return {error: e}
+    }
+  },
 
   /*
   search ({ commit }, what) {

@@ -115,13 +115,23 @@
                       <save-button-icon />
                     </a>
                   </div>
-                  {{ error.title }}
+                  <div class="control">
+                  <a
+                    @click.stop="deleteCollectionUI"
+                    class="button is-primary"
+                    :class="deleting === 'loading' ? 'is-loading' : ''"
+                  >
+                    <delete-button-icon :status="deleting === 'error' ? 'error' : deleting === 'normal' ? 'normal' : ''" />
+                  </a>
+                  </div>
+                </div>
+                  <!-- not in Carine code {{ error.title }}
                   <router-link
                     tag="button"
                     class="button control ml-2 is-primary"
                     :to="{ name: 'collection', params: { collectionId: collection.id } }"
                   ><i class="fas fa-arrow-right" /></router-link>
-                </div>
+                </div>-->
                 <!--<div class="control">
                   <b-field label="Curator">
                     <select @change="updateCuratorId">
@@ -160,6 +170,27 @@
               </p>
             </div>
           </div>
+                <!--Carine code <div class="control">
+                  <a
+                    @click.stop="save"
+                    class="button is-primary"
+                    :class="saving === 'loading' ? 'is-loading' : ''"
+                  >
+                    <save-button-icon />
+                  </a>
+                </div>
+                <div class="control">
+                  <a
+                    @click.stop="deleteCollectionUI"
+                    class="button is-primary"
+                    :class="deleting === 'loading' ? 'is-loading' : ''"
+                  >
+                    <delete-button-icon :status="deleting === 'error' ? 'error' : deleting === 'normal' ? 'normal' : ''" />
+                  </a>
+                </div>
+              </div>
+            </span>
+          </span>-->
         </div>
       </div>
 
@@ -307,11 +338,18 @@ import {mapState, mapActions, mapGetters} from "vuex";
 import CollectionHierarchy from "@/components/CollectionHierarchy.vue";
 import TitleFieldInPlace from "@/components/forms/fields/TitleFieldInPlace";
 import SaveButtonIcon from "@/components/ui/SaveButtonIcon";
+import DeleteButtonIcon from "@/components/ui/DeleteButtonIcon";//added from Carine
 //import collectionHierarchy from "./CollectionHierarchy.vue";
 
 export default {
   name: "CollectionInteractiveCard",
-  components: { TitleFieldInPlace, SaveButtonIcon, CollectionHierarchy },
+  components: { TitleFieldInPlace, SaveButtonIcon, CollectionHierarchy, DeleteButtonIcon },// , DeleteButtonIcon added from Carine
+// carine code import DeleteButtonIcon from "@/components/ui/DeleteButtonIcon";
+
+/* Carine code export default {
+  name: "CollectionInteractiveCard",
+  components: { TitleFieldInPlace, SaveButtonIcon, DeleteButtonIcon },
+*/
   props: {
     collectionId: { type: Number, required: true },
     editable: { type: Boolean, default: false },
@@ -319,6 +357,7 @@ export default {
   data() {
     return {
       saving: "normal",
+      deleting: "normal",
       collection: null,
       showHierarchy: false,
       curatorId: null,
@@ -358,8 +397,11 @@ export default {
     this.curatorId = this.collection.admin.id
   },
   methods: {
-    ...mapActions("collections", ["saveCollection", "fetchOne"]),
+    ...mapActions("collections", ["saveCollection", "fetchOne", "deleteCollection"]),//, "deleteCollection" from Carine
     ...mapActions("user", ["fetchUsers"]),
+/* Carine code
+    ...mapActions("collections", ["saveCollection", "fetchOne", "deleteCollection"]),
+*/
 
     descriptionFormats() {
       return [["superscript"]];
@@ -388,6 +430,20 @@ export default {
       });
       await this.load();
       this.saving = "normal";
+    },
+    async deleteCollectionUI() {
+      this.deleting = "loading";
+      const resp = await this.deleteCollection({
+        id: this.collection.id,
+      });
+      if (resp.error) {
+        this.deleting = "error";
+        console.warn("failed to delete collection", this.collection.id, resp.error);
+      }
+      else {
+        this.deleting = "normal";
+        this.$router.push({ name: "collections" });
+      }
     },
 
     saveDescription(evt) {
