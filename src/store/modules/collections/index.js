@@ -60,7 +60,12 @@ const mutations = {
 
     state.collectionsById = collectionsById
   },
-
+  UPDATE_ONE(state, {id, title, description, admin}) {
+    const collection = state.collectionsById[id]
+    collection.title = title
+    collection.description = description
+    collection.admin = admin
+  }
 };
 
 const actions = {
@@ -154,7 +159,15 @@ const actions = {
         }
       }
     }
-    return await http.patch(`collections/${collection.id}`, data);
+    const response = await http.patch(`collections/${collection.id}`, data)
+    const admin = rootState.user.users.find(({id}) => id == collection.curatorId)
+    commit('UPDATE_ONE', {
+      id: collection.id,
+      title: collection.title,
+      description: collection.description,
+      admin: {username: admin.username}
+    })
+    return response
   },
 
   addCollection: async function({ rootState, commit }, collection) {
