@@ -24,8 +24,11 @@
         <b-field>
           <b-input
             v-model="searchTerm"
-            placeholder="Rechercher..."
+            placeholder="Rechercher une collection"
             type="search"
+            icon-right="close-circle"
+            icon-right-clickable
+            @icon-right-click="searchTerm=''"
           />
         </b-field>
       </div>

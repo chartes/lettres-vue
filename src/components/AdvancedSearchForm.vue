@@ -171,10 +171,11 @@
             field="attributes.label"
             :loading="isFetchingPlaceFrom"
             @typing="getAsyncPlaceFromData"
-            @select="(option) => (selectedPlaceFrom = option)"
+            @select="(option) => {selectedPlaceFrom = option;// TODO: review next row, added temporarily
+            selectedPlaceFrom = selectedPlaceFrom}"
             clearable
           >
-            <template slot-scope="props">
+            <template v-slot="props"><!--TODO: slot-scope replaced by v-slot-->
               {{ props.option.attributes.label }}
             </template>
           </b-autocomplete>
@@ -364,6 +365,9 @@ export default {
       this.performSearch();
     },
     creationDateTo() {
+      this.performSearch();
+    },
+    selectedPlaceFrom() {
       this.performSearch();
     },
   },

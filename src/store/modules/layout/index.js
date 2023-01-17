@@ -1,6 +1,6 @@
 
 const state = {
-  showLeftSideBar: true,
+  showLeftSideBar: false,
   showRightSideBar: false,
   lastSeenDocId: null,
   displayedManifestUrl: null
