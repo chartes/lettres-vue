@@ -81,7 +81,7 @@
           <b-table-column
             v-slot="props"
             field="id"
-            label="Document"
+            label="Lettre"
             sortable
           >
             <document-tag-bar :doc-id="props.row.id" />

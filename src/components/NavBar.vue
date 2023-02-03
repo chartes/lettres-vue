@@ -39,10 +39,10 @@
             Collections
           </router-link>
 
-          <search-box
+          <!--<search-box
             v-show="!showLeftSideBar || $route.name !== 'search'"
             class="ml-5 navbar-start-item"
-          />
+          />-->
         </div>
         <div class="navbar-end is-align-items-center">
           <router-link
@@ -207,12 +207,12 @@
 
 <script>
 import { mapState, mapGetters } from "vuex";
-import SearchBox from "@/components/SearchBox";
+//import SearchBox from "@/components/SearchBox";
 
 export default {
   name: "NavBar",
   components: {
-    SearchBox,
+    /*SearchBox,*/
   },
   computed: {
     ...mapState("user", ["current_user"]),

@@ -4,7 +4,7 @@
       :to="{ name: 'document', params: { docId } }"
       class="tag document-status-card__doc-tag"
     >
-      <span>Document {{ docId }}</span>
+      <span>Lettre {{ docId }}</span>
     </router-link>
 
     <!--

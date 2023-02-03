@@ -20,6 +20,8 @@ const state = {
 
    personsHavingRoles: [], //obsolete?
    persons: [],
+   persons_roles: [],
+
 };
 
 const mutations = {
@@ -47,10 +49,84 @@ const mutations = {
   SET_PERSONS_HAVING_ROLES(state, payload) {
     state.personsHavingRoles = payload;
   },
+
+  SET_PERSONS_ROLES (state, persons_roles) {
+    //const placesList = Object.fromEntries(places.items.map((pl) => ([pl.id, pl])));
+    state.persons_roles = persons_roles
+  },
   ...searchStore.mutations
 };
 
 const actions = {
+
+  async fetchAll({commit, rootState}) {
+        const http = http_with_auth(rootState.user.jwt);
+        try {
+            const response = await http.get(`/persons?include=roles-within-documents@personHasRoleWithIds`)
+            // console.log('type response : ',response.data)
+            const {data:personsRolesJSON, included} = response.data;
+            //building list of persons and respective roles :
+            const personsRoles = included.map(({
+                type, // unused
+                id,
+                attributes: {field, person_id, document_id, role_id, document_title, document_creation_label}, // also has function (unnecessary) field causing error
+            }) => ({
+                //type,
+                id,
+                //unused attributes : function, field, document_id, document_title, document_creation_label
+                person_id,
+                // fetching persons label from response data by person_id:
+                label: personsRolesJSON.find(({type, id: pers_id}) => type === "person" && pers_id === person_id).attributes.label,
+                role_id,
+            }));
+            // building lists by roles (filtering and grouping by roles (1 = from, 2 = to, 3 = cited in transcription) :
+
+            const AllPersonsFrom = personsRoles.filter(pl => (pl.role_id === 1));
+            //console.log('AllPersonsFrom : ', AllPersonsFrom);
+            const AllPersonsTo = personsRoles.filter(pl => (pl.role_id === 2));
+            //console.log('AllPersonsTo : ', AllPersonsTo);
+            const AllPersonsCited = personsRoles.filter(pl => (pl.role_id === 3));
+            //console.log('AllPersonsCited : ', AllPersonsCited);
+
+            const AllPersonsFromUnique = Object.values(AllPersonsFrom.reduce(
+                (a, c) => {
+                    a[c.person_id] = c;
+                    return a
+                    }, {}
+                )
+            );
+            const AllPersonsToUnique = Object.values(AllPersonsTo.reduce(
+                (a, c) => {
+                    a[c.person_id] = c;
+                    return a
+                    }, {}
+                )
+            );
+            const AllPersonsCitedUnique = Object.values(AllPersonsCited.reduce(
+                (a, c) => {
+                    a[c.person_id] = c;
+                    return a
+                    }, {}
+                )
+            );
+            //console.log('AllPersonsFromUnique : ', AllPersonsFromUnique);
+            //console.log('AllPersonsToUnique : ', AllPersonsToUnique);
+            //console.log('AllPersonsCitedUnique : ', AllPersonsCitedUnique);
+            const persons_roles = [
+                {role_id: "Expéditeur", persons: AllPersonsFromUnique},
+                {role_id: "Destinataire", persons : AllPersonsToUnique},
+                {role_id: "Personne citée", persons : AllPersonsCitedUnique}
+            ]
+            //console.log('persons_roles : ', persons_roles)
+            commit('SET_PERSONS_ROLES', persons_roles)
+            commit('SET_LOADING', false)
+
+        } catch(e) {
+          console.error('issue with persons_roles loading', e);
+          commit('RESET');
+        }
+    },
+
 
   search ({ rootState, commit }, what) {
     commit('SEARCH_RESULTS', [])
@@ -191,7 +267,7 @@ const actions = {
             return phr.relationships['person-role'].data.id === inlinedRole.id && phr.relationships.document.data.id === rootState.document.document.id && phr.relationships.person.data.id === personId                
         }) 
 
-        // le role existe deja; on met simplement à jour l'attribut field
+        // le role existe deja : on met simplement à jour l'attribut field
         if (found) {
             console.log(`Inlined phr already exists (person: ${personId}, field: ${personField}, document: ${rootState.document.document.id})`)
 
@@ -205,7 +281,7 @@ const actions = {
         } else {
             console.log(`Inlined phr does not exist(person: ${personId}, field: ${personField}, document: ${rootState.document.document.id})`)
 
-            // le role inlined n'existe pas encore pour ce document, on le crée et on rempli l'attribut field
+            // le role inlined n'existe pas encore pour ce document, on le crée et on remplit l'attribut field
             let data = {
                 data: {
                     type: 'person-has-role',
@@ -432,7 +508,7 @@ const getters = {
       const inNotesDict = groupByPerson(inNotes)
       const inTranscriptionDict = groupByPerson(inTranscription)
       const docIds = state.included.map(phr => phr.attributes.document_id).filter(function(item, pos, self) {
-          return self.indexOf(item) == pos;
+          return self.indexOf(item) === pos;
       })
       docIds.sort();
 

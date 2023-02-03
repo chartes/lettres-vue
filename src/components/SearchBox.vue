@@ -2,10 +2,14 @@
   <div class="search-container">
     <b-field>
       <b-input
-        class="search_input"
         v-model="inputTerm"
+        class="search_input"
         placeholder="Catherine de Medicis"
+        icon-right="close-circle"
+        icon-right-clickable
         type="search"
+        @icon-right-click="inputTerm = ''"
+        @focus="$event.target.select()"
       />
       <div>
         <a
@@ -29,7 +33,7 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapActions } from "vuex";
+import { mapState, mapActions } from "vuex";
 
 export default {
   name: "SearchBox",
@@ -74,10 +78,15 @@ export default {
 
 .search-container input {
   width: 100% !important;
+  vertical-align: center;
 }
-.control{
+.control, .search_input {
   width: 100% !important;
 }
+/* align close button ?
+span.icon {
+
+}*/
 .advanced-search {
   width: 100%;
   text-align: right;

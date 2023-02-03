@@ -1,10 +1,101 @@
 <template>
   <section class="main">
     <nav-bar />
-    <section class="section" style="height: 100%">
+    <section
+      class="section"
+      style="height: 100%"
+    >
+      <div
+        v-if="$route.name === 'home' || $route.name === 'search'"
+      >
+        <div
+          v-if="$route.name === 'home'"
+          id="intro_home"
+          class="bg-image content"
+        >
+          <div
+            v-if="$route.name === 'home'"
+            class="row"
+          >
+            <p class="homepage_title">
+              Lettres
+            </p>
+          </div>
+          <div
+            v-if="$route.name === 'home'"
+            class="row"
+          >
+            <p class="homepage_subtitle">
+              de la Première Modernité
+            </p>
+          </div>
+          <div
+            v-if="$route.name === 'home'"
+            class="row is-flex is-justify-content-center mt-5"
+          >
+            <b-button
+              tag="router-link"
+              to="/about"
+              class="portail_button"
+            >
+              Le portail
+            </b-button>
+          </div>
+        </div>
+        <div
+          v-else
+          id="intro_search"
+          class="bg-image content"
+        >
+          <div
+            v-if="$route.name === 'home'"
+            class="row"
+          >
+            <p class="homepage_title">
+              Lettres
+            </p>
+          </div>
+          <div
+            v-if="$route.name === 'home'"
+            class="row"
+          >
+            <p class="homepage_subtitle">
+              de la Première Modernité
+            </p>
+          </div>
+          <div
+            v-if="$route.name === 'home'"
+            class="row is-flex is-justify-content-center mt-5"
+          >
+            <b-button
+              tag="router-link"
+              to="/about"
+              class="portail_button"
+            >
+              Le portail
+            </b-button>
+          </div>
+        </div>
+        <div class="row search_row">
+          <div class="col is-2 ml-5 search_span">
+            <span class="search_span">Votre recherche</span>
+          </div>
+          <div class="column pt-3">
+            <search-box
+              class="m-5"
+            />
+          </div>
+        </div>
+      </div>
       <div class="columns">
-        <div v-if="showLeftSideBar" class="column is-3">
-          <div @click="hideLeftSideBar" class="hide-left-bar">
+        <div
+          v-if="showLeftSideBar && $route.name === 'search'"
+          class="column is-3"
+        >
+          <div
+            class="hide-left-bar"
+            @click="hideLeftSideBar"
+          >
             <i class="far fa-times-circle" />
           </div>
           <advanced-search-form v-if="$route.name === 'search'" />
@@ -39,7 +130,7 @@
           <img
             class="enc-logo ml-5 pt-3"
             src="@/assets/images/logos/logo-ecole-nationale-des-chartes-header.png"
-          />
+          >
         </div>
       </nav>
     </footer>
@@ -49,6 +140,8 @@
 <script>
 import { mapState, mapActions } from "vuex";
 import NavBar from "@/components/NavBar.vue";
+import SearchBox from "@/components/SearchBox";
+import background_image from "@/assets/images/about.jpg";
 /*import SideBar from "@/components/SideBar.vue";*/
 //import AdvancedSearchForm from ;
 
@@ -58,10 +151,16 @@ export default {
   components: {
     NavBar,
     /*SideBar,*/
+    SearchBox,
     AdvancedSearchForm: () => import("@/components/AdvancedSearchForm.vue"),
     MiradorViewer: () => import("@/components/MiradorViewer"),
   },
-
+  data: function () {
+    return {
+      background_image: background_image,
+      //featured_collectionIds : [73, 74, 75]
+    }
+  },
   computed: {
     ...mapState("user", ["current_user"]),
     ...mapState("layout", [
@@ -132,7 +231,7 @@ export default {
   min-height: 100%;
 }
 .main-column {
-  background-color: $beige-lighter;
+  background-color: white;
   padding-bottom: 0;
 }
 .main-column-content {
@@ -153,7 +252,7 @@ export default {
 .hide-button {
   width: 15px;
   min-height: 100vh;
-  background-color: $beige-lighter;
+  /*background-color: $beige-lighter;*/
   border: 1px solid;
   border-top: none;
   border-bottom: none;
@@ -181,7 +280,7 @@ export default {
 }
 footer {
   background-color: $nice-grey !important;
-  padding: 15px 0px 25px !important;
+  padding: 15px 0 25px !important;
   z-index: 100;
 
   .enc-logo {
@@ -191,4 +290,88 @@ footer {
     width: 80px;
   }
 }
+#intro_home {
+  background-image: url('../assets/images/about.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height:300px;
+  width:auto;
+  display:flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-bottom: 0 !important;
+}
+#intro_search {
+  background-image: url('../assets/images/about.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height:150px;
+  width:auto;
+  display:flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-bottom: 0px !important;
+}
+#card_image {
+  max-height: 250px;
+}
+.homepage_title {
+  font-size: xxx-large;
+  font-weight: bolder;
+  text-shadow: 0px 2px, 2px 0px, 2px 2px;
+  color: white;
+  text-align: center;
+}
+.homepage_subtitle {
+  font-size: x-large;
+  color: white;
+  text-align: center;
+}
+.metadata {
+  font-size: xx-large;
+  font-weight: bolder;
+  text-shadow: 0px 2px, 2px 0px, 2px 2px;
+  color: rgb(255, 0, 83);
+  text-align: center;
+}
+.col_meta:not(:last-of-type) {
+  border-right: solid 5px;
+  border-right-color: rgba(180, 0, 80);
+}
+.card {
+  overflow: hidden;
+  border-radius: 0.5em;
+}
+.card-title {
+  color: rgb(255, 0, 83);
+}
+.portail_button {
+  background-color: transparent;
+  color: white;
+}
+.search_row {
+  background-color: rgba(35, 9, 20);
+  padding: 5px;
+  width: 100% !important;
+  display:flex;
+  flex-direction: row;
+  align-items: center;
+}
+.search_span {
+  background-color: rgba(35, 9, 20);
+  color: white;
+  text-align: center;
+}
+/*a.button {
+  border: none !important;
+  outline: none !important;
+}*/
+.search_button {
+  border-color: white !important;
+  outline: none !important;
+  box-shadow:none !important;
+  color: rgba(35, 9, 20) !important;
+ }
 </style>

@@ -1,15 +1,17 @@
 <template>
-  <div class="search-page-container">
-    <div class="columns">
-      <div class="column">
-        <button
-          @click="toggleLeftSideBar"
-          v-show="!showLeftSideBar"
-          class="button is-text mt-3"
-        >
-          Recherche avancée
-        </button>
-        <document-list />
+  <div class="container">
+    <div class="search-page-container">
+      <div class="columns">
+        <div class="column">
+          <button
+            v-show="!showLeftSideBar"
+            class="button is-text mt-3"
+            @click="toggleLeftSideBar"
+          >
+            Recherche avancée
+          </button>
+          <document-list />
+        </div>
       </div>
     </div>
   </div>
@@ -19,6 +21,8 @@
 import { mapState, mapActions, mapGetters } from "vuex";
 
 import DocumentList from "@/components/sections/DocumentList";
+import SearchBox from "@/components/SearchBox.vue";
+import background_image from "@/assets/images/about.jpg";
 
 export default {
   name: "SearchPage",
@@ -29,14 +33,32 @@ export default {
     ...mapState("user", ["current_user"]),
     ...mapState("layout", ["showLeftSideBar"]),
     ...mapState("search", ["documents", "loadingStatus"]),
+    ...mapState("search", ["selectedPlaceFrom","selectedPlaceTo","selectedPlaceCited"]),
+    ...mapActions("placenames", ["fetchAll"]),
   },
-  watch: {},
-  created() {
-    if (!this.loadingStatus) this.performSearch();
+  watch: {
   },
+  async created() {
+    if (!this.loadingStatus)
+      await this.fetchAll;
+      await this.performSearch();
+  },
+  /*mounted() {
+    this.$store.dispatch("placenames/fetchAllPlacenames");
+    this.$store.dispatch("placenames/fetchRoles");
+    this.$store.dispatch("placenames/getPlacenameById");
+    this.thistest()
+
+  },*/
   methods: {
     ...mapActions("search", ["performSearch"]),
     ...mapActions("layout", ["toggleLeftSideBar"]),
+    /*...mapActions("placenames", [
+      "getPlacenameById",
+      "performSearch",
+      "fetchPlacenamesHavingRoles",
+      "fetchAllPlacenames"
+    ]),*/
   },
 };
 </script>

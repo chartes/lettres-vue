@@ -1,6 +1,6 @@
 <template>
   <article>
-    <section>
+    <!--<section>
       <div class="container">
         <div
           id="intro"
@@ -25,7 +25,7 @@
               Le portail
             </b-button>
           </div>
-          <!--<div class="row">
+          <div class="row">
             <p class="title has-text-centered">
               Lettres
             </p>
@@ -61,7 +61,7 @@
                 </b-button>
               </div>
             </div>
-          </div>-->
+          </div>
         </div>
         <div class="row search_row">
           <search-box
@@ -69,7 +69,7 @@
           />
         </div>
       </div>
-    </section>
+    </section>-->
     <section>
       <div class="container">
         <!--<div class="row">
@@ -172,10 +172,12 @@
         <div class="row m-auto">
           <div
             class="container columns is-vcentered m-5"
-            v-for="featured in featured_collections"
-            v-bind:key="featured.id"
           >
-            <div class="column is-4 padding-5 is-inline-block">
+            <div
+              v-for="featured in featured_collections"
+              :key="featured.id"
+              class="column is-4 padding-5 is-inline-block"
+            >
               <div class="card has-text-centered">
                 <router-link
                   :to="{ name: 'collection', params: {collectionId: featured.id } }"
@@ -183,21 +185,21 @@
                   <img
                     id="card_image"
                     class="card-img-top m-5 is-inline-block"
-                    src="../assets/images/collections/collection1.jpg"
+                    :src="getImgUrl(featured.id)"
                     alt="Card image cap"
                   >
                   <div class="card-body has-text-centered">
                     <h5 class="card-title px-6">
-                      collection {{featured.id}}
+                      collection {{ featured.id }}
                     </h5>
                     <p class="card-text">
-                      4708 documents
+                      {{ featured.documentCount }} documents
                     </p>
                   </div>
                   <div class="card-footer is-flex is-justify-content-center">
                     <b-button
                       tag="router-link"
-                      to="/collections/1"
+                      :to="{ name: 'collection', params: {collectionId: featured.id } }"
                       type="is-primary"
                     >
                       Découvrir la collection
@@ -208,7 +210,7 @@
             </div>
           </div>
         </div>
-        <div class="row m-auto">
+        <!-- featured manual <div class="row m-auto">
           <div class="container columns is-vcentered m-5">
             <div class="column is-4 padding-5">
               <div class="card has-text-centered">
@@ -296,7 +298,7 @@
               </div>
             </div>
           </div>
-        </div>
+        </div>-->
       </div>  
     </section>
   </article>
@@ -304,21 +306,13 @@
 
 <script>
 import { mapState, mapActions, mapGetters } from "vuex";
-import SearchBox from "@/components/SearchBox";
-import background_image from "@/assets/images/about.jpg";
+//import SearchBox from "@/components/SearchBox";
 
 
 export default {
   name: "HomePage",
   components: {
-    SearchBox,
-  },
-
-  data: function () {
-    return {
-      background_image: background_image,
-      //featured_collectionIds : [73, 74, 75]
-    }
+    /*SearchBox,*/
   },
   computed: {
     ...mapState("collections", {
@@ -343,9 +337,6 @@ export default {
     collectionsCount: function () {
       console.log('allCollections # keys : ', Object.keys(this.allCollections).length);
       return Object.keys(this.allCollections).length - 1;
-      /*.reduce((sum, collection ) => {
-            return sum += collection.documentCount;
-        }, 0);*/
     },
     lettersCount: function () {
       return Object.values(this.allCollections).reduce((sum, collection) => sum + collection.documentCount, 0);
@@ -359,22 +350,13 @@ export default {
       return this.$store.state.placenames.placenames.length;
     },
     featured_collections: function () {
-      //console.log('featured_collectionIds : ', this.featured_collectionIds);
-      let featured=[];
-      let featured_collectionIds=[73, 74, 75];
-      console.log('length keys : ', Object.keys(this.allCollections).length);
-      for (let i=1; i< Object.keys(this.allCollections).length; i++){
-        console.log('i : ', i);
-
-        if (featured_collectionIds.includes(parseInt(Object.values(this.allCollections)[i][0]))) {
-          console.log('Object i : ', i, Object.values(this.allCollections)[i][0] );
-          console.log('Object i : ', Object.values(this.allCollections[i]) );
-          // here STATE selected in previous drop down, match it with state from json and get COUNTY
-          featured = [Object.keys(this.allCollections[i])];
-        }
-      }
+      let featured_collectionIds=[1, 2, 78];
+      let featured = Object.values(this.allCollections).filter(item=> {
+        return featured_collectionIds.includes(item.id)
+      });
+      console.log('featured : ', featured)
       return featured;
-    },
+    }
   },
   created() {
     this.fetchCollections();
@@ -386,14 +368,26 @@ export default {
     ...mapActions("collections", { fetchCollections: "fetchAll" }),
     //...mapState("collections", ["collectionsById"]),
     ...mapActions("persons", { fetchPersons: "fetchAllPersons" }),
-    ...mapActions("placenames", { fetchPlaces: "fetchAllPlacenames"})
+    ...mapActions("placenames", { fetchPlaces: "fetchAllPlacenames"}),
+    getImgUrl: function (img) {
+      try {
+        return require('@/assets/images/collections/collection' + img + '.jpg')
+      } catch (e) {
+        //console.log('mon erreur : ',e)
+        try {
+          return require('@/assets/images/collections/collection' + this.findRoot(img).id + '.jpg')
+        } catch (e) {
+          return require('@/assets/images/collections/default.jpg')
+        }
+      }
+    }
   },
 };
 </script>
 
 <style scoped lang="scss">
 @import "@/assets/sass/main.scss";
-#intro {
+/*#intro {
   background-image: url('../assets/images/about.jpg');
   background-size: cover;
   background-position: center;
@@ -404,11 +398,11 @@ export default {
   flex-direction: column;
   justify-content: center;
   margin-bottom: 0px !important;
-}
+}*/
 #card_image {
-  max-width: 200px;
+  max-height: 250px;
 }
-.homepage_title {
+/*.homepage_title {
   font-size: xxx-large;
   font-width: bolder;
   text-shadow: 0px 2px, 2px 0px, 2px 2px;
@@ -419,10 +413,10 @@ export default {
   font-size: x-large;
   color: white;
   text-align: center;
-}
+}*/
 .metadata {
   font-size: xx-large;
-  font-width: bolder;
+  font-weight: bolder;
   text-shadow: 0px 2px, 2px 0px, 2px 2px;
   color: rgb(255, 0, 83);
   text-align: center;
@@ -442,18 +436,18 @@ export default {
   background-color: transparent;
   color: white;
 }
-.search_row {
+/*.search_row {
   background-color: rgba(35, 9, 20);
   padding: 5px;
-}
+}*/
 /*a.button {
   border: none !important;
   outline: none !important;
 }*/
-.search_button {
+/*.search_button {
   border-color: white !important;
   outline: none !important;
   box-shadow:none !important;
   color: rgba(35, 9, 20) !important;
- }
+ }*/
 </style>

@@ -5,6 +5,54 @@ import {debounce} from 'lodash';
 import searchStore from '@/store/modules/search';
 import {formatDate, getNextMonthLabel} from '@/store/modules/search';
 
+function renameKey ( obj, oldKey, newKey ) {
+            obj[newKey] = obj[oldKey];
+            delete obj[oldKey];
+        }
+function tada(test, included) {
+                return test.map((index, data) =>
+                    ({
+                    //rel_id: id,
+                            role_id: included.find(({type, id: rel_id}) => type === "placename-has-role" && rel_id === index.data.id).attributes.role_id
+                    }),
+                 )
+    //return role_id
+        }
+function tada2(array1, array2){
+            for(let i=0; i<array1.relationships.roles_within_documents.length; i++){
+                console.log('JSON.parse(array1)[i].relationships.roles_within_documents',array1.relationships.roles_within_documents[i])
+                JSON.parse(array1).map(({
+        id,
+        attributes: {label, long, lat, ref},
+        relationships: {changes, roles_within_documents, documents}
+      }) => ({
+        id,
+        label,
+        type: "placeFrom" ,
+        /*documentCount: nb_docs,
+        dateMin: date_min,
+        dateMax: date_max,
+        description,
+        children: children.data.map((child) => child.id),
+        parent: parents.data[0] !== undefined ? parents.data[0].id : null,*/
+        roles_within_documents: {
+
+            role_id: array2.find(({type, id: rel_id}) => type === "placename-has-role" && rel_id === roles_within_documents[i].data.id).attributes.role_id,
+        }
+
+            /*function(roles_within_documents)//tada(roles_within_documents, included)/*
+            {
+                roles_within_documents.map((index, data) =>
+                    ({
+                    rel_id: id,
+                            role_id: included.find(({type, id: rel_id}) => type === "placename-has-role" && rel_id === index.data.id).attributes.role_id
+                    }),
+                 )
+        }}*///included.filter(item => item.type === "placename-has-role" && item.id === roles_within_documents.data.id).map(att => { return { id: att.role_id, ...attr.attributes }})
+      }))
+            }
+        }
+
 const state = {
 
     placenamesSearchResults: null,
@@ -20,6 +68,8 @@ const state = {
     placenamesHavingRoles: [], //obsolete?
 
     placenames: [],
+
+    places: []
 
 };
 
@@ -48,10 +98,123 @@ const mutations = {
     SET_PLACENAMES(state, payload) {
         state.placenames = payload;
     },
+    SET_ALL(state, places) {
+        //const placesList = Object.fromEntries(places.items.map((pl) => ([pl.id, pl])));
+        state.places = places
+    },
     ...searchStore.mutations
 };
 
 const actions = {
+
+    async fetchAll2({commit, rootState}) {
+        commit('SET_LOADING', true)
+        const http = http_with_auth(rootState.user.jwt);
+        try {
+            const response = await http.get(`/search?query=*&index=lettres__${process.env.NODE_ENV}__placenames&without-relationships`)
+            const {data:placesJSON, included} = response.data;
+            // Convert JSON to places
+            //const roles_within = "roles-within-documents"
+            const ExpPlaces = placesJSON.map(({
+                id,
+                attributes: {label, long, lat, ref}//,
+                //relationships: {changes, roles-within-documents,documents}
+            }) => ({
+                id,
+                label,
+                /*documentCount: nb_docs,
+                dateMin: date_min,
+                dateMax: date_max,
+                description,
+                children: children.data.map((child) => child.id),
+                parent: parents.data[0] !== undefined ? parents.data[0].id : null,
+                roles_within: {
+                    role_id: included.find(({type, id: roles_within_id}) => type === "placename-has-role" && roles_within_id === roles_within.data.id).attributes.role_id
+                }*/
+            }));
+
+            const places = {
+                name: "Lieu d'expédition",
+                items: ExpPlaces,
+            }
+            console.log('places : ', places)
+      //console.log('type role_within : ', typeof(placesJSON[index]['roles-within-documents']))
+      commit('SET_ALL', places)
+      commit('SET_LOADING', false)
+
+    } catch(e) {
+      console.error('issue with places loading', e)
+      //commit('RESET');
+    }
+    },
+
+    async fetchAll({commit, rootState}) {
+        const http = http_with_auth(rootState.user.jwt);
+        try {
+            const response = await http.get(`/placenames?include=roles-within-documents@placenameHasRoleWithIds`)
+            // console.log('type response : ',response.data)
+            const {data:placesRolesJSON, included} = response.data;
+            //building list of places and respective roles :
+            const placesRoles = included.map(({
+                type, // unused
+                id,
+                attributes: {field, placename_id, document_id, role_id, document_title, document_creation_label}, // also has function (unnecessary) field causing error
+            }) => ({
+                //type,
+                id,
+                //unused attributes : function, field, document_id, document_title, document_creation_label
+                placename_id,
+                // fetching placenames label from response data by placename_id:
+                label: placesRolesJSON.find(({type, id: pl_id}) => type === "placename" && pl_id === placename_id).attributes.label,
+                role_id,
+            }));
+            // building lists by roles (filtering and grouping by roles (1 = from, 2 = to, 3 = cited in transcription) :
+
+            const AllPlacesFrom = placesRoles.filter(pl => (pl.role_id === 1));
+            //console.log('AllPlacesFrom : ', AllPlacesFrom);
+            const AllPlacesTo = placesRoles.filter(pl => (pl.role_id === 2));
+            //console.log('AllPlacesTo : ', AllPlacesTo);
+            const AllPlacesCited = placesRoles.filter(pl => (pl.role_id === 3));
+            //console.log('AllPlacesCited : ', AllPlacesCited);
+
+            const AllPlacesFromUnique = Object.values(AllPlacesFrom.reduce(
+                (a, c) => {
+                    a[c.placename_id] = c;
+                    return a
+                    }, {}
+                )
+            );
+            const AllPlacesToUnique = Object.values(AllPlacesTo.reduce(
+                (a, c) => {
+                    a[c.placename_id] = c;
+                    return a
+                    }, {}
+                )
+            );
+            const AllPlacesCitedUnique = Object.values(AllPlacesCited.reduce(
+                (a, c) => {
+                    a[c.placename_id] = c;
+                    return a
+                    }, {}
+                )
+            );
+            //console.log('AllPlacesFromUnique : ', AllPlacesFromUnique);
+            //console.log('AllPlacesToUnique : ', AllPlacesToUnique);
+            //console.log('AllPlacesCitedUnique : ', AllPlacesCitedUnique);
+            const places = [
+                {role_id: "Lieu d'expédition", places : AllPlacesFromUnique},
+                {role_id: "Lieu de destination", places : AllPlacesToUnique},
+                {role_id: "Lieu mentionné", places : AllPlacesCitedUnique}
+            ]
+            //console.log('places : ', places)
+            commit('SET_ALL', places)
+            commit('SET_LOADING', false)
+
+        } catch(e) {
+          console.error('issue with placeRoles loading', e);
+          commit('RESET');
+        }
+    },
 
     search({commit, rootState}, what) {
         commit('SEARCH_RESULTS', [])
@@ -91,8 +254,8 @@ const actions = {
                 phr.push({
                     id: element.id,
                     attributes: element.attributes,
-                    placename,
-                    role
+                    placename: element.attributes.label,
+                    role: element.attributes.role
                 })
             });
             commit('SET_PLACENAMES_HAVING_ROLES', phr)
@@ -238,10 +401,7 @@ const actions = {
                 })
             }
 
-
         }
-
-
     },
 
     /* ======================
@@ -259,7 +419,7 @@ const actions = {
         commit('SET_LOADING_STATUS', true);
     
         /* =========== filters =========== */
-        let query =  state.searchTerm || '***'; //`collections.id:${state.selectedCollectionId}`
+        let query =  state.searchTerm ||  '***' ; //`collections.id:${state.selectedCollectionId}`state.placenamesSearchResults.map(p => `id:${p.id}`).join(' OR ') ||
     
     
         if (!rootState.user.current_user){
@@ -404,8 +564,14 @@ const getters = {
     },
 
     getFunctionsByPlacename: (state) => {
-        return groupbyPlacename(state.included.filter(phr => phr.attributes.function).map(phr => { 
+        return groupbyPlacename(state.included.filter(phr => phr.attributes.function).map(phr => {
             return {placenameId: phr.attributes.placename_id, function: phr.attributes.function}
+        }))
+    },
+
+    getRolesByPlacename: (state) => {
+        return groupbyPlacename(state.included.filter(phr => phr.attributes.role).map(phr => {
+            return {placenameId: phr.attributes.placename_id, role: phr.attributes.role}
         }))
     },
 

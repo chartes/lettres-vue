@@ -2,7 +2,7 @@
   <div class="doc-tag">
     <router-link :to="{ name: 'document', params: { docId } }">
       <div class="tags has-addons">
-        <span class="tag doc-id is-primary"> Doc {{ docId }}</span>
+        <span class="tag doc-id is-primary"> Lettre {{ docId }}</span>
         <span
           class="tag doc-creation-label"
           v-html="creationLabel"

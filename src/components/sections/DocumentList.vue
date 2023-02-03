@@ -51,7 +51,7 @@
         <b-table-column
           v-slot="props"
           field="id"
-          label="Document"
+          label="Lettre"
           :td-attrs="columnTdAttrs"
           sortable
         >
