@@ -5,54 +5,6 @@ import {debounce} from 'lodash';
 import searchStore from '@/store/modules/search';
 import {formatDate, getNextMonthLabel} from '@/store/modules/search';
 
-function renameKey ( obj, oldKey, newKey ) {
-            obj[newKey] = obj[oldKey];
-            delete obj[oldKey];
-        }
-function tada(test, included) {
-                return test.map((index, data) =>
-                    ({
-                    //rel_id: id,
-                            role_id: included.find(({type, id: rel_id}) => type === "placename-has-role" && rel_id === index.data.id).attributes.role_id
-                    }),
-                 )
-    //return role_id
-        }
-function tada2(array1, array2){
-            for(let i=0; i<array1.relationships.roles_within_documents.length; i++){
-                console.log('JSON.parse(array1)[i].relationships.roles_within_documents',array1.relationships.roles_within_documents[i])
-                JSON.parse(array1).map(({
-        id,
-        attributes: {label, long, lat, ref},
-        relationships: {changes, roles_within_documents, documents}
-      }) => ({
-        id,
-        label,
-        type: "placeFrom" ,
-        /*documentCount: nb_docs,
-        dateMin: date_min,
-        dateMax: date_max,
-        description,
-        children: children.data.map((child) => child.id),
-        parent: parents.data[0] !== undefined ? parents.data[0].id : null,*/
-        roles_within_documents: {
-
-            role_id: array2.find(({type, id: rel_id}) => type === "placename-has-role" && rel_id === roles_within_documents[i].data.id).attributes.role_id,
-        }
-
-            /*function(roles_within_documents)//tada(roles_within_documents, included)/*
-            {
-                roles_within_documents.map((index, data) =>
-                    ({
-                    rel_id: id,
-                            role_id: included.find(({type, id: rel_id}) => type === "placename-has-role" && rel_id === index.data.id).attributes.role_id
-                    }),
-                 )
-        }}*///included.filter(item => item.type === "placename-has-role" && item.id === roles_within_documents.data.id).map(att => { return { id: att.role_id, ...attr.attributes }})
-      }))
-            }
-        }
-
 const state = {
 
     placenamesSearchResults: null,

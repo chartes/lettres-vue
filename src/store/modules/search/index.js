@@ -61,7 +61,7 @@ function formatDate(year, month, day) {
     }
     formatted = year.toString()
   }
-
+  console.log('formatted', formatted)
   return formatted
 }
 
@@ -337,28 +337,35 @@ const actions = {
   
     /* =========== date ranges ===========*/
     const cdf = state.creationDateFrom.selection
+    //console.log('cdf', cdf)
     const cdt = state.creationDateTo.selection
+    //console.log('cdto', cdt)
     let cdfFormatted = null
     let cdtFormatted = null
-    console.log(state.creationDateFrom, state.creationDateTo)
+    //console.log('state.creationDateFrom, state.creationDateTo',state.creationDateFrom, state.creationDateTo)
 
     try {
       cdfFormatted = formatDate(cdf.year, cdf.month, cdf.day)
-      if (state.withDateRange) {
-        cdtFormatted = formatDate(cdt.year, cdt.month, cdt.day)
-      }
-    } catch (e) {
+      //console.log('cdfFormatted', cdfFormatted)
+    } catch (ecdf) {
       cdfFormatted = null
+      //console.log('ecdf', ecdf)
+    }
+    try {
+      cdtFormatted = formatDate(cdt.year, cdt.month, cdt.day)
+      //console.log('cdto Formatted', cdtFormatted)
+    } catch (ecdt) {
       cdtFormatted = null
-      //console.log(e)
+      //console.log('ecdt', ecdt)
     }
 
     let creationDateRange = '';
 
     try {
       if (cdfFormatted) {
-        if (state.withDateRange && cdtFormatted) {
-          // between from and to 
+        if (/*state.withDateRange && */cdtFormatted) {
+          // between from and to
+          //console.log('between from and to')
           let upperBound = cdtFormatted
           let upperOp = 'lt'
           if (cdt.month === null) {
@@ -372,8 +379,9 @@ const actions = {
           creationDateRange = `&range[creation]=gte:${cdfFormatted},${upperOp}:${upperBound}`
         } else {
           // single date (from)
+          //console.log('single date (from)')
           let upperBound = cdfFormatted
-          let upperOp = 'lt'
+          /*let upperOp = 'lt'
           if (cdf.month === null) {
             // search a single and whole year
             // between 1577 and 1578
@@ -384,8 +392,29 @@ const actions = {
           } else {
             // a single day: 1577-11-10
             upperOp = 'lte'
-          }
-          creationDateRange = `&range[creation]=gte:${cdfFormatted},${upperOp}:${upperBound}`
+          }*/
+          //creationDateRange = `&range[creation]=gte:${cdfFormatted},${upperOp}:${upperBound}`
+          creationDateRange = `&range[creation]=gte:${cdfFormatted}`
+        }
+      } else {
+        if (cdtFormatted) {
+          // single date (to)
+          //console.log('single date (to)')
+          let upperBound = cdtFormatted
+          let upperOp = 'lt'
+          if (cdf.month === null) {
+            // search a single and whole year
+            // between 1577 and 1578
+            upperBound = formatDate(parseInt(cdt.year) + 1, cdt.month, cdt.day)
+          }/* else if (cdf.day === null) {
+            // between 1577-01 and 1577-02
+            upperBound = formatDate(cdf.year, getNextMonthLabel(cdf.month), cdf.day)
+          } else {
+            // a single day: 1577-11-10
+            upperOp = 'lte'
+          }*/
+          //creationDateRange = `&range[creation]=gte:${cdfFormatted},${upperOp}:${upperBound}`
+          creationDateRange = `&range[creation]=${upperOp}:${upperBound}`
         }
       }
     } catch (e) {
