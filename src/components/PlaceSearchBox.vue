@@ -21,7 +21,6 @@
             v-model="tags"
             :data="filteredTags"
             autocomplete
-            :open-on-focus="true"
             field="label"
             placeholder="Paris"
             icon="fas fa-search"
