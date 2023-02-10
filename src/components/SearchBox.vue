@@ -8,8 +8,10 @@
         icon-right="close-circle"
         icon-right-clickable
         type="search"
+        :lazy="true"
         @icon-right-click="inputTerm = ''"
         @focus="$event.target.select()"
+        @keyup.native.enter="search"
       />
       <div>
         <a
@@ -50,6 +52,7 @@ export default {
   watch: {
     inputTerm() {
       this.setSearchTerm(this.inputTerm);
+      this.performSearch();
     }
   },
   created() {
@@ -61,7 +64,6 @@ export default {
       if (!this.documentLoading) {
         this.setSearchTerm(this.inputTerm);
         this.setNumPage(1);
-        //this.performSearch()
         this.performSearch();
 
         if (this.$route.name !== "search") {
