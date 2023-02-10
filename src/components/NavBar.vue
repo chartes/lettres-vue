@@ -20,12 +20,12 @@
           :to="{ name: 'home' }"
           class="navbar-item title is-4 navbar-title is-inline-block"
         >
-          LETTRES
+          Lettres
         </router-link>
       </div>
 
       <div class="navbar-menu is-align-items-center">
-        <div class="navbar-start is-align-items-center">
+        <div class="navbar-end is-align-items-center">
           <router-link
             :to="{ name: 'search' }"
             class="navbar-start-item"
@@ -38,19 +38,17 @@
           >
             Collections
           </router-link>
+          <router-link
+              :to="{ name: 'documentation' }"
+              class="navbar-start-item"
+          >
+            Documentation
+          </router-link>
 
           <!--<search-box
             v-show="!showLeftSideBar || $route.name !== 'search'"
             class="ml-5 navbar-start-item"
           />-->
-        </div>
-        <div class="navbar-end is-align-items-center">
-          <router-link
-            :to="{ name: 'documentation' }"
-            class="navbar-start-item"
-          >
-            Documentation
-          </router-link>
         </div>
 
         <div class="navbar-end is-align-items-center">
@@ -232,20 +230,44 @@ export default {
 
 <style scoped lang="scss">
 @import "@/assets/sass/main.scss";
+
 .navbar {
   background-color: rgba(127, 0, 56) !important;
   box-shadow: 0px 2px 3px 1px rgb(10 10 10 / 30%);
+
+  .title {
+    padding: 5px;
+    font-family: $family-apptitle;
+    font-size: 60px;
+    line-height: 1;
+    text-transform: none;
+  }
+
+  & > .container {
+    max-width: 1180px !important;
+
+    @include respond-small-desktop {
+      max-width: 100% !important;
+      margin-left: $container-small-desktop-margin;
+      margin-right: $container-small-desktop-margin;
+    }
+  }
 }
 .navbar-brand a {
   color: $white !important;
-  font-family: $bitter-family;
-  letter-spacing: 5px;
+
+  & > img {
+    padding: 10px 30px 0 0;
+  }
 }
+
 .navbar-start-item:not(:last-child)::after {
   content: "|";
   display: inline-block;
   color: $white;
-  padding-left: 0.75rem;
+  padding-left: 12px;
+  padding-right: 2px;
+  transform: scale(1 , 2) translateY(-2px);
 }
 .navbar-dropdown {
   background-color: rgb(79, 5, 49, 0.9) !important;
@@ -284,6 +306,11 @@ export default {
   color: $white !important;
 }
 .navbar-start-item {
+  font-family: $family-secondary;
+  font-size: 18px;
+  vertical-align: top;
+  font-weight: 200;
+  text-transform: uppercase;
   color: $white !important;
   padding-left: 0.75rem;
 }
@@ -292,7 +319,7 @@ export default {
 }
 .navbar-start-item:hover,
 .navbar-start-item:focus {
-  text-decoration: underline 3px red;
+  text-decoration: underline 1px white;
   color: $white !important;
   background-color: transparent !important;
 }

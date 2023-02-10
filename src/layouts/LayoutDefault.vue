@@ -31,14 +31,14 @@
           </div>
           <div
             v-if="$route.name === 'home'"
-            class="row is-flex is-justify-content-center mt-5"
+            class="row is-flex is-justify-content-center"
           >
             <b-button
               tag="router-link"
               to="/about"
               class="portail_button"
             >
-              Le portail
+              À propos du portail
             </b-button>
           </div>
         </div>
@@ -65,7 +65,7 @@
           </div>
           <div
             v-if="$route.name === 'home'"
-            class="row is-flex is-justify-content-center mt-5"
+            class="row is-flex is-justify-content-centerhomepage_subtitle"
           >
             <b-button
               tag="router-link"
@@ -76,8 +76,8 @@
             </b-button>
           </div>
         </div>
-        <div class="row search_row">
-          <div class="col is-2 ml-5 search_span">
+        <div class="row search_row is-align-items-center">
+          <div class="col is-2">
             <span class="search_span">Votre recherche</span>
           </div>
           <div class="column pt-3">
@@ -219,7 +219,7 @@ export default {
 }
 .column {
   margin-top: 0;
-  padding-top: 0;
+  padding: 0;
   &.is-2,
   &.is-5 {
     padding-left: 0;
@@ -235,7 +235,7 @@ export default {
   padding-bottom: 0;
 }
 .main-column-content {
-  padding: 18px;
+  padding: 18px 0;
   width: 100%;
   height: 100%;
   background-color: white;
@@ -291,17 +291,44 @@ footer {
   }
 }
 #intro_home {
+  position: relative;
   background-image: url('../assets/images/about.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  height:300px;
+  height:443px;
   width:auto;
   display:flex;
   flex-direction: column;
   justify-content: center;
   margin-bottom: 0 !important;
 }
+#intro_home::before {
+  content: "";
+  position: absolute;
+  display: block;
+  width: 100%;
+  height: 100%;
+  background-color: #00000066;
+  z-index: 1;
+}
+#intro_home::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top:0;
+  display: block;
+  width: 100%;
+  height: 70px;
+  background-image: linear-gradient(#000000 0% ,#D8D8D800 100%);
+  opacity: 0.50;
+  z-index: 2;
+}
+#intro_home > * {
+  position: relative;
+  z-index: 2;
+}
+
 #intro_search {
   background-image: url('../assets/images/about.jpg');
   background-size: cover;
@@ -318,16 +345,21 @@ footer {
   max-height: 250px;
 }
 .homepage_title {
-  font-size: xxx-large;
-  font-weight: bolder;
-  text-shadow: 0px 2px, 2px 0px, 2px 2px;
+  font-family: $family-apptitle;
+  font-weight: 200;
+  font-size: 210px;
+  line-height: 1;
   color: white;
   text-align: center;
 }
 .homepage_subtitle {
-  font-size: x-large;
+  font-family: $family-apptitle;
+  font-weight: 200;
+  font-size: 58px;
+  line-height: 1;
   color: white;
   text-align: center;
+  transform: translateY(-18px);
 }
 .metadata {
   font-size: xx-large;
@@ -347,23 +379,52 @@ footer {
 .card-title {
   color: rgb(255, 0, 83);
 }
-.portail_button {
+a.portail_button {
+  margin-top: 30px;
   background-color: transparent;
-  color: white;
+  border-color: #FFFFFF;
+  border-width: 1px;
+  border-radius: 5px;
+  font-family: $family-secondary;
+  font-size: 18px;
+  text-align: center;
+  font-weight: 400;
+  color: #FFFFFF;
+  text-transform: uppercase;
+}
+a.portail_button:hover {
+  color: #FFFFFF;
 }
 .search_row {
-  background-color: rgba(35, 9, 20);
-  padding: 5px;
+  background-color: #230914;
+  padding: 1px calc( 0.5 * (100% - $container-max-width) );
   width: 100% !important;
   display:flex;
   flex-direction: row;
   align-items: center;
+
+  & > .column.pt-3 {
+    padding-top: 0 !important;
+  }
+
+  @include respond-small-desktop {
+    padding-left: $container-small-desktop-margin;
+    padding-right: $container-small-desktop-margin;
+  }
 }
 .search_span {
+  margin-left: 0 !important;
   background-color: rgba(35, 9, 20);
+  font-family: $family-primary;
+  font-size: 20px;
   color: white;
   text-align: center;
 }
+.search-container.m-5 {
+  margin-left: 25px !important;
+  margin-right: 0 !important;
+}
+
 /*a.button {
   border: none !important;
   outline: none !important;

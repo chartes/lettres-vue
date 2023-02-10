@@ -79,9 +79,9 @@
           class="row m-auto is-flex is-justify-content-center"
           style="text-align: center"
         >
-          <div class="column col_meta is-inline-block my-5">
-            <div class="row">
-              <span class="has-text-grey has-text-weight-bold">LETTRES</span>
+          <div class="column col_meta is-inline-block">
+            <div class="row metadata-label">
+              <span>LETTRES</span>
             </div>
             <div class="row">
               <router-link
@@ -92,9 +92,9 @@
               </router-link>
             </div>
           </div>
-          <div class="column col_meta is-inline-block my-5">
-            <div class="row">
-              <span class="has-text-grey has-text-weight-bold">COLLECTIONS</span>
+          <div class="column col_meta is-inline-block">
+            <div class="row metadata-label">
+              <span>COLLECTIONS</span>
             </div>
             <div class="row">
               <router-link
@@ -105,9 +105,9 @@
               </router-link>
             </div>
           </div>
-          <div class="column col_meta is-inline-block my-5">
-            <div class="row">
-              <span class="has-text-grey has-text-weight-bold">PERSONNES</span>
+          <div class="column col_meta is-inline-block">
+            <div class="row metadata-label">
+              <span>PERSONNES</span>
             </div>
             <div class="row">
               <router-link
@@ -118,9 +118,9 @@
               </router-link>
             </div>
           </div>
-          <div class="column col_meta is-inline-block my-5">
-            <div class="row">
-              <span class="has-text-grey has-text-weight-bold">LIEUX</span>
+          <div class="column col_meta is-inline-block">
+            <div class="row metadata-label">
+              <span>LIEUX</span>
             </div>
             <div class="row">
               <router-link
@@ -414,15 +414,33 @@ export default {
   color: white;
   text-align: center;
 }*/
+.metadata-label > span {
+  font-family: $family-primary;
+  font-size: 16px;
+  font-weight: 600 !important;
+  line-height: 1;
+  color: #6D7278;
+  text-align: center;
+  text-transform: uppercase;
+}
 .metadata {
-  font-size: xx-large;
-  font-weight: bolder;
-  text-shadow: 0px 2px, 2px 0px, 2px 2px;
-  color: rgb(255, 0, 83);
+  font-family: $family-primary;
+  font-size: 50px;
+  line-height: 1;
+  font-weight: 700;
   text-align: center;
 }
+.col_meta:nth-child(2n+1) .metadata {
+  color: #FF0052;
+}
+.col_meta:nth-child(2n) .metadata {
+  color: #C00055;
+}
+.col_meta {
+  margin: 85px 0;
+}
 .col_meta:not(:last-of-type) {
-  border-right: solid 5px;
+  border-right: solid 8px;
   border-right-color: rgba(180, 0, 80);
 }
 .card {
@@ -436,6 +454,14 @@ export default {
   background-color: transparent;
   color: white;
 }
+section > .container {
+  @include respond-tablet {
+    max-width: 100% !important;
+    margin: 0 $container-tablet-margin !important;
+  }
+}
+
+
 /*.search_row {
   background-color: rgba(35, 9, 20);
   padding: 5px;

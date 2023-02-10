@@ -1,0 +1,12 @@
+@mixin respond-small-desktop {
+  @media screen and (max-width:1250px) { @content }
+}
+
+@mixin respond-tablet {
+  @media screen and (max-width:1024px) { @content }
+}
+
+@mixin respond-mobile {
+  @media screen and (max-width:640px) { @content }
+}
+
