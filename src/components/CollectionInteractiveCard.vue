@@ -115,6 +115,13 @@
                       <save-button-icon />
                     </a>
                   </div>
+                  <div>
+                    <collection-deletion
+                      class="column"
+                      v-if="current_user && current_user.isAdmin"
+                      :collection-id="collectionId"
+                    />
+                  </div>
                   <div class="control">
                   <a
                     @click.stop="deleteCollectionUI"
@@ -339,11 +346,12 @@ import CollectionHierarchy from "@/components/CollectionHierarchy.vue";
 import TitleFieldInPlace from "@/components/forms/fields/TitleFieldInPlace";
 import SaveButtonIcon from "@/components/ui/SaveButtonIcon";
 import DeleteButtonIcon from "@/components/ui/DeleteButtonIcon";//added from Carine
+import CollectionDeletion from "@/components/CollectionDeletion.vue";
 //import collectionHierarchy from "./CollectionHierarchy.vue";
 
 export default {
   name: "CollectionInteractiveCard",
-  components: { TitleFieldInPlace, SaveButtonIcon, CollectionHierarchy, DeleteButtonIcon },// , DeleteButtonIcon added from Carine
+  components: { TitleFieldInPlace, SaveButtonIcon, CollectionHierarchy, DeleteButtonIcon, CollectionDeletion },// , DeleteButtonIcon added from Carine
 // carine code import DeleteButtonIcon from "@/components/ui/DeleteButtonIcon";
 
 /* Carine code export default {
