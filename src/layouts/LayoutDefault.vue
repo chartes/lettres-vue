@@ -119,19 +119,25 @@
       </div>
     </section>
     <footer class="footer">
-      <nav class="level">
-        <div class="level-item has-text-centered">
-          <span
-            class="cths-logo mr-5 pt-3"
-            v-html="
-              require('@/assets/images/logos/Comité_des_travaux_historiques_et_scientifiques_logo.svg')
-            "
-          />
-          <img
-            class="enc-logo ml-5 pt-3"
-            src="@/assets/images/logos/logo-ecole-nationale-des-chartes-header.png"
-          >
-        </div>
+      <nav>
+        <ul class="is-flex is-justify-content-space-between">
+          <li>
+            <a href="">
+              <img
+                  class="enc-logo"
+                  src="@/assets/images/logos/logo-footer.png"
+              >
+            </a>
+          </li>
+          <li>
+            <a href="">
+              <img
+                  class="cths-logo"
+                  src="@/assets/images/logos/logo-cths-footer.png"
+              >
+            </a>
+          </li>
+        </ul>
       </nav>
     </footer>
   </section>
@@ -214,8 +220,6 @@ export default {
   display: flex;
   height: 100%;
   min-height: 100vh;
-  margin-bottom: 0;
-  margin-top: 0;
 }
 .column {
   margin-top: 0;
@@ -235,12 +239,13 @@ export default {
   padding-bottom: 0;
 }
 .main-column-content {
-  padding: 18px 0;
-  width: 100%;
-  height: 100%;
+  width: $container-max-width;
+  margin: 18px auto;
   background-color: white;
 }
-
+.main-column-content section .container {
+  margin: 0 !important;
+}
 .hide-left-bar {
   float: right;
   width: 32px;
@@ -279,15 +284,22 @@ export default {
   }
 }
 footer {
-  background-color: $nice-grey !important;
-  padding: 15px 0 25px !important;
+  background-color: $footer-background-color !important;
+  border-top: solid 6px #7F0038;
+  padding: 90px 0 !important;
   z-index: 100;
 
-  .enc-logo {
-    height: 55px;
-  }
-  .cths-logo {
-    width: 80px;
+  nav {
+    width: $container-max-width;
+    margin: 0 auto;
+
+    .enc-logo {
+      height: 70px;
+    }
+
+    .cths-logo {
+      height: 100px;
+    }
   }
 }
 #intro_home {
@@ -345,6 +357,7 @@ footer {
   max-height: 250px;
 }
 .homepage_title {
+  margin-top: 20px;
   font-family: $family-apptitle;
   font-weight: 200;
   font-size: 210px;
@@ -368,19 +381,18 @@ footer {
   color: rgb(255, 0, 83);
   text-align: center;
 }
-.col_meta:not(:last-of-type) {
-  border-right: solid 5px;
-  border-right-color: rgba(180, 0, 80);
-}
 .card {
   overflow: hidden;
-  border-radius: 0.5em;
+  background-color: #F0F0F0;
+  border-radius: 10px;
+  box-shadow: none;
 }
 .card-title {
   color: rgb(255, 0, 83);
 }
 a.portail_button {
-  margin-top: 30px;
+  margin-top: 26px;
+  padding: 0 1em;
   background-color: transparent;
   border-color: #FFFFFF;
   border-width: 1px;
@@ -397,7 +409,7 @@ a.portail_button:hover {
 }
 .search_row {
   background-color: #230914;
-  padding: 1px calc( 0.5 * (100% - $container-max-width) );
+  padding: 1px calc( 0.5 * (100% - $nav-max-width) );
   width: 100% !important;
   display:flex;
   flex-direction: row;

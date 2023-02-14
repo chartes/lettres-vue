@@ -244,7 +244,7 @@ export default {
   }
 
   & > .container {
-    max-width: 1180px !important;
+    max-width: $nav-max-width !important;
 
     @include respond-small-desktop {
       max-width: 100% !important;
