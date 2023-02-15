@@ -25,31 +25,30 @@
       </div>
 
       <div class="navbar-menu is-align-items-center">
-        <div class="navbar-end is-align-items-center">
-          <router-link
-            :to="{ name: 'search' }"
-            class="navbar-start-item"
-          >
-            Recherche
-          </router-link>
-          <router-link
-            :to="{ name: 'collections' }"
-            class="navbar-start-item"
-          >
-            Collections
-          </router-link>
-          <router-link
-              :to="{ name: 'documentation' }"
-              class="navbar-start-item"
-          >
-            Documentation
-          </router-link>
+        <ul class="navbar-end is-align-items-center">
+            <li class="navbar-start-item">
+              <router-link
+                  :to="{ name: 'search' }"
 
-          <!--<search-box
-            v-show="!showLeftSideBar || $route.name !== 'search'"
-            class="ml-5 navbar-start-item"
-          />-->
-        </div>
+              >
+                Recherche
+              </router-link>
+            </li>
+            <li class="navbar-start-item">
+              <router-link
+                  :to="{ name: 'collections' }"
+               >
+                Collections
+              </router-link>
+            </li>
+            <li class="navbar-start-item">
+              <router-link
+                  :to="{ name: 'documentation' }"
+              >
+                Documentation
+              </router-link>
+            </li>
+        </ul>
 
         <div class="navbar-end is-align-items-center">
           <div
@@ -235,6 +234,7 @@ export default {
     font-size: 60px;
     line-height: 1;
     text-transform: none;
+    text-decoration: none !important;
   }
 
   & > .container {
@@ -255,13 +255,8 @@ export default {
   }
 }
 
-.navbar-start-item:not(:last-child)::after {
-  content: "|";
-  display: inline-block;
-  color: $white;
-  padding-left: 12px;
-  padding-right: 2px;
-  transform: scale(1 , 2) translateY(-2px);
+.navbar-end .navbar-item {
+  padding: 20px 0.75rem;
 }
 
 .user-account {
@@ -286,7 +281,7 @@ export default {
   padding: 15px 0 18px 20px;
   right: 0 !important;
   left: auto !important;
-  top:60px;
+  top:78px;
 
   font-family: $family-secondary;
   font-size: 18px;
@@ -338,24 +333,37 @@ export default {
 .navbar-dropdown>a {
   color: $white !important;
 }
+.navbar-dropdown a.navbar-item {
+  padding: 0;
+}
+
 .navbar-start-item {
+  padding-left: 0.75rem;
+}
+.navbar-start-item:not(:last-child)::after {
+  content: "|";
+  display: inline-block;
+  color: $white;
+  padding-left: 12px;
+  padding-right: 2px;
+  transform: scale(1 , 2) translateY(-2px);
+}
+.navbar-start-item a {
+  padding-bottom: 2px;
   font-family: $family-secondary;
   font-size: 18px;
   vertical-align: top;
   font-weight: 200;
   text-transform: uppercase;
   color: $white !important;
-  padding-left: 0.75rem;
 }
-.navbar-item > span {
-  background-color: rgba(133, 18, 58, 0.9) !important;
+.navbar-start-item a.router-link-active {
+  font-weight: 600;
 }
-.navbar-dropdown a.navbar-item {
-  padding: 0;
-}
-.navbar-start-item:hover,
-.navbar-start-item:focus {
-  box-shadow: 0 1px 0 0 #FF0052;
+.navbar-start-item a.router-link-active,
+.navbar-start-item a:hover,
+.navbar-start-item a:focus {
+  border-bottom: solid 4px #FF0052;
   color: $white !important;
   background-color: transparent !important;
 }
@@ -365,7 +373,7 @@ export default {
 .menu-list a.is-active {
   background: transparent !important;
 }
-a.navbar-item:hover,
+.navbar-dropdown a.navbar-item:hover,
 .menu-list a:hover {
   background: transparent !important;
   text-decoration: underline !important;
