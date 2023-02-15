@@ -30,7 +30,7 @@
         field="id"
         label="Lettre"
         sortable
-        width="400"
+        width="10%"
       >
         <document-tag-bar
           :key="props.row.id"
@@ -42,7 +42,7 @@
         v-slot="props"
         field="title"
         label="Titre"
-        width="500"
+        width="40%"
         sortable
       >
         <span v-html="props.row.title" />
@@ -52,6 +52,7 @@
         v-slot="props"
         field="witnesses"
         label="Témoins"
+        width="50%"
       >
         <ul>
           <li
@@ -141,7 +142,9 @@ export default {
      * Handle sort event
      */
     onSort(field, order) {
+      console.log('field : ', field)
       this.sortField = field;
+      console.log('order : ', order)
       this.sortOrder = order;
       this.loadAsyncData();
     },
