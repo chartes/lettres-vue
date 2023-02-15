@@ -56,19 +56,18 @@
             v-if="isAuthenticated"
             class="navbar-item is-hoverable"
           >
-            <a>
-              <i
-                :title="current_user.username"
-                class="fas fa-user-check fa-2x"
-              />
+            <a
+              :title="current_user.username"
+              class="user-account active"
+            >
             </a>
 
             <div class="navbar-dropdown is-align-items-center">
               <div
                 v-if="current_user"
-                class="item"
+                class="item user-name"
               >
-                <span>User : {{ current_user.username }}</span>
+                <span>{{ current_user.username }}</span>
               </div>
               <div
                 v-if="current_user"
@@ -76,9 +75,9 @@
               >
                 <div
                   v-if="current_user.roles.includes('admin')"
-                  class="item is-inline-block"
+                  class="item is-inline-block user-role"
                 >
-                  <span class="is-inline-block">Role : Administrateur</span>
+                  <span>Administrateur</span>
                 </div>
                 <div
                   v-else-if="current_user.roles.includes('contributor')"
@@ -87,8 +86,6 @@
                   <span class="is-inline-block">Role : Contributeur</span>
                 </div>
               </div>
-
-              <!--<hr class="navbar-divider" />-->
               <p
                 v-if="current_user"
                 class="menu-label"
@@ -104,7 +101,7 @@
                     :to="{ name: 'bookmarks' }"
                     active-class="is-active"
                   >
-                    <i class="fas fa-bookmark" />Mes favoris
+                    Mes favoris
                   </router-link>
                 </li>
                 <li>
@@ -112,7 +109,7 @@
                     :to="{ name: 'history' }"
                     active-class="is-active"
                   >
-                    <i class="fas fa-history" />Mon historique
+                    Mon historique
                   </router-link>
                 </li>
                 <li>
@@ -120,11 +117,10 @@
                     :to="{ name: 'locks' }"
                     active-class="is-active"
                   >
-                    <i class="fas fa-lock" />Mes verrous
+                    Mes verrous
                   </router-link>
                 </li>
               </ul>
-              <!--<hr class="navbar-divider" />-->
               <p
                 v-if="current_user"
                 class="menu-label"
@@ -140,14 +136,14 @@
                     :to="{ name: 'places' }"
                     active-class="is-active"
                   >
-                    <i class="fas fa-map-marker-alt" />Gestion des Lieux
+                    Gestion des Lieux
                   </router-link>
                 </li><li>
                   <router-link
                     :to="{ name: 'persons' }"
                     active-class="is-active"
                   >
-                    <i class="fas fa-users" />Gestion des Personnes
+                    Gestion des Personnes
                   </router-link>
                 </li>
                 <li>
@@ -155,7 +151,7 @@
                     :to="{ name: 'witnesses' }"
                     active-class="is-active"
                   >
-                    <i class="fas fa-book" />Gestion des Témoins
+                    Gestion des Témoins
                   </router-link>
                 </li>
                 <li>
@@ -163,7 +159,7 @@
                     :to="{ name: 'users' }"
                     active-class="is-active"
                   >
-                    <i class="fas fa-users-cog" />Gestion des Utilisateurs
+                    Gestion des Utilisateurs
                   </router-link>
                 </li>
                 <li>
@@ -171,7 +167,7 @@
                     :to="{ name: 'document-creation' }"
                     active-class="is-active"
                   >
-                    <i class="fas fa-file-alt" />Créer un nouveau document
+                    Créer un nouveau document
                   </router-link>
                 </li>
               </ul>
@@ -187,9 +183,7 @@
               v-if="!isAuthenticated"
               :to="{ name: 'login', query: { from: $route.name } }"
             >
-              <a title="Connectez-vous">
-                <i class="fas fa-user-times fa-2x" />
-              </a>
+              <a title="Connectez-vous" class="user-account" ></a>
             </router-link>
           </div>
         <!--<div class="navbar-end is-align-items-center">
@@ -269,38 +263,77 @@ export default {
   padding-right: 2px;
   transform: scale(1 , 2) translateY(-2px);
 }
+
+.user-account {
+  display: inline-block;
+  width: 38px;
+  height: 38px;
+  background: url('../assets/images/icons/compte_off.svg') center / cover no-repeat;
+
+  &.active {
+    background: url(../assets/images/icons/compte_on.svg)
+  }
+}
+
 .navbar-dropdown {
-  background-color: rgb(79, 5, 49, 0.9) !important;
-  color: $white !important;
-  border-top-color: $red !important;
-  border-top-width: 0.5em;
+  background-color: #583243;
+  box-shadow: -6px 6px 30px 0 #00000080;
+  border-top: #FF0052 5px solid;
+  border-radius: 0;
+
   width: max-content;
-  padding: 10px;
+  min-width: 274px;
+  padding: 15px 0 18px 20px;
   right: 0 !important;
   left: auto !important;
+  top:60px;
+
+  font-family: $family-secondary;
+  font-size: 18px;
+  color: $white !important;
+
+  /* display:block !important; */
 }
-.navbar-dropdown div>span {
-  color: $red !important;
+.navbar-dropdown .user-name {
+  font-size: 18px;
+  font-weight: 500;
+  color: #D4508B;
+}
+.navbar-dropdown .user-role {
+  margin-top: -4px;
+  font-size: 18px;
+  font-weight: 400;
+  font-style: italic;
+  color: #C04B7F;
 }
 .menu-label {
   display: flex;
+  margin: 20px 0 5px !important;
+  font-size: 18px;
+  color: #D4508B;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: uppercase;
 }
 .menu-label:after {
   content:"";
   flex: 1;
-  border-bottom:2px solid;
-  border-bottom-color: $red !important;
+  border-bottom:1px solid #C00055;
   height:1em;
-  margin-left: 1em;
+  margin-left: 4px;
+  transform: translateY(-2px);
 }
 .navbar-divider {
-  background-color: $red !important;
+  margin-top: 30px;
+  background-color: #C00055 !important;
+  margin-left: -20px;
 }
-.navbar-dropdown ul>li>a {
+.navbar-dropdown ul > li > a {
   color: $white !important;
 }
-.navbar-dropdown p {
-  color: $red !important;
+.navbar-dropdown ul > li > a:hover {
+  text-decoration: underline !important;
+  text-decoration-style: dotted !important;
 }
 .navbar-dropdown>a {
   color: $white !important;
@@ -317,14 +350,25 @@ export default {
 .navbar-item > span {
   background-color: rgba(133, 18, 58, 0.9) !important;
 }
+.navbar-dropdown a.navbar-item {
+  padding: 0;
+}
 .navbar-start-item:hover,
 .navbar-start-item:focus {
-  text-decoration: underline 1px white;
+  box-shadow: 0 1px 0 0 #FF0052;
   color: $white !important;
   background-color: transparent !important;
 }
-.fas {
-  color: $white !important;
-  padding-right: 0.75rem;
+.menu-list a {
+  padding: 8px 0;
+}
+.menu-list a.is-active {
+  background: transparent !important;
+}
+a.navbar-item:hover,
+.menu-list a:hover {
+  background: transparent !important;
+  text-decoration: underline !important;
+  text-decoration-style: dotted !important;
 }
 </style>

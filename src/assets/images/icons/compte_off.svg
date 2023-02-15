@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="38px" height="38px" viewBox="0 0 38 38" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>cpte_off</title>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Pour-intégration" transform="translate(-66.000000, -235.000000)" fill="#FFFFFF" fill-rule="nonzero">
+            <g id="loupe-header" transform="translate(66.000000, 235.000000)">
+                <path d="M19,0 C29.4945312,0 38,8.50546875 38,19 C38,29.4945312 29.4945312,38 19,38 C8.50546875,38 0,29.4945312 0,19 C0,8.50546875 8.50546875,0 19,0 Z M21.8496503,24 L17.1503497,24 C13.6699301,24 10.6227273,26.015625 9,29.015625 C11.5846154,32.078125 15.3293706,34 19.5,34 C23.6706294,34 27.4153846,32.0703125 30,29.015625 C28.3772727,26.015625 25.3300699,24 21.8496503,24 Z M19.5,9 C16.4597222,9 14,11.4597222 14,14.5 C14,17.5402778 16.4597222,20 19.5,20 C22.5402778,20 25,17.5402778 25,14.5 C25,11.4597222 22.5402778,9 19.5,9 Z" id="Combined-Shape"></path>
+            </g>
+        </g>
+    </g>
+</svg>

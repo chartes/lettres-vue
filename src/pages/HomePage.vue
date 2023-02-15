@@ -404,13 +404,13 @@ article > section .homepage-intro {
 }
 
 article > section .content h3 {
-  font-family: "Barlow", sans-serif;
+  font-family: $family-primary;
   font-size: 28px;
   color: #000000;
 }
 
 article > section .content p {
-  font-family: "Barlow", sans-serif;
+  font-family: $family-primary;
   font-size: 20px;
   line-height: 1.25;
 }
@@ -486,7 +486,7 @@ article > section:first-child > .container {
   padding: 25px 25px 30px;
 
   a {
-    font-family: "Barlow", sans-serif;
+    font-family: $family-primary;
     font-size: 18px;
     font-weight: 400;
     color: #4A4A4A;
