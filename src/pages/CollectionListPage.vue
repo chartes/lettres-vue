@@ -12,37 +12,42 @@
       </p>-->
     </div>
 
-
     <div v-if="!isLoading">
-      <span
-        v-if="current_user && current_user.isAdmin"
-        class="column"
-      >
-        <router-link
-          v-slot="{ navigate }"
-          to="/collections/create"
-          custom
-        >
-          <b-button
-            type="is-primary"
-            label="Créer une collection"
-            @click="navigate"
-          />
-        </router-link>
-      </span>
 
-      <div class="search-container">
-        <b-field>
-          <b-input
-            v-model="searchTerm"
-            placeholder="Rechercher une collection"
-            type="search"
-            icon-right="close-circle"
-            icon-right-clickable
-            @icon-right-click="searchTerm=''"
-          />
-        </b-field>
+      <div class="is-flex is-align-items-center">
+        <div class="search-container">
+          <b-field>
+            <b-input
+                v-model="searchTerm"
+                placeholder="Rechercher une collection"
+                type="search"
+                icon-right="close-circle"
+                icon-right-clickable
+                @icon-right-click="searchTerm=''"
+            />
+          </b-field>
+        </div>
+        <span
+            v-if="current_user && current_user.isAdmin"
+            class="column"
+        >
+          <router-link
+              v-slot="{ navigate }"
+              to="/collections/create"
+              custom
+          >
+            <b-button
+                type="is-primary"
+                label="Créer une collection"
+                @click="navigate"
+            />
+          </router-link>
+        </span>
+        <span>
+          Pagination...
+        </span>
       </div>
+
       <!-- if admin show default collection of unclassified documents -->
       <div v-if="current_user && current_user.isAdmin">
         <div v-if="searchTerm === ''">
@@ -50,7 +55,7 @@
           <collection-list-item
             v-for="rootCollection of rootCollections"
             :key="rootCollection.id"
-            class="m-3"
+            class="collection-list-item"
             :collection-id="rootCollection.id"
           />
         </div>
@@ -140,4 +145,9 @@ export default {
 <style lang="scss">
 @import "@/assets/sass/main.scss";
 @import "@/assets/sass/objects/collection.scss";
+
+.collection-list-item {
+  margin-bottom: 50px;
+}
+
 </style>

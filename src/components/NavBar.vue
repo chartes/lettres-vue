@@ -349,7 +349,7 @@ export default {
   transform: scale(1 , 2) translateY(-2px);
 }
 .navbar-start-item a {
-  padding-bottom: 2px;
+  padding-bottom: 3px;
   font-family: $family-secondary;
   font-size: 18px;
   vertical-align: top;

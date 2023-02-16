@@ -209,7 +209,7 @@
                     </p>
                   </div>
                   <div class="card-footer is-flex">
-                    Curateur :
+                    Curateur : <a>{{ featured.admin.username }}</a>
                   </div>
                 </router-link>
               </div>
