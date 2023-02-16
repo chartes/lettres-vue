@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="large-container">
     <!--<router-link
       :to="{ name: 'collections' }"
       class="mt-5 mb-5"
@@ -18,7 +18,6 @@
       <collection-interactive-card
         :collection-id="collectionId"
         :editable="true"
-        class="m-3"
       />
       <b-sidebar
         v-model="showHierarchy"

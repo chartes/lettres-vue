@@ -19,9 +19,9 @@
         {{ collection.title }}
       </router-link>
       <div class="collection-infos is-flex is-flex-direction-column">
-        <div class="is-flex">
-          {{ collection.dateMin || "..." }} -
-          {{ collection.dateMax || "..." }}
+        <div class="collection-dates is-flex">
+          <span>{{ collection.dateMin || "..." }}</span>
+          <span>{{ collection.dateMax || "..." }}</span>
         </div>
         <div>
           <span class="documents-count">{{ collection.documentCount }}</span>
@@ -154,6 +154,11 @@ export default {
       line-height: 1.2;
       color: #FFFFFF;
       text-transform: uppercase;
+
+      & > .collection-dates span:first-child::after {
+        content: ">";
+        margin: 0 8px;
+      }
     }
 
     .documents-count {
@@ -250,6 +255,7 @@ export default {
     height: 20px;
     background: url(../assets/images/icons/expand-collection-right.svg) left bottom / 23px auto no-repeat;
     border: none;
+    cursor: pointer;
   }
 
   .expanded > button {

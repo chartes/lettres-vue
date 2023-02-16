@@ -71,7 +71,7 @@
       </div>
     </section>-->
     <section>
-      <div class="container">
+      <div class="narrow-container">
         <!--<div class="row">
           {{ allCollections }}
         </div>-->
@@ -167,7 +167,7 @@
       </div>
     </section>
     <section>
-      <div class="container">
+      <div class="narrow-container">
         <div class="row m-auto is-flex">
           <div class="content is-inline-block">
             <h3>Focus</h3>
@@ -209,7 +209,7 @@
                     </p>
                   </div>
                   <div class="card-footer is-flex">
-                    Curateur : <a>{{ featured.admin.username }}</a>
+                    Curateur :&nbsp;<a>{{ featured.admin.username }}</a>
                   </div>
                 </router-link>
               </div>

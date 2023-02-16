@@ -242,10 +242,47 @@ export default {
   width: $container-max-width;
   margin: 18px auto;
   background-color: white;
+
+  @include respond-small-desktop {
+    width: calc( 100vw - 2 * $container-small-desktop-margin );
+    margin: 18px $container-small-desktop-margin;
+  }
+
+  @include respond-tablet {
+    width: calc( 100vw - 2 * $container-tablet-margin );
+    margin: 18px $container-tablet-margin;
+  }
+
+  @include respond-mobile {
+    width: calc( 100vw - 2 * $container-mobile-margin );
+    margin: 18px $container-mobile-margin;
+  }
 }
 .main-column-content section .container {
   margin: 0 !important;
 }
+
+::v-deep .narrow-container {
+  margin-left: $container-narrow-margin;
+  margin-right: $container-narrow-margin;
+
+  @include respond-small-desktop {
+    margin-left: 10%;
+    margin-right: 10%;
+  }
+
+  @include respond-tablet {
+    margin-left: 5%;
+    margin-right: 5%;
+  }
+
+  @include respond-mobile {
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+
+
 .hide-left-bar {
   float: right;
   width: 32px;

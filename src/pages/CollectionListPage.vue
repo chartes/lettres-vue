@@ -1,9 +1,6 @@
 <template>
-  <div class="container">
+  <div class="narrow-container">
     <div class="m-5">
-      <p class="title">
-        Les collections
-      </p>
       <!--<p class="has-text-justified mb-2">
         Les collections constituent des ensembles de taille variable constitués autour de logiques décidées par leurs responsables scientifiques. La plus répandue est celle qui consiste à éditer la correspondance active d’un individu. D’autres choix sont également recevables, comme les lettres reçues par un individu (correspondance passive) ou les lettres écrites par des groupes de personnes ayant entre elles un lien familial ou professionnel.
       </p>
@@ -14,7 +11,7 @@
 
     <div v-if="!isLoading">
 
-      <div class="is-flex is-align-items-center">
+      <div class="collection-list-header is-flex is-justify-content-space-between is-align-items-center">
         <div class="search-container">
           <b-field>
             <b-input
@@ -76,7 +73,7 @@
           <collection-list-item
             v-for="rootCollection of activeRootCollections"
             :key="rootCollection.id"
-            class="m-3"
+            class="collection-list-item"
             :collection-id="rootCollection.id"
           />
         </div>
@@ -145,6 +142,10 @@ export default {
 <style lang="scss">
 @import "@/assets/sass/main.scss";
 @import "@/assets/sass/objects/collection.scss";
+
+.collection-list-header {
+  margin-bottom: 15px;
+}
 
 .collection-list-item {
   margin-bottom: 50px;
