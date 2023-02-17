@@ -5,7 +5,7 @@
     aria-label="main navigation"
   >
     <div class="container">
-      <div class="navbar-brand pl-2">
+      <div class="navbar-brand">
         <a 
           href="https://www.chartes.psl.eu"
           target="_blank"
@@ -240,13 +240,24 @@ export default {
   & > .container {
     max-width: $nav-max-width !important;
 
-    @include respond-small-desktop {
+    @include on-small-desktop {
       max-width: 100% !important;
       margin-left: $container-small-desktop-margin;
       margin-right: $container-small-desktop-margin;
     }
+
+    @include on-tablet {
+      margin-left: $container-tablet-margin;
+      margin-right: $container-tablet-margin;
+    }
+
+    @include on-mobile {
+      margin-left: $container-mobile-margin;
+      margin-right: $container-mobile-margin;
+    }
   }
 }
+
 .navbar-brand a {
   color: $white !important;
 

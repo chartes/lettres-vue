@@ -11,31 +11,11 @@
       <b-button @click="navigate" type="is-primary" label="Créer une sous-collection"/>
     </router-link>
 
-    <!--<b-button @click="showHierarchy = !showHierarchy" class="ml-auto">
-      Hiérarchie
-    </b-button>-->
     <div>
       <collection-interactive-card
         :collection-id="collectionId"
         :editable="true"
       />
-      <b-sidebar
-        v-model="showHierarchy"
-        position="fixed"
-        :right="true"
-        :fullheight="true"
-        class="m-3"
-        style="width: 500px"
-      >
-        <div class="m-3">
-          <p class="menu-label">
-            Hiérarchie
-          </p>
-          <collection-hierarchy
-            :collection-id="collectionId"
-          />
-        </div>
-      </b-sidebar>
     </div>
 
     <section>
@@ -136,7 +116,6 @@ export default {
   name: "CollectionPage",
   components: {
     CollectionInteractiveCard,
-    CollectionHierarchy,
     DocumentTagBar: () => import("@/components/document/DocumentTagBar"),
     Document: () => import("@/components/sections/Document"),
   },
@@ -154,8 +133,7 @@ export default {
       numPage: 1,
       pageSize: 25,
       totalCount: 0,
-      isLoading: false,
-      showHierarchy: false
+      isLoading: false
     };
   },
   computed: {
@@ -261,7 +239,9 @@ export default {
 ::v-deep .sidebar-content {
   width: 500px;
 }
-
+.large-container {
+  margin-top: 60px;
+}
 .pagination-goto {
   display: flex;
   float: right;

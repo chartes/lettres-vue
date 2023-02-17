@@ -2,44 +2,41 @@
   <div v-if="collection">
     <div class="collection-interactive-card">
       <div class="collection-card-content">
-        <div class="row">
-          <span class="parent-collection-title">
-            <!--<span v-if="!editMode">-->
-            <router-link
-              :to="{ name: 'collection', params: { collectionId: findRoot(collectionId).id } }"
-              class="collection_title mt-3 mb-5"
-            >
-              <!--{{ collection.title }}-->
-              {{ findRoot(collectionId).title }}
-            </router-link>
-            <!--</span>
-            <span v-else>
-              <div class="field has-addons">
-                <div class="control">
-                  <input
-                    v-model="collection.title"
-                    class="input collection-card__title-input"
-                    type="text"
-                    placeholder="Titre de la collection"
-                  >
-                </div>
-                <div class="control">
-                  <a
-                    class="button is-primary"
-                    :class="saving === 'loading' ? 'is-loading' : ''"
-                    @click.stop="save"
-                  >
-                    <save-button-icon />
-                  </a>
-                </div>
-                <router-link
-                  tag="button"
-                  class="button control ml-2 is-primary"
-                  :to="{ name: 'collection', params: { collectionId: collection.id } }"
-                ><i class="fas fa-arrow-right" /></router-link>
+        <div class="parent-collection-title">
+          <!--<span v-if="!editMode">-->
+          <router-link
+            :to="{ name: 'collection', params: { collectionId: findRoot(collectionId).id } }"
+          >
+            <!--{{ collection.title }}-->
+            {{ findRoot(collectionId).title }}
+          </router-link>
+          <!--</span>
+          <span v-else>
+            <div class="field has-addons">
+              <div class="control">
+                <input
+                  v-model="collection.title"
+                  class="input collection-card__title-input"
+                  type="text"
+                  placeholder="Titre de la collection"
+                >
               </div>
-            </span>-->
-          </span>
+              <div class="control">
+                <a
+                  class="button is-primary"
+                  :class="saving === 'loading' ? 'is-loading' : ''"
+                  @click.stop="save"
+                >
+                  <save-button-icon />
+                </a>
+              </div>
+              <router-link
+                tag="button"
+                class="button control ml-2 is-primary"
+                :to="{ name: 'collection', params: { collectionId: collection.id } }"
+              ><i class="fas fa-arrow-right" /></router-link>
+            </div>
+          </span>-->
         </div>
         <div
           class="row is-flex"
@@ -56,7 +53,7 @@
               >
             </div>
             <div class="collection-thumbnail-caption">
-              Frans Pourbus the Younger (Antwerp 1569 - Paris 1622) - Henri IV, King of France (1553-1610) - RCIN 402972 - Royal Collection
+              Légende éventuelle
             </div>
           </div>
 
@@ -88,7 +85,8 @@
                 </div>
                 <div class="control">
                   <a
-                    type="submit" :disabled="!collection.title"
+                    type="submit"
+                    :disabled="!collection.title"
                     class="button is-primary"
                     :class="saving === 'loading' ? 'is-loading' : ''"
                     @click.stop="save"
@@ -98,9 +96,9 @@
                 </div>
                 <div class="control">
                   <a
-                    @click.stop="deleteCollectionUI"
-                    class="button is-primary"
                     :class="deleting === 'loading' ? 'is-loading' : ''"
+                    class="button is-primary"
+                    @click.stop="deleteCollectionUI"
                   >
                     <delete-button-icon :status="deleting === 'error' ? 'error' : deleting === 'normal' ? 'normal' : ''" />
                   </a>
@@ -121,14 +119,14 @@
               </p>
               <p v-else>
                 <title-field-in-place
-                    :tabulation-index="0"
-                    label="Titre"
-                    name="title"
-                    not-set="Non renseigné"
-                    :initial-value="collection.description"
-                    :editable="true"
-                    :formats="descriptionFormats"
-                    @changed="saveDescription"
+                  :tabulation-index="0"
+                  label="Titre"
+                  name="title"
+                  not-set="Non renseigné"
+                  :initial-value="collection.description"
+                  :editable="true"
+                  :formats="descriptionFormats"
+                  @changed="saveDescription"
                 />
               </p>
             </div>
@@ -136,27 +134,22 @@
             <!-- Curateur de la collection -->
             <div
               v-if="!editMode || collection.title === 'Non triées'"
+              class="collection-user-roles"
             >
-              <div class="is-inline-block">
-                <p class="pt-2 pr-2 pb-2 pl-3">
-                  Curateur : <!--<a>{{ collection.admin.username }}</a>-->
-                </p>
-              </div>
-              <div class="column is-inline-block">
-                <p class="pt-2 pr-2 pb-2 pl-3">
-                  <a>{{ collection.admin.username }}</a>
-                </p>
+              <p>
+                Curateur :
+              </p>
+              <div class="collection-user-roles-value">
+                <a>{{ collection.admin.username }}</a>
               </div>
             </div>
             <div
               v-else
-              class="control"
+              class="collection-user-roles control"
             >
-              <div class="is-inline-block">
-                <p class="pt-2 pr-2 pb-2 pl-3">
-                  Curateur : <!--<a>{{ collection.admin.username }}</a>-->
-                </p>
-              </div>
+              <p>
+                Curateur :
+              </p>
               <div class="is-inline-block">
                 <b-field>
                   <select @change="updateCuratorId">
@@ -175,34 +168,35 @@
               </div>
             </div>
 
-            <!-- not in Carine code {{ error.title }}
-            <router-link
-              tag="button"
-              class="button control ml-2 is-primary"
-              :to="{ name: 'collection', params: { collectionId: collection.id } }"
-            ><i class="fas fa-arrow-right" /></router-link>
-          </div>-->
-            <!--<div class="control">
-              <b-field label="Curator">
-                <select @change="updateCuratorId">
-                  <option :value="collection.admin.id">{{ collection.admin.username }}</option>
-                  <option
-                    v-for="option in users.filter((u) => u.isAdmin === true && u.id !== collection.admin.id)"
-                    :key="option.id"
-                    :value="option.id"
-                  >
-                    {{ option.username }}
-                  </option>
-                </select>
-              </b-field>
-            </div>-->
-
           </div>
+
+          <!-- not in Carine code {{ error.title }}
+          <router-link
+            tag="button"
+            class="button control ml-2 is-primary"
+            :to="{ name: 'collection', params: { collectionId: collection.id } }"
+          ><i class="fas fa-arrow-right" /></router-link>
+        </div>-->
+          <!--<div class="control">
+            <b-field label="Curator">
+              <select @change="updateCuratorId">
+                <option :value="collection.admin.id">{{ collection.admin.username }}</option>
+                <option
+                  v-for="option in users.filter((u) => u.isAdmin === true && u.id !== collection.admin.id)"
+                  :key="option.id"
+                  :value="option.id"
+                >
+                  {{ option.username }}
+                </option>
+              </select>
+            </b-field>
+          </div>-->
 
           <!-- Colonne 3 : Sommaire -->
           <div class="column toc-column">
             <b-button
-                class="TOC-button ml-auto is-small"
+                class="TOC-button"
+                :class="showHierarchy ? 'opened' : ''"
                 @click="showHierarchy = !showHierarchy"
             >
               SOMMAIRE
@@ -212,7 +206,7 @@
                 position="fixed"
                 :right="true"
                 :fullheight="true"
-                class="m-3"
+                class="TOC-content m-3"
                 style="width: 500px"
             >
               <div class="m-3">
@@ -496,34 +490,37 @@ export default {
 
     .thumbnail-column {
       flex: $collection-thumbnail-size 0 0;
+      margin-top: 7px;
 
-      @include respond-small-desktop {
+      @include on-small-desktop {
         flex: $collection-thumbnail-small-desktop-size 0 0;
       }
 
-      @include respond-tablet {
+      @include on-tablet {
         flex: $collection-thumbnail-tablet-size 0 0;
       }
     }
 
     .metadata-column {
       border-top: #C00055 solid 7px;
-      padding-top: 20px;
+      padding-top: 15px;
     }
 
     .toc-column {
       flex: 290px 0 0;
       border-top: #C00055 solid 7px;
-      padding-top: 5px;
     }
   }
 
   .parent-collection-title {
-    margin-bottom: 15px;
+    margin-bottom: 25px;
     font-family: $family-primary;
     font-size: 20px;
     font-weight: 500;
-    color: #C00055;
+
+    & > a {
+      color: #C00055;
+    }
   }
 
   .collection-title {
@@ -541,12 +538,12 @@ export default {
     overflow: hidden;
     border-radius: 20px;
 
-    @include respond-small-desktop {
+    @include on-small-desktop {
       width: $collection-thumbnail-small-desktop-size;
       height: $collection-thumbnail-small-desktop-size;
     }
 
-    @include respond-tablet {
+    @include on-tablet {
       width: $collection-thumbnail-tablet-size;
       height: $collection-thumbnail-tablet-size;
     }
@@ -562,6 +559,7 @@ export default {
   }
 
   .collection-thumbnail-caption {
+    margin-bottom: 30px;
     font-family: $family-secondary;
     font-size: 16px;
     color: #000000;
@@ -569,12 +567,22 @@ export default {
     line-height: 21px;
   }
 
-  .collection-dates span:first-child::after {
-    content: ">";
-    margin: 0 8px;
+  .collection-dates {
+    margin-bottom: 14px;
+    font-family: $family-primary;
+    font-size: 16px;
+    font-weight: 500;
+    color: #6D7278;
+    text-transform: uppercase;
+
+    & > span:first-child::after {
+      content: ">";
+      margin: 0 8px;
+    }
   }
 
   .collection-description {
+    margin-bottom: 30px;
     font-family: $family-primary;
     font-size: 18px;
     color: #000000;
@@ -582,15 +590,67 @@ export default {
     line-height: 24px;
   }
 
+  .collection-user-roles {
+    margin-bottom: 30px;
+
+    /* label */
+    & > p {
+      font-family: $family-primary;
+      font-size: 14px;
+      font-weight: 500;
+      color: #000000;
+      text-transform: uppercase;
+    }
+
+    /* value : read mode */
+    .collection-user-roles-value a {
+      font-family: $family-primary;
+      font-size: 18px;
+      font-weight: 400;
+      color: #4A4A4A;
+    }
+  }
+
   .TOC-button {
-    color: #b9192f;
-    border-color: #b9192f;
-    border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin: 0;
+    padding: 12px 10px 14px 2px;
+    border:none;
+    border-radius: 0;
+    border-bottom: solid 1px #C00055;
+    box-shadow: none !important;
+
+    font-family: $family-primary;
+    font-size: 16px;
+    font-weight: 500;
+    color: #6D7278;
+    text-align: left;
+
+    :focus {
+      border: none;
+      box-shadow: none !important;
+    }
+
+    &::after {
+      content: "";
+      display: inline-block;
+      width: 14px;
+      height: 10px;
+      background: url(../assets/images/icons/open_menu_coll.svg) center right / 14px auto no-repeat;
+    }
+
+    &.opened::after {
+      transform-origin: 50% 50%;
+      transform: rotate(180deg);
+    }
   }
-  .collection_title {
-    color: #b9192f !important;
-    font-weight: normal;
+
+  .TOC-content {
   }
+
   .input--error{
     border-color: red;
   }

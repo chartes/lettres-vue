@@ -153,6 +153,7 @@ export default {
       font-weight: 500;
       line-height: 1.2;
       color: #FFFFFF;
+      text-align: right;
       text-transform: uppercase;
 
       & > .collection-dates span:first-child::after {
@@ -162,10 +163,12 @@ export default {
     }
 
     .documents-count {
+      font-size: 18px;
       font-weight: 600;
     }
 
     .documents-count-label {
+      font-size: 18px;
       font-weight: 400;
     }
 
@@ -266,6 +269,7 @@ export default {
   button.show-children {
     align-self: start;
     padding-left: 30px;
+    font-size: 18px;
     text-transform: uppercase;
   }
 

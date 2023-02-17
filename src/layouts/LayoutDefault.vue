@@ -243,17 +243,17 @@ export default {
   margin: 18px auto;
   background-color: white;
 
-  @include respond-small-desktop {
+  @include on-small-desktop {
     width: calc( 100vw - 2 * $container-small-desktop-margin );
     margin: 18px $container-small-desktop-margin;
   }
 
-  @include respond-tablet {
+  @include on-tablet {
     width: calc( 100vw - 2 * $container-tablet-margin );
     margin: 18px $container-tablet-margin;
   }
 
-  @include respond-mobile {
+  @include on-mobile {
     width: calc( 100vw - 2 * $container-mobile-margin );
     margin: 18px $container-mobile-margin;
   }
@@ -266,17 +266,17 @@ export default {
   margin-left: $container-narrow-margin;
   margin-right: $container-narrow-margin;
 
-  @include respond-small-desktop {
+  @include on-small-desktop {
     margin-left: 10%;
     margin-right: 10%;
   }
 
-  @include respond-tablet {
+  @include on-tablet {
     margin-left: 5%;
     margin-right: 5%;
   }
 
-  @include respond-mobile {
+  @include on-mobile {
     margin-left: 0;
     margin-right: 0;
   }
@@ -351,6 +351,10 @@ footer {
   flex-direction: column;
   justify-content: center;
   margin-bottom: 0 !important;
+
+  @include on-tablet {
+    height:320px;
+  }
 }
 #intro_home::before {
   content: "";
@@ -401,6 +405,10 @@ footer {
   line-height: 1;
   color: white;
   text-align: center;
+
+  @include on-tablet {
+    font-size: 100px;
+  }
 }
 .homepage_subtitle {
   font-family: $family-apptitle;
@@ -410,6 +418,11 @@ footer {
   color: white;
   text-align: center;
   transform: translateY(-18px);
+
+  @include on-tablet {
+    font-size: 30px;
+    transform: none;
+  }
 }
 .metadata {
   font-size: xx-large;
@@ -456,7 +469,7 @@ a.portail_button:hover {
     padding-top: 0 !important;
   }
 
-  @include respond-small-desktop {
+  @include on-small-desktop {
     padding-left: $container-small-desktop-margin;
     padding-right: $container-small-desktop-margin;
   }
@@ -484,4 +497,5 @@ a.portail_button:hover {
   box-shadow:none !important;
   color: rgba(35, 9, 20) !important;
  }
+
 </style>

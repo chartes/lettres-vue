@@ -394,8 +394,13 @@ export default {
 <style scoped lang="scss">
 @import "@/assets/sass/main.scss";
 
-article > section > .container > .numbers,
-article > section > .container {
+
+article > section:first-child > .narrow-container {
+  margin-top: 115px;
+}
+
+article > section > .narrow-container > .numbers,
+article > section > .narrow-container {
   margin-bottom: 85px;
 }
 
@@ -413,10 +418,6 @@ article > section .content p {
   font-family: $family-primary;
   font-size: 20px;
   line-height: 1.25;
-}
-
-article > section:first-child > .container {
-  margin-top: 115px;
 }
 
 #card_image {
@@ -530,7 +531,7 @@ article > section:first-child > .container {
   color: white;
 }
 section > .container {
-  @include respond-tablet {
+  @include on-tablet {
     max-width: 100% !important;
     margin: 0 $container-tablet-margin !important;
   }

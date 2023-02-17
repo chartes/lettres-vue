@@ -151,4 +151,33 @@ export default {
   margin-bottom: 50px;
 }
 
+input[type=text],
+input[type=search] {
+  height: auto;
+  padding: 4px 30px 5px 10px !important;
+  background-color: #FFFFFF;
+  border: solid 1px #C5C5C5;
+  border-radius: 5px;
+  box-shadow: none;
+}
+
+.button.is-primary {
+  border: solid 1px #C00055;
+  border-radius: 5px;
+  background: #FFFFFF !important;
+
+  font-family: $family-primary;
+  font-size: 14px;
+  color: #C00055;
+  font-weight: 400;
+  text-transform: uppercase;
+
+  &:focus,
+  &:hover {
+    background: #C00055 !important;
+    color: #FFFFFF;
+    box-shadow: none !important;
+  }
+}
+
 </style>

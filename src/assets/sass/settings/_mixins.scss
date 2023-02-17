@@ -1,12 +1,12 @@
-@mixin respond-small-desktop {
+@mixin on-small-desktop {
   @media screen and (max-width:1250px) { @content }
 }
 
-@mixin respond-tablet {
+@mixin on-tablet {
   @media screen and (max-width:1024px) { @content }
 }
 
-@mixin respond-mobile {
+@mixin on-mobile {
   @media screen and (max-width:640px) { @content }
 }
 
