@@ -41,7 +41,34 @@
           </router-link>
         </span>
         <span>
-          Pagination...
+          <div class="pagination-controls">
+            <a
+              class="first-page"
+              href=""
+            >
+            </a>
+            <a
+              class="previous-page"
+              href=""
+            >
+            </a>
+            <input
+              class="current-page"
+              type="text"
+            />
+            <span class="label-sur-page">sur</span>
+            <span class="total-pages">150</span>
+            <a
+              class="next-page"
+              href=""
+            >
+            </a>
+            <a
+              class="last-page"
+              href=""
+            >
+            </a>
+          </div>
         </span>
       </div>
 
@@ -177,6 +204,72 @@ input[type=search] {
     background: #C00055 !important;
     color: #FFFFFF;
     box-shadow: none !important;
+  }
+}
+
+.pagination-controls {
+  display: flex;
+  align-items: center;
+
+  & > * {
+    display: inline-block;
+    width: 38px;
+    height: 38px;
+    margin-right: 4px;
+  }
+  & > a {
+    display: inline-block;
+    width: 38px;
+    height: 38px;
+    background-color: #C3C3C3;
+    border-radius: 3.2px;
+  }
+  & > a.first-page {
+    background: #C3C3C3 url(../assets/images/icons/page_debut.svg) center / 28px auto no-repeat;
+  }
+  & > a.previous-page {
+    background: #C3C3C3 url(../assets/images/icons/page_precedent.svg) center / 28px auto no-repeat;
+  }
+  & > a.next-page {
+    background: #C3C3C3 url(../assets/images/icons/page_suivant.svg) center / 28px auto no-repeat;
+  }
+  & > a.last-page {
+    background: #C3C3C3 url(../assets/images/icons/page_fin.svg) center / 28px auto no-repeat;
+  }
+  & > input[type=text] {
+    height: 38px !important;
+    border-color: #C00055;
+    border-width: 0.8px;
+    border-radius: 3.2px;
+
+    font-family: $family-primary;
+    font-size: 18px;
+    color: #CB2158;
+    font-weight: 800;
+    text-align: center;
+  }
+
+  & > span.label-sur-page {
+    font-family: $family-primary;
+    font-size: 11px;
+    line-height: 38px;
+    color: #979797;
+    font-weight: 500;
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  & > span.total-pages {
+    background-color: #DFDFDF;
+    border-radius: 3.2px;
+
+    font-family: $family-primary;
+    font-size: 18px;
+    line-height: 38px;
+    color: #818181;
+    text-align: center;
+    font-weight: 600;
+    text-transform: uppercase;
   }
 }
 

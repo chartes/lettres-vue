@@ -11,7 +11,7 @@
       <b-button @click="navigate" type="is-primary" label="Créer une sous-collection"/>
     </router-link>
 
-    <div>
+    <div class="collection-card-parent">
       <collection-interactive-card
         :collection-id="collectionId"
         :editable="true"
@@ -242,6 +242,10 @@ export default {
 .large-container {
   margin-top: 60px;
 }
+.collection-card-parent {
+  padding-bottom: 40px;
+}
+
 .pagination-goto {
   display: flex;
   float: right;
@@ -259,5 +263,129 @@ export default {
 }
 progress {
   margin-top: 30px;
+}
+
+::v-deep {
+
+  .table-wrapper {
+
+    th {
+      font-family: $family-secondary;
+      font-size: 14px;
+      font-weight: 500;
+      color: #4A4A4A;
+      text-transform: uppercase;
+    }
+
+    tbody {
+
+      td {
+        vertical-align: middle;
+
+        /* Chevron */
+        &:nth-child(1) {
+          padding-left: 0;
+          padding-right: 0;
+
+          a {
+            display: flex;
+            align-items: center;
+
+            span.icon {
+              &::after {
+                content: "";
+                display: inline-block;
+                width: 24px;
+                height: 24px;
+                background: url(../assets/images/icons/open_text.svg) center right / 18px auto no-repeat;
+                transform-origin: 50% 50%;
+                transform: rotate(-90deg);
+              }
+
+              &.opened::after {
+                transform: rotate(0deg);
+              }
+            }
+          }
+
+          i {
+            display: none;
+          }
+        }
+
+        /* ID Lettre */
+        &:nth-child(2) {
+          padding-left: 0;
+          padding-right: 0;
+
+          .tag {
+            background: none;
+            font-family: $family-primary;
+            font-size: 16px;
+            font-weight: 400;
+            color: #515151;
+          }
+        }
+
+        /* Titre lettre */
+        &:nth-child(3) {
+          color: #4A4A4A;
+          font-weight: 500;
+        }
+
+        /* Titre */
+        &:nth-child(4) {
+          a {
+            font-family: $family-secondary;
+            font-size: 16px;
+            color: #000000;
+            font-weight: 600;
+            line-height: 20px;
+
+            &:hover {
+              text-decoration: underline;
+            }
+          }
+        }
+
+      }
+
+      tr.detail {
+        background-color: #F8F8F8;
+
+        .document-page {
+
+          .heading {
+            background: none;
+            border: none;
+            padding: 0;
+          }
+
+          .heading-content {
+            display: flex;
+            align-items: flex-end;
+            gap: 4px;
+            padding: 20px 0;
+
+            font-family: $family-primary;
+            font-size: 16px;
+            line-height: 16px;
+            color: #CB2158;
+            font-weight: 600;
+            letter-spacing: 0;
+            text-transform: uppercase;
+
+            &::after {
+              content: "";
+              display: inline-block;
+              border-bottom: 1px solid #CB2158;
+              width: 100%;
+              transform: translateY(-2px);
+            }
+          }
+        }
+      }
+    }
+  }
 }
 </style>
