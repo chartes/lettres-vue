@@ -35,6 +35,46 @@
                 class="button control ml-2 is-primary"
                 :to="{ name: 'collection', params: { collectionId: collection.id } }"
               ><i class="fas fa-arrow-right" /></router-link>
+=======
+    <div class="collection-card card">
+      <div class="card-content">
+        <div class="container">
+          <div class="row is-flex is-justify-content-space-between mb-4">
+            <div class="col-5">
+              <span class="title">
+                <router-link
+                  :to="{ name: 'collection', params: { collectionId: findRoot(collectionId).id } }"
+                  class="collection_title mt-3 mb-5"
+                >
+                  {{ findRoot(collectionId).title }}
+                </router-link>
+              </span>
+            </div>
+            <div class="col-5">
+              <b-button
+                class="TOC-button ml-auto is-small"
+                @click="showHierarchy = !showHierarchy"
+              >
+                SOMMAIRE
+              </b-button>
+              <b-sidebar
+                v-model="showHierarchy"
+                position="fixed"
+                :right="true"
+                :fullheight="true"
+                class="m-3"
+                style="width: 500px"
+              >
+                <div class="m-3">
+                  <p class="menu-label">
+                    SOMMAIRE
+                  </p>
+                  <collection-hierarchy
+                    :collection-id="collectionId"
+                  />
+                </div>
+              </b-sidebar>
+>>>>>>> upstream/dev
             </div>
           </span>-->
         </div>
@@ -82,6 +122,23 @@
                     :initial-value="collection.title"
                     required
                   >
+                </div>
+                <div class="control">
+                  <a
+                    type="submit" :disabled="!collection.title"
+                    class="button is-primary"
+                    :class="saving === 'loading' ? 'is-loading' : ''"
+                    @click.stop="save"
+                  >
+                    <save-button-icon />
+                  </a>
+                </div>
+                <div>
+                  <collection-deletion
+                    class="column"
+                    v-if="current_user && current_user.isAdmin"
+                    :collection-id="collectionId"
+                  />
                 </div>
                 <div class="control">
                   <a
@@ -219,7 +276,6 @@
               </div>
             </b-sidebar>
           </div>
-
         </div>
               <!--Carine code <div class="control">
                 <a
@@ -342,18 +398,13 @@ import {mapState, mapActions, mapGetters} from "vuex";
 import CollectionHierarchy from "@/components/CollectionHierarchy.vue";
 import TitleFieldInPlace from "@/components/forms/fields/TitleFieldInPlace";
 import SaveButtonIcon from "@/components/ui/SaveButtonIcon";
-import DeleteButtonIcon from "@/components/ui/DeleteButtonIcon";//added from Carine
-//import collectionHierarchy from "./CollectionHierarchy.vue";
+import DeleteButtonIcon from "@/components/ui/DeleteButtonIcon";
+import CollectionDeletion from "@/components/CollectionDeletion.vue";
 
 export default {
   name: "CollectionInteractiveCard",
-  components: { TitleFieldInPlace, SaveButtonIcon, CollectionHierarchy, DeleteButtonIcon },// , DeleteButtonIcon added from Carine
-// carine code import DeleteButtonIcon from "@/components/ui/DeleteButtonIcon";
+  components: { TitleFieldInPlace, SaveButtonIcon, CollectionHierarchy, DeleteButtonIcon, CollectionDeletion },// , DeleteButtonIcon added from Carine
 
-/* Carine code export default {
-  name: "CollectionInteractiveCard",
-  components: { TitleFieldInPlace, SaveButtonIcon, DeleteButtonIcon },
-*/
   props: {
     collectionId: { type: Number, required: true },
     editable: { type: Boolean, default: false },
@@ -401,11 +452,8 @@ export default {
     this.curatorId = this.collection.admin.id
   },
   methods: {
-    ...mapActions("collections", ["saveCollection", "fetchOne", "deleteCollection"]),//, "deleteCollection" from Carine
-    ...mapActions("user", ["fetchUsers"]),
-/* Carine code
     ...mapActions("collections", ["saveCollection", "fetchOne", "deleteCollection"]),
-*/
+    ...mapActions("user", ["fetchUsers"]),
 
     descriptionFormats() {
       return [["superscript"]];
@@ -458,7 +506,6 @@ export default {
       try {
         return require('@/assets/images/collections/collection' + img + '.jpg')
       } catch (e) {
-        //console.log('mon erreur : ',e)
         try {
           return require('@/assets/images/collections/collection' + this.findRoot(img).id + '.jpg')
         } catch (e) {

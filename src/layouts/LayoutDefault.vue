@@ -6,15 +6,13 @@
       style="height: 100%"
     >
       <div
-        v-if="$route.name === 'home' || $route.name === 'search'"
+        v-if="$route.name === 'home'"
       >
         <div
-          v-if="$route.name === 'home'"
           id="intro_home"
           class="bg-image content"
         >
           <div
-            v-if="$route.name === 'home'"
             class="row"
           >
             <p class="homepage_title">
@@ -22,7 +20,6 @@
             </p>
           </div>
           <div
-            v-if="$route.name === 'home'"
             class="row"
           >
             <p class="homepage_subtitle">
@@ -30,7 +27,6 @@
             </p>
           </div>
           <div
-            v-if="$route.name === 'home'"
             class="row is-flex is-justify-content-center"
           >
             <b-button
@@ -42,40 +38,6 @@
             </b-button>
           </div>
         </div>
-        <div
-          v-else
-          id="intro_search"
-          class="bg-image content"
-        >
-          <div
-            v-if="$route.name === 'home'"
-            class="row"
-          >
-            <p class="homepage_title">
-              Lettres
-            </p>
-          </div>
-          <div
-            v-if="$route.name === 'home'"
-            class="row"
-          >
-            <p class="homepage_subtitle">
-              de la Première Modernité
-            </p>
-          </div>
-          <div
-            v-if="$route.name === 'home'"
-            class="row is-flex is-justify-content-centerhomepage_subtitle"
-          >
-            <b-button
-              tag="router-link"
-              to="/about"
-              class="portail_button"
-            >
-              Le portail
-            </b-button>
-          </div>
-        </div>
         <div class="row search_row is-align-items-center">
           <div class="col is-2">
             <span class="search_span">Votre recherche</span>
@@ -84,6 +46,25 @@
             <search-box
               class="m-5"
             />
+          </div>
+        </div>
+      </div>
+      <div
+        v-else-if="$route.name === 'search'"
+      >
+        <div
+          id="intro_search"
+          class="bg-image content is-align-items-center"
+        >
+          <div class="row search_page_search_row">
+            <div class="col is-2 ml-5 search_page_search_span">
+              <span>Votre recherche</span>
+            </div>
+            <div class="column pt-3">
+              <search-box
+                class="m-5"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -474,6 +455,14 @@ a.portail_button:hover {
     padding-right: $container-small-desktop-margin;
   }
 }
+.search_page_search_row {
+  background-color: transparent;
+  padding: 5px;
+  width: 100% !important;
+  display:flex;
+  flex-direction: row;
+  align-items: center;
+}
 .search_span {
   margin-left: 0 !important;
   background-color: rgba(35, 9, 20);
@@ -486,7 +475,13 @@ a.portail_button:hover {
   margin-left: 25px !important;
   margin-right: 0 !important;
 }
-
+.search_page_search_span {
+  background-color: rgba(0, 0, 0, 0.6);
+  color: white;
+  text-align: center;
+  padding: 8px;
+  border-radius: 3px;
+}
 /*a.button {
   border: none !important;
   outline: none !important;

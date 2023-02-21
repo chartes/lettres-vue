@@ -37,7 +37,7 @@
           :to="{ name: 'document', params: { docId: props.row.docId } }"
           class="tag document-preview-card__doc-tag"
         >
-          <span>Lettre {{ props.row.docId }}</span>
+          <span>{{ props.row.docId }}</span>
         </router-link>
       </b-table-column>
       <b-table-column
@@ -63,6 +63,7 @@
         v-slot="props"
         field="description"
         label="Description"
+        sortable
       >
         <span>{{ props.row.description }} </span>
       </b-table-column>
