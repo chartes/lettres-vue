@@ -142,17 +142,6 @@
                 </div>
                 <div class="control">
                   <a
-                    type="submit"
-                    :disabled="!collection.title"
-                    class="button is-primary"
-                    :class="saving === 'loading' ? 'is-loading' : ''"
-                    @click.stop="save"
-                  >
-                    <save-button-icon />
-                  </a>
-                </div>
-                <div class="control">
-                  <a
                     :class="deleting === 'loading' ? 'is-loading' : ''"
                     class="button is-primary"
                     @click.stop="deleteCollectionUI"

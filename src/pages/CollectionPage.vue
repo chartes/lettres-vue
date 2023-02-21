@@ -8,7 +8,7 @@
       Toutes les collections
     </router-link>-->
     <router-link v-if="current_user && current_user.isAdmin" to="create" custom v-slot="{ navigate }" append>
-      <b-button @click="navigate" type="is-primary" label="Créer une sous-collection"/>
+      <b-button @click="navigate" type="is-primary" label="Créer une sous-collection" class="create-collection-btn"/>
     </router-link>
 
     <div class="collection-card-parent">
@@ -240,8 +240,16 @@ export default {
   width: 500px;
 }
 .large-container {
+  position: relative;
   margin-top: 60px;
 }
+
+.create-collection-btn {
+  position: absolute;
+  left: 368px;
+}
+
+
 .collection-card-parent {
   padding-bottom: 40px;
 }
@@ -378,10 +386,46 @@ progress {
             &::after {
               content: "";
               display: inline-block;
-              border-bottom: 1px solid #CB2158;
+              border-bottom: 1px solid #D2D2D2;
               width: 100%;
               transform: translateY(-2px);
             }
+          }
+
+          .document-section {
+            font-family: $family-primary;
+            font-size: 18px;
+            line-height: 23px;
+            color: #373737;
+
+            .witness-list {
+              ul.list-group {
+                list-style-position: inside;
+
+                li.list-group-item {
+                  background: url(../assets/images/icons/voir.svg) top 6px left / 24px auto no-repeat;
+                  padding: 0 0 0 32px;
+
+                  .columns {
+                    margin: 0;
+
+                    &:last-child {
+                      margin-bottom: 10px;
+                    }
+
+                    .column {
+                      padding: 0 !important;
+
+                      & > div > * {
+                        display: inline-block;
+                        margin-right: 5px;
+                      }
+                    }
+                  }
+                }
+              }
+            }
+
           }
         }
       }
