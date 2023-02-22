@@ -121,7 +121,7 @@ export default {
   components: { InputFilter, Pagination },
   props: {
     compact: { default: false, type: Boolean },
-    pageSize: { required: true, type: Number },
+    pageSize: { type: Number, default: 25 },
   },
   data() {
     return {

@@ -6,6 +6,10 @@ const state = {
   fullLocks: [],
   links: [],
 
+  userLocks: {},
+  totalCount: 0,
+  isLoading: false,
+
   currentLock: null,
   lockOwner: {}
 };
@@ -23,11 +27,21 @@ function addUserToData(data, included) {
 }
 
 const mutations = {
-  UPDATE_FULL_LOCKS (state, {locks, included, links}) {
+  UPDATE_FULL_LOCKS (state, {locks, included, links, meta}) {
     console.log("UPDATE_FULL_LOCKS", locks, included);
     state.fullLocks = addUserToData(locks, included);
     state.links = links;
+    state.totalCount = meta['total-count'];
   },
+  /*SET_NUM_PAGE(state, num) {
+    state.numPage = num;
+  },
+  SET_PAGE_SIZE(state, size) {
+    state.pageSize = size;
+  },
+  SET_SORTS(state, sorts) {
+    state.sorts = sorts;
+  },*/
 
   SAVE_LOCK(state, lock) {
     state.currentLock = lock;
@@ -49,15 +63,36 @@ const mutations = {
 };
 
 const actions = {
-  fetchFullLocks ({ rootState, commit }, {pageId, pageSize, filters}) {
+  /*setNumPage({commit}, num) {
+    commit('SET_NUM_PAGE', num)
+  },
+  setPageSize({commit}, size) {
+    commit('SET_PAGE_SIZE', size)
+  },
+  setSorts({commit}, sorting) {
+    commit('SET_NUM_PAGE', 1)
+    commit('SET_SORTS', sorting)
+  },*/
+
+  fetchFullLocks ({ rootState, commit }, {user, sortingPriority, pageSize, numPage, filters}) {
     const http = http_with_auth(rootState.user.jwt);
-    return http.get(`locks?include=user&sort=-expiration-date&page[size]=${pageSize}&page[number]=${pageId}${filters ? '&'+filters : ''}`).then( response => {
-      commit('UPDATE_FULL_LOCKS', {
-        locks: response.data.data,
-        included: response.data.included,
-        links:response.data.links
+
+    /* =========== sorts ===========*/
+    if (numPage !== null) {
+      let sorts = sortingPriority ? sortingPriority.map(s => `${s.order === 'desc' ? '-' : ''}${s.field}`) : []
+        sorts = `&sort=${sorts.length ? sorts.join(',') : '-expiration-date'}`
+      console.log('sorts', sorts)
+      return http.get(`locks?include=user${sorts}&page[size]=${pageSize || 50}&page[number]=${numPage|| 1}${filters ? '&' + filters : ''}`).then(response => {
+        commit('UPDATE_FULL_LOCKS', {
+          locks: response.data.data,
+          included: response.data.included,
+          links: response.data.links,
+          meta: response.data.meta
+        });
+        let locks = state.fullLocks;
+        return {locks, totalCount: response.data.meta['total-count']}
       });
-    });
+    }
   },
 
   fetchLockOwner({ rootState, commit}, {docId, lockId}) {
@@ -76,7 +111,8 @@ const actions = {
 
   removeLock({ rootState, commit}, lock) {
     const http = http_with_auth(rootState.user.jwt);
-    return http.delete(`locks/${lock.id}`, {data : {data: [{id: lock.id, type: 'lock'}]}}).then(response => {
+    console.log('lock : ', lock)
+    return http.delete(`locks/${lock.id}`, {data: lock}).then(response => {
       commit('REMOVE_LOCK');
       commit('RESET_LOCK_OWNER', {docId: lock['object-id']});
     });

@@ -36,6 +36,7 @@
     
     .is-locked::after {
         padding-left: 4px;
+        content: "verrouillé";
         color: $gold-lock;
     }
     
