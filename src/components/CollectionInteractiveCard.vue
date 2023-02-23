@@ -247,23 +247,12 @@
             >
               SOMMAIRE
             </b-button>
-            <b-sidebar
-                v-model="showHierarchy"
-                position="fixed"
-                :right="true"
-                :fullheight="true"
-                class="TOC-content m-3"
-                style="width: 500px"
-            >
-              <div class="m-3">
-                <p class="menu-label">
-                  SOMMAIRE
-                </p>
-                <collection-hierarchy
-                    :collection-id="collectionId"
-                />
-              </div>
-            </b-sidebar>
+            <div v-if="showHierarchy">
+              <collection-hierarchy
+                  :collection-id="collectionId"
+                  class="TOC-content"
+              />
+            </div>
           </div>
         </div>
               <!--Carine code <div class="control">
@@ -685,6 +674,11 @@ export default {
   }
 
   .TOC-content {
+    background-color: #F8F8F8;
+
+    ::v-deep li  a {
+      padding: 0 10px;
+    }
   }
 
   .input--error{

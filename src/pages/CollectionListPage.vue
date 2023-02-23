@@ -246,8 +246,8 @@ input[type=search] {
   }
   & > input[type=text] {
     height: 38px !important;
-    border-color: #C00055;
-    border-width: 0.8px;
+    padding: 0 !important;
+    border: 1px solid #C00055;
     border-radius: 3.2px;
 
     font-family: $family-primary;
@@ -255,6 +255,11 @@ input[type=search] {
     color: #CB2158;
     font-weight: 800;
     text-align: center;
+    text-decoration: none;
+
+    &:focus {
+      outline: 1px solid #C00055;
+    }
   }
 
   & > span.label-sur-page {
