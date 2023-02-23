@@ -1,20 +1,6 @@
 <template>
   <div>
     <div>
-      <Locks />
-    </div>
-    <div>
-      <span class="pagination-goto">
-        <span> Page : </span>
-        <input
-          v-model="currentPage"
-          name="page"
-          class="input"
-          type="text"
-          placeholder="Page..."
-          @change.prevent="currentPage = parseInt(p)"
-        >
-      </span>
       <b-table
         ref="multiSortTable"
         :data="data"
@@ -23,13 +9,15 @@
         show-detail-icon
 
         striped
-
         :loading="isLoading"
+
         paginated
         backend-pagination
         :per-page="pageSize"
         :current-page.sync="currentPage"
         pagination-position="both"
+        :page-input="true"
+        page-input-position="is-input-left"
         aria-next-label="Page suivante"
         aria-previous-label="Page précédente"
         aria-page-label="Page"
@@ -44,13 +32,16 @@
         checkable
         checkbox-position="right"
 
+        backend-filtering
         @sort="sortPressed"
         @sorting-priority-removed="sortingPriorityRemoved"
-        backend-filtering
         @filters-change="onFilter"
         @page-change="onPageChange"
       >
         <!-- backend-sorting :total="totalCount" @sort="onSort" -->
+        <template #top-left>
+          <span class="table_title">Status des verrouillages</span>
+        </template>
         <template slot="empty">
           <section class="section">
             <div class="content has-text-grey has-text-centered">
@@ -58,18 +49,18 @@
             </div>
           </section>
         </template>
-        <template #detail="props">
+        <!--<template #detail="props">
           <document
             class="document-page"
-            :doc-id="props.row.attributes['object-id']"
+            :doc-id="props.row.docId"
             :preview="true"
           />
-        </template>
+        </template>-->
         <b-table-column
           v-slot="props"
           field="object-id"
           label="Lettre"
-          width="10%"
+          width="20%"
           sortable
           numeric
           searchable
@@ -77,68 +68,72 @@
           <document-tag-bar
             :key="props.row.docId"
             :doc-id="props.row.docId"
-            :with-status="false"
+            :with-status="true"
           />
         </b-table-column>
         <b-table-column
-          v-slot="props"
-          field="user-id"
-          label="User Id"
-          width="20%"
-          centered
-          sortable
-          numeric
-          searchable
-        >
-          <span v-html="props.row.userId" />
-        </b-table-column>
-        <b-table-column
-          v-slot="props"
           field="userName"
           label="User name"
           width="10%"
           searchable
         >
-          <span v-html="props.row.userName" />
+          <!--<span v-html="props.row.items.userName" />-->
         </b-table-column>
         <b-table-column
-          v-slot="props"
           field="description"
           label="Description"
           width="40%"
           sortable
           searchable
         >
-          <span v-html="props.row.attributes.description" />
+          <!--<span v-html="props.row.items.attributes.description" />-->
         </b-table-column>
         <b-table-column
-          v-slot="props"
           field="event-date"
           label="Date"
-          width="40%"
+          width="15%"
           sortable
           searchable
         >
-          <span v-html="new Date(props.row.attributes['event-date']).toLocaleDateString()" />
+          <!--<span class="tag" v-html="new Date(props.row.items.attributes['event-date']).toLocaleDateString()" />-->
         </b-table-column>
         <b-table-column
-          v-slot="props"
           field="expiration-date"
           label="Expire"
-          width="40%"
+          width="15%"
           sortable
+          searchable
         >
-          <span v-html="props.row.attributes['expiration-date']" />
+          <!--<span
+            v-if="props.row.items.attributes['is-active']"
+            class="tag is-success"
+            v-html="new Date(props.row.items.attributes['expiration-date']).toLocaleDateString()"
+          />
+          <span
+            v-else
+            class="tag is-warning"
+            v-html="new Date(props.row.items.attributes['expiration-date']).toLocaleDateString()"
+          />-->
         </b-table-column>
-        <b-table-column
-          v-slot="props"
-          field="status"
-          label="Active"
-          width="20%"
-          centered
-        >
-          <span v-html="props.row.attributes['is-active']" />
-        </b-table-column>
+        <template #detail="props">
+                <tr v-for="item in props.row.items" :key="item.userName">
+                    <td>{{ item.userName }}</td>
+                    <!--<td>{{ item.attributes.description }}</td>
+                    <td>{{ item.attributes['event-date'] }}</td>
+                    <td>
+                        <span
+            v-if="item.attributes['is-active']"
+            class="tag is-success"
+            v-html="new Date(item.attributes['expiration-date']).toLocaleDateString()"
+          />
+          <span
+            v-else
+            class="tag is-warning"
+            v-html="new Date(item.attributes['expiration-date']).toLocaleDateString()"
+          />
+                    </td>-->
+                </tr>
+            </template>
       </b-table>
     </div>
   </div>
@@ -148,14 +143,13 @@
 
 import { mapState, mapActions, mapGetters } from "vuex";
 import DocumentTagBar from "@/components/document/DocumentTagBar";
-import Locks from "@/components/sections/Locks.vue";
 import Document from "@/components/sections/Document.vue";
+import {left} from "core-js/internals/array-reduce";
 
 export default {
   name: "LocksPage",
   components: {
-    Document,
-    Locks,
+    //Document,
     DocumentTagBar,
   },
   data() {
@@ -207,6 +201,9 @@ export default {
     await this.fetchData();
   },
   methods: {
+    toggle(row) {
+                this.$refs.table.toggleDetails(row)
+            },
     ...mapActions("locks", ["fetchFullLocks"]),
     async fetchData() {
       this.isLoading = true;
@@ -317,10 +314,11 @@ export default {
         this.data = this.fetchedData.locks.map((l) => {
             return {
               docId: l.data.attributes['object-id'],
-              userId: l.user.id,
-              attributes: l.data.attributes,
-              userName: l.user.username,
-            };
+              items:  {
+                userId: l.user.id,
+                attributes: l.data.attributes,
+                userName: l.user.username,
+            }};
           })
         console.log('loadAsyncData() / this.data : ', this.data);
       }
@@ -351,19 +349,11 @@ export default {
 
 <style scoped lang="scss">
 @import "@/assets/sass/main.scss";
-.pagination-goto {
-  display: flex;
-  float: right;
-  position: relative;
-  width: 120px;
-  margin-left: 50px;
-  span {
-    width: 100px;
-    align-self: center;
-  }
-  input {
-    margin-left: 4px;
-    display: inline;
-  }
+.table_title {
+  margin-bottom: 25px;
+  font-family: $family-primary;
+  font-size: 20px;
+  font-weight: 500;
+  color: #C00055;
 }
 </style>
