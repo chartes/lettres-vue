@@ -1,5 +1,6 @@
 <template>
   <div class="collection-card card">
+    <!-- Card header : thummbnail, title, documents count, dates -->
     <div
       class="card-header is-flex is-align-items-center"
       :class="expandedById[collection.id] ? 'expanded': ''"
@@ -12,12 +13,14 @@
           alt="Card image cap"
         >
       </div>
-      <router-link
-        :to="{ name: 'collection', params: { collectionId: collection.id } }"
-        class="collection-title"
-      >
-        {{ collection.title }}
-      </router-link>
+      <div class="collection-title-wrapper">
+        <router-link
+            :to="{ name: 'collection', params: { collectionId: collection.id } }"
+            class="collection-title"
+        >
+          {{ collection.title }}
+        </router-link>
+      </div>
       <div class="collection-infos is-flex is-flex-direction-column">
         <div class="collection-dates is-flex">
           <span>{{ collection.dateMin || "..." }}</span>
@@ -29,6 +32,7 @@
         </div>
       </div>
     </div>
+    <!-- Card body : description -->
     <div class="card-body card-content">
       <div
         class="collection-description"
@@ -40,7 +44,7 @@
         </p>
       </div>
     </div>
-    <!-- Collection children -->
+    <!-- Card footer : collection children -->
     <footer
       v-if="collection.children.length > 0"
       class="card-footer collect-card__children is-flex is-flex-direction-column"
@@ -121,165 +125,5 @@ export default {
 
 <style scoped lang="scss">
 @import "@/assets/sass/main.scss";
-
-.collection-card {
-  background: none !important;
-  border: none !important;
-
-  .card-header {
-    background-color: #858585;
-    border-radius: 5px;
-    padding-left: 25px;
-    font-family: $family-primary;
-
-    &.expanded {
-      background-color: #CB2158;
-    }
-
-    a.collection-title {
-      flex: 2;
-      padding: 0 25px;
-      display: inline-block;
-      font-size: 30px;
-      font-weight: 500;
-      line-height: 1.2;
-      color: #FFFFFF;
-    }
-
-    .collection-infos {
-      gap: 10px;
-      padding: 0 25px;
-      font-size: 20px;
-      font-weight: 500;
-      line-height: 1.2;
-      color: #FFFFFF;
-      text-align: right;
-      text-transform: uppercase;
-
-      & > .collection-dates span:first-child::after {
-        content: ">";
-        margin: 0 8px;
-      }
-    }
-
-    .documents-count {
-      font-size: 18px;
-      font-weight: 600;
-    }
-
-    .documents-count-label {
-      font-size: 18px;
-      font-weight: 400;
-    }
-
-    .collection-thumbnail {
-      width: 110px;
-      height: 110px;
-      padding: 0;
-      overflow: hidden;
-
-      img {
-        width: 100%;
-        height: 100%;
-        max-height: unset;
-        object-fit: cover;
-        object-position: center;
-        border-radius: 0;
-      }
-    }
-  }
-
-  .card-header,
-  .card-body {
-    margin-bottom: 10px;
-    box-shadow: none;
-  }
-
-  .card-body,
-  .card-footer {
-    background-color: #F6F6F6;
-    border: none;
-    border-radius: 5px;
-    padding: 25px;
-  }
-
-  button,
-  .card-body,
-  .card-footer {
-    font-family: $family-primary;
-    font-size: 20px;
-    font-weight: 400;
-    line-height: 26px;
-    color: #707070;
-  }
-
-  .card-footer {
-
-    & > div > .child-collection {
-      margin-top: 20px;
-    }
-
-    & > div > .child-collection ~ .child-collection {
-      margin-top: 10px;
-    }
-
-    & > div > .child-collection > a {
-      color: #858585;
-    }
-
-    & > div > .child-collection.expanded > a {
-      color: #CB2158;
-    }
-  }
-
-  .collection-description {
-    margin-bottom: 25px;
-  }
-
-  .collection-description:empty {
-    display: none;
-  }
-
-  .collection-metadata {
-
-    label {
-      color: #AAAAAA;
-    }
-
-    a {
-      color: #707070 !important;
-    }
-  }
-
-  button {
-    display: inline-flex;
-    align-items: center;
-    min-width: 23px;
-    height: 20px;
-    background: url(../assets/images/icons/expand-collection-right.svg) left bottom / 23px auto no-repeat;
-    border: none;
-    cursor: pointer;
-  }
-
-  .expanded > button {
-    background-image: url(../assets/images/icons/expand-collection-down.svg);
-    color: #CB2158;
-  }
-
-  button.show-children {
-    align-self: start;
-    padding-left: 30px;
-    font-size: 18px;
-    text-transform: uppercase;
-  }
-
-  button.expand-collection {
-    padding: 0;
-    width: 23px;
-  }
-
-  .card-img-left {
-    max-height: 100px;
-  }
-}
+@import "@/assets/sass/components/_collection.collection-list-item.scss";
 </style>

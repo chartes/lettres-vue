@@ -1,57 +1,64 @@
 <template>
   <div class="collection-card card">
-    <div class="card-content">
-      <div class="is-flex is-justify-content-space-between mb-4">
+    <!-- Card header : thummbnail, title, documents count, dates -->
+    <div
+      class="card-header is-flex is-align-items-center"
+      :class="hierarchyShown ? 'expanded': ''"
+    >
+      <div class="collection-thumbnail">
+      </div>
+      <div class="collection-title-wrapper">
+        <collection-breadcrumb
+          v-if="collection.parent !== null"
+          :collection-id="collection.parent"
+          class="collection-parent-title"
+        />
+        <router-link
+          :to="{ name: 'collection', params: { collectionId: collection.id } }"
+          class="collection-title"
+          v-html="title"
+        />
+      </div>
+      <div class="collection-infos is-flex is-flex-direction-column">
+        <div class="collection-dates is-flex">
+          <span>{{ collection.dateMin || "..." }}</span>
+          <span>{{ collection.dateMax || "..." }}</span>
+        </div>
         <div>
-          <collection-breadcrumb
-            v-if="collection.parent !== null"
-            :collection-id="collection.parent"
-          />
-          <span class="title is-flex is-justify-content-space-between">
-            <router-link
-              :to="{ name: 'collection', params: { collectionId: collection.id } }"
-              class="mb-5"
-              v-html="title"
-            />
-          </span>
-        </div>
-        <div class="ml-auto">
-          Documents&nbsp;:&nbsp;{{
-            collection.documentCount
-          }}
-        </div>
-        <div class="ml-5">
-          {{ collection.dateMin || "..." }} -
-          {{ collection.dateMax || "..." }}
+          <span class="documents-count">{{ collection.documentCount }}</span>
+          <span class="documents-count-label"> documents</span>
         </div>
       </div>
-
-      <span
-        class="description"
-        v-html="description"
+    </div>
+    <!-- Card body : description -->
+    <div class="card-body card-content">
+      <div
+          class="collection-description"
+          v-html="description"
       />
-      <div class="is-flex">
-        <p class="pt-2 pr-2 pb-2 pl-3 ml-auto">
-          Gérée par&nbsp;<a>{{ collection.admin.username }}</a>
+      <div class="collection-metadata is-flex">
+        <p>
+          <label>Curateur :</label>&nbsp;<a>{{ collection.admin.username }}</a>
         </p>
       </div>
     </div>
-
-    <!-- Collection children -->
+    <!-- Card footer : collection children -->
     <footer
+      v-if="collection.children.length > 0"
       class="card-footer collect-card__children is-flex is-flex-direction-column"
+      :class="hierarchyShown ? 'expanded': ''"
     >
       <button
-        class="show-hierarchy"
-        @click="toggleHierarchy(collection.id)"
+          class="show-children show-hierarchy"
+          @click="toggleHierarchy(collection.id)"
       >
-        <i
-          :class="`fas fa-caret-${hierarchyShown ? 'down': 'right'}`"
-          class="caret"
-        />&nbsp;Parcourir les collections
+        Parcourir la collection
       </button>
       <div v-if="hierarchyShown">
-        <collection-hierarchy :collection-id="collectionId" />
+        <collection-hierarchy
+            :collection-id="collectionId"
+            class="child-collection"
+        />
       </div>
     </footer>
   </div>
@@ -113,38 +120,6 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.collection-card {
-
-  button.show-hierarchy {
-    line-height: 1.5;
-    font-size: 1rem;
-    align-self: start;
-    background: none;
-    border: none;
-  }
-
-  button.expand-collection {
-    background: none;
-    border: none;
-    line-height: 1.5;
-    font-size: 1rem;
-    padding: 0;
-    width: 20px;
-  }
-
-  button .caret {
-    width: 20px;
-  }
-
-  .card-footer {
-    padding: 10px;
-  }
-
-  .title::v-deep, .description::v-deep {
-    mark {
-      background-color: yellow;
-      color: black;
-    }
-  }
-}
+@import "@/assets/sass/main.scss";
+@import "@/assets/sass/components/_collection.collection-list-item.scss";
 </style>

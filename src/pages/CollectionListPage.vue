@@ -79,17 +79,17 @@
           <collection-list-item
             v-for="rootCollection of rootCollections"
             :key="rootCollection.id"
-            class="collection-list-item"
             :collection-id="rootCollection.id"
+            class="collection-list-item"
           />
         </div>
         <div v-else>
           <collection-search-result
             v-for="collection of searchResults"
             :key="collection.id"
-            class="m-3"
             :collection-id="collection.id"
             :search-term="searchTerm"
+            class="collection-list-item"
           />
         </div>
       </div>
@@ -100,17 +100,17 @@
           <collection-list-item
             v-for="rootCollection of activeRootCollections"
             :key="rootCollection.id"
-            class="collection-list-item"
             :collection-id="rootCollection.id"
+            class="collection-list-item"
           />
         </div>
         <div v-else>
           <collection-search-result
             v-for="collection of activesearchResults"
             :key="collection.id"
-            class="m-3"
             :collection-id="collection.id"
             :search-term="searchTerm"
+            class="collection-list-item"
           />
         </div>
       </div>
@@ -187,6 +187,14 @@ input[type=search] {
   border-radius: 5px;
   box-shadow: none;
 }
+
+.control.has-icons-left .icon,
+.control.has-icons-right .icon {
+  width: 30px;
+  height: 100%;
+  padding: 0;
+}
+
 
 .button.is-primary {
   border: solid 1px #C00055;
