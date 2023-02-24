@@ -7,9 +7,6 @@
       <i class="fas fa-arrow-left ml-1 mr-3" />
       Toutes les collections
     </router-link>-->
-    <router-link v-if="current_user && current_user.isAdmin" to="create" custom v-slot="{ navigate }" append>
-      <b-button @click="navigate" type="is-primary" label="Créer une sous-collection" class="create-collection-btn"/>
-    </router-link>
 
     <div class="collection-card-parent">
       <collection-interactive-card
@@ -243,12 +240,6 @@ export default {
   position: relative;
   margin-top: 60px;
 }
-
-.create-collection-btn {
-  position: absolute;
-  left: 368px;
-}
-
 
 .collection-card-parent {
   padding-bottom: 40px;

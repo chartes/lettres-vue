@@ -1,7 +1,8 @@
 <template>
   <div v-if="collection">
     <div class="collection-interactive-card">
-      <div class="collection-card-content">
+
+      <div class="collection-card-header row is-flex">
         <div class="parent-collection-title">
           <!--<span v-if="!editMode">-->
           <router-link
@@ -10,273 +11,270 @@
             <!--{{ collection.title }}-->
             {{ findRoot(collectionId).title }}
           </router-link>
-          <!--</span>
-          <span v-else>
-            <div class="field has-addons">
-              <div class="control">
-                <input
-                  v-model="collection.title"
-                  class="input collection-card__title-input"
-                  type="text"
-                  placeholder="Titre de la collection"
-                >
-              </div>
-              <div class="control">
-                <a
-                  class="button is-primary"
-                  :class="saving === 'loading' ? 'is-loading' : ''"
-                  @click.stop="save"
-                >
-                  <save-button-icon />
-                </a>
-              </div>
-              <router-link
-                tag="button"
-                class="button control ml-2 is-primary"
-                :to="{ name: 'collection', params: { collectionId: collection.id } }"
-              ><i class="fas fa-arrow-right" /></router-link>
-=======
-    <div class="collection-card card">
-      <div class="card-content">
-        <div class="container">
-          <div class="row is-flex is-justify-content-space-between mb-4">
-            <div class="col-5">
-              <span class="title">
-                <router-link
-                  :to="{ name: 'collection', params: { collectionId: findRoot(collectionId).id } }"
-                  class="collection_title mt-3 mb-5"
-                >
-                  {{ findRoot(collectionId).title }}
-                </router-link>
-              </span>
-            </div>
-            <div class="col-5">
-              <b-button
-                class="TOC-button ml-auto is-small"
-                @click="showHierarchy = !showHierarchy"
-              >
-                SOMMAIRE
-              </b-button>
-              <b-sidebar
-                v-model="showHierarchy"
-                position="fixed"
-                :right="true"
-                :fullheight="true"
-                class="m-3"
-                style="width: 500px"
-              >
-                <div class="m-3">
-                  <p class="menu-label">
-                    SOMMAIRE
-                  </p>
-                  <collection-hierarchy
-                    :collection-id="collectionId"
-                  />
-                </div>
-              </b-sidebar>
->>>>>>> upstream/dev
-            </div>
-          </span>-->
         </div>
-        <div
-          class="row is-flex"
-          style="vertical-align: center"
-        >
 
-          <!-- Colonne 1 : vignette -->
-          <div class="column thumbnail-column">
-            <div class="collection-thumbnail">
-              <img
-                id="card_image"
-                :src="getImgUrl(collectionId)"
-                alt="Card image cap"
+        <!--</span>
+        <span v-else>
+          <div class="field has-addons">
+            <div class="control">
+              <input
+                v-model="collection.title"
+                class="input collection-card__title-input"
+                type="text"
+                placeholder="Titre de la collection"
               >
             </div>
-            <div class="collection-thumbnail-caption">
-              Légende éventuelle
+            <div class="control">
+              <a
+                class="button is-primary"
+                :class="saving === 'loading' ? 'is-loading' : ''"
+                @click.stop="save"
+              >
+                <save-button-icon />
+              </a>
             </div>
-          </div>
-
-          <!-- Colonne 2 : metadonnées de la collections -->
-          <div class="column metadata-column">
-
-            <!-- Titre de la collection -->
-            <span
-              v-if="!editMode || collection.title === 'Non triées'"
-            >
+            <router-link
+              tag="button"
+              class="button control ml-2 is-primary"
+              :to="{ name: 'collection', params: { collectionId: collection.id } }"
+            ><i class="fas fa-arrow-right" /></router-link>
+=======
+  <div class="collection-card card">
+    <div class="card-content">
+      <div class="container">
+        <div class="row is-flex is-justify-content-space-between mb-4">
+          <div class="col-5">
+            <span class="title">
               <router-link
-                :to="{ name: 'collection', params: { collectionId: collection.id } }"
-                class="collection-title"
+                :to="{ name: 'collection', params: { collectionId: findRoot(collectionId).id } }"
+                class="collection_title mt-3 mb-5"
               >
-                {{ collection.title }}
+                {{ findRoot(collectionId).title }}
               </router-link>
             </span>
-            <span v-else>
-              <div class="field has-addons">
-                <div class="control">
-                  <input
-                    v-model="collection.title"
-                    class="input collection-card__title-input"
-                    :class="{'input--error':!collection.title}"
-                    type="text"
-                    :initial-value="collection.title"
-                    required
-                  >
-                </div>
-                <div class="control">
-                  <a
-                    type="submit" :disabled="!collection.title"
-                    class="button is-primary"
-                    :class="saving === 'loading' ? 'is-loading' : ''"
-                    @click.stop="save"
-                  >
-                    <save-button-icon />
-                  </a>
-                </div>
-                <div>
-                  <collection-deletion
-                    class="column"
-                    v-if="current_user && current_user.isAdmin"
-                    :collection-id="collectionId"
-                  />
-                </div>
-                <div class="control">
-                  <a
-                    :class="deleting === 'loading' ? 'is-loading' : ''"
-                    class="button is-primary"
-                    @click.stop="deleteCollectionUI"
-                  >
-                    <delete-button-icon :status="deleting === 'error' ? 'error' : deleting === 'normal' ? 'normal' : ''" />
-                  </a>
-                </div>
-              </div>
-            </span>
-
-            <!-- Date de la collection -->
-            <div class="collection-dates">
-              <span>{{ collection.dateMin || "..." }}</span>
-              <span>{{ collection.dateMax || "..." }}</span>
-            </div>
-
-            <!-- Description de la collection -->
-            <div class="collection-description">
-              <p v-if="!editMode || collection.title === 'Non triées'">
-                <span v-html="collection.description" />
-              </p>
-              <p v-else>
-                <title-field-in-place
-                  :tabulation-index="0"
-                  label="Titre"
-                  name="title"
-                  not-set="Non renseigné"
-                  :initial-value="collection.description"
-                  :editable="true"
-                  :formats="descriptionFormats"
-                  @changed="saveDescription"
-                />
-              </p>
-            </div>
-
-            <!-- Curateur de la collection -->
-            <div
-              v-if="!editMode || collection.title === 'Non triées'"
-              class="collection-user-roles"
-            >
-              <p>
-                Curateur :
-              </p>
-              <div class="collection-user-roles-value">
-                <a>{{ collection.admin.username }}</a>
-              </div>
-            </div>
-            <div
-              v-else
-              class="collection-user-roles control"
-            >
-              <p>
-                Curateur :
-              </p>
-              <div class="is-inline-block">
-                <b-field>
-                  <select @change="updateCuratorId">
-                    <option :value="collection.admin.id">
-                      {{ collection.admin.username }}
-                    </option>
-                    <option
-                        v-for="option in users.filter((u) => u.isAdmin === true && u.id !== collection.admin.id)"
-                        :key="option.id"
-                        :value="option.id"
-                    >
-                      {{ option.username }}
-                    </option>
-                  </select>
-                </b-field>
-              </div>
-            </div>
-
           </div>
-
-          <!-- not in Carine code {{ error.title }}
-          <router-link
-            tag="button"
-            class="button control ml-2 is-primary"
-            :to="{ name: 'collection', params: { collectionId: collection.id } }"
-          ><i class="fas fa-arrow-right" /></router-link>
-        </div>-->
-          <!--<div class="control">
-            <b-field label="Curator">
-              <select @change="updateCuratorId">
-                <option :value="collection.admin.id">{{ collection.admin.username }}</option>
-                <option
-                  v-for="option in users.filter((u) => u.isAdmin === true && u.id !== collection.admin.id)"
-                  :key="option.id"
-                  :value="option.id"
-                >
-                  {{ option.username }}
-                </option>
-              </select>
-            </b-field>
-          </div>-->
-
-          <!-- Colonne 3 : Sommaire -->
-          <div class="column toc-column">
+          <div class="col-5">
             <b-button
-                class="TOC-button"
-                :class="showHierarchy ? 'opened' : ''"
-                @click="showHierarchy = !showHierarchy"
+              class="TOC-button ml-auto is-small"
+              @click="showHierarchy = !showHierarchy"
             >
               SOMMAIRE
             </b-button>
-            <div v-if="showHierarchy">
-              <collection-hierarchy
+            <b-sidebar
+              v-model="showHierarchy"
+              position="fixed"
+              :right="true"
+              :fullheight="true"
+              class="m-3"
+              style="width: 500px"
+            >
+              <div class="m-3">
+                <p class="menu-label">
+                  SOMMAIRE
+                </p>
+                <collection-hierarchy
                   :collection-id="collectionId"
-                  class="TOC-content"
-              />
-            </div>
+                />
+              </div>
+            </b-sidebar>
+>>>>>>> upstream/dev
+          </div>
+        </span>-->
+
+        <div class="collection-actions central-column is-flex">
+          <!-- Nouvelle sous-collection -->
+          <router-link v-if="current_user && current_user.isAdmin" to="create" custom v-slot="{ navigate }" append>
+            <b-button @click="navigate" type="is-primary" label="Créer une sous-collection" class="create-collection-btn"/>
+          </router-link>
+          <!-- Supprimer la collection -->
+          <collection-deletion
+            v-if="current_user && current_user.isAdmin"
+            :collection-id="collectionId"
+          />
+        </div>
+      </div>
+
+      <div
+        class="collection-card-body row is-flex"
+        style="vertical-align: center"
+      >
+
+        <!-- Colonne 1 : vignette -->
+        <div class="column thumbnail-column">
+          <div class="collection-thumbnail">
+            <img
+              id="card_image"
+              :src="getImgUrl(collectionId)"
+              alt="Card image cap"
+            >
+          </div>
+          <div class="collection-thumbnail-caption">
+            Légende éventuelle
           </div>
         </div>
-              <!--Carine code <div class="control">
-                <a
-                  @click.stop="save"
-                  class="button is-primary"
-                  :class="saving === 'loading' ? 'is-loading' : ''"
-                >
-                  <save-button-icon />
-                </a>
-              </div>
+
+        <!-- Colonne 2 : metadonnées de la collections -->
+        <div class="column central-column metadata-column">
+
+          <!-- Titre de la collection -->
+          <span
+            v-if="!editMode || collection.title === 'Non triées'"
+          >
+            <router-link
+              :to="{ name: 'collection', params: { collectionId: collection.id } }"
+              class="collection-title"
+            >
+              {{ collection.title }}
+            </router-link>
+          </span>
+          <span v-else>
+            <div class="field has-addons">
+              <input
+                v-model="collection.title"
+                class="input collection-card__title-input"
+                :class="{'input--error':!collection.title}"
+                type="text"
+                :initial-value="collection.title"
+                required
+              >
               <div class="control">
                 <a
-                  @click.stop="deleteCollectionUI"
+                  type="submit" :disabled="!collection.title"
                   class="button is-primary"
-                  :class="deleting === 'loading' ? 'is-loading' : ''"
+                  :class="saving === 'loading' ? 'is-loading' : ''"
+                  @click.stop="save"
                 >
-                  <delete-button-icon :status="deleting === 'error' ? 'error' : deleting === 'normal' ? 'normal' : ''" />
+                  <save-button-icon />
                 </a>
               </div>
             </div>
           </span>
-        </span>-->
+
+          <!-- Date de la collection -->
+          <div class="collection-dates">
+            <span>{{ collection.dateMin || "..." }}</span>
+            <span>{{ collection.dateMax || "..." }}</span>
+          </div>
+
+          <!-- Description de la collection -->
+          <div class="collection-description">
+            <p v-if="!editMode || collection.title === 'Non triées'">
+              <span v-html="collection.description" />
+            </p>
+            <p v-else>
+              <title-field-in-place
+                :tabulation-index="0"
+                label="Titre"
+                name="title"
+                not-set="Non renseigné"
+                :initial-value="collection.description"
+                :editable="true"
+                :formats="descriptionFormats"
+                @changed="saveDescription"
+              />
+            </p>
+          </div>
+
+          <!-- Curateur de la collection -->
+          <div
+            v-if="!editMode || collection.title === 'Non triées'"
+            class="collection-user-roles"
+          >
+            <p>
+              Curateur :
+            </p>
+            <div class="collection-user-roles-value">
+              <a>{{ collection.admin.username }}</a>
+            </div>
+          </div>
+          <div
+            v-else
+            class="collection-user-roles control"
+          >
+            <p>
+              Curateur :
+            </p>
+            <div class="is-inline-block">
+              <b-field>
+                <select @change="updateCuratorId">
+                  <option :value="collection.admin.id">
+                    {{ collection.admin.username }}
+                  </option>
+                  <option
+                      v-for="option in users.filter((u) => u.isAdmin === true && u.id !== collection.admin.id)"
+                      :key="option.id"
+                      :value="option.id"
+                  >
+                    {{ option.username }}
+                  </option>
+                </select>
+              </b-field>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- not in Carine code {{ error.title }}
+        <router-link
+          tag="button"
+          class="button control ml-2 is-primary"
+          :to="{ name: 'collection', params: { collectionId: collection.id } }"
+        ><i class="fas fa-arrow-right" /></router-link>
+      </div>-->
+        <!--<div class="control">
+          <b-field label="Curator">
+            <select @change="updateCuratorId">
+              <option :value="collection.admin.id">{{ collection.admin.username }}</option>
+              <option
+                v-for="option in users.filter((u) => u.isAdmin === true && u.id !== collection.admin.id)"
+                :key="option.id"
+                :value="option.id"
+              >
+                {{ option.username }}
+              </option>
+            </select>
+          </b-field>
+        </div>-->
+
+        <!-- Colonne 3 : Sommaire -->
+        <div class="column toc-column">
+          <b-button
+              class="TOC-button"
+              :class="showHierarchy ? 'opened' : ''"
+              @click="showHierarchy = !showHierarchy"
+          >
+            SOMMAIRE
+          </b-button>
+          <div v-if="showHierarchy">
+            <collection-hierarchy
+                :collection-id="collectionId"
+                class="TOC-content"
+            />
+          </div>
+        </div>
       </div>
+
+      <!--Carine code <div class="control">
+        <a
+          @click.stop="save"
+          class="button is-primary"
+          :class="saving === 'loading' ? 'is-loading' : ''"
+        >
+          <save-button-icon />
+        </a>
+      </div>
+      <div class="control">
+        <a
+          @click.stop="deleteCollectionUI"
+          class="button is-primary"
+          :class="deleting === 'loading' ? 'is-loading' : ''"
+        >
+          <delete-button-icon :status="deleting === 'error' ? 'error' : deleting === 'normal' ? 'normal' : ''" />
+        </a>
+      </div>
+    </div>
+  </span>
+  </span>-->
       <!--<div class="columns is-vcentered">
         <img
           id="card_image"
@@ -365,6 +363,7 @@
           </div>
         </div>
       </div>-->
+
       <footer class="card-footer is-flex is-justify-content-end">
       </footer>
     </div>
@@ -376,12 +375,11 @@ import {mapState, mapActions, mapGetters} from "vuex";
 import CollectionHierarchy from "@/components/CollectionHierarchy.vue";
 import TitleFieldInPlace from "@/components/forms/fields/TitleFieldInPlace";
 import SaveButtonIcon from "@/components/ui/SaveButtonIcon";
-import DeleteButtonIcon from "@/components/ui/DeleteButtonIcon";
 import CollectionDeletion from "@/components/CollectionDeletion.vue";
 
 export default {
   name: "CollectionInteractiveCard",
-  components: { TitleFieldInPlace, SaveButtonIcon, CollectionHierarchy, DeleteButtonIcon, CollectionDeletion },// , DeleteButtonIcon added from Carine
+  components: { TitleFieldInPlace, SaveButtonIcon, CollectionHierarchy, CollectionDeletion },// , DeleteButtonIcon added from Carine
 
   props: {
     collectionId: { type: Number, required: true },
@@ -501,12 +499,56 @@ export default {
 <style lang="scss">
 @import "@/assets/sass/main.scss";
 @import "@/assets/sass/objects/collection.scss";
+@import "@/assets/sass/components/_buttons.scss";
 
 .collection-interactive-card {
   background: none !important;
   border: none !important;
 
-  .row {
+  .collection-card-header {
+    gap: 55px;
+    align-items: flex-end;
+    margin-bottom: 22px;
+
+    .parent-collection-title {
+      flex: $collection-thumbnail-size 0 0;
+      font-family: $family-primary;
+      font-size: 20px;
+      font-weight: 500;
+      line-height: 1.2;
+
+      @include on-small-desktop {
+        flex: $collection-thumbnail-small-desktop-size 0 0;
+      }
+
+      @include on-tablet {
+        flex: $collection-thumbnail-tablet-size 0 0;
+      }
+
+      & > a {
+        color: #C00055;
+      }
+    }
+
+    .collection-actions {
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+  }
+
+  .central-column {
+    width: calc( 100% - $collection-thumbnail-size - 290px - 2 * 55px );
+
+    @include on-small-desktop {
+      width: calc( 100% - $collection-thumbnail-small-desktop-size - 290px - 2 * 55px );
+    }
+
+    @include on-tablet {
+      width: calc( 100% - $collection-thumbnail-tablet-size - 290px - 2 * 55px );
+    }
+  }
+
+  .collection-card-body {
     gap: 55px;
 
     .column {
@@ -527,8 +569,17 @@ export default {
     }
 
     .metadata-column {
+      width: calc( 100% - $collection-thumbnail-size - 290px - 2 * 55px );
       border-top: #C00055 solid 7px;
       padding-top: 15px;
+
+      .field.has-addons {
+        display: flex;
+
+        .control {
+          width: 48px;
+        }
+      }
     }
 
     .toc-column {
@@ -537,16 +588,6 @@ export default {
     }
   }
 
-  .parent-collection-title {
-    margin-bottom: 25px;
-    font-family: $family-primary;
-    font-size: 20px;
-    font-weight: 500;
-
-    & > a {
-      color: #C00055;
-    }
-  }
 
   .collection-title {
     font-family: $family-primary;
@@ -675,6 +716,9 @@ export default {
 
   .TOC-content {
     background-color: #F8F8F8;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #C00055;
+    margin-bottom: 30px;
 
     ::v-deep li  a {
       padding: 0 10px;

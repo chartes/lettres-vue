@@ -4,7 +4,7 @@
       Delete
     -->
     <a
-      class="button is-primary"
+      class="delete-collection-btn button is-primary"
       :class="deleting === 'loading' ? 'is-loading' : ''"
       @click.stop="collectionIdToBeDeleted = collectionId"
     >
@@ -81,3 +81,22 @@ export default {
   },
 };
 </script>
+
+<style scoped lang="scss">
+
+.delete-collection-btn.button.is-primary {
+  display: inline-block;
+  width: 38px;
+  max-width: unset;
+  max-height: unset;
+  height: 38px;
+  background: url(../assets/images/icons/bouton_supprimer.svg) center / 38px auto no-repeat !important;
+  border-radius: 0!important;
+  border: none !important;
+
+  .icon {
+    display: none;
+  }
+}
+
+</style>

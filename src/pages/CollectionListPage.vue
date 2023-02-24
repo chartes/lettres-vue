@@ -36,6 +36,7 @@
             <b-button
                 type="is-primary"
                 label="Créer une collection"
+                class="create-collection-btn"
                 @click="navigate"
             />
           </router-link>
@@ -55,6 +56,7 @@
             <input
               class="current-page"
               type="text"
+              value="1"
             />
             <span class="label-sur-page">sur</span>
             <span class="total-pages">150</span>
@@ -169,6 +171,7 @@ export default {
 <style lang="scss">
 @import "@/assets/sass/main.scss";
 @import "@/assets/sass/objects/collection.scss";
+@import "@/assets/sass/components/_buttons.scss";
 
 .collection-list-header {
   margin-bottom: 15px;
@@ -190,30 +193,11 @@ input[type=search] {
 
 .control.has-icons-left .icon,
 .control.has-icons-right .icon {
-  width: 30px;
-  height: 100%;
+  width: 30px !important;
+  height: 100% !important;
   padding: 0;
 }
 
-
-.button.is-primary {
-  border: solid 1px #C00055;
-  border-radius: 5px;
-  background: #FFFFFF !important;
-
-  font-family: $family-primary;
-  font-size: 14px;
-  color: #C00055;
-  font-weight: 400;
-  text-transform: uppercase;
-
-  &:focus,
-  &:hover {
-    background: #C00055 !important;
-    color: #FFFFFF;
-    box-shadow: none !important;
-  }
-}
 
 .pagination-controls {
   display: flex;
