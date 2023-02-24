@@ -82,7 +82,7 @@ const actions = {
       let sorts = sortingPriority ? sortingPriority.map(s => `${s.order === 'desc' ? '-' : ''}${s.field}`) : []
         sorts = `&sort=${sorts.length ? sorts.join(',') : '-expiration-date'}`
       console.log('sorts', sorts)
-      return http.get(`locks?include=user${sorts}&page[size]=${pageSize || 50}&page[number]=${numPage|| 1}${filters ? '&' + filters : ''}`).then(response => {
+      return http.get(`locks?include=user${sorts}&page[size]=${pageSize || 50}&page[number]=${numPage|| 1}${filters ? '&' + filters.join('&') : ''}`).then(response => {
         commit('UPDATE_FULL_LOCKS', {
           locks: response.data.data,
           included: response.data.included,

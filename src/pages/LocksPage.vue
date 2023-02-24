@@ -6,6 +6,7 @@
         :data="data"
         detailed
         detail-key="docId"
+
         show-detail-icon
 
         striped
@@ -37,8 +38,8 @@
         @sorting-priority-removed="sortingPriorityRemoved"
         @filters-change="onFilter"
         @page-change="onPageChange"
+        @details-open="(row, index) => $buefy.toast.open(`Expanded ${row.docId}`)"
       >
-        <!-- backend-sorting :total="totalCount" @sort="onSort" -->
         <template #top-left>
           <span class="table_title">Status des verrouillages</span>
         </template>
@@ -49,13 +50,13 @@
             </div>
           </section>
         </template>
-        <!--<template #detail="props">
+        <template #detail="props">
           <document
             class="document-page"
             :doc-id="props.row.docId"
             :preview="true"
           />
-        </template>-->
+        </template>
         <b-table-column
           v-slot="props"
           field="object-id"
@@ -72,68 +73,53 @@
           />
         </b-table-column>
         <b-table-column
+          v-slot="props"
           field="userName"
           label="User name"
           width="10%"
           searchable
         >
-          <!--<span v-html="props.row.items.userName" />-->
+          <span v-html="props.row.username" />
         </b-table-column>
         <b-table-column
+          v-slot="props"
           field="description"
           label="Description"
           width="40%"
           sortable
           searchable
         >
-          <!--<span v-html="props.row.items.attributes.description" />-->
+          <span v-html="props.row.description" />
         </b-table-column>
         <b-table-column
+          v-slot="props"
           field="event-date"
           label="Date"
           width="15%"
           sortable
           searchable
         >
-          <!--<span class="tag" v-html="new Date(props.row.items.attributes['event-date']).toLocaleDateString()" />-->
+          <span class="tag" v-html="new Date(props.row.event_date).toLocaleDateString()" />
         </b-table-column>
         <b-table-column
+          v-slot="props"
           field="expiration-date"
           label="Expire"
           width="15%"
           sortable
           searchable
         >
-          <!--<span
-            v-if="props.row.items.attributes['is-active']"
+          <span
+            v-if="props.row.is_active"
             class="tag is-success"
-            v-html="new Date(props.row.items.attributes['expiration-date']).toLocaleDateString()"
+            v-html="new Date(props.row.expiration_date).toLocaleDateString()"
           />
           <span
             v-else
             class="tag is-warning"
-            v-html="new Date(props.row.items.attributes['expiration-date']).toLocaleDateString()"
-          />-->
+            v-html="new Date(props.row.expiration_date).toLocaleDateString()"
+          />
         </b-table-column>
-        <template #detail="props">
-                <tr v-for="item in props.row.items" :key="item.userName">
-                    <td>{{ item.userName }}</td>
-                    <!--<td>{{ item.attributes.description }}</td>
-                    <td>{{ item.attributes['event-date'] }}</td>
-                    <td>
-                        <span
-            v-if="item.attributes['is-active']"
-            class="tag is-success"
-            v-html="new Date(item.attributes['expiration-date']).toLocaleDateString()"
-          />
-          <span
-            v-else
-            class="tag is-warning"
-            v-html="new Date(item.attributes['expiration-date']).toLocaleDateString()"
-          />
-                    </td>-->
-                </tr>
-            </template>
       </b-table>
     </div>
   </div>
@@ -144,12 +130,11 @@
 import { mapState, mapActions, mapGetters } from "vuex";
 import DocumentTagBar from "@/components/document/DocumentTagBar";
 import Document from "@/components/sections/Document.vue";
-import {left} from "core-js/internals/array-reduce";
 
 export default {
   name: "LocksPage",
   components: {
-    //Document,
+    Document,
     DocumentTagBar,
   },
   data() {
@@ -181,58 +166,43 @@ export default {
     ...mapState("locks", ["fullLocks"]),
     ...mapGetters("document", []),
   },
-  /*watch: {
-    async fullLocks() {
-      this.data = await Promise.all(
-          this.fullLocks.map(async (b) => {
-            return {
-              docId: b.data.attributes['object-id'],
-              userId: b.user.id,
-              attributes: b.data.attributes,
-              userName: b.user.username,
-
-            };
-          })
-      )
-      console.log('this.data : ', this.data);
-    },
-  },*/
   async created() {
     await this.fetchData();
+    if (this.current_user) {
+      await this.fetchUsers();
+    }
   },
   methods: {
-    toggle(row) {
-                this.$refs.table.toggleDetails(row)
-            },
     ...mapActions("locks", ["fetchFullLocks"]),
+    ...mapActions("user", ["fetchUsers"]),
     async fetchData() {
       this.isLoading = true;
-      let myfilters = [];
+      let filters_list = [];
       if (this.filters) {
         for (let i = 0; i < Object.keys(this.filters).length; i++) {
-          myfilters.push('filter['+Object.keys(this.filters)[i]+']='+Object.values(this.filters)[i]);
+          // si filtre username, get user_ids
+          if (Object.keys(this.filters)[i] === 'userName') {
+            let filtered_users = this.$store.state.user.users.map(u => u.username.includes(Object.values(this.filters)[i]) ? u.id : false).filter(Boolean);
+            console.log('filtered_users : ', filtered_users)
+            // assign array of users as list (backend expects list)
+            filters_list.push('filter[user_id]=[' + filtered_users + ']');
+          }
+          else filters_list.push('filter[' + Object.keys(this.filters)[i] + ']=' + Object.values(this.filters)[i]);
         }
       }
-      console.log('myfilters : ',myfilters.join('&'))
+      console.log('filters_list : ', filters_list)
       this.fetchedData = await this.fetchFullLocks({
         userId: this.current_user.id,
         sortingPriority: this.sortingPriority,
         numPage: this.numPage,
         pageSize: this.pageSize,
-        filters: myfilters,
+        filters: filters_list.length ? filters_list : null,
       });
       console.log('async fetchData() / this.fetchedData : ', this.fetchedData)
       this.loadAsyncData();
       this.isLoading = false;
     },
-    /* Handle sort event
-
-            onSort(field, order) {
-                this.sortField = field
-                this.sortOrder = order
-                this.sortingPriorityRemoved(field)
-            },
-    */
+    /*TODO add lock sort reset button
     async resetPriority() {
       console.log("reset");
       this.$refs.multiSortTable.resetMultiSorting();
@@ -241,31 +211,13 @@ export default {
         this.sortingPriority = [];
         await this.fetchData();
       }
-    },
+    },*/
     async onFilter(filters){
       console.log("filters : ", filters);
       if (filters) {
         this.filters = Object.entries(filters).reduce((a,[k,v]) => (v ? (a[k]=v, a) : a), {});
+        console.log('onFilter / this.filters ', this.filters)
         await this.fetchData();
-        /*let existingPriority = this.sortingPriority.filter((i) => i.field === field)[0];
-        console.log('existingPriority', existingPriority);
-        if (existingPriority) {
-          existingPriority.order = existingPriority.order === "desc" ? "asc" : "desc";
-          this.sortingPriority[this.sortingPriority.findIndex(sp => sp.field === existingPriority.field)] = existingPriority;
-          //this.sortingPriority.push({ field, order });
-          console.log('sortingPriority', this.sortingPriority);
-        } else {
-          // request sorted data from backend
-          console.log('change order', field, order );
-          this.sortingPriority.push({ field, order });
-        }
-        await this.fetchData();
-        //this.currentPage = 1;
-      } else {
-        // request regular sorted data from backend
-        console.log('no change order', field, order );
-        this.sortingPriority = []; // [{field, order}]
-        this.currentPage = 1;*/
       }
     },
     // Backend sorting
@@ -303,24 +255,59 @@ export default {
         this.sortingPriority = []; // [{field, order}]
         this.currentPage = 1;
       }
-      // will reload the data
+      // will reload the data (Note 24022023 : not true)
       //this.currentPage = 1;
     },
+    /* function used to regroup locks by docId in the version with multiple historical locks by doc
+    (see also loadAsyncData below)
 
+    groupLocksByDoc(arr){
+
+      const mapper = new Map()
+      for (const { data, user} of arr) {
+        if (!mapper.has(data.attributes['object-id'])) {
+          mapper.set(data, { docId: data.attributes['object-id'], lock: [], user})
+        }
+        mapper.get(data).lock.push(data.attributes)
+       }
+       return Array.from(mapper.values())
+    },*/
     loadAsyncData() {
       if (this.fetchedData) {
         console.log('loadAsyncData() / this.fetchedData : ', this.fetchedData)
         this.totalCount = this.fetchedData.totalCount;
+
+        /* code used to regroup locks by docId in the version with multiple historical locks by doc
+
+        let LocksByDocID = this.groupLocksByDoc(this.fetchedData.locks);
+        console.log('LocksByDocID : ', LocksByDocID)
+
+        this.data = LocksByDocID.map(({docId, lock, user}) => {
+          const flatLockByDoc = {};
+
+          flatLockByDoc['docId'] = parseInt(docId),
+          flatLockByDoc['description'] = lock[0]['description'],
+          flatLockByDoc['event_date'] = lock[0]['event-date'],
+          flatLockByDoc['expiration_date'] = lock[0]['expiration-date'],
+          flatLockByDoc['is_active'] = lock[0]['is-active'],
+          flatLockByDoc['user_id'] = user.id,
+          flatLockByDoc['username'] = user.username
+
+          return flatLockByDoc;
+          })*/
+
         this.data = this.fetchedData.locks.map((l) => {
             return {
               docId: l.data.attributes['object-id'],
-              items:  {
-                userId: l.user.id,
-                attributes: l.data.attributes,
-                userName: l.user.username,
-            }};
+              description: l.data.attributes.description,
+              event_date: l.data.attributes['event-date'],
+              expiration_date: l.data.attributes['expiration-date'],
+              is_active: l.data.attributes['is-active'],
+              user_id: l.user.id,
+              username: l.user.username
+            };
           })
-        console.log('loadAsyncData() / this.data : ', this.data);
+        //console.log('loadAsyncData() / this.data : ', this.data);
       }
     },
     /*
@@ -330,19 +317,6 @@ export default {
       console.log("tada")
       this.currentPage = page;
     },
-
-
-    /*
-     * Load async data
-     */
-    /*loadAsyncData() {
-      this.fetchFullLocks({
-        userId: this.current_user.id,
-        pageId: this.page,
-        pageSize: this.perPage,
-        filters: "",
-      });
-    },*/
   },
 }
 </script>

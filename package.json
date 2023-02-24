@@ -20,7 +20,7 @@
     "acorn": "^7.1.1",
     "axios": "^0.21.1",
     "axios-auth-refresh": "^3.1.0",
-    "buefy": "^0.9.22",
+    "buefy": "^0.9.20",
     "core-js": "^3.1.2",
     "leaflet": "^1.7.1",
     "lodash": "^4.17.15",
