@@ -23,6 +23,7 @@
         <button
           v-if="submit"
           class="button is-success"
+          :class="{'modalbutton_disabled' : !valid}"
           :disabled="!valid || submitting"
           @click="submit"
         >
@@ -42,6 +43,7 @@
         >
           <button
             class="button is-danger"
+            :class="{'modalbutton_disabled': submitting}"
             :disabled="submitting"
             @click="remove"
           >
@@ -81,3 +83,18 @@ export default {
   },
 };
 </script>
+<style scoped lang="scss">
+@import "@/assets/sass/main.scss";
+.modalbutton_disabled {
+  background-color: #f6f6f6 !important;
+  border-color: #f6f6f6 !important;
+  color: gray !important;
+  cursor: not-allowed !important;
+}
+.modalbutton_enabled {
+  type: button;
+  background-color: #48c774;
+  border-color: transparent;
+  color: #fff;
+}
+</style>

@@ -54,26 +54,26 @@
       classes-inactive="tag"
       :action-when-on="startLockEditor"
       :action-when-off="startLockEditor"
-      :starts-on="lockOwner[docId]"
+      :starts-on="status.currentLock['is-active']"
     >
       <template #active>
         <a><i class="fas fa-lock" /></a>
       </template>
-      <template #activeLabel>
+      <!--<template #activeLabel>
         <span
           v-if="lockOwner[docId]"
           class="badge-label"
         >{{
           lockOwner[docId].attributes.username
         }}</span>
-      </template>
+      </template>-->
       <template #inactive>
         <a><i class="fas fa-unlock" /></a>
       </template>
     </badge>
 
     <lock-form
-      v-if="withStatus && lockEditMode & status"
+      v-if="withStatus && lockEditMode && status"
       :doc-id="docId"
       :current-lock="status.currentLock"
       :cancel="stopLockEditor"
@@ -147,27 +147,35 @@ export default {
     },
     publishDocument() {
       return this.$store.dispatch("document/publish", this.docId).then((resp) => {
-        this.status.isPublished = resp.attributes["is-published"];
+        this.status.isPublished = true;
         return Promise.resolve(true);
       });
     },
     unpublishDocument() {
       return this.$store.dispatch("document/unpublish", this.docId).then((resp) => {
-        this.status.isPublished = resp.attributes["is-published"];
+        this.status.isPublished = false;
         return Promise.resolve(false);
       });
     },
     startLockEditor() {
       this.lockEditMode = true;
-      return Promise.resolve(!!this.lockOwner[this.docId]);
+      //await this.fetchStatus().then( (resp) => {
+        return Promise.resolve(this.status.currentLock['is-active']);
+      //})
     },
     async stopLockEditor() {
       this.lockEditMode = false;
+      await this.fetchStatus().then( (resp) => {
+        return Promise.resolve(this.status.currentLock['is-active']);
+      })
       //this.status = await this.getPreview(this.docId);
       // TODO: mettre à jour l'affichage du lock
-      console.warn("DocumentTagBar (lock): affichage du lock non mis à jour");
-      return Promise.resolve(!!this.lockOwner[this.docId]);
+      //console.warn("DocumentTagBar (lock): affichage du lock non mis à jour");
+      //return Promise.resolve(!!this.lockOwner[this.docId]);
     },
   },
-};
+}
 </script>
+<style scoped lang="scss">
+@import "@/assets/sass/main.scss";
+</style>
