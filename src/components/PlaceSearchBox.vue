@@ -1,11 +1,7 @@
 <template>
   <div>
     <section>
-      <div class="row is-flex is-justify-content-space-between">
-        <i
-          class="fas fa-map-marker-alt m-2"
-          style="font-size:32px;"
-        />
+      <div class="row is-flex is-justify-content-space-between search-section-header-places">
         <span class="advanced_search_header m-2">LIEUX</span>
         <router-link
           :to="{ name: 'places' }"
@@ -242,6 +238,11 @@ div.dropdown-item {
   padding: 2px;
   display: inline-flex;
   align-items: center;
+}
+
+.search-section-header-places {
+  padding-left: 30px;
+  background: url('../assets/images/icons/picto-lieux.svg') center left no-repeat;
 }
 .advanced_search_header {
   align-self: center;

@@ -33,6 +33,12 @@
         font-weight: 500;
         line-height: 1.2;
         color: #FFFFFF;
+
+        &:hover {
+          text-decoration: underline;
+          text-decoration-style: dotted;
+          text-underline-offset: 4px;
+        }
      }
     }
 

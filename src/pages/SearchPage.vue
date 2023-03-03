@@ -5,10 +5,10 @@
         <div class="column">
           <button
             v-show="!showLeftSideBar"
-            class="button is-text mt-3"
+            class="button advanced-search-btn"
             @click="toggleLeftSideBar"
           >
-            Recherche avancée
+            Afficher les filtres
           </button>
           <document-list />
         </div>
@@ -65,13 +65,33 @@ export default {
 
 <style scoped lang="scss">
 @import "@/assets/sass/main.scss";
+@import "@/assets/sass/components/_search_results_table.scss";
+
 .columns {
   height: 100%;
 }
 .column {
   padding-top: 0px;
 }
+.advanced-search-btn {
+  position: absolute;
+  top: 10px;
 
+  border: none;
+  padding: 10px 0;
+  font-family: $family-secondary;
+  font-size: 16px;
+  color: #C00055 !important;
+  font-weight: 500;
+  text-decoration: none;
+  text-transform: uppercase;
+
+  &:focus,
+  &:hover {
+    text-decoration: underline;
+    background: transparent;
+  }
+}
 .collection-selection {
   top: 50px;
   position: relative;

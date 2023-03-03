@@ -43,9 +43,7 @@
             <span class="search_span">Votre recherche</span>
           </div>
           <div class="column pt-3">
-            <search-box
-              class="m-5"
-            />
+            <search-box />
           </div>
         </div>
       </div>
@@ -57,27 +55,27 @@
           class="bg-image content is-align-items-center"
         >
           <div class="row search_page_search_row">
-            <div class="col is-2 ml-5 search_page_search_span">
+            <div class="col is-2 search_page_search_span">
               <span>Votre recherche</span>
             </div>
-            <div class="column pt-3">
-              <search-box
-                class="m-5"
-              />
+            <div class="column">
+              <search-box />
             </div>
           </div>
         </div>
       </div>
-      <div class="columns">
+      <div
+          class="columns advanced-search_row"
+          :class="showLeftSideBar ? 'with-side-bar' : ''"
+      >
         <div
           v-if="showLeftSideBar && $route.name === 'search'"
-          class="column is-3"
+          class="column filters-column"
         >
           <div
             class="hide-left-bar"
             @click="hideLeftSideBar"
           >
-            <i class="far fa-times-circle" />
           </div>
           <advanced-search-form v-if="$route.name === 'search'" />
         </div>
@@ -264,14 +262,6 @@ export default {
 }
 
 
-.hide-left-bar {
-  float: right;
-  width: 32px;
-  height: 32px;
-  margin-top: 20px;
-  cursor: pointer;
-}
-
 .hide-button {
   width: 15px;
   min-height: 100vh;
@@ -368,7 +358,7 @@ footer {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  height:150px;
+  height:266px;
   width:auto;
   display:flex;
   flex-direction: column;
@@ -438,31 +428,73 @@ a.portail_button {
 a.portail_button:hover {
   color: #FFFFFF;
 }
-.search_row {
-  background-color: #230914;
-  padding: 1px calc( 0.5 * (100% - $nav-max-width) );
-  width: 100% !important;
+
+.search_row,
+.advanced-search_row,
+.search_page_search_row {
   display:flex;
   flex-direction: row;
   align-items: center;
+  width: 100% !important;
 
-  & > .column.pt-3 {
-    padding-top: 0 !important;
-  }
+  padding-left: calc( 0.5 * (100% - $nav-max-width) );
+  padding-right: calc( 0.5 * (100% - $nav-max-width) );
 
   @include on-small-desktop {
     padding-left: $container-small-desktop-margin;
     padding-right: $container-small-desktop-margin;
   }
 }
+.search_row {
+  background-color: #230914;
+  padding-top: 25px;
+  padding-bottom: 25px;
+
+  & > .column.pt-3 {
+    padding-top: 0 !important;
+  }
+}
+
 .search_page_search_row {
   background-color: transparent;
-  padding: 5px;
-  width: 100% !important;
-  display:flex;
-  flex-direction: row;
-  align-items: center;
 }
+
+.advanced-search_row {
+  display: flex;
+  align-items: flex-start;
+  gap: 40px;
+
+  & > .filters-column {
+    flex: 350px 0 0;
+    padding-top: 70px;
+    position: relative;
+
+    .hide-left-bar {
+      position: absolute;
+      top: 0;
+      left: 0;
+
+      width: 32px;
+      height: 32px;
+      background: url('../assets/images/icons/close-filters-panel.svg') center / 18px auto no-repeat;
+      margin-top: 20px;
+      cursor: pointer;
+    }
+  }
+
+  & > .main-column {
+    flex: 100% 0 0;
+
+    .main-column-content {
+      width: 100%;
+    }
+  }
+
+  &.with-side-bar  > .main-column {
+    flex: calc( 100% - 350px ) 0 0;
+  }
+}
+
 .search_span {
   margin-left: 0 !important;
   background-color: rgba(35, 9, 20);
@@ -471,16 +503,23 @@ a.portail_button:hover {
   color: white;
   text-align: center;
 }
-.search-container.m-5 {
-  margin-left: 25px !important;
-  margin-right: 0 !important;
+.search-container {
+  margin: 0 0 0 10px !important;
+
+  ::v-deep .icon {
+    height: 40px !important;
+    padding: 0;
+  }
 }
+
 .search_page_search_span {
-  background-color: rgba(0, 0, 0, 0.6);
+  background-color: #00000094;
+  font-size: 20px;
+  line-height: 1;
   color: white;
   text-align: center;
-  padding: 8px;
-  border-radius: 3px;
+  padding: 10px 12px;
+  border-radius: 5px;
 }
 /*a.button {
   border: none !important;
