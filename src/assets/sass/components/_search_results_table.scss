@@ -90,71 +90,75 @@
       tr.detail {
         background-color: #F8F8F8;
 
-        .document-page {
+        .detail-container {
+          overflow: hidden;
 
-          .heading {
-            background: none;
-            border: none;
-            padding: 0;
-          }
+          .document-page {
 
-          .heading-content {
-            display: flex;
-            align-items: flex-end;
-            gap: 4px;
-            padding: 20px 0;
-
-            font-family: $family-primary;
-            font-size: 16px;
-            line-height: 16px;
-            color: #CB2158;
-            font-weight: 600;
-            letter-spacing: 0;
-            text-transform: uppercase;
-
-            &::after {
-              content: "";
-              display: inline-block;
-              border-bottom: 1px solid #D2D2D2;
-              width: 100%;
-              transform: translateY(-2px);
+            .heading {
+              background: none;
+              border: none;
+              padding: 0;
             }
-          }
 
-          .document-section {
-            font-family: $family-primary;
-            font-size: 18px;
-            line-height: 23px;
-            color: #373737;
+            .heading-content {
+              display: flex;
+              align-items: flex-end;
+              gap: 4px;
+              padding: 20px 0;
 
-            .witness-list {
-              ul.list-group {
-                list-style-position: inside;
+              font-family: $family-primary;
+              font-size: 16px;
+              line-height: 16px;
+              color: #CB2158;
+              font-weight: 600;
+              letter-spacing: 0;
+              text-transform: uppercase;
 
-                li.list-group-item {
-                  background: url(#{$image-path}/icons/voir.svg) top 6px left / 24px auto no-repeat;
-                  padding: 0 0 0 32px;
+              &::after {
+                content: "";
+                display: inline-block;
+                border-bottom: 1px solid #D2D2D2;
+                width: 100%;
+                transform: translateY(-2px);
+              }
+            }
 
-                  .columns {
-                    margin: 0;
+            .document-section {
+              font-family: $family-primary;
+              font-size: 18px;
+              line-height: 23px;
+              color: #373737;
 
-                    &:last-child {
-                      margin-bottom: 10px;
-                    }
+              .witness-list {
+                ul.list-group {
+                  list-style-position: inside;
 
-                    .column {
-                      padding: 0 !important;
+                  li.list-group-item {
+                    background: url(#{$image-path}/icons/voir.svg) top 6px left / 24px auto no-repeat;
+                    padding: 0 0 0 32px;
 
-                      & > div > * {
-                        display: inline-block;
-                        margin-right: 5px;
+                    .columns {
+                      margin: 0;
+
+                      &:last-child {
+                        margin-bottom: 10px;
+                      }
+
+                      .column {
+                        padding: 0 !important;
+
+                        & > div > * {
+                          display: inline-block;
+                          margin-right: 5px;
+                        }
                       }
                     }
                   }
                 }
               }
-            }
 
+            }
           }
         }
       }

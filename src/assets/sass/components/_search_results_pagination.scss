@@ -1,0 +1,27 @@
+::v-deep {
+  .pagination {
+
+    .pagination-link {
+      display: inline-block;
+      width: 38px;
+      height: 38px;
+      background-color: #C3C3C3;
+      border: none;
+      border-radius: 3.2px;
+
+      &.pagination-previous {
+        background: #C3C3C3 url(#{$image-path}/icons/page_precedent.svg) center / 28px auto no-repeat;
+      }
+
+      &.pagination-next {
+        background: #C3C3C3 url(#{$image-path}/icons/page_suivant.svg) center / 28px auto no-repeat;
+      }
+
+      & > * {
+        display: none;
+      }
+
+    }
+
+  }
+}
