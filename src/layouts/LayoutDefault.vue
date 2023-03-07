@@ -66,7 +66,7 @@
       </div>
       <div
         class="columns advanced-search_row"
-        :class="showLeftSideBar ? 'with-side-bar' : ''"
+        :class="showLeftSideBar && $route.name === 'search' ? 'with-side-bar' : ''"
       >
         <div
           v-if="showLeftSideBar && $route.name === 'search'"
