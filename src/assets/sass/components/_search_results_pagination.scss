@@ -1,5 +1,68 @@
+
+.pagination-goto {
+  display: flex;
+  float: right;
+  position: relative;
+  width: 120px;
+  margin-left: 50px;
+
+  & > input[type="text"] {
+    margin-left: 4px;
+    height: 38px !important;
+    padding: 0 !important;
+    border: 1px solid #C00055;
+    border-radius: 3.2px;
+
+    font-family: $family-primary;
+    font-size: 18px;
+    color: #CB2158;
+    font-weight: 800;
+    text-align: center;
+    text-decoration: none;
+
+    &:focus {
+      outline: 1px solid #C00055;
+    }
+  }
+
+  & > input[type="text"],
+  & > span {
+    display: inline-block;
+    width: 40px;
+  }
+
+  & > span.label-sur-page {
+    font-family: $family-primary;
+    font-size: 11px;
+    line-height: 38px;
+    color: #979797;
+    font-weight: 500;
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  & > span.total-pages {
+    background-color: #DFDFDF;
+    border-radius: 3.2px;
+
+    font-family: $family-primary;
+    font-size: 18px;
+    line-height: 38px;
+    color: #818181;
+    text-align: center;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+}
+
+
 ::v-deep {
   .pagination {
+
+    .pagination-list {
+      order:2;
+    }
 
     .pagination-link {
       display: inline-block;

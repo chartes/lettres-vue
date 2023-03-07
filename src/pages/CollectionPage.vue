@@ -16,8 +16,8 @@
     </div>
 
     <section>
-      <span class="pagination-goto">
-        <span> Page : </span>
+
+      <span v-if="totalCount" class="pagination-goto">
         <input
           v-model="currentPage"
           name="page"
@@ -26,7 +26,10 @@
           placeholder="Page..."
           @change.prevent="currentPage = parseInt(p)"
         >
+        <span class="label-sur-page">sur</span>
+        <span class="total-pages">{{ totalPages }}</span>
       </span>
+
       <div class="">
         <b-table
           ref="multiSortTable"
@@ -145,6 +148,9 @@ export default {
           await this.fetchData();
         }
       },
+    },
+    totalPages: function() {
+      return Math.ceil(this.totalCount / this.pageSize)
     },
     ...mapState("user", ["current_user"]),
   },

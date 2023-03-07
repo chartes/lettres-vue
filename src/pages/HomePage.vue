@@ -546,10 +546,5 @@ section > .container {
   border: none !important;
   outline: none !important;
 }*/
-/*.search_button {
-  border-color: white !important;
-  outline: none !important;
-  box-shadow:none !important;
-  color: rgba(35, 9, 20) !important;
- }*/
+
 </style>

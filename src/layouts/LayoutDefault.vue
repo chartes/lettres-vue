@@ -65,8 +65,8 @@
         </div>
       </div>
       <div
-          class="columns advanced-search_row"
-          :class="showLeftSideBar ? 'with-side-bar' : ''"
+        class="columns advanced-search_row"
+        :class="showLeftSideBar ? 'with-side-bar' : ''"
       >
         <div
           v-if="showLeftSideBar && $route.name === 'search'"
@@ -215,7 +215,7 @@ export default {
 }
 .main-column {
   background-color: white;
-  padding-bottom: 0;
+  padding-bottom: 20px;
 }
 .main-column-content {
   width: $container-max-width;
@@ -504,7 +504,7 @@ a.portail_button:hover {
   text-align: center;
 }
 .search-container {
-  margin: 0 0 0 10px !important;
+  margin: 0 0 0 20px !important;
 
   ::v-deep .icon {
     height: 40px !important;
@@ -525,11 +525,6 @@ a.portail_button:hover {
   border: none !important;
   outline: none !important;
 }*/
-.search_button {
-  border-color: white !important;
-  outline: none !important;
-  box-shadow:none !important;
-  color: rgba(35, 9, 20) !important;
- }
+
 
 </style>
