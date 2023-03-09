@@ -48,7 +48,7 @@
         </div>
       </div>
       <div
-        v-else-if="$route.name === 'search'"
+        v-else-if="$route.name === 'search' || $route.name === 'document'"
       >
         <div
           id="intro_search"

@@ -28,7 +28,7 @@
       <!-- dates de lieux et de temps -->
 
       <section class="document-section">
-        <div class="heading is-size-5 is-uppercase">
+        <div class="heading is-uppercase">
           <span class="heading-content">Dates</span>
           <div class="slope-container">
             <span class="slope tier-1" />
@@ -37,7 +37,7 @@
             <span class="slope tier-4" />
           </div>
         </div>
-        <div>
+        <div class="document-section-content">
           <document-date-attributes :editable="canEdit" />
           <document-placenames
             :editable="canEdit"
@@ -49,7 +49,7 @@
 
       <!-- correspondents -->
       <section class="document-section">
-        <div class="heading is-size-5 is-uppercase">
+        <div class="heading is-uppercase">
           <span class="heading-content">Correspondants</span>
           <div class="slope-container">
             <span class="slope tier-1" />
@@ -58,7 +58,7 @@
             <span class="slope tier-4" />
           </div>
         </div>
-        <div>
+        <div class="document-section-content">
           <document-persons
             :editable="canEdit"
             @add-person="addPerson"
@@ -72,7 +72,7 @@
        -->
 
       <section class="document-section">
-        <div class="heading is-size-5 is-uppercase">
+        <div class="heading is-uppercase">
           <span class="heading-content"> Témoins </span>
           <b-button
             v-if="canEdit"
@@ -91,7 +91,7 @@
             <span class="slope tier-4" />
           </div>
         </div>
-        <div>
+        <div class="document-section-content">
           <witness-list
             :editable="canEdit"
             :open-modal="openWitnessModal"
@@ -103,15 +103,17 @@
 
       <section class="document-section">
         <!-- collections -->
-        <div class="heading is-size-5 is-uppercase">
+        <div class="heading is-uppercase">
           <span class="heading-content">Collections</span>
         </div>
-        <document-collections :editable="canEdit" />
+        <div class="document-section-content">
+          <document-collections :editable="canEdit" />
+        </div>
       </section>
 
       <!-- analyse -->
       <section class="document-section">
-        <div class="heading is-size-5 is-uppercase">
+        <div class="heading is-uppercase">
           <span class="heading-content">Analyse</span>
           <div class="slope-container">
             <span class="slope tier-1" />
@@ -120,7 +122,7 @@
             <span class="slope tier-4" />
           </div>
         </div>
-        <div>
+        <div class="document-section-content">
           <document-argument
             :editable="canEdit"
             @add-place="addPlace"
@@ -129,9 +131,10 @@
           />
         </div>
       </section>
+
       <!-- transcription -->
       <section v-if="!preview" class="document-section">
-        <div class="heading is-size-5 is-uppercase">
+        <div class="heading is-uppercase">
           <span class="heading-content">Transcription</span>
           <div class="slope-container">
             <span class="slope tier-1" />
@@ -140,7 +143,7 @@
             <span class="slope tier-4" />
           </div>
         </div>
-        <div>
+        <div class="document-section-content">
           <document-transcription
             :editable="canEdit"
             @add-place="addPlace"
@@ -419,22 +422,146 @@ export default {
   margin-bottom: 20px;
 }
 
-.panel {
-  -webkit-box-shadow: none;
-  box-shadow: none;
-}
-
 .document-section {
+  flex-direction: column;
+  align-items: flex-start;
+
+  font-family: $family-primary;
+  font-size: 20px;
+  line-height: 1.2;
+
+  // Section : Titre du document et langues
   &.columns {
-    margin-left: 0;
-    margin-right: 0;
-    margin-bottom: 30px;
+    margin: 20px 0 50px;
 
     .column {
-      padding-top: 0;
-      padding-bottom: 0;
+      padding: 0;
+      border: none;
+
+      &.component {
+        align-self: flex-start !important;
+      }
+
+      &:first-child {
+        width: 100%;
+      }
+
+      ::v-deep {
+        .tag:not(body).is-light {
+          background: none;
+          font-family: $family-primary;
+          font-size: 16px;
+          color: #6D7278;
+          font-weight: 400;
+        }
+      }
+
     }
   }
+
+  // Sections : Termes et contenus des metadonnées
+
+  & > .heading {
+    display: flex;
+    gap: 2px;
+    margin-bottom: 20px;
+
+    font-size: 16px;
+    line-height: 1;
+    font-weight: 500;
+    color: #FF0052;
+    letter-spacing: 0;
+    text-transform: uppercase;
+
+    .heading-content {
+      display: inline-block;
+    }
+
+    &::after {
+      display: block;
+      content: '';
+      width: 100%;
+      border-bottom: 1px solid #FF0052;
+      transform: translateY(-3px);
+    }
+  }
+
+  & > .document-section-content {
+    margin-left: 60px;
+    margin-bottom: 40px;
+
+    ::v-deep {
+
+      a {
+        color: #000000;
+
+        &:hover {
+          color: #C00055;
+          text-decoration: underline;
+        }
+      }
+
+      .document-date__attributes {
+        margin-bottom: 20px;
+      }
+
+      .label,
+      .heading {
+        font-size: 16px;
+        color: #000000;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0;
+      }
+
+      .label {
+        font-size: 13px;
+      }
+
+      .panel {
+        -webkit-box-shadow: none;
+        box-shadow: none;
+
+        font-family: $family-primary;
+
+        .panel-block {
+          border: none;
+          padding: 0;
+          margin-bottom: 20px;
+
+          & > :nth-child(2) {
+            font-size: 20px;
+            color: #585858;
+            font-weight: 400;
+            letter-spacing: 0;
+          }
+        }
+      }
+
+      .tag {
+        background: none;
+        padding: 0;
+        margin: 0;
+
+        .breadcrumb.is-small {
+          font-size: 20px;
+          font-weight: 400;
+
+          a {
+            color: #000000;
+
+            &:hover {
+              color: #C00055;
+              text-decoration: underline;
+            }
+          }
+        }
+      }
+
+    }
+  }
+
+
 }
 
 .slope-container {
@@ -464,25 +591,6 @@ export default {
   background-color: #baaf92;
 }
 
-.heading {
-  display: block;
-  background-color: $beige-lighter;
-  margin-bottom: 3px;
-  margin-top: 3px;
-  padding-left: 5px;
-  border-left: 3px solid $nice-grey;
-}
-.heading-content {
-  display: inline-block;
-
-  color: $brown;
-  font-family: $bitter-family;
-  font-size: 18px;
-  padding: 5px;
-}
-.main-column-content {
-  padding-left: 0px !important;
-}
 .open-modal-button {
   margin-top: 3px;
   background-color: $beige-lighter !important;

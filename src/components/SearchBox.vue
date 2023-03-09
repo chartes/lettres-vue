@@ -88,6 +88,8 @@ export default {
   ::v-deep input[type="search"] {
     border-color: #FFFFFF !important;
     height: 100%;
+    padding-top: 2px;
+    padding-bottom: 2px;
 
     font-family: $family-primary;
     font-size: 18px;
