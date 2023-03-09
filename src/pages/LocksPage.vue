@@ -32,8 +32,11 @@
 
         checkable
         checkbox-position="right"
+        :checked-rows.sync="checkedRows"
+        :custom-is-checked="(a, b) => { return a.docId === b.docId }"
 
         backend-filtering
+
         @sort="sortPressed"
         @sorting-priority-removed="sortingPriorityRemoved"
         @filters-change="onFilter"
@@ -43,7 +46,10 @@
         <template #top-left>
           <span class="table_title">Status des verrouillages</span>
         </template>
-        <template slot="empty">
+        <template #bottom-left>
+          <b>Total checked</b>: {{ checkedRows.length }}
+        </template>
+        <template #empty>
           <section class="section">
             <div class="content has-text-grey has-text-centered">
               <p>Vous n'avez aucun verrouillage pour le moment.</p>
@@ -99,7 +105,10 @@
           sortable
           searchable
         >
-          <span class="tag" v-html="new Date(props.row.event_date).toLocaleDateString()" />
+          <span
+            class="tag"
+            v-html="new Date(props.row.event_date).toLocaleDateString()"
+          />
         </b-table-column>
         <b-table-column
           v-slot="props"
@@ -121,6 +130,13 @@
           />
         </b-table-column>
       </b-table>
+      <lock-form
+        v-if="withStatus && lockEditMode && status"
+        :doc-id="checkedRows[0].docId"
+        :current-lock="status.currentLock"
+        :cancel="stopLockEditor"
+        :submit="stopLockEditor"
+      />
     </div>
   </div>
 </template>
@@ -129,6 +145,7 @@
 
 import { mapState, mapActions, mapGetters } from "vuex";
 import DocumentTagBar from "@/components/document/DocumentTagBar";
+import LockForm from "@/components/forms/LockForm";
 import Document from "@/components/sections/Document.vue";
 
 export default {
@@ -136,11 +153,16 @@ export default {
   components: {
     Document,
     DocumentTagBar,
+    LockForm
   },
   data() {
     return {
+      lockEditMode: false,
+      withStatus: false,
+      status: null,
       fetchedData: [],
       data: [],
+      checkedRows:[],
       sortingPriority: [{ field: "expiration-date", order: "desc" }],
       filters: [],
       numPage: 1,
@@ -165,16 +187,32 @@ export default {
     ...mapState("user", ["current_user", "jwt"]),
     ...mapState("locks", ["fullLocks"]),
     ...mapGetters("document", []),
+    ...mapGetters("document", ["getDocumentStatus"])
+  },
+  watch: {
+    checkedRows: async function() {
+      console.log("checked rows watch : ", this.checkedRows)
+      /*TODO allow multiple locks processing */
+      if (this.checkedRows.length === 1 && this.checkedRows[0].docId) {
+        await this.fetchStatus(this.checkedRows[0].docId);
+        this.lockEditMode = true;
+        this.withStatus = true;
+      }
+    },
   },
   async created() {
-    await this.fetchData();
     if (this.current_user) {
       await this.fetchUsers();
+      await this.fetchData();
     }
   },
   methods: {
     ...mapActions("locks", ["fetchFullLocks"]),
     ...mapActions("user", ["fetchUsers"]),
+    async fetchStatus(docId) {
+      this.status = await this.getDocumentStatus(docId);
+      console.log("status", docId, this.status);
+    },
     async fetchData() {
       this.isLoading = true;
       let filters_list = [];
@@ -189,6 +227,11 @@ export default {
           }
           else filters_list.push('filter[' + Object.keys(this.filters)[i] + ']=' + Object.values(this.filters)[i]);
         }
+      }
+      if (!this.current_user.isAdmin){
+        console.log("For non-admin users, only fetch their own locks");
+        let filtered_users = this.$store.state.user.users.map(u => u.id === this.current_user.id ? u.id : false).filter(Boolean);
+        filters_list.push('filter[user_id]=[' + filtered_users + ']');
       }
       console.log('filters_list : ', filters_list)
       this.fetchedData = await this.fetchFullLocks({
@@ -304,17 +347,24 @@ export default {
               expiration_date: l.data.attributes['expiration-date'],
               is_active: l.data.attributes['is-active'],
               user_id: l.user.id,
-              username: l.user.username
+              username: l.user.username,
             };
           })
         //console.log('loadAsyncData() / this.data : ', this.data);
       }
     },
+    startLockEditor() {
+      this.lockEditMode = true;
+        return Promise.resolve(this.status.currentLock['is-active']);
+    },
+    async stopLockEditor() {
+      this.lockEditMode = false;
+      await this.fetchData()
+    },
     /*
      * Handle page-change event
      */
     onPageChange(page) {
-      console.log("tada")
       this.currentPage = page;
     },
   },

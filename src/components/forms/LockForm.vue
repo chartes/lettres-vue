@@ -4,8 +4,8 @@
     class="lock-form"
     :title="title"
     :cancel="cancelAction"
-    :submit="canBeLocked ? submitAction : false"
-    :remove="canBeUnlocked ? removeAction : false"
+    :submit="canBeLocked ? submitAction : null"
+    :remove="canBeUnlocked ? removeAction : null"
     :valid="true"
     :submitting="false"
     submit-text="Verrouiller"
@@ -64,8 +64,11 @@
           />
         </form>
         <form @submit.prevent="">
-          <b-field>
-            <select>
+          <b-field label="Choisir le propriétaire du verrou">
+            <select @change="updateNextLockOwner">
+              <option :value="current_user.id">
+                {{ current_user.username }}
+              </option>
               <option
                 v-for="option in users"
                 :key="option.id"
@@ -99,6 +102,7 @@ export default {
     currentLock: { type: Object, default: null },
     cancel: { type: Function, default: () => {} },
     submit: { type: Function, default: () => {} },
+    remove: { type: Function, default: () => {} },
   },
   data() {
     return {
@@ -180,19 +184,18 @@ export default {
       this.fetchLock();
     },
   },
-  /*async created() {
-    await this.fetchLock()
-  },*/
   mounted() {
     this.fetchLock();
     this.nextLockOwner = this.current_user;
+    console.log('this.nextLockOwner (mounted) : ', this.nextLockOwner)
     this.description = this.defaultDescription;
   },
   methods: {
     ...mapActions("user", ["fetchUsers"]),
+    ...mapActions("locks", ["saveLock", "updateLock"/*,"removeLock"*/]),
     submitAction() {
       if (this.nextLock) {
-        this.saveLock().then((resp) => {
+        this.saveLock(this.nextLock).then((resp) => {
           console.log('submitAction() RESP : ', resp)
           console.log('this.$props : ', this.$props)
           this.$props.submit();
@@ -203,9 +206,9 @@ export default {
       this.$props.cancel();
     },
     removeAction() {
-      this.removeLock().then((resp) => {
+      this.updateLock(this.selectedLock).then((resp) => {
         console.log('submitAction() RESP : ', resp)
-          console.log('this.$props : ', this.$props)
+        console.log('this.$props : ', this.$props)
         this.$props.submit();
       });
     },
@@ -226,21 +229,17 @@ export default {
         this.loading = false;
       }
     },
-    saveLock() {
-      console.log('saveLock(this.nextLock)', this.nextLock)
-      return this.$store.dispatch("locks/saveLock", this.nextLock);
-    },
-    removeLock() {
-      console.log('this.selectedLock : ', this.selectedLock)
-      console.log('removeLock(this.nextLock)', this.nextLock)
-      return this.$store.dispatch("locks/removeLock", this.selectedLock);
-    },
     searchUser(search) {
       return this.$store.dispatch("user/search", search);
     },
     resetDescription() {
       this.description = this.defaultDescription;
     },
+    updateNextLockOwner(evt) {
+      this.nextLockOwner = this.users.filter((u) => u.id === parseInt(evt.target.value))[0];
+      console.log('evt.target.value : ', evt.target.value)
+      console.log('this.nextLockOwner (update) : ', this.nextLockOwner)
+    }
   },
 };
 </script>

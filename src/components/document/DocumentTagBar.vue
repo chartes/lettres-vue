@@ -59,14 +59,14 @@
       <template #active>
         <a><i class="fas fa-lock" /></a>
       </template>
-      <!--<template #activeLabel>
+      <template #activeLabel>
         <span
-          v-if="lockOwner[docId]"
+          v-if="$route.name === 'document' && lockOwner[docId]"
           class="badge-label"
         >{{
           lockOwner[docId].attributes.username
         }}</span>
-      </template>-->
+      </template>
       <template #inactive>
         <a><i class="fas fa-unlock" /></a>
       </template>
@@ -83,7 +83,7 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from "vuex";
+import { mapState, mapActions, mapGetters } from "vuex";
 import Badge from "../ui/Badge";
 import LockForm from "../forms/LockForm";
 
@@ -111,17 +111,28 @@ export default {
       if (this.withStatus) {
         await this.fetchStatus();
       }
-    },
+    }
   },
   async created() {
     if (this.withStatus) {
       await this.fetchStatus();
+      await this.fetchData();
     }
+
   },
   methods: {
+        ...mapActions("locks", ["fetchLockOwner"]),
     async fetchStatus() {
       this.status = await this.getDocumentStatus(this.docId);
       console.log("status", this.docId, this.status);
+    },
+    async fetchData() {
+      if (this.status.currentLock.id) {
+        this.$store.state.lockOwner = await this.fetchLockOwner({
+        docId: this.docId,
+        lockId: this.status.currentLock.id
+        })
+      }
     },
     addBookmark() {
       return this.$store

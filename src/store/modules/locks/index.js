@@ -81,7 +81,7 @@ const actions = {
     if (numPage !== null) {
       let sorts = sortingPriority ? sortingPriority.map(s => `${s.order === 'desc' ? '-' : ''}${s.field}`) : []
         sorts = `&sort=${sorts.length ? sorts.join(',') : '-expiration-date'}`
-      console.log('sorts', sorts)
+      console.log('sorts criteriae : ', sorts)
       return http.get(`locks?include=user${sorts}&page[size]=${pageSize || 50}&page[number]=${numPage|| 1}${filters ? '&' + filters.join('&') : ''}`).then(response => {
         commit('UPDATE_FULL_LOCKS', {
           locks: response.data.data,
@@ -106,6 +106,14 @@ const actions = {
     const http = http_with_auth(rootState.user.jwt);
     return http.post(`/locks`, {data: lock}).then(response => {
       commit('SAVE_LOCK', response.data.data);
+    });
+  },
+
+  updateLock({ rootState, commit}, lock) {
+    const http = http_with_auth(rootState.user.jwt);
+    return http.patch(`/locks/${lock.id}`, {data: lock}).then(response => {
+      console.log('updated lock : ', lock)
+      //commit('REMOVE_LOCK');
     });
   },
 
