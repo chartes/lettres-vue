@@ -6,7 +6,7 @@
   >
     <div class="root-grid-container" :class="popupMode ? 'popup-mode' : ''">
       <div v-if="popupMode" class="leftbar-header-area">
-        <h1 class="step-label is-uppercase is-size-2">
+        <h1 class="step-label">
           {{ wizardLabel }}
         </h1>
         <h2 v-if="subtitle" class="step-label is-uppercase is-size-5 mb-3">
@@ -351,15 +351,15 @@ export default {
 
 <style lang="scss" scoped>
 @import "@/assets/sass/main.scss";
+@import "@/assets/sass/components/_search_results_table.scss";
+@import "@/assets/sass/components/_search_results_pagination.scss";
 
 .root-container {
   overflow: hidden;
-
   min-height: 720px;
-
   height: inherit;
-
-  padding: 0px !important;
+  padding: 0 !important;
+  background: transparent !important;
 
   .label {
     color: inherit !important;
@@ -380,27 +380,57 @@ export default {
     margin-left: 40px;
   }
 
-  .leftbar-header-area,
+  /*  Grid */
+  .root-grid-container {
+    display: grid;
+    min-height: inherit;
+    height: 100%;
+    background: none;
+
+    grid-template-columns: auto;
+    grid-template-rows: auto;
+    grid-template-areas: "center-content";
+  }
+
+  .popup-mode {
+    grid-template-columns: 320px auto;
+    grid-template-rows: 62px auto 80px;
+    grid-template-areas:
+      "leftbar-header leftbar-header"
+      "leftbar-content center-content"
+      "leftbar-footer center-footer";
+  }
+
+  .leftbar-header-area {
+    grid-area: leftbar-header;
+  }
+
+  .leftbar-header-area {
+    background-color: #CB2158;
+    border: none;
+    border-radius: 5px;
+    padding: 3px 20px;
+    margin-bottom: 10px;
+
+    h1 {
+      padding: 0;
+      font-family: $family-apptitle;
+      font-size: 30px;
+      color: #FFFFFF;
+      font-weight: 200;
+      letter-spacing: 0;
+    }
+  }
+
+  .leftbar-content-area {
+    grid-area: leftbar-content;
+  }
+
   .leftbar-content-area,
   .leftbar-footer-area {
     background-color: $light !important;
   }
 
-  .leftbar-header-area {
-    grid-area: leftbar-header;
-    h1 {
-      padding-bottom: 0px;
-    }
-    h2 {
-      padding-top: 0px;
-      top: -12px;
-      position: relative;
-      left: 0px;
-    }
-  }
-  .leftbar-content-area {
-    grid-area: leftbar-content;
-  }
   .leftbar-footer-area {
     grid-area: leftbar-footer;
 
@@ -415,44 +445,43 @@ export default {
 
   .center-content-area {
     grid-area: center-content;
+    background-color: #FFFFFF;
     height: 100%;
 
     & > .b-tabs {
       height: 100%;
+
+      ::v-deep {
+        .tabs li > a {
+          font-family: $family-primary;
+          font-size: 18px;
+          color: #7F0038;
+          font-weight: 500;
+          text-transform: uppercase;
+        }
+      }
+
       .tab-content {
         padding: 0;
       }
+
       .tab-content,
       .tab-item {
         height: 100%;
       }
     }
   }
+
   .center-footer-area {
     grid-area: center-footer;
-    justify-self: end;
-    align-self: center;
+    background-color: #FFFFFF;
+
     .buttons {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
       margin-right: 20px;
     }
-  }
-
-  .root-grid-container {
-    display: grid;
-    min-height: inherit;
-    height: 100%;
-
-    grid-template-columns: auto;
-    grid-template-rows: auto;
-    grid-template-areas: "center-content";
-  }
-  .popup-mode {
-    grid-template-columns: 320px auto;
-    grid-template-rows: 120px auto 80px;
-    grid-template-areas:
-      "leftbar-header center-content"
-      "leftbar-content center-content"
-      "leftbar-footer center-footer";
   }
 }
 
