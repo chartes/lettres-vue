@@ -1,14 +1,17 @@
 <template>
-  <div class="document">
+  <div
+      class="document"
+      :class="canEdit ? 'edit-mode' : ''"
+  >
     <div class="columns">
       <document-tag-bar
-      class="column is-three-quarters"
+      class="column tag-bar"
       v-if="!preview && !isLoading && current_user"
       :doc-id="docId"
       :with-status="true"
     />
     <document-deletion
-      class="column"
+      class="column delete-button"
       v-if="!preview && current_user && current_user.isAdmin"
       :doc-id="docId"
     />
@@ -73,16 +76,14 @@
 
       <section class="document-section">
         <div class="heading is-uppercase">
-          <span class="heading-content"> Témoins </span>
+          <span class="heading-content "> Témoins </span>
           <b-button
             v-if="canEdit"
-            type="is-light"
             value="+"
-            size="is-small"
-            class="open-modal-button"
+            class="open-modal-button has-add-btn"
             @click="openWitnessModal = true"
           >
-            <i class="fas fa-plus" />
+            <icon-add />
           </b-button>
           <div class="slope-container">
             <span class="slope tier-1" />
@@ -275,11 +276,13 @@ import WitnessList from "@/components/document/WitnessList.vue";
 
 import PlaceWizardForm from "@/components/forms/wizards/PlaceWizardForm.vue";
 import PersonWizardForm from "@/components/forms/wizards/PersonWizardForm.vue";
+import IconAdd from "@/components/ui/icons/IconAdd";
 
 export default {
   name: "Document",
   //emit: ["open-witness-modal"],
   components: {
+    IconAdd,
     Changelog,
     DocumentSkeleton,
     DocumentPersons,
@@ -413,6 +416,16 @@ export default {
 
 .document {
   width: 100%;
+
+  & > .columns {
+    align-items: center;
+    margin: 30px 0 40px !important;
+
+    .tag-bar {
+      padding: 0;
+      margin: 0;
+    }
+  }
 }
 
 .document__content {
@@ -561,8 +574,100 @@ export default {
     }
   }
 
+}
+
+
+// Mode édition
+
+.document.edit-mode {
+
+  .document-section {
+    border: 1px solid #FF0052;
+    border-radius: 5px;
+    padding: 30px;
+    margin-bottom: 30px;
+
+    // Section du titre
+    &.columns::before {
+      content: "TITRE";
+      display: inline-block;
+      margin-bottom: 20px;
+      font-weight: 500;
+      color: #FF0052;
+    }
+
+    & > .heading {
+
+      span {
+        font-size: 20px;
+      }
+
+      &::after {
+        display: none;
+      }
+    }
+
+    & > .document-section-content {
+      margin-left: 30px;
+      margin-bottom: 0;
+
+      ::v-deep {
+
+        .has-add-btn {
+          display: flex !important;
+          align-items: center;
+          gap: 8px;
+          line-height: 20px;
+
+          a.tag .icon {
+            width: 20px !important;
+            height: 20px !important;
+            margin: 0 !important;
+            padding: 0 !important;
+
+            .icon__line {
+              stroke: #FFFFFF;
+            }
+          }
+
+          a.tag:hover .icon circle {
+            fill: #C00055;
+          }
+
+        }
+
+      }
+    }
+
+  }
 
 }
+
+.delete-button {
+  flex: 38px 0 0;
+  padding: 0;
+
+  ::v-deep {
+
+    & > a.tag {
+      display: inline-block;
+      width: 38px;
+      max-width: unset;
+      max-height: unset;
+      height: 38px;
+      background: url(../../assets/images/icons/bouton_supprimer.svg) center / 38px auto no-repeat !important;
+      border-radius: 0!important;
+      border: none !important;
+      margin: 0;
+      text-indent: -9999px;
+
+      .icon {
+        display: none;
+      }
+    }
+  }
+}
+
 
 .slope-container {
   height: 3px;
@@ -591,11 +696,43 @@ export default {
   background-color: #baaf92;
 }
 
-.open-modal-button {
-  margin-top: 3px;
-  background-color: $beige-lighter !important;
-  &:hover {
-    background-color: $nice-grey !important;
+.button.open-modal-button.has-add-btn {
+  display: flex !important;
+  align-items: center;
+  line-height: 20px;
+
+  height: 20px !important;
+  background-color: transparent !important;
+  border: none;
+  padding: 0;
+
+  ::v-deep {
+
+    span {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+
+      .icon {
+        width: 20px !important;
+        height: 20px !important;
+        margin: 0 0 0 8px !important;
+        padding: 0 !important;
+
+        .icon__line {
+          stroke: #FFFFFF;
+        }
+      }
+    }
   }
+
+  &:hover {
+    ::v-deep {
+      .icon circle {
+        fill: #C00055;
+      }
+    }
+  }
+
 }
 </style>

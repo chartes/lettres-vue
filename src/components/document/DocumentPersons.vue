@@ -5,7 +5,7 @@
         class="panel-block"
         style="display: inline-block; width: 100%"
       >
-        <div class="heading mb-2">
+        <div class="heading mb-2 has-add-btn">
           Expéditeur{{ documentSender.length > 1 ? "s" : "" }}
           <a
             v-if="editable"
@@ -51,7 +51,7 @@
         class="panel-block"
         style="display: inline-block; width: 100%"
       >
-        <div class="heading mb-2">
+        <div class="heading mb-2 has-add-btn">
           Destinataire{{ documentRecipients.length > 1 ? "s" : "" }}
           <a
             v-if="editable"

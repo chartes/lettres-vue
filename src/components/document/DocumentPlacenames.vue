@@ -5,7 +5,7 @@
   >
     <div class="columns">
       <div class="document-placenames__senders column is-one-third">
-        <h3 class="document-placenames__subtitle heading">
+        <h3 class="document-placenames__subtitle heading has-add-btn">
           Dates de lieu d'expédition
           <a
             v-if="editable && locationDateFrom.length === 0"
@@ -49,7 +49,7 @@
       </div>
 
       <div class="document-placenames__recipients column is-one-third">
-        <h3 class="document-placenames__subtitle heading">
+        <h3 class="document-placenames__subtitle heading has-add-btn">
           Dates de lieu de destination
           <a
             v-if="editable && locationDateTo.length === 0"

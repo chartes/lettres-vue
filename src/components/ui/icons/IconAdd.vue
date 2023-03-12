@@ -1,23 +1,29 @@
 <template>
   <svg
     class="icon icon__add"
-    viewBox="0 0 24 24"
+    viewBox="0 0 20 20"
   >
     <g>
+      <circle cx="10" cy="10" r="10" fill="#6D7278" />
       <line
         class="icon__line"
-        x1="12"
-        y1="1"
-        x2="12"
-        y2="23"
+        x1="10"
+        y1="5"
+        x2="10"
+        y2="15"
+        stroke="#FFFFFF"
+        stroke-width="2"
       />
       <line
         class="icon__line"
-        x1="23"
-        y1="12"
-        x2="1"
-        y2="12"
-      />    </g>
+        x1="15"
+        y1="10"
+        x2="5"
+        y2="10"
+        stroke="#FFFFFF"
+        stroke-width="2"
+      />
+    </g>
   </svg>
 </template>
 
@@ -26,3 +32,4 @@
     name: 'IconAdd',
   }
 </script>
+
