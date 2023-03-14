@@ -6,7 +6,6 @@
         :data="data"
         detailed
         detail-key="docId"
-
         show-detail-icon
 
         striped
@@ -36,6 +35,7 @@
         :custom-is-checked="(a, b) => { return a.docId === b.docId }"
 
         backend-filtering
+        :debounce-search="1000"
 
         @sort="sortPressed"
         @sorting-priority-removed="sortingPriorityRemoved"
@@ -77,6 +77,16 @@
             :doc-id="props.row.docId"
             :with-status="true"
           />
+        </b-table-column>
+        <b-table-column
+          v-slot="props"
+          field="collections"
+          label="Collection"
+          width="20%"
+          sortable
+          searchable
+        >
+          <span v-html="props.row.collections" />
         </b-table-column>
         <b-table-column
           v-slot="props"
@@ -162,6 +172,7 @@ export default {
       status: null,
       fetchedData: [],
       data: [],
+      documentsCollections: [],
       checkedRows:[],
       sortingPriority: [{ field: "expiration-date", order: "desc" }],
       filters: [],
@@ -199,16 +210,57 @@ export default {
         this.withStatus = true;
       }
     },
+    /*fetchData() {
+      this.loadAsyncData();
+    }*/
   },
   async created() {
     if (this.current_user) {
       await this.fetchUsers();
       await this.fetchData();
     }
+    this.loadAsyncData();
   },
   methods: {
+    ...mapActions("collections", ["getCollectionByDocId"]),
     ...mapActions("locks", ["fetchFullLocks"]),
     ...mapActions("user", ["fetchUsers"]),
+    async getCollectionTitle(docId) {
+      let response = await this.getCollectionByDocId(docId);
+      if (response) {
+        const start = response.reduce((object, {docId}) => ({...object, [docId]: []}), {});
+        console.log('start', start)
+        const result = response.reduce((object, {docId, title}) => ({...object, [docId]: [object[docId], [title]].flat(1)}), start);
+        console.log('result', result)
+        //let docIdCollectionsList = Object.entries(result).map(([name, value]) => ({docId: name, title: value}));
+
+          let groupBy = function(xs, key) {
+            return xs.reduce(function(rv, x) {
+              (rv[x[key]] = rv[x[key]] || []).push(x);
+              return rv;
+            }, {});
+          };
+
+          let groupedItems = groupBy(response, "docId");
+          let docIdCollectionsList = Object.keys(groupedItems).map(it => ({
+            docId: it,
+            title: groupedItems[it].map(r => r.title)
+          }));
+
+        /*let docIdCollectionsList = response.reduce((acc, {name, value}) => {
+          acc[name] ??= {name: name, value: []};
+          if(Array.isArray(value)) // if it's array type then concat
+            acc[name].value = acc[name].value.concat(value);
+          else
+            acc[name].value.push(value);
+
+          return acc;
+        }, {});*/
+        console.log("docIdCollectionsList", docIdCollectionsList);
+        //console.log("reducedArr", dataToPost);
+        return docIdCollectionsList;
+      }
+    },
     async fetchStatus(docId) {
       this.status = await this.getDocumentStatus(docId);
       console.log("status", docId, this.status);
@@ -216,24 +268,40 @@ export default {
     async fetchData() {
       this.isLoading = true;
       let filters_list = [];
+      let filtered_users = [];
       if (this.filters) {
         for (let i = 0; i < Object.keys(this.filters).length; i++) {
           // si filtre username, get user_ids
           if (Object.keys(this.filters)[i] === 'userName') {
-            let filtered_users = this.$store.state.user.users.map(u => u.username.includes(Object.values(this.filters)[i]) ? u.id : false).filter(Boolean);
+            filtered_users = this.$store.state.user.users.map(u => u.username.includes(Object.values(this.filters)[i]) ? u.id : false).filter(Boolean);
             console.log('filtered_users : ', filtered_users)
+            if (filtered_users.length > 0){
             // assign array of users as list (backend expects list)
-            filters_list.push('filter[user_id]=[' + filtered_users + ']');
+            filters_list.push('filter[user_id]=[' + filtered_users + ']');}
+            else {
+              console.log('TADA')
+              this.fetchedData = [];
+              this.data = [];
+              this.isLoading = false;
+              return;
+            }
           }
           else filters_list.push('filter[' + Object.keys(this.filters)[i] + ']=' + Object.values(this.filters)[i]);
         }
       }
       if (!this.current_user.isAdmin){
         console.log("For non-admin users, only fetch their own locks");
-        let filtered_users = this.$store.state.user.users.map(u => u.id === this.current_user.id ? u.id : false).filter(Boolean);
-        filters_list.push('filter[user_id]=[' + filtered_users + ']');
+        filtered_users = this.$store.state.user.users.map(u => u.id === this.current_user.id ? u.id : false).filter(Boolean);
+        if (filtered_users.length > 0){
+          filters_list.push('filter[user_id]=[' + filtered_users + ']');
+        } else {
+          this.data = [];
+          this.isLoading = false;
+          return;
+        }
       }
       console.log('filters_list : ', filters_list)
+
       this.fetchedData = await this.fetchFullLocks({
         userId: this.current_user.id,
         sortingPriority: this.sortingPriority,
@@ -241,9 +309,20 @@ export default {
         pageSize: this.pageSize,
         filters: filters_list.length ? filters_list : null,
       });
-      console.log('async fetchData() / this.fetchedData : ', this.fetchedData)
-      this.loadAsyncData();
-      this.isLoading = false;
+      console.log('async fetchData() / this.fetchedData : ', this.fetchedData);
+      this.documentsCollections = [];
+      for (let i = 0; i < this.fetchedData.locks.length; i++) {
+          let collectionMaps = await this.getCollectionTitle(this.fetchedData.locks[i].data.attributes['object-id'])
+          this.documentsCollections.push(collectionMaps[0])
+          console.log('this.fetchedData.locks[i].data.attributes[\'object-id\'])', this.fetchedData.locks[i].data.attributes['object-id'])
+          console.log('this.documentsCollections', this.documentsCollections)
+        }
+      if (this.documentsCollections.length >0) {
+        let ids = this.documentsCollections.map(m => m.docId)
+        this.documentsCollections = this.documentsCollections.filter(({docId}, index) => !ids.includes(docId, index + 1))
+      }
+      console.log('this.documentsCollections after dedupe', this.documentsCollections)
+      return this.fetchedData;
     },
     /*TODO add lock sort reset button
     async resetPriority() {
@@ -261,6 +340,7 @@ export default {
         this.filters = Object.entries(filters).reduce((a,[k,v]) => (v ? (a[k]=v, a) : a), {});
         console.log('onFilter / this.filters ', this.filters)
         await this.fetchData();
+        this.loadAsyncData();
       }
     },
     // Backend sorting
@@ -272,6 +352,7 @@ export default {
       this.sortingPriority = [...newPriority];
       console.log(newPriority, this.sortingPriority);
       await this.fetchData();
+      this.loadAsyncData();
     },
 
     async sortPressed(field, order, event) {
@@ -291,6 +372,7 @@ export default {
           this.sortingPriority.push({ field, order });
         }
         await this.fetchData();
+        this.loadAsyncData();
         //this.currentPage = 1;
       } else {
         // request regular sorted data from backend
@@ -316,7 +398,7 @@ export default {
        return Array.from(mapper.values())
     },*/
     loadAsyncData() {
-      if (this.fetchedData) {
+      //if (this.fetchedData && this.documentsCollections) {
         console.log('loadAsyncData() / this.fetchedData : ', this.fetchedData)
         this.totalCount = this.fetchedData.totalCount;
 
@@ -339,7 +421,7 @@ export default {
           return flatLockByDoc;
           })*/
 
-        this.data = this.fetchedData.locks.map((l) => {
+        this.data = this.fetchedData.locks.map((l) =>  {
             return {
               docId: l.data.attributes['object-id'],
               description: l.data.attributes.description,
@@ -348,18 +430,27 @@ export default {
               is_active: l.data.attributes['is-active'],
               user_id: l.user.id,
               username: l.user.username,
+              collections: this.documentsCollections.filter((map) => parseInt(map.docId) === l.data.attributes['object-id'])[0].title
             };
           })
-        //console.log('loadAsyncData() / this.data : ', this.data);
-      }
+
+        //console.log('this.rootCollections : ', this.getCollectionAdmin());
+        console.log('loadAsyncData() / this.data : ', this.data);
+        this.isLoading = false;
+      //}
     },
+    /*getCollectionAdmin(){
+      return Object.values(this.$store.state.collections.collectionsById).filter((c) => c.admin.username === this.current_user.username)
+
+    },*/
     startLockEditor() {
       this.lockEditMode = true;
         return Promise.resolve(this.status.currentLock['is-active']);
     },
     async stopLockEditor() {
       this.lockEditMode = false;
-      await this.fetchData()
+      await this.fetchData();
+      this.loadAsyncData();
     },
     /*
      * Handle page-change event

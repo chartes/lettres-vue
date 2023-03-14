@@ -219,7 +219,18 @@ const actions = {
       return {error: e}
     }
   },
+  getCollectionByDocId: async function({rootState}, docId) {
 
+    const http = http_with_auth(rootState.user.jwt);
+    const response = await http.get(`documents/${docId}/collections`);
+    if (response) {
+      const collections = response.data.data.map(collection => {
+        return { docId: docId, collectionId: collection.id, title: collection.attributes.title };
+      });
+      console.log('const collections : ', collections);
+      return collections;
+    }
+  }
   /*
   search ({ commit }, what) {
     state.isLoading = true;
