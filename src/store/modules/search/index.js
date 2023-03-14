@@ -228,8 +228,13 @@ const actions = {
     commit('SET_NUM_PAGE', 1)
     console.log('SET_SELECTED_PERSON_CITED', personCited)
   },
-
-
+  async getDocumentsTotal ({commit, rootState}) {
+    const http = http_with_auth(rootState.user.jwt);
+    const response = await http.get(`/search?query=*&without-relationships&sort=-id`);
+    const documentsTotal = response.data.meta['total-count'];
+    const lastDocId = response.data.data[0].id;
+    return {documentsTotal: documentsTotal, lastDocId: lastDocId};
+  },
   performSearch: debounce(async ({commit, state, rootState}) => {
     commit('SET_LOADING_STATUS', true);
 
