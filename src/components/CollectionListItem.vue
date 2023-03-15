@@ -34,7 +34,6 @@
               {{ collection.dateMax || "..." }}
             </div>
           </div>
-
           <span v-html="collection.description" />
           <div class="is-flex">
             <p class="pt-2 pr-2 pb-2 pl-3 ml-auto">

@@ -1,57 +1,84 @@
 <template>
   <div class="collection-card card">
-    <div class="card-content">
-      <div class="is-flex is-justify-content-space-between mb-4">
-        <div>
-          <collection-breadcrumb
-            v-if="collection.parent !== null"
-            :collection-id="collection.parent"
-          />
-          <span class="title is-flex is-justify-content-space-between">
-            <router-link
-              :to="{ name: 'collection', params: { collectionId: collection.id } }"
-              class="mb-5"
-              v-html="title"
-            />
-          </span>
-        </div>
-        <div class="ml-auto">
-          Documents&nbsp;:&nbsp;{{
-            collection.documentCount
-          }}
-        </div>
-        <div class="ml-5">
-          {{ collection.dateMin || "..." }} -
-          {{ collection.dateMax || "..." }}
-        </div>
+    <div class="columns is-vcentered">
+      <div
+        class="column is-2 has-text-centered"
+      >
+        <img
+          id="card_image"
+          class="card-img-left m-2 is-inline-block"
+          :src="getImgUrl(collectionId)"
+          alt="Card image cap"
+        >
       </div>
-
-      <span
-        class="description"
-        v-html="description"
-      />
-      <div class="is-flex">
-        <p class="pt-2 pr-2 pb-2 pl-3 ml-auto">
-          Gérée par&nbsp;<a>{{ collection.admin.username }}</a>
-        </p>
+      <div class="column">
+        <div class="card-content">
+          <div class="is-flex is-justify-content-space-between mb-4">
+            <div>
+              <collection-breadcrumb
+                v-if="collection.parent !== null"
+                :collection-id="collection.parent"
+              />
+              <span class="title is-flex is-justify-content-space-between">
+                <router-link
+                  :to="{ name: 'collection', params: { collectionId: collection.id } }"
+                  class="title mb-5"
+                  v-html="title"
+                />
+              </span>
+            </div>
+            <div class="ml-auto">
+              Documents&nbsp;:&nbsp;{{
+                collection.documentCount
+              }}
+            </div>
+            <div class="ml-5">
+              {{ collection.dateMin || "..." }} -
+              {{ collection.dateMax || "..." }}
+            </div>
+          </div>
+          <span
+            class="description"
+            v-html="description"
+          />
+          <div class="is-flex">
+            <p class="pt-2 pr-2 pb-2 pl-3 ml-auto">
+              Gérée par&nbsp;<a>{{ collection.admin.username }}</a>
+            </p>
+          </div>
+        </div>
       </div>
     </div>
-
     <!-- Collection children -->
     <footer
+      v-if="collection.children.length > 0"
       class="card-footer collect-card__children is-flex is-flex-direction-column"
     >
       <button
-        class="show-hierarchy"
-        @click="toggleHierarchy(collection.id)"
+        class="show-children"
+        @click="toggleExpanded(collection.id)"
       >
         <i
-          :class="`fas fa-caret-${hierarchyShown ? 'down': 'right'}`"
+          :class="`fas fa-caret-${expandedById[collection.id] ? 'down': 'right'}`"
           class="caret"
-        />&nbsp;Parcourir les collections
+        />&nbsp;Parcourir la collection
       </button>
-      <div v-if="hierarchyShown">
-        <collection-hierarchy :collection-id="collectionId" />
+      <div v-if="expandedById[collection.id]">
+        <div
+          v-for="childCollection of flattenedCollectionsTree(collection.children, parentExpanded)"
+          :key="childCollection.id"
+          :style="`margin-left: ${ 20 * childCollection.depth + (childCollection.children.length > 0 ? 0 : 20)}px;`"
+        >
+          <button
+            v-if="childCollection.children.length > 0"
+            class="expand-collection"
+            @click="toggleExpanded(childCollection.id)"
+          >
+            <i :class="`fas fa-caret-${expandedById[childCollection.id] ? 'down': 'right'}`" />
+          </button><router-link :to="{name: 'collection', params: {collectionId: childCollection.id}}">
+            {{ childCollection.title }}&nbsp;-&nbsp; {{ childCollection.documentCount }} document{{ childCollection.documentCount > 1 ? "s" : "" }}
+          </router-link>
+        </div>
       </div>
     </footer>
   </div>
@@ -60,14 +87,12 @@
 <script>
 
 import escapeRegExp from "lodash/escapeRegExp"
-
-import CollectionHierarchy from "./CollectionHierarchy.vue";
+import {mapState, mapGetters} from "vuex";
 import CollectionBreadcrumb from "./CollectionBreadcrumb.vue";
 
 export default {
   name: "CollectionSearchResult",
   components: {
-    CollectionHierarchy,
     CollectionBreadcrumb,
   },
   props: {
@@ -81,11 +106,14 @@ export default {
     }
   },
   data() {
+    const collectionsTree =  this.$store.getters["collections/flattenedCollectionsTree"]([this.collectionId])
     return {
-      hierarchyShown: false
+      expandedById: Object.fromEntries(collectionsTree.map(col => [col.id, false])),
     }
   },
   computed: {
+    ...mapState("collections", ["collectionsById"]),
+    ...mapGetters("collections", ["flattenedCollectionsTree"]),
     collection() {
       return this.$store.state.collections.collectionsById[this.collectionId]
     },
@@ -100,14 +128,25 @@ export default {
     },
   },
   methods: {
-    toggleHierarchy() {
-      this.hierarchyShown = !this.hierarchyShown
+    toggleExpanded(collectionId) {
+      this.expandedById[collectionId] = !this.expandedById[collectionId]
+    },
+    parentExpanded(collection) {
+      return collection.parent === null || this.expandedById[collection.parent]
     },
     highlight(text) {
       const terms = this.searchTerm.split(new RegExp("\\s+")).map(escapeRegExp).filter(term => term !== "")
       const re = new RegExp(`(${terms.join("|")})`)
       return text.replace(new RegExp(re, 'gi'), (match => `<mark>${match}</mark>`))
-    }
+    },
+    getImgUrl: function (img) {
+      try {
+        return require('@/assets/images/collections/collection' + img + '.jpg')
+      }   catch (e) {
+        //console.log('mon erreur : ',e)
+        return require('@/assets/images/collections/default.jpg')
+      }
+    },
   },
 };
 </script>
@@ -115,7 +154,7 @@ export default {
 <style scoped lang="scss">
 .collection-card {
 
-  button.show-hierarchy {
+  button.show-children {
     line-height: 1.5;
     font-size: 1rem;
     align-self: start;
@@ -139,12 +178,17 @@ export default {
   .card-footer {
     padding: 10px;
   }
-
+  .title {
+    color: #485fc7;
+  }
   .title::v-deep, .description::v-deep {
     mark {
-      background-color: yellow;
-      color: black;
+      background-color: yellow !important;
+      color: black !important;
     }
+  }
+  .card-img-left {
+    max-height: 100px;
   }
 }
 </style>
