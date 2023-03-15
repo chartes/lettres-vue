@@ -2,6 +2,7 @@
   <div class="document__transcription">
     <div class="panel">
       <div
+        v-if="!preview"
         class="panel-block"
         style="display: inline-block; width: 100%"
       >
@@ -34,7 +35,10 @@
         class="panel-block document__transcription--tr-content"
         style="display: inline-block; width: 100%"
       >
-        <h3 class="heading mt-3">
+        <h3
+          v-if="!preview"
+          class="heading mt-3"
+        >
           Lettre
         </h3>
         <rich-text-editor
@@ -51,6 +55,11 @@
             :value="transcriptionContent"
           />
         </rich-text-editor>
+        <div
+          v-else-if="preview"
+          class="document__transcription--content"
+          v-html="truncate(transcriptionContent, 399, true)"
+        />
         <div
           v-else
           class="document__transcription--content"
@@ -82,6 +91,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    preview: {
+      type: Boolean,
+      default: false,
+    }
   },
   emits: ["add-place", "add-person", "add-note"],
   data() {
@@ -108,6 +121,13 @@ export default {
     addNote(evt) {
       this.$emit("add-note", { ...evt });
     },
+    truncate(str, n, useWordBoundary){
+      if (str.length <= n) { return str; }
+      const subString = str.slice(0, n-1);
+      return (useWordBoundary
+        ? subString.slice(0, subString.lastIndexOf(" "))
+        : subString) + " (...)";
+    }
   },
 };
 </script>

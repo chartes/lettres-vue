@@ -11,27 +11,27 @@
     }
 
     .is-bookmarked  i {
-        color: $red-bookmark;
+        color: $red-bookmark !important;
     }
     
     .is-bookmarked::after{
         padding-left: 4px;
         content: "favoris";
-        color: $red-bookmark;
+        color: $red-bookmark !important;
     }
     
     .is-published i{
-        color: $blue-published;
+        color: $blue-published !important;
     }
     
     .is-published::after {
         padding-left: 4px;
         content: "publié";
-        color: $blue-published;
+        color: $blue-published !important;
     }
     
     .is-locked i, .is-locked span {
-        color: $gold-lock;
+        color: $gold-lock !important;
     }
     
     .is-locked::after {

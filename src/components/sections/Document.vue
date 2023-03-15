@@ -1,22 +1,56 @@
 <template>
-  <div
-      class="document"
-      :class="canEdit ? 'edit-mode' : ''"
-  >
+  <div class="document">
+    <div
+      v-if="!preview"
+      class="is-justify-content-left">
+      <nav class="mb-3">
+        <a
+          role="button"
+          :href="`/documents/${ docId-1 }`"
+          :disabled="docId === 1"
+          aria-label="Previous page"
+          class="pagination-link pagination-previous"
+        >
+          <span
+            class="icon"
+            aria-hidden="true"
+          >
+            <i class="fas fa-angle-left" />
+          </span>
+        </a>
+        <a
+          role="button"
+          :href="`/documents/${ docId+1 }`"
+          aria-label="Next page"
+          :disabled="docId === lastDocId"
+          class="pagination-link pagination-next"
+        >
+          <span
+            class="icon"
+            aria-hidden="true"
+          >
+            <i class="fas fa-angle-right" />
+          </span>
+        </a>
+      </nav>
+    </div>
     <div class="columns">
       <document-tag-bar
-      class="column tag-bar"
-      v-if="!preview && !isLoading && current_user"
-      :doc-id="docId"
-      :with-status="true"
-    />
-    <document-deletion
-      class="column delete-button"
-      v-if="!preview && current_user && current_user.isAdmin"
-      :doc-id="docId"
-    />
+        v-if="!preview && !isLoading && current_user"
+        class="column is-three-quarters"
+        :doc-id="docId"
+        :with-status="true"
+      />
+      <document-deletion
+        v-if="!preview && !isLoading && current_user && current_user.isAdmin"
+        class="column"
+        :doc-id="docId"
+      />
     </div>
-    <article v-if="document && !isLoading" class="document__content">
+    <article
+      v-if="document && !isLoading"
+      class="document__content"
+    >
       <!-- titre et langue -->
       <section class="document-section columns">
         <document-title
@@ -26,7 +60,10 @@
           class="column is-three-quarters"
           @add-note="addNote"
         />
-        <document-languages :editable="canEdit" class="column" />
+        <document-languages
+          :editable="canEdit"
+          class="column"
+        />
       </section>
       <!-- dates de lieux et de temps -->
 
@@ -134,8 +171,10 @@
       </section>
 
       <!-- transcription -->
-      <section v-if="!preview" class="document-section">
-        <div class="heading is-uppercase">
+      <section
+        class="document-section"
+      >
+        <div class="heading is-size-5 is-uppercase">
           <span class="heading-content">Transcription</span>
           <div class="slope-container">
             <span class="slope tier-1" />
@@ -147,6 +186,7 @@
         <div class="document-section-content">
           <document-transcription
             :editable="canEdit"
+            :preview="preview"
             @add-place="addPlace"
             @add-person="addPerson"
             @add-note="addNote"
@@ -159,12 +199,20 @@
         class=""
         style="margin-left: 0; margin-top: 50px"
       >
-        <header class="subtitle mb-3">Historique des modifications</header>
-        <changelog :doc-id="docId" :per-page="10" />
+        <header class="subtitle mb-3">
+          Historique des modifications
+        </header>
+        <changelog
+          :doc-id="docId"
+          :per-page="10"
+        />
       </div>
     </article>
 
-    <document-skeleton v-if="isLoading" class="mt-5" />
+    <document-skeleton
+      v-if="isLoading"
+      class="mt-5"
+    />
 
     <!-- modals -->
     <b-modal
@@ -306,6 +354,7 @@ export default {
   },
   data() {
     return {
+      lastDocId: 0,
       isLoading: true,
 
       openWitnessModal: false,
@@ -368,17 +417,26 @@ export default {
    async created() {
     this.isLoading = true;
     try {
+      let documentsTotal = await this.getDocumentsTotal().then(resp => {
+        return resp.documentsTotal
+      });
+      console.log('documentsTotal : ', documentsTotal)
+      this.lastDocId = await this.getDocumentsTotal().then(resp => {
+        return resp.lastDocId
+      });
+      console.log('lastDocId : ', this.lastDocId);
+
       await this.$store.dispatch("document/fetch", this.docId);
       this.setLastSeen(this.docId);
     } catch (e) {
+      console.log("e : ", e)
       await this.$router.push({name: "home"});
     }
     this.isLoading = false;
   },
-
   methods: {
     ...mapActions("layout", ["setLastSeen"]),
-
+    ...mapActions("search", ["getDocumentsTotal"]),
     addPlace(evt) {
       this.placeInputData = evt;
       this.isPlaceWizardFormModalActive = true;
