@@ -194,8 +194,6 @@ export default {
 @import "@/assets/sass/main.scss";
 
 .tags {
-  display: flex !important;
-  gap: 50px;
 
   a.tag:first-child {
     padding: 0;

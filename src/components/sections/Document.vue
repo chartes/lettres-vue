@@ -1,9 +1,12 @@
 <template>
-  <div class="document">
+  <div
+      class="document"
+      :class="documentCssClass"
+  >
     <div
       v-if="!preview"
       class="is-justify-content-left">
-      <nav class="mb-3">
+      <nav class="mb-3 previous-next-navigation">
         <a
           role="button"
           :href="`/documents/${ docId-1 }`"
@@ -37,13 +40,13 @@
     <div class="columns">
       <document-tag-bar
         v-if="!preview && !isLoading && current_user"
-        class="column is-three-quarters"
+        class="column"
         :doc-id="docId"
         :with-status="true"
       />
       <document-deletion
         v-if="!preview && !isLoading && current_user && current_user.isAdmin"
-        class="column"
+        class="column delete-button"
         :doc-id="docId"
       />
     </div>
@@ -370,6 +373,12 @@ export default {
     };
   },
   computed: {
+    documentCssClass: function(){
+      if (this.canEdit && !this.preview) {
+        return 'can-edit';
+      }
+      return this.preview ? "is-preview" : "";
+    },
     ...mapState("document", [
       "document",
       "documentLoading",
@@ -474,23 +483,74 @@ export default {
 
 .document {
   width: 100%;
+  margin-top: 30px;
+
+  &.is-preview {
+    margin-top: 0;
+  }
 
   & > .columns {
     align-items: center;
-    margin: 30px 0 40px !important;
+    margin: 0 !important;
 
-    .tag-bar {
+    .tags {
       padding: 0;
       margin: 0;
     }
   }
+
+  & > .document__content {
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+
+  &.is-preview > .document__content {
+    margin-top: 0;
+    margin-bottom: 0;
+
+    & > .document-section:first-child {
+      margin-top: 0;
+    }
+  }
 }
 
-.document__content {
-  //display: flex;
-  //flex-wrap: wrap;
-  margin-top: 20px;
-  margin-bottom: 20px;
+nav.previous-next-navigation {
+  display: flex;
+  gap: 12px;
+
+  a.pagination-link {
+    border: none;
+    padding: 0 !important;
+    margin: 0;
+    min-width: unset !important;
+    height: 30px;
+
+    &::after {
+      content: "";
+      display: inline-block;
+      width: 30px;
+      height: 30px;
+      background: url(../../assets/images/icons/lettre_nav_precedent.svg) center / 30px auto no-repeat !important;
+    }
+
+    &.pagination-previous {
+    }
+
+    &.pagination-next::after {
+      transform: rotate(180deg);
+      transform-origin:50% 50%;
+    }
+
+    .icon {
+      display: none;
+    }
+  }
+}
+
+.document-tag-bar {
+  display: flex !important;
+  gap: 50px;
+
 }
 
 .document-section {
@@ -506,7 +566,7 @@ export default {
     margin: 20px 0 50px;
 
     .column {
-      padding: 0;
+      padding: 0 !important;
       border: none;
 
       &.component {
@@ -637,13 +697,23 @@ export default {
 
 // Mode édition
 
-.document.edit-mode {
+.document.can-edit {
+
+  nav.previous-next-navigation {
+    padding-bottom: 10px;
+    border-bottom: #FDB3CC solid 1px;
+    margin-bottom: 30px;
+  }
 
   .document-section {
     border: 1px solid #FF0052;
     border-radius: 5px;
     padding: 30px;
     margin-bottom: 30px;
+
+    &.columns {
+      margin: 30px 0 40px !important;
+    }
 
     // Section du titre
     &.columns::before {
