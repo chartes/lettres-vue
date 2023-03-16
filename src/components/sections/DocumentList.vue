@@ -254,30 +254,6 @@ export default {
   width: 100%;
   padding: 70px 0 0 !important;
 }
-.document-list-header {
-  border-top: solid 1px #FDB3CC;
-  border-bottom: solid 1px #C7C7C7;
-  margin-bottom: 25px;
-
-  .results-count {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-
-    font-family: $family-primary;
-    font-size: 14px;
-    color: #6D7278;
-    font-weight: 600;
-    text-transform: uppercase;
-
-    .total-count {
-      font-size: 50px;
-      color: #FF0052;
-      text-align: center;
-      font-weight: 700;
-    }
-  }
-}
 
 progress {
   margin-top: 30px;

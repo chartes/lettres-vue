@@ -5,16 +5,34 @@
     style="width: 1024px !important"
   >
     <div class="root-grid-container" :class="popupMode ? 'popup-mode' : ''">
+
       <div v-if="popupMode" class="leftbar-header-area">
         <h1 class="step-label">
           {{ wizardLabel }}
         </h1>
-        <h2 v-if="subtitle" class="step-label is-uppercase is-size-5 mb-3">
-          {{ subtitle }}
-        </h2>
+        <h2 v-if="subtitle" class="step-label">{{ subtitle }}</h2>
         <h2 v-if="currentStep.label" class="step-label is-uppercase is-size-5">
           {{ currentStep.label }}
         </h2>
+      </div>
+
+      <div class="center-content-area">
+        <b-tabs v-model="activeTab">
+          <b-tab-item
+              v-for="(stepItem, i) in stepItems"
+              :key="`center-step-${i}`"
+              :label="stepItem.center ? stepItem.center.label : `center-step-${i}`"
+          >
+            <keep-alive v-if="stepItem.center">
+              <component
+                  :is="stepItem.center.component"
+                  v-bind="stepItem.center.attributes"
+                  @goto-wizard-step="gotoStep"
+                  @manage-person-data="managePersonData"
+              />
+            </keep-alive>
+          </b-tab-item>
+        </b-tabs>
       </div>
       <div v-if="popupMode" class="leftbar-content-area">
         <b-tabs v-model="activeTab" :animated="false">
@@ -34,27 +52,9 @@
           </b-tab-item>
         </b-tabs>
       </div>
-      <div v-if="popupMode" class="leftbar-footer-area" />
 
-      <div class="center-content-area">
-        <b-tabs v-model="activeTab">
-          <b-tab-item
-            v-for="(stepItem, i) in stepItems"
-            :key="`center-step-${i}`"
-            :label="stepItem.center ? stepItem.center.label : `center-step-${i}`"
-          >
-            <keep-alive v-if="stepItem.center">
-              <component
-                :is="stepItem.center.component"
-                v-bind="stepItem.center.attributes"
-                @goto-wizard-step="gotoStep"
-                @manage-person-data="managePersonData"
-              />
-            </keep-alive>
-          </b-tab-item>
-        </b-tabs>
-      </div>
-      <div v-if="popupMode" class="center-footer-area">
+      <div v-if="popupMode" class="leftbar-footer-area" />
+      <div v-if="popupMode" class="nav-footer-area">
         <div class="buttons">
           <b-button type="is-primary" size="is-medium" @click="closeWizard">
             Annuler
@@ -386,12 +386,12 @@ export default {
   }
 
   .popup-mode {
-    grid-template-columns: 320px auto;
+    grid-template-columns: auto 320px;
     grid-template-rows: 62px auto 80px;
     grid-template-areas:
       "leftbar-header leftbar-header"
-      "leftbar-content center-content"
-      "leftbar-footer center-footer";
+      "center-content leftbar-content"
+      "leftbar-footer nav-footer";
   }
 
   .leftbar-header-area {
@@ -399,6 +399,9 @@ export default {
   }
 
   .leftbar-header-area {
+    display: flex;
+    align-items: center;
+
     background-color: #CB2158;
     border: none;
     border-radius: 5px;
@@ -423,16 +426,22 @@ export default {
   }
 
   .leftbar-content-area,
-  .leftbar-footer-area {
-    background-color: $light !important;
+  .nav-footer-area {
+    background-color: #7F0038 !important;
+    margin-left: 10px;
   }
 
   .leftbar-content-area {
     grid-area: leftbar-content;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
   }
 
   .leftbar-footer-area {
     grid-area: leftbar-footer;
+    background-color: #FFFFFF;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
 
     .buttons {
       margin-right: 20px;
@@ -447,6 +456,8 @@ export default {
     grid-area: center-content;
     height: 100%;
     background-color: #FFFFFF;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
 
     & > .b-tabs {
       height: 100%;
@@ -472,15 +483,20 @@ export default {
     }
   }
 
-  .center-footer-area {
-    grid-area: center-footer;
-    background-color: #FFFFFF;
+  .nav-footer-area {
+    grid-area: nav-footer;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
 
     .buttons {
       display: flex;
-      justify-content: flex-end;
+      justify-content: center;
       align-items: center;
-      margin-right: 20px;
+
+      button {
+        background-color: #CB2158;
+      }
+
     }
   }
 }

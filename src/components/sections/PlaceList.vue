@@ -74,7 +74,11 @@
     </div>
 
     <div>
-      <p class="mt-4 mb-1">Environ {{ totalCount }} résultat(s)</p>
+      <div class="document-list-header">
+        <div class="results-count">
+          <span class="total-count">{{ totalCount }}</span> résultat(s)
+        </div>
+      </div>
       <div class="result-container">
         <span class="pagination-goto">
           <span> Page : </span>
