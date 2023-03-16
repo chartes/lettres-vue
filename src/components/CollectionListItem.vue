@@ -32,6 +32,7 @@
         </div>
       </div>
     </div>
+
     <!-- Card body : description -->
     <div class="card-body card-content">
       <div
@@ -44,6 +45,7 @@
         </p>
       </div>
     </div>
+
     <!-- Card footer : collection children -->
     <footer
       v-if="collection.children.length > 0"
