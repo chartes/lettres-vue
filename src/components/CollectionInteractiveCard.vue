@@ -78,7 +78,8 @@
                   </div>
                   <div class="control">
                     <a
-                      type="submit" :disabled="!collection.title"
+                      type="submit"
+                      :disabled="!collection.title"
                       class="button is-primary"
                       :class="saving === 'loading' ? 'is-loading' : ''"
                       @click.stop="save"
@@ -88,32 +89,28 @@
                   </div>
                   <div>
                     <collection-deletion
-                      class="column"
                       v-if="current_user && current_user.isAdmin"
                       :collection-id="collectionId"
                     />
-                  </div>
-                  <div class="control">
-                  <a
-                    @click.stop="deleteCollectionUI"
-                    class="button is-primary"
-                    :class="deleting === 'loading' ? 'is-loading' : ''"
-                  >
-                    <delete-button-icon :status="deleting === 'error' ? 'error' : deleting === 'normal' ? 'normal' : ''" />
-                  </a>
                   </div>
                 </div>
               </span>
               <!--<p class="mt-3">
                 Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor dolo incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis dolore.
               </p>-->
-              <p v-if="!editMode || collection.title === 'Non triées'" class="mt-3">
-                <span v-html="collection.description" /> ({{
-                  collection.documentCount
-                }}
-                documents)
+              <p
+                v-if="!editMode || collection.title === 'Non triées'"
+                class="mt-3"
+              >
+                <span
+                  v-html="collection.description"
+                />
+                <span>({{ collection.documentCount }} documents)</span>
               </p>
-              <p v-else class="mt-3">
+              <p
+                v-else
+                class="mt-3"
+              >
                 <title-field-in-place
                   :tabulation-index="0"
                   label="Titre"
@@ -186,12 +183,11 @@ import {mapState, mapActions, mapGetters} from "vuex";
 import CollectionHierarchy from "@/components/CollectionHierarchy.vue";
 import TitleFieldInPlace from "@/components/forms/fields/TitleFieldInPlace";
 import SaveButtonIcon from "@/components/ui/SaveButtonIcon";
-import DeleteButtonIcon from "@/components/ui/DeleteButtonIcon";
 import CollectionDeletion from "@/components/CollectionDeletion.vue";
 
 export default {
   name: "CollectionInteractiveCard",
-  components: { TitleFieldInPlace, SaveButtonIcon, CollectionHierarchy, DeleteButtonIcon, CollectionDeletion },// , DeleteButtonIcon added from Carine
+  components: { TitleFieldInPlace, SaveButtonIcon, CollectionHierarchy, CollectionDeletion },
 
   props: {
     collectionId: { type: Number, required: true },
