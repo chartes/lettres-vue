@@ -49,6 +49,7 @@
                 :to="{ name: 'collection', params: { collectionId: findRoot(collectionId).id } }"
                 class="collection_title mt-3 mb-5"
               >
+<<<<<<< HEAD
                 {{ findRoot(collectionId).title }}
               </router-link>
             </span>
@@ -74,6 +75,68 @@
                 </p>
                 <collection-hierarchy
                   :collection-id="collectionId"
+=======
+                <router-link
+                  :to="{ name: 'collection', params: { collectionId: collection.id } }"
+                  class="mt-3 mb-5 collection_title"
+                >
+                  {{ collection.title }}
+                </router-link>
+              </span>
+              <span v-else>
+                <div class="field has-addons">
+                  <div class="control">
+                    <input
+                      v-model="collection.title"
+                      class="input collection-card__title-input"
+                      :class="{'input--error':!collection.title}"
+                      type="text"
+                      :initial-value="collection.title"
+                      required
+                    >
+                  </div>
+                  <div class="control">
+                    <a
+                      type="submit"
+                      :disabled="!collection.title"
+                      class="button is-primary"
+                      :class="saving === 'loading' ? 'is-loading' : ''"
+                      @click.stop="save"
+                    >
+                      <save-button-icon />
+                    </a>
+                  </div>
+                  <div>
+                    <collection-deletion
+                      v-if="current_user && current_user.isAdmin"
+                      :collection-id="collectionId"
+                    />
+                  </div>
+                </div>
+              </span>
+              <p
+                v-if="!editMode || collection.title === 'Non triées'"
+                class="mt-3"
+              >
+                <span
+                  v-html="collection.description"
+                />
+                <span>({{ collection.documentCount }} documents)</span>
+              </p>
+              <p
+                v-else
+                class="mt-3"
+              >
+                <title-field-in-place
+                  :tabulation-index="0"
+                  label="Titre"
+                  name="title"
+                  not-set="Non renseigné"
+                  :initial-value="collection.description"
+                  :editable="true"
+                  :formats="descriptionFormats"
+                  @changed="saveDescription"
+>>>>>>> upstream/dev
                 />
               </div>
             </b-sidebar>
@@ -379,8 +442,7 @@ import CollectionDeletion from "@/components/CollectionDeletion.vue";
 
 export default {
   name: "CollectionInteractiveCard",
-  components: { TitleFieldInPlace, SaveButtonIcon, CollectionHierarchy, CollectionDeletion },// , DeleteButtonIcon added from Carine
-
+  components: { TitleFieldInPlace, SaveButtonIcon, CollectionHierarchy, CollectionDeletion },
   props: {
     collectionId: { type: Number, required: true },
     editable: { type: Boolean, default: false },

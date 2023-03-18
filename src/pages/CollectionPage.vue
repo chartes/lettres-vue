@@ -131,7 +131,7 @@ export default {
       tableData: [],
       sortingPriority: [{ field: "creation", order: "desc" }],
       numPage: 1,
-      pageSize: 25,
+      pageSize: 30,
       totalCount: 0,
       isLoading: false
     };
