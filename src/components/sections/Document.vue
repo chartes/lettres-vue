@@ -2,7 +2,8 @@
   <div class="document">
     <div
       v-if="!preview"
-      class="is-justify-content-left">
+      class="is-justify-content-left"
+    >
       <nav class="mb-3">
         <a
           role="button"

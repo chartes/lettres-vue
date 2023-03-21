@@ -1,5 +1,8 @@
 <template>
-  <div class="modal is-active" style="text-align: left">
+  <div
+    class="modal is-active"
+    style="text-align: left"
+  >
     <div
       class="modal-background"
       @click="cancel"

@@ -191,9 +191,18 @@
               :width="120"
             />-->
             <div class="switch-button-div">
-              <div class="switch-button" @click="toggle">
-                <input class="switch-button-checkbox" type="checkbox"/>
-                <label class="switch-button-label" for="">
+              <div
+                class="switch-button"
+                @click="toggle"
+              >
+                <input
+                  class="switch-button-checkbox"
+                  type="checkbox"
+                >
+                <label
+                  class="switch-button-label"
+                  for=""
+                >
                   <span class="switch-button-label-span">TABLEAU</span>
                 </label>
               </div>

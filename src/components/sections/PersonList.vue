@@ -5,7 +5,10 @@
         <header />
         <div class="searchbox-container">
           <div class="searchbox-container">
-            <b-field label="Nom" class="term-search">
+            <b-field
+              label="Nom"
+              class="term-search"
+            >
               <div class="field has-addons">
                 <div class="control">
                   <input
@@ -14,59 +17,109 @@
                     type="text"
                     placeholder="Catherine de Médics"
                     @keyup.enter="search"
-                  />
+                  >
                 </div>
                 <div class="control">
-                  <a class="button pl-5 pr-5" @click="search">
+                  <a
+                    class="button pl-5 pr-5"
+                    @click="search"
+                  >
                     <span class="icon">
-                      <i v-if="loadingStatus" class="fas fa-spinner fa-pulse" />
-                      <i v-else class="fas fa-search" />
+                      <i
+                        v-if="loadingStatus"
+                        class="fas fa-spinner fa-pulse"
+                      />
+                      <i
+                        v-else
+                        class="fas fa-search"
+                      />
                     </span>
                   </a>
                 </div>
               </div>
             </b-field>
 
-            <b-field v-if="false" label="Correspondants">
+            <b-field
+              v-if="false"
+              label="Correspondants"
+            >
               <b-field>
-                <b-checkbox v-model="sender" type="is-info"> Expéditeur </b-checkbox>
+                <b-checkbox
+                  v-model="sender"
+                  type="is-info"
+                >
+                  Expéditeur
+                </b-checkbox>
               </b-field>
               <b-field>
-                <b-checkbox v-model="recipient" type="is-info"> Destinataire </b-checkbox>
+                <b-checkbox
+                  v-model="recipient"
+                  type="is-info"
+                >
+                  Destinataire
+                </b-checkbox>
               </b-field>
             </b-field>
 
-            <b-field v-if="false" label="Parties du document">
+            <b-field
+              v-if="false"
+              label="Parties du document"
+            >
               <b-field>
-                <b-checkbox v-model="inAddress" type="is-info"> Adresse </b-checkbox>
+                <b-checkbox
+                  v-model="inAddress"
+                  type="is-info"
+                >
+                  Adresse
+                </b-checkbox>
               </b-field>
 
               <b-field>
-                <b-checkbox v-model="inTranscription" type="is-info">
+                <b-checkbox
+                  v-model="inTranscription"
+                  type="is-info"
+                >
                   Transcription
                 </b-checkbox>
               </b-field>
               <b-field>
-                <b-checkbox v-model="inArgument" type="is-info"> Analyse </b-checkbox>
+                <b-checkbox
+                  v-model="inArgument"
+                  type="is-info"
+                >
+                  Analyse
+                </b-checkbox>
               </b-field>
               <b-field>
-                <b-checkbox v-model="inNotes" type="is-info"> Notes </b-checkbox>
+                <b-checkbox
+                  v-model="inNotes"
+                  type="is-info"
+                >
+                  Notes
+                </b-checkbox>
               </b-field>
             </b-field>
           </div>
         </div>
       </section>
 
-      <section v-if="!popupMode && false" class="filterbox-container">
+      <section
+        v-if="!popupMode && false"
+        class="filterbox-container"
+      >
         <header>
-          <div class="heading divider is-left">Filtres</div>
+          <div class="heading divider is-left">
+            Filtres
+          </div>
         </header>
         Document, personne, date, collection
       </section>
     </div>
 
     <div>
-      <p class="mt-4 mb-1">Environ {{ totalCount }} résultat(s)</p>
+      <p class="mt-4 mb-1">
+        Environ {{ totalCount }} résultat(s)
+      </p>
       <div class="result-container">
         <span class="pagination-goto">
           <span> Page : </span>
@@ -77,7 +130,7 @@
             type="text"
             placeholder="Page..."
             @change.prevent="currentPage = parseInt(p)"
-          />
+          >
         </span>
 
         <b-table
@@ -137,7 +190,11 @@
             <span
               class="tags is-flex-direction-column is-align-items-flex-start is-flex-wrap-wrap"
             >
-              <span v-for="func in props.row.functions" :key="func" class="tag is-light">
+              <span
+                v-for="func in props.row.functions"
+                :key="func"
+                class="tag is-light"
+              >
                 {{ func }}
               </span>
             </span>
@@ -154,8 +211,9 @@
                 v-if="props.row.ref.startsWith('http')"
                 :href="props.row.ref"
                 target="_blank"
-                >{{ props.row.ref }}</a
               >
+                {{ props.row.ref }}
+              </a>
               <span v-else>{{ props.row.ref }}</span>
             </span>
           </b-table-column>
@@ -176,18 +234,20 @@
           -->
 
           <template #empty>
-            <div class="has-text-centered">Aucun résultat</div>
+            <div class="has-text-centered">
+              Aucun résultat
+            </div>
           </template>
 
           <template #detail="props">
             <div
               v-if="
                 (sender && props.row.sender.length > 0) ||
-                (recipient && props.row.recipient.length > 0) ||
-                (inNotes && props.row.inNotes.length > 0) ||
-                (inAddress && props.row.inAddress.length > 0) ||
-                (inTranscription && props.row.inTranscription.length > 0) ||
-                (inArgument && props.row.inArgument.length > 0)
+                  (recipient && props.row.recipient.length > 0) ||
+                  (inNotes && props.row.inNotes.length > 0) ||
+                  (inAddress && props.row.inAddress.length > 0) ||
+                  (inTranscription && props.row.inTranscription.length > 0) ||
+                  (inArgument && props.row.inArgument.length > 0)
               "
               class="detail-td"
             >
@@ -306,8 +366,13 @@
               </div>
             </div>
 
-            <div v-else class="detail-td is-flex is-align-items-center">
-              <div class="m-3 mx-auto">Aucune utilisation</div>
+            <div
+              v-else
+              class="detail-td is-flex is-align-items-center"
+            >
+              <div class="m-3 mx-auto">
+                Aucune utilisation
+              </div>
             </div>
           </template>
         </b-table>
