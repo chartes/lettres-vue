@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="15px" height="20px" viewBox="0 0 15 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>fav_neutre</title>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Pour-intégration" transform="translate(-528.000000, -1149.000000)" fill="#000000" fill-rule="nonzero">
+            <g id="fav_neutre" transform="translate(528.000000, 1149.000000)">
+                <path d="M13.125,0 L1.875,0 C0.839453125,0 0,0.839453125 0,1.875 L0,18.7460937 C0,19.7109375 1.04648437,20.3117187 1.8796875,19.8257812 L7.5,16.546875 L13.1210937,19.8253906 C13.953125,20.2773437 15,19.7109375 15,18.7460937 L15,1.875 C15,0.839453125 14.1601562,0 13.125,0 Z M13.125,17.65625 L7.5,14.375 L1.875,17.65625 L1.875,2.109375 C1.875,1.97773438 1.97773438,1.875 2.07421875,1.875 L12.8554688,1.875 C13.0234375,1.875 13.125,1.97773438 13.125,2.109375 L13.125,17.65625 Z" id="favori"></path>
+            </g>
+        </g>
+    </g>
+</svg>

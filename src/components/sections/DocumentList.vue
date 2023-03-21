@@ -1,12 +1,15 @@
 <template>
   <div class="section">
-    <div>
-      Environ {{ totalCount }} résultat(s)
+    <div class="document-list-header">
+      <div class="results-count">
+        <span class="total-count">{{ totalCount }}</span> résultat(s)
+      </div>
     </div>
-    <span class="pagination-goto">
-      <span>
-        Page :
-      </span>
+
+    <span
+      v-if="totalCount"
+      class="pagination-goto"
+    >
       <input
         v-model="currentPage"
         name="page"
@@ -15,7 +18,10 @@
         placeholder="Page..."
         @change.prevent="currentPage = parseInt(p)"
       >
+      <span class="label-sur-page">sur</span>
+      <span class="total-pages">{{ totalPages }}</span>
     </span>
+
     <div class="">
       <b-table
         ref="multiSortTable"
@@ -144,7 +150,11 @@ export default {
             this.loadAsyncData()
           }
         }
-    }
+    },
+    totalPages: function() {
+      return Math.ceil(this.totalCount / this.pageSize)
+    },
+
   },
   watch: {
     documents() {
@@ -240,25 +250,14 @@ export default {
 
 <style scoped lang="scss">
 @import "@/assets/sass/main.scss";
+@import "@/assets/sass/components/_search_results_table.scss";
+@import "@/assets/sass/components/_search_results_pagination.scss";
 
 .section {
   width: 100%;
+  padding: 70px 0 0 !important;
 }
-.pagination-goto {
-  display: flex;
-  float: right;
-  position: relative;
-  width: 120px;
-  margin-left: 50px;
-  span {
-    width: 100px;
-    align-self: center;
-  }
-  input {
-    margin-left: 4px;
-    display: inline;
-  }
-}
+
 progress {
   margin-top: 30px;
 }

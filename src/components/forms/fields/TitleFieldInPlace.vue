@@ -159,16 +159,14 @@ export default {
 </script>
 
 <style scoped lang="scss">
+@import "@/assets/sass/main.scss";
+
+.document-title,
 .field-title__input {
-  font-family: "Bitter", sans-serif;
+  font-family: $family-primary;
+  font-size: 30px !important;
   font-weight: 500 !important;
-  font-size: 32px !important;
-  font-variant: small-caps;
+  color: #C00055;
 }
-.document-title {
-  font-family: "Bitter", sans-serif;
-  font-weight: 500 !important;
-  font-size: 32px !important;
-  font-variant: small-caps;
-}
+
 </style>

@@ -1,14 +1,15 @@
 .note-list {
 
   margin: 2rem 2rem;
-  padding-top: 2rem;
-  border-top: solid 1px #ccc;
+  padding-top: 0;
+  border-top: none;
   color: grey;
 
   &__header {
     margin-bottom: 1em;
   }
 }
+
 .note-item {
 
   $action-w: rem-calc(24);

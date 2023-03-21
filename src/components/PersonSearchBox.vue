@@ -1,11 +1,7 @@
 <template>
   <div>
     <section>
-      <div class="row is-flex is-justify-content-space-between">
-        <i
-          class="fas fa-user-circle m-2"
-          style="font-size:32px;"
-        />
+      <div class="row is-flex is-justify-content-space-between search-section-header-persons">
         <span class="advanced_search_header m-2">PERSONNES</span>
         <router-link
           :to="{ name: 'persons' }"
@@ -240,6 +236,11 @@ div.dropdown-item {
   padding: 2px;
   display: inline-flex;
   align-items: center;
+}
+
+.search-section-header-persons {
+  padding-left: 30px;
+  background: url('../assets/images/icons/picto-personnes.svg') center left no-repeat;
 }
 .advanced_search_header {
   align-self: center;

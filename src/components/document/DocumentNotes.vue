@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="note-list-parent">
     <ol
       v-if="notes.length"
       class="note-list notes"
@@ -190,4 +190,10 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+
+.note-list-parent {
+  border-top: solid 1px #ccc;
+}
+
+</style>

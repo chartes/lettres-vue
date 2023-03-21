@@ -92,9 +92,19 @@ export default {
 
 <style scoped lang="scss">
 @import "@/assets/sass/main.scss";
-.component {
-  align-self: center;
-  padding-left: 16px;
-  border-left: 1px solid $coffee;
+.component ::v-deep {
+  .field {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  .label {
+    margin: 0;
+    font-family: $family-primary;
+    font-size: 16px;
+    color: #000000;
+    font-weight: 500;
+    text-transform: uppercase;
+  }
 }
 </style>

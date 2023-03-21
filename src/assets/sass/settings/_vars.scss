@@ -1,5 +1,17 @@
-$font-body: "Montserrat", Helvetica, SegoeUI, Arial, sans-serif;
-$font-alt: 'IBM Plex Sans', sans-serif;
+$nav-max-width: 1180px;
+$container-max-width: $nav-max-width;
+$container-narrow-width: 930px;
+$container-narrow-margin: ( $nav-max-width - 930px ) / 2;
+
+$container-small-desktop-margin: 40px;
+$container-tablet-margin: 20px;
+$container-mobile-margin: 10px;
+
+$collection-thumbnail-size: 312px;
+$collection-thumbnail-small-desktop-size: 250px;
+$collection-thumbnail-tablet-size: 180px;
+$collection-thumbnail-mobile-size: 80px;
+
 $info: 'black';
 $font-size-base: 16px;
 $line-height-base: 2rem;

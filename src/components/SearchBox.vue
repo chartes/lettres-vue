@@ -84,22 +84,52 @@ export default {
 }
 .control, .search_input {
   width: 100% !important;
+
+  ::v-deep input[type="search"] {
+    border-color: #FFFFFF !important;
+    height: 100%;
+    padding-top: 2px;
+    padding-bottom: 2px;
+
+    font-family: $family-primary;
+    font-size: 18px;
+    font-weight: 400;
+    color: #343434;
+
+    &:hover,
+    &:focus {
+      border-color: transparent !important;
+      box-shadow: none !important;
+    }
+  }
 }
+
 /* align close button ?
 span.icon {
 
 }*/
+
 .advanced-search {
   width: 100%;
   text-align: right;
 }
-.search_row .search_button {
+
+.search_button {
   border-color: white !important;
   outline: none !important;
   box-shadow: none !important;
   color: rgba(127, 0, 56) !important;
   border-bottom-left-radius: 0px !important;
   border-top-left-radius: 0px !important;
+
+  i.fa-search {
+    text-indent: -9999px;
+    display: inline-block;
+    width: 25px;
+    height: 25px;
+    background: url(../assets/images/icons/loupe_header.svg) center / contain no-repeat;
+  }
+
  }
 
 </style>

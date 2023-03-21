@@ -82,6 +82,6 @@ export default {
 @import "@/assets/sass/main.scss";
 
 .document-title__component {
-  color: #444;
+  margin-bottom: 15px;
 }
 </style>

@@ -2,15 +2,36 @@
   <div class="root-container box modal-card">
     <div class="root-grid-container">
       <div class="leftbar-header-area">
-        <h1 class="step-label is-uppercase is-size-2">
+        <h1 class="step-label">
           {{ wizardLabel }}
         </h1>
         <h2
           v-if="currentStep.label"
-          class="step-label is-uppercase is-size-5"
+          class="step-label"
         >
           {{ currentStep.label }}
         </h2>
+      </div>
+
+      <div class="center-content-area">
+        <b-tabs v-model="activeTab">
+          <b-tab-item
+            v-for="(stepItem, i) in stepItems"
+            :key="`center-step-${i}`"
+            :label="stepItem.center ? stepItem.center.label : `center-step-${i}`"
+          >
+            <keep-alive v-if="stepItem.center">
+              <component
+                :is="stepItem.center.component"
+                v-bind="stepItem.center.attributes"
+                @goto-wizard-step="gotoStep"
+                @manage-manifest-data="manageManifestData"
+                @manage-witness-data="manageWitnessData"
+                @add-note="addNote"
+              />
+            </keep-alive>
+          </b-tab-item>
+        </b-tabs>
       </div>
       <div class="leftbar-content-area">
         <b-tabs
@@ -34,29 +55,9 @@
           </b-tab-item>
         </b-tabs>
       </div>
-      <div class="leftbar-footer-area" />
 
-      <div class="center-content-area">
-        <b-tabs v-model="activeTab">
-          <b-tab-item
-            v-for="(stepItem, i) in stepItems"
-            :key="`center-step-${i}`"
-            :label="stepItem.center ? stepItem.center.label : `center-step-${i}`"
-          >
-            <keep-alive v-if="stepItem.center">
-              <component
-                :is="stepItem.center.component"
-                v-bind="stepItem.center.attributes"
-                @goto-wizard-step="gotoStep"
-                @manage-manifest-data="manageManifestData"
-                @manage-witness-data="manageWitnessData"
-                @add-note="addNote"
-              />
-            </keep-alive>
-          </b-tab-item>
-        </b-tabs>
-      </div>
-      <div class="center-footer-area">
+      <div class="leftbar-footer-area" />
+      <div class="nav-footer-area">
         <div class="buttons">
           <b-button
             type="is-primary"
@@ -369,17 +370,17 @@ export default {
 
 <style lang="scss" scoped>
 @import "@/assets/sass/main.scss";
+@import "@/assets/sass/components/_search_results_table.scss";
+@import "@/assets/sass/components/_search_results_pagination.scss";
 
 .root-container {
   overflow: hidden;
-
   min-height: 720px;
   min-width: 960px;
-
   width: 100%;
   height: inherit;
-
-  padding: 0px !important;
+  padding: 0 !important;
+  background: transparent !important;
 
   .label {
     color: inherit !important;
@@ -400,29 +401,74 @@ export default {
     margin-left: 40px;
   }
 
-  .leftbar-header-area,
-  .leftbar-content-area,
-  .leftbar-footer-area {
-    background-color: $light !important;
+  /* Grid */
+  .root-grid-container {
+    display: grid;
+    min-height: inherit;
+    height: 100%;
+    background: none;
+
+    grid-template-columns: minmax(800px, auto) minmax(280px, 28%);
+    grid-template-rows: 62px auto 80px;
+    grid-template-areas:
+      "leftbar-header leftbar-header"
+      "center-content leftbar-content"
+      "leftbar-footer nav-footer";
   }
 
   .leftbar-header-area {
     grid-area: leftbar-header;
-    h1 {
-      padding-bottom: 0px;
-    }
+  }
+
+  .leftbar-header-area {
+    display: flex;
+    align-items: center;
+    gap: 0;
+
+    background-color: #CB2158;
+    border: none;
+    border-radius: 5px;
+    padding: 3px 20px;
+    margin-bottom: 10px;
+
+    h1,
     h2 {
-      padding-top: 0px;
-      top: -12px;
-      position: relative;
-      left: 0px;
+      padding: 0;
+      margin: 0 !important;
+      font-family: $family-apptitle;
+      font-size: 30px !important;
+      color: #FFFFFF;
+      font-weight: 200;
+      letter-spacing: 0;
+    }
+
+    h2 {
+      text-transform: none !important;
+
+      &::before {
+        content: ":";
+        margin: 0 5px;
+      }
     }
   }
+
   .leftbar-content-area {
     grid-area: leftbar-content;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
   }
+
+  .leftbar-content-area,
+  .nav-footer-area {
+    background-color: #7F0038 !important;
+    margin-left: 10px;
+  }
+
   .leftbar-footer-area {
     grid-area: leftbar-footer;
+    background-color: #FFFFFF;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
 
     .buttons {
       margin-right: 20px;
@@ -436,39 +482,48 @@ export default {
   .center-content-area {
     grid-area: center-content;
     height: 100%;
+    background-color: #FFFFFF;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
 
     & > .b-tabs {
       height: 100%;
 
+      ::v-deep {
+        .tabs li > a {
+          font-family: $family-primary;
+          font-size: 18px;
+          color: #7F0038;
+          font-weight: 500;
+          text-transform: uppercase;
+        }
+      }
+
       .tab-content {
         padding: 0;
       }
+
       .tab-content,
       .tab-item {
         height: 100%;
       }
     }
   }
-  .center-footer-area {
-    grid-area: center-footer;
-    justify-self: end;
-    align-self: center;
+
+  .nav-footer-area {
+    grid-area: nav-footer;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+
     .buttons {
-      margin-right: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      button {
+        background-color: #CB2158;
+      }
     }
-  }
-
-  .root-grid-container {
-    display: grid;
-    min-height: inherit;
-    height: 100%;
-
-    grid-template-columns: minmax(280px, 28%) minmax(800px, auto);
-    grid-template-rows: 120px auto 80px;
-    grid-template-areas:
-      "leftbar-header center-content"
-      "leftbar-content center-content"
-      "leftbar-footer center-footer";
   }
 }
 

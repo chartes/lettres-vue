@@ -464,6 +464,9 @@ export default {
 
 <style scoped lang="scss">
 @import "@/assets/sass/main.scss";
+@import "@/assets/sass/components/_search_results_table.scss";
+@import "@/assets/sass/components/_search_results_pagination.scss";
+
 .table_title {
   margin-bottom: 25px;
   font-family: $family-primary;

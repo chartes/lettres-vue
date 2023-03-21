@@ -1,81 +1,79 @@
 <template>
   <div class="collection-card card">
-    <div class="columns is-vcentered">
-      <div
-        class="column is-2 has-text-centered"
-      >
+    <!-- Card header : thummbnail, title, documents count, dates -->
+    <div
+      class="card-header is-flex is-align-items-center"
+      :class="expandedById[collection.id] ? 'expanded': ''"
+    >
+      <div class="collection-thumbnail">
         <img
           id="card_image"
-          class="card-img-left m-2 is-inline-block"
+          class="card-img-left is-inline-block"
           :src="getImgUrl(collectionId)"
           alt="Card image cap"
         >
       </div>
-      <div class="column">
-        <div class="card-content">
-          <div class="is-flex is-justify-content-space-between mb-4">
-            <div>
-              <collection-breadcrumb
-                v-if="collection.parent !== null"
-                :collection-id="collection.parent"
-              />
-              <span class="title is-flex is-justify-content-space-between">
-                <router-link
-                  :to="{ name: 'collection', params: { collectionId: collection.id } }"
-                  class="title mb-5"
-                  v-html="title"
-                />
-              </span>
-            </div>
-            <div class="ml-auto">
-              Documents&nbsp;:&nbsp;{{
-                collection.documentCount
-              }}
-            </div>
-            <div class="ml-5">
-              {{ collection.dateMin || "..." }} -
-              {{ collection.dateMax || "..." }}
-            </div>
-          </div>
-          <span
-            class="description"
-            v-html="description"
-          />
-          <div class="is-flex">
-            <p class="pt-2 pr-2 pb-2 pl-3 ml-auto">
-              Gérée par&nbsp;<a>{{ collection.admin.username }}</a>
-            </p>
-          </div>
+      <div class="collection-title-wrapper">
+        <collection-breadcrumb
+          v-if="collection.parent !== null"
+          :collection-id="collection.parent"
+          class="collection-parent-title"
+        />
+        <router-link
+          :to="{ name: 'collection', params: { collectionId: collection.id } }"
+          class="collection-title"
+          v-html="title"
+        />
+      </div>
+      <div class="collection-infos is-flex is-flex-direction-column">
+        <div class="collection-dates is-flex">
+          <span>{{ collection.dateMin || "..." }}</span>
+          <span>{{ collection.dateMax || "..." }}</span>
+        </div>
+        <div>
+          <span class="documents-count">{{ collection.documentCount }}</span>
+          <span class="documents-count-label"> documents</span>
         </div>
       </div>
     </div>
-    <!-- Collection children -->
+    <!-- Card body : description -->
+    <div class="card-body card-content">
+      <div
+        class="collection-description"
+        v-html="description"
+      />
+      <div class="collection-metadata is-flex">
+        <p>
+          <label>Curateur :</label>&nbsp;<a>{{ collection.admin.username }}</a>
+        </p>
+      </div>
+    </div>
+    <!-- Card footer : collection children -->
     <footer
       v-if="collection.children.length > 0"
       class="card-footer collect-card__children is-flex is-flex-direction-column"
+      :class="hierarchyShown ? 'expanded': ''"
     >
       <button
         class="show-children"
         @click="toggleExpanded(collection.id)"
       >
-        <i
-          :class="`fas fa-caret-${expandedById[collection.id] ? 'down': 'right'}`"
-          class="caret"
-        />&nbsp;Parcourir la collection
+        Parcourir la collection
       </button>
       <div v-if="expandedById[collection.id]">
         <div
           v-for="childCollection of flattenedCollectionsTree(collection.children, parentExpanded)"
           :key="childCollection.id"
           :style="`margin-left: ${ 20 * childCollection.depth + (childCollection.children.length > 0 ? 0 : 20)}px;`"
+          class="child-collection"
+          :class="expandedById[childCollection.id] ? 'expanded': ''"
         >
           <button
             v-if="childCollection.children.length > 0"
             class="expand-collection"
             @click="toggleExpanded(childCollection.id)"
-          >
-            <i :class="`fas fa-caret-${expandedById[childCollection.id] ? 'down': 'right'}`" />
-          </button><router-link :to="{name: 'collection', params: {collectionId: childCollection.id}}">
+          />
+          <router-link :to="{name: 'collection', params: {collectionId: childCollection.id}}">
             {{ childCollection.title }}&nbsp;-&nbsp; {{ childCollection.documentCount }} document{{ childCollection.documentCount > 1 ? "s" : "" }}
           </router-link>
         </div>
@@ -152,43 +150,6 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.collection-card {
-
-  button.show-children {
-    line-height: 1.5;
-    font-size: 1rem;
-    align-self: start;
-    background: none;
-    border: none;
-  }
-
-  button.expand-collection {
-    background: none;
-    border: none;
-    line-height: 1.5;
-    font-size: 1rem;
-    padding: 0;
-    width: 20px;
-  }
-
-  button .caret {
-    width: 20px;
-  }
-
-  .card-footer {
-    padding: 10px;
-  }
-  .title {
-    color: #485fc7;
-  }
-  .title::v-deep, .description::v-deep {
-    mark {
-      background-color: yellow !important;
-      color: black !important;
-    }
-  }
-  .card-img-left {
-    max-height: 100px;
-  }
-}
+@import "@/assets/sass/main.scss";
+@import "@/assets/sass/components/_collection.collection-list-item.scss";
 </style>

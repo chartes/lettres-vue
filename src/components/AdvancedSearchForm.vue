@@ -1,12 +1,8 @@
 <template>
   <section class="advanced-search-form">
-    <div class="section grid-container p-5">
-      <section class="search-section">
-        <div class="row is-flex is-align-items-center">
-          <i
-            class="fas fa-calendar-alt m-2"
-            style="font-size:32px;"
-          />
+    <div class="section grid-container">
+      <section class="search-section search-section-dates">
+        <div class="row is-flex is-align-items-center search-section-header-dates">
           <span class="advanced_search_header m-2">DATES</span>
         </div>
         <div class="row">
@@ -14,7 +10,7 @@
             <!-- Input sliders -->
             <div>
               <div>
-                <div class="row is-flex is-align-items-center is-justify-content-center">
+                <div class="row is-flex is-align-items-center is-justify-content-center mb-5">
                   <span
                     class="date_label m-2"
                     style="font-size: small"
@@ -76,7 +72,7 @@
                     </b-autocomplete>
                   </b-field>
                 </div>
-                <div>
+                <div class="vue-slider-parent">
                   <vue-slider
                     v-model="DateRange"
                     :min="minDateRange"
@@ -560,12 +556,20 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @import "@/assets/sass/main.scss";
 
 .advanced-search-form {
   background-color: white;
   height: 100%;
+
+  color: #6D7278;
+  font-weight: 400;
+
+  .section.grid-container {
+    padding: 0;
+  }
+
   .b-slider .b-slider-thumb-wrapper.has-indicator .b-slider-thumb {
     padding: 14px 4px !important;
   }
@@ -598,12 +602,66 @@ export default {
   .display-section,
   .search-section {
     margin-top: 16px;
-    background-color: $beige-lighter;
+    background-color: #F0F0F0;
     border-radius: 5px;
-    padding: 10px;
+    padding: 14px 20px 5px;
     /*.input {
       width: 250px;
     }*/
+  }
+
+  .search-section .search-section-header-dates {
+    padding-left: 30px;
+    background: url('../assets/images/icons/picto-dates.svg') center left no-repeat;
+  }
+
+  .search-section::v-deep {
+
+    .row:first-of-type {
+      margin-bottom: 20px;
+    }
+
+    .advanced_search_header {
+      font-weight: 500;
+    }
+
+    a.advanced_search_router {
+      font-size: 14px;
+      color: #6D7278;
+      text-transform: uppercase;
+    }
+
+    .taginput .taginput-container .autocomplete input {
+      height: auto;
+      margin-bottom: 0;
+      padding-top: 8px;
+      padding-bottom: 8px;
+      border-radius: 5px;
+    }
+  }
+
+  .search-section.search-section-dates .autocomplete.year-search::v-deep {
+    input {
+      height: auto;
+      padding-top: 0 !important;
+      padding-bottom: 0 !important;
+      border: #BAB9B6 solid 1px;
+
+      font-family: $family-primary;
+      font-size: 14px;
+      font-weight: 500;
+      color: #8B8A7E;
+    }
+
+    .control.has-icons-right .icon {
+      height: 24px;
+      padding: 0;
+    }
+  }
+
+  .search-section:first-of-type {
+    margin-top: 0;
+    padding-bottom: 60px;
   }
 
   .autocomplete .icon {
@@ -613,9 +671,11 @@ export default {
     height: 22px !important;
   }
 }
+
+
 /* sliders */
 .sliders {
-  font-family: "Barlow", sans-serif;
+  font-family: $family-primary;
   font-weight: 500;
   text-transform: uppercase;
 }
@@ -639,7 +699,7 @@ export default {
   padding: 2px 0;
   margin: 0 15px;
 
-  font-family: "Barlow", sans-serif;
+  font-family: $family-primary;
   font-weight: 500;
   font-size: 14px;
   color: #979797;
@@ -669,26 +729,50 @@ input[type="number"]::-webkit-inner-spin-button {
 .vue-slider.vue-slider-ltr {
   margin-top: 15px !important;
   padding: 0 10px !important;
-  height: 3px !important;
+  height: 6px !important;
 }
-.vue-slider :deep(.vue-slider-dot) {
-  width: 18px !important;
-  height: 18px !important;
-}
-.vue-slider:hover :deep(.vue-slider-rail),
-.vue-slider :deep(.vue-slider-rail) {
-  background-color: #ffffff;
-}
-.vue-slider :deep(.vue-slider:hover .vue-slider-process),
-.vue-slider :deep(.vue-slider-process) {
-  background-color: #b9192f !important;
-}
-.vue-slider :deep(.vue-slider-dot-handle:hover),
-.vue-slider :deep(.vue-slider-dot-handle-focus),
-.vue-slider :deep(.vue-slider-dot-handle) {
-  border-color: #b9192f !important;
-}
-.vue-slider :deep(.vue-slider-dot-handle-focus) {
-  box-shadow: 0 0 0 5px rgba(185, 25, 47, 0.2);
+
+.vue-slider-parent::v-deep {
+
+  .vue-slider-rail {
+    background-color: #CECECE;
+  }
+
+  .vue-slider-process {
+    background-color: #CB2158;
+  }
+
+  .vue-slider-dot {
+    width: 23px !important;
+    height: 23px !important;
+  }
+
+  .vue-slider-mark,
+  .vue-slider-dot-handle {
+    border-width: 5px;
+    border-color: #CB2158;
+  }
+
+  .vue-slider-dot-handle:hover {
+    border-color: #CB2158;
+    box-shadow: 0 0 0 1px #CB2158;
+  }
+
+  .vue-slider-mark,
+  .vue-slider-mark.vue-slider-mark-active {
+    width: 6px !important;
+    height: 6px !important;
+  }
+
+  .vue-slider-mark-step-active,
+  .vue-slider-mark:hover,
+  .vue-slider:hover .vue-slider-mark-step-active,
+  .vue-slider-mark.vue-slider-mark-active:hover {
+    box-shadow: 0 0 0 1px #CB2158 !important;
+  }
+
+  .vue-slider-dot-handle-focus {
+    box-shadow: 0 0 0 5px rgba(185, 25, 47, 0.2);
+  }
 }
 </style>

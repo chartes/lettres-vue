@@ -19,12 +19,12 @@
             :key="witness.id"
             class="list-group-item"
           >
-            <span class="columns">
+            <span class="columns is-flex-direction-column">
               <div class="column">
                 <div v-html="witness.content" />
                 <div v-html="witness['classification-mark']" />
               </div>
-              <div class="column is-two-fifths">
+              <div class="column">
                 <div class="witness-actions">
                   <b-field
                     grouped
@@ -295,7 +295,6 @@ export default {
 
 .witness-actions {
   display: inline-flex;
-  float: right;
   width: max-content;
 }
 .display-manifest-button {

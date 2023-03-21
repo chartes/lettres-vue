@@ -71,71 +71,79 @@
       </div>
     </section>-->
     <section>
-      <div class="container">
+      <div class="narrow-container">
         <!--<div class="row">
           {{ allCollections }}
         </div>-->
         <div
-          class="row m-auto is-flex is-justify-content-center"
-          style="text-align: center"
+          class="numbers row is-flex"
+          style="text-align: center;"
         >
-          <div class="column col_meta is-inline-block my-5">
-            <div class="row">
-              <span class="has-text-grey has-text-weight-bold">LETTRES</span>
-            </div>
-            <div class="row">
-              <router-link
-                :to="{ name: 'search' }"
-                class="navbar-start-item"
-              >
-                <span class="metadata">{{ lettersCount }}</span>
-              </router-link>
-            </div>
-          </div>
-          <div class="column col_meta is-inline-block my-5">
-            <div class="row">
-              <span class="has-text-grey has-text-weight-bold">COLLECTIONS</span>
-            </div>
-            <div class="row">
-              <router-link
-                :to="{ name: 'collections' }"
-                class="navbar-start-item"
-              >
-                <span class="metadata">{{ collectionsCount }}</span>
-              </router-link>
+          <div class="column col_meta">
+            <div class="is-flex is-flex-direction-column">
+              <div class="row metadata-label">
+                <span>LETTRES</span>
+              </div>
+              <div class="row">
+                <router-link
+                  :to="{ name: 'search' }"
+                  class="navbar-start-item"
+                >
+                  <span class="metadata">{{ lettersCount }}</span>
+                </router-link>
+              </div>
             </div>
           </div>
-          <div class="column col_meta is-inline-block my-5">
-            <div class="row">
-              <span class="has-text-grey has-text-weight-bold">PERSONNES</span>
-            </div>
-            <div class="row">
-              <router-link
-                :to="{ name: 'persons' }"
-                class="navbar-start-item"
-              >
-                <span class="metadata">{{ personsCount }}</span>
-              </router-link>
+          <div class="column col_meta">
+            <div class="is-flex is-flex-direction-column">
+              <div class="row metadata-label">
+                <span>COLLECTIONS</span>
+              </div>
+              <div class="row">
+                <router-link
+                  :to="{ name: 'collections' }"
+                  class="navbar-start-item"
+                >
+                  <span class="metadata">{{ collectionsCount }}</span>
+                </router-link>
+              </div>
             </div>
           </div>
-          <div class="column col_meta is-inline-block my-5">
-            <div class="row">
-              <span class="has-text-grey has-text-weight-bold">LIEUX</span>
+          <div class="column col_meta">
+            <div class="is-flex is-flex-direction-column">
+              <div class="row metadata-label">
+                <span>PERSONNES</span>
+              </div>
+              <div class="row">
+                <router-link
+                  :to="{ name: 'persons' }"
+                  class="navbar-start-item"
+                >
+                  <span class="metadata">{{ personsCount }}</span>
+                </router-link>
+              </div>
             </div>
-            <div class="row">
-              <router-link
-                :to="{ name: 'places' }"
-                class="navbar-start-item"
-              >
-                <span class="metadata">{{ placesCount }}</span>
-              </router-link>
+          </div>
+          <div class="column col_meta">
+            <div class="is-flex is-flex-direction-column">
+              <div class="row metadata-label">
+                <span>LIEUX</span>
+              </div>
+              <div class="row">
+                <router-link
+                  :to="{ name: 'places' }"
+                  class="navbar-start-item"
+                >
+                  <span class="metadata">{{ placesCount }}</span>
+                </router-link>
+              </div>
             </div>
           </div>
         </div>
         <div
-          class="row m-auto is-flex is-justify-content-center"
+          class="homepage-intro row m-auto is-flex is-justify-content-center"
         >
-          <div class="content is-inline-block m-5 p-1">
+          <div class="content is-inline-block">
             <h3>Des correspondances <br> du XV<sup>e</sup> au XVII<sup>e</sup> siècle</h3>
             <p class="has-text-justified">
               LPM présente le contenu de lettres missives de la fin du Moyen Âge et du début de l’époque moderne (vers
@@ -145,7 +153,7 @@
               rassemblent des milliers de lettres ou qui contiennent quelques lettres seulement.
             </p>
           </div>
-          <div class="content is-inline-block m-5 p-1">
+          <div class="content is-inline-block">
             <h3>Un portail d’éditions <br> collaboratives</h3>
             <p class="has-text-justified mb-2">
               LPM rassemble des projets conduits par des partenaires différents qui mettent en commun leurs apports
@@ -159,9 +167,9 @@
       </div>
     </section>
     <section>
-      <div class="container">
+      <div class="narrow-container">
         <div class="row m-auto is-flex">
-          <div class="content is-inline-block m-5 p-1">
+          <div class="content is-inline-block">
             <h3>Focus</h3>
             <!--<p class="has-text-justified mb-2">
               [Boutons de nouvelles collections et une ou des collections plus anciennes de manière aléatoire et
@@ -171,39 +179,37 @@
         </div>
         <div class="row m-auto">
           <div
-            class="container columns is-vcentered m-5"
+            class="container columns cards is-vcentered"
           >
             <div
               v-for="featured in featured_collections"
               :key="featured.id"
-              class="column is-4 padding-5 is-inline-block"
+              class="column is-4 is-inline-block"
             >
-              <div class="card has-text-centered">
+              <div class="card">
                 <router-link
                   :to="{ name: 'collection', params: {collectionId: featured.id } }"
                 >
-                  <img
-                    id="card_image"
-                    class="card-img-top m-5 is-inline-block"
-                    :src="getImgUrl(featured.id)"
-                    alt="Card image cap"
-                  >
-                  <div class="card-body has-text-centered">
-                    <h5 class="card-title px-6">
+                  <div class="card-header is-flex is-justify-content-center">
+                    <div class="card-image-parent">
+                      <img
+                        id="card_image"
+                        class="card-img-top is-inline-block"
+                        :src="getImgUrl(featured.id)"
+                        alt="Card image cap"
+                      >
+                    </div>
+                  </div>
+                  <div class="card-body">
+                    <h5 class="card-title">
                       collection {{ featured.id }}
                     </h5>
                     <p class="card-text">
                       {{ featured.documentCount }} documents
                     </p>
                   </div>
-                  <div class="card-footer is-flex is-justify-content-center">
-                    <b-button
-                      tag="router-link"
-                      :to="{ name: 'collection', params: {collectionId: featured.id } }"
-                      type="is-primary"
-                    >
-                      Découvrir la collection
-                    </b-button>
+                  <div class="card-footer is-flex">
+                    Curateur :&nbsp;<a>{{ featured.admin.username }}</a>
                   </div>
                 </router-link>
               </div>
@@ -387,55 +393,151 @@ export default {
 
 <style scoped lang="scss">
 @import "@/assets/sass/main.scss";
-/*#intro {
-  background-image: url('../assets/images/about.jpg');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  height:300px;
-  width:auto;
-  display:flex;
-  flex-direction: column;
-  justify-content: center;
-  margin-bottom: 0px !important;
-}*/
+
+
+article > section:first-child > .narrow-container {
+  margin-top: 115px;
+}
+
+article > section > .narrow-container > .numbers,
+article > section > .narrow-container {
+  margin-bottom: 85px;
+}
+
+article > section .homepage-intro {
+  gap: 95px;
+}
+
+article > section .content h3 {
+  font-family: $family-primary;
+  font-size: 28px;
+  color: #000000;
+}
+
+article > section .content p {
+  font-family: $family-primary;
+  font-size: 20px;
+  line-height: 1.25;
+}
+
 #card_image {
   max-height: 250px;
 }
-/*.homepage_title {
-  font-size: xxx-large;
-  font-width: bolder;
-  text-shadow: 0px 2px, 2px 0px, 2px 2px;
-  color: white;
+.metadata-label > span {
+  font-family: $family-primary;
+  font-size: 16px;
+  font-weight: 600 !important;
+  line-height: 1;
+  color: #6D7278;
   text-align: center;
+  text-transform: uppercase;
 }
-.homepage_subtitle {
-  font-size: x-large;
-  color: white;
-  text-align: center;
-}*/
 .metadata {
-  font-size: xx-large;
-  font-weight: bolder;
-  text-shadow: 0px 2px, 2px 0px, 2px 2px;
-  color: rgb(255, 0, 83);
+  font-family: $family-primary;
+  font-size: 50px;
+  line-height: 1;
+  font-weight: 700;
   text-align: center;
 }
-.col_meta:not(:last-of-type) {
-  border-right: solid 5px;
+
+.column.col_meta {
+  flex: 28% 0 0;
+  padding: 0;
+  border-right: solid 8px;
   border-right-color: rgba(180, 0, 80);
+}
+.col_meta:first-child,
+.col_meta:last-child {
+  flex: 22% 0 0;
+}
+.col_meta:last-child {
+  border: none;
+}
+.col_meta > div {
+  padding: 10px 0 15px;
+}
+.col_meta:first-child > div {
+  float: left;
+}
+.col_meta:last-child > div {
+  float: right;
+}
+.col_meta:nth-child(2n+1) .metadata {
+  color: #FF0052;
+}
+.col_meta:nth-child(2n) .metadata {
+  color: #C00055;
+}
+
+
+.cards {
+  gap: 30px;
+  width: 100%;
+  margin: 0;
+}
+.cards .column {
+  flex: calc( 33.33% - 20px) 0 0;
+  padding: 0;
 }
 .card {
   overflow: hidden;
-  border-radius: 0.5em;
+  background-color: #F0F0F0;
+  border-radius: 10px;
+  box-shadow: none;
+  padding: 25px 25px 30px;
+
+  a {
+    font-family: $family-primary;
+    font-size: 18px;
+    font-weight: 400;
+    color: #4A4A4A;
+  }
+
+  .card-header {
+    box-shadow: none;
+    padding-bottom: 25px;
+
+    .card-image-parent {
+      width: 170px;
+      height: 170px;
+      border-radius: 10px;
+      overflow: hidden;
+
+      img {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        object-fit: cover;
+        object-position: center;
+      }
+    }
+  }
+
+  .card-body {
+    h5.card-title {
+      font-size: 20px;
+      font-weight: 500;
+      color: #C00055;
+    }
+  }
+
+  .card-footer {
+    padding-top: 30px;
+  }
 }
-.card-title {
-  color: rgb(255, 0, 83);
-}
+
 .portail_button {
   background-color: transparent;
   color: white;
 }
+section > .container {
+  @include on-tablet {
+    max-width: 100% !important;
+    margin: 0 $container-tablet-margin !important;
+  }
+}
+
+
 /*.search_row {
   background-color: rgba(35, 9, 20);
   padding: 5px;
@@ -444,10 +546,5 @@ export default {
   border: none !important;
   outline: none !important;
 }*/
-/*.search_button {
-  border-color: white !important;
-  outline: none !important;
-  box-shadow:none !important;
-  color: rgba(35, 9, 20) !important;
- }*/
+
 </style>

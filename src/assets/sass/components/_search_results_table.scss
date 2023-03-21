@@ -1,0 +1,190 @@
+::v-deep {
+  .table-wrapper {
+    border-top: #CB2158 8px solid;
+
+    th {
+      font-family: $family-secondary;
+      font-size: 14px;
+      font-weight: 500;
+      color: #4A4A4A;
+      text-transform: uppercase;
+      border-bottom: 1px solid #fdb3cc;
+    }
+
+    tbody {
+
+      td {
+        vertical-align: middle;
+        border-color: #fdb3cc;
+        padding: 8px 10px;
+
+        /* Chevron */
+        &:nth-child(1) {
+          padding-left: 0;
+          padding-right: 0;
+
+          a {
+            display: flex;
+            align-items: center;
+
+            span.icon {
+              &::after {
+                content: "";
+                display: inline-block;
+                width: 24px;
+                height: 24px;
+                background: url(#{$image-path}/icons/open_text.svg) center right / 18px auto no-repeat;
+                transform-origin: 50% 50%;
+                transform: rotate(-90deg);
+              }
+
+              &.opened::after {
+                transform: rotate(0deg);
+              }
+            }
+          }
+
+          i {
+            display: none;
+          }
+        }
+
+        /* ID Lettre */
+        &:nth-child(2) {
+          padding-left: 0;
+          padding-right: 0;
+
+          .tag {
+            background: none;
+            font-family: $family-primary;
+            font-size: 16px;
+            font-weight: 400;
+            color: #515151;
+          }
+        }
+
+        /* Titre lettre */
+        &:nth-child(3) {
+          color: #4A4A4A;
+          font-weight: 500;
+        }
+
+        /* Titre */
+        &:nth-child(4) {
+          a {
+            font-family: $family-secondary;
+            font-size: 16px;
+            color: #000000;
+            font-weight: 600;
+            line-height: 20px;
+
+            &:hover {
+              text-decoration: underline;
+            }
+          }
+        }
+
+      }
+
+      tr.detail {
+        background-color: #F8F8F8;
+
+        .detail-container {
+          overflow: hidden;
+
+          .document-page {
+
+            .heading {
+              background: none;
+              border: none;
+              padding: 0;
+            }
+
+            .heading-content {
+              display: flex;
+              align-items: flex-end;
+              gap: 4px;
+
+              font-family: $family-primary;
+              font-size: 16px;
+              line-height: 16px;
+              color: #CB2158;
+              font-weight: 600;
+              letter-spacing: 0;
+              text-transform: uppercase;
+
+              &::after {
+                content: "";
+                display: inline-block;
+                border-bottom: 1px solid #D2D2D2;
+                width: 100%;
+                transform: translateY(-2px);
+              }
+            }
+
+            .document-section {
+              font-family: $family-primary;
+              font-size: 18px;
+              line-height: 23px;
+              color: #373737;
+
+              .witness-list {
+                ul.list-group {
+                  list-style-position: inside;
+
+                  li.list-group-item {
+                    background: url(#{$image-path}/icons/voir.svg) top 6px left / 24px auto no-repeat;
+                    padding: 0 0 0 32px;
+
+                    .columns {
+                      margin: 0;
+
+                      &:last-child {
+                        margin-bottom: 10px;
+                      }
+
+                      .column {
+                        padding: 0 !important;
+
+                        & > div > * {
+                          display: inline-block;
+                          margin-right: 5px;
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .document-list-header {
+    border-top: solid 1px #FDB3CC;
+    border-bottom: solid 1px #C7C7C7;
+    margin-bottom: 25px;
+
+    .results-count {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      font-family: $family-primary;
+      font-size: 14px;
+      color: #6D7278;
+      font-weight: 600;
+      text-transform: uppercase;
+
+      .total-count {
+        font-size: 50px;
+        color: #FF0052;
+        text-align: center;
+        font-weight: 700;
+      }
+    }
+  }
+}

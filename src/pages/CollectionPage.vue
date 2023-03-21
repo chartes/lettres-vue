@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="large-container">
     <!--<router-link
       :to="{ name: 'collections' }"
       class="mt-5 mb-5"
@@ -7,6 +7,7 @@
       <i class="fas fa-arrow-left ml-1 mr-3" />
       Toutes les collections
     </router-link>-->
+    <!-- TODO this was in the dev branch not in dev-css control !!!:
     <router-link
       v-if="current_user && current_user.isAdmin"
       v-slot="{ navigate }"
@@ -19,34 +20,12 @@
         label="Créer une sous-collection"
         @click="navigate"
       />
-    </router-link>
-
-    <!--<b-button @click="showHierarchy = !showHierarchy" class="ml-auto">
-      Hiérarchie
-    </b-button>-->
-    <div>
+    </router-link>-->
+    <div class="collection-card-parent">
       <collection-interactive-card
         :collection-id="collectionId"
         :editable="true"
-        class="m-3"
       />
-      <b-sidebar
-        v-model="showHierarchy"
-        position="fixed"
-        :right="true"
-        :fullheight="true"
-        class="m-3"
-        style="width: 500px"
-      >
-        <div class="m-3">
-          <p class="menu-label">
-            Hiérarchie
-          </p>
-          <collection-hierarchy
-            :collection-id="collectionId"
-          />
-        </div>
-      </b-sidebar>
     </div>
     <section class="mb-5">
       <div class="is-flex">
@@ -317,7 +296,6 @@ export default {
   name: "CollectionPage",
   components: {
     CollectionInteractiveCard,
-    CollectionHierarchy,
     DocumentTagBar: () => import("@/components/document/DocumentTagBar"),
     Document: () => import("@/components/sections/Document")
   },
@@ -355,6 +333,9 @@ export default {
           await this.fetchData();
         }
       },
+    },
+    totalPages: function() {
+      return Math.ceil(this.totalCount / this.pageSize)
     },
     ...mapState("user", ["current_user"]),
   },
@@ -488,9 +469,19 @@ export default {
 
 <style scoped lang="scss">
 @import "@/assets/sass/main.scss";
+@import "@/assets/sass/components/_search_results_table.scss";
+@import "@/assets/sass/components/_search_results_pagination.scss";
 
 ::v-deep .sidebar-content {
   width: 500px;
+}
+.large-container {
+  position: relative;
+  margin-top: 60px;
+}
+
+.collection-card-parent {
+  padding-bottom: 40px;
 }
 
 .pagination-goto {

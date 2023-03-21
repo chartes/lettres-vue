@@ -8,7 +8,16 @@ module.exports = {
       rules: [
         {
           test: /\.(svg)(\?.*)?$/,
-          use: 
+          include: [
+              path.resolve(__dirname, 'src/assets/images/icons/'),
+              path.resolve(__dirname, 'src/assets/images/icons/'),
+          ],
+          use: ['url-loader'],
+        },
+        {
+          test: /\.(svg)(\?.*)?$/,
+          include: [ path.resolve(__dirname, 'src/assets/icons/')  ],
+          use:
           [
             {
               loader: 'svg-inline-loader',

@@ -1,10 +1,13 @@
 <template>
-  <div class="document">
+  <div
+    class="document"
+    :class="documentCssClass"
+  >
     <div
       v-if="!preview"
       class="is-justify-content-left"
     >
-      <nav class="mb-3">
+      <nav class="mb-3 previous-next-navigation">
         <a
           role="button"
           :href="`/documents/${ docId-1 }`"
@@ -38,13 +41,13 @@
     <div class="columns">
       <document-tag-bar
         v-if="!preview && !isLoading && current_user"
-        class="column is-three-quarters"
+        class="column"
         :doc-id="docId"
         :with-status="true"
       />
       <document-deletion
         v-if="!preview && !isLoading && current_user && current_user.isAdmin"
-        class="column"
+        class="column delete-button"
         :doc-id="docId"
       />
     </div>
@@ -69,7 +72,7 @@
       <!-- dates de lieux et de temps -->
 
       <section class="document-section">
-        <div class="heading is-size-5 is-uppercase">
+        <div class="heading is-uppercase">
           <span class="heading-content">Dates</span>
           <div class="slope-container">
             <span class="slope tier-1" />
@@ -78,7 +81,7 @@
             <span class="slope tier-4" />
           </div>
         </div>
-        <div>
+        <div class="document-section-content">
           <document-date-attributes :editable="canEdit" />
           <document-placenames
             :editable="canEdit"
@@ -90,7 +93,7 @@
 
       <!-- correspondents -->
       <section class="document-section">
-        <div class="heading is-size-5 is-uppercase">
+        <div class="heading is-uppercase">
           <span class="heading-content">Correspondants</span>
           <div class="slope-container">
             <span class="slope tier-1" />
@@ -99,7 +102,7 @@
             <span class="slope tier-4" />
           </div>
         </div>
-        <div>
+        <div class="document-section-content">
           <document-persons
             :editable="canEdit"
             @add-person="addPerson"
@@ -113,17 +116,15 @@
        -->
 
       <section class="document-section">
-        <div class="heading is-size-5 is-uppercase">
-          <span class="heading-content"> Témoins </span>
+        <div class="heading is-uppercase">
+          <span class="heading-content "> Témoins </span>
           <b-button
             v-if="canEdit"
-            type="is-light"
             value="+"
-            size="is-small"
-            class="open-modal-button"
+            class="open-modal-button has-add-btn"
             @click="openWitnessModal = true"
           >
-            <i class="fas fa-plus" />
+            <icon-add />
           </b-button>
           <div class="slope-container">
             <span class="slope tier-1" />
@@ -132,7 +133,7 @@
             <span class="slope tier-4" />
           </div>
         </div>
-        <div>
+        <div class="document-section-content">
           <witness-list
             :editable="canEdit"
             :open-modal="openWitnessModal"
@@ -144,15 +145,17 @@
 
       <section class="document-section">
         <!-- collections -->
-        <div class="heading is-size-5 is-uppercase">
+        <div class="heading is-uppercase">
           <span class="heading-content">Collections</span>
         </div>
-        <document-collections :editable="canEdit" />
+        <div class="document-section-content">
+          <document-collections :editable="canEdit" />
+        </div>
       </section>
 
       <!-- analyse -->
       <section class="document-section">
-        <div class="heading is-size-5 is-uppercase">
+        <div class="heading is-uppercase">
           <span class="heading-content">Analyse</span>
           <div class="slope-container">
             <span class="slope tier-1" />
@@ -161,7 +164,7 @@
             <span class="slope tier-4" />
           </div>
         </div>
-        <div>
+        <div class="document-section-content">
           <document-argument
             :editable="canEdit"
             @add-place="addPlace"
@@ -170,6 +173,7 @@
           />
         </div>
       </section>
+
       <!-- transcription -->
       <section
         class="document-section"
@@ -183,7 +187,7 @@
             <span class="slope tier-4" />
           </div>
         </div>
-        <div>
+        <div class="document-section-content">
           <document-transcription
             :editable="canEdit"
             :preview="preview"
@@ -324,11 +328,13 @@ import WitnessList from "@/components/document/WitnessList.vue";
 
 import PlaceWizardForm from "@/components/forms/wizards/PlaceWizardForm.vue";
 import PersonWizardForm from "@/components/forms/wizards/PersonWizardForm.vue";
+import IconAdd from "@/components/ui/icons/IconAdd";
 
 export default {
   name: "Document",
   //emit: ["open-witness-modal"],
   components: {
+    IconAdd,
     Changelog,
     DocumentSkeleton,
     DocumentPersons,
@@ -368,6 +374,12 @@ export default {
     };
   },
   computed: {
+    documentCssClass: function(){
+      if (this.canEdit && !this.preview) {
+        return 'can-edit';
+      }
+      return this.preview ? "is-preview" : "";
+    },
     ...mapState("document", [
       "document",
       "documentLoading",
@@ -472,32 +484,319 @@ export default {
 
 .document {
   width: 100%;
-}
+  margin-top: 30px;
 
-.document__content {
-  //display: flex;
-  //flex-wrap: wrap;
-  margin-top: 20px;
-  margin-bottom: 20px;
-}
+  &.is-preview {
+    margin-top: 0;
+  }
 
-.panel {
-  -webkit-box-shadow: none;
-  box-shadow: none;
-}
+  & > .columns {
+    align-items: center;
+    margin: 0 !important;
 
-.document-section {
-  &.columns {
-    margin-left: 0;
-    margin-right: 0;
-    margin-bottom: 30px;
+    .tags {
+      padding: 0;
+      margin: 0;
+    }
+  }
 
-    .column {
-      padding-top: 0;
-      padding-bottom: 0;
+  & > .document__content {
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+
+  &.is-preview > .document__content {
+    margin-top: 0;
+    margin-bottom: 0;
+
+    & > .document-section:first-child {
+      margin-top: 0;
     }
   }
 }
+
+nav.previous-next-navigation {
+  display: flex;
+  gap: 12px;
+
+  a.pagination-link {
+    border: none;
+    padding: 0 !important;
+    margin: 0;
+    min-width: unset !important;
+    height: 30px;
+
+    &::after {
+      content: "";
+      display: inline-block;
+      width: 30px;
+      height: 30px;
+      background: url(../../assets/images/icons/lettre_nav_precedent.svg) center / 30px auto no-repeat !important;
+    }
+
+    &.pagination-previous {
+    }
+
+    &.pagination-next::after {
+      transform: rotate(180deg);
+      transform-origin:50% 50%;
+    }
+
+    .icon {
+      display: none;
+    }
+  }
+}
+
+.document-tag-bar {
+  display: flex !important;
+  gap: 50px;
+
+}
+
+.document-section {
+  flex-direction: column;
+  align-items: flex-start;
+
+  font-family: $family-primary;
+  font-size: 20px;
+  line-height: 1.2;
+
+  // Section : Titre du document et langues
+  &.columns {
+    margin: 20px 0 50px;
+
+    .column {
+      padding: 0 !important;
+      border: none;
+
+      &.component {
+        align-self: flex-start !important;
+      }
+
+      &:first-child {
+        width: 100%;
+      }
+
+      ::v-deep {
+        .tag:not(body).is-light {
+          background: none;
+          font-family: $family-primary;
+          font-size: 16px;
+          color: #6D7278;
+          font-weight: 400;
+        }
+      }
+
+    }
+  }
+
+  // Sections : Termes et contenus des metadonnées
+
+  & > .heading {
+    display: flex;
+    gap: 2px;
+    margin-bottom: 20px;
+
+    font-size: 16px;
+    line-height: 1;
+    font-weight: 500;
+    color: #FF0052;
+    letter-spacing: 0;
+    text-transform: uppercase;
+
+    .heading-content {
+      display: inline-block;
+    }
+
+    &::after {
+      display: block;
+      content: '';
+      width: 100%;
+      border-bottom: 1px solid #FF0052;
+      transform: translateY(-3px);
+    }
+  }
+
+  & > .document-section-content {
+    margin-left: 60px;
+    margin-bottom: 40px;
+
+    ::v-deep {
+
+      a {
+        color: #000000;
+
+        &:hover {
+          color: #C00055;
+          text-decoration: underline;
+        }
+      }
+
+      .document-date__attributes {
+        margin-bottom: 20px;
+      }
+
+      .label,
+      .heading {
+        font-size: 16px;
+        color: #000000;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0;
+      }
+
+      .label {
+        font-size: 13px;
+      }
+
+      .panel {
+        -webkit-box-shadow: none;
+        box-shadow: none;
+
+        font-family: $family-primary;
+
+        .panel-block {
+          border: none;
+          padding: 0;
+          margin-bottom: 20px;
+
+          & > :nth-child(2) {
+            font-size: 20px;
+            color: #585858;
+            font-weight: 400;
+            letter-spacing: 0;
+          }
+        }
+      }
+
+      .tag {
+        background: none;
+        padding: 0;
+        margin: 0;
+
+        .breadcrumb.is-small {
+          font-size: 20px;
+          font-weight: 400;
+
+          a {
+            color: #000000;
+
+            &:hover {
+              color: #C00055;
+              text-decoration: underline;
+            }
+          }
+        }
+      }
+
+    }
+  }
+
+}
+
+
+// Mode édition
+
+.document.can-edit {
+
+  nav.previous-next-navigation {
+    padding-bottom: 10px;
+    border-bottom: #FDB3CC solid 1px;
+    margin-bottom: 30px;
+  }
+
+  .document-section {
+    border: 1px solid #FF0052;
+    border-radius: 5px;
+    padding: 30px;
+    margin-bottom: 30px;
+
+    &.columns {
+      margin: 30px 0 40px !important;
+    }
+
+    // Section du titre
+    &.columns::before {
+      content: "TITRE";
+      display: inline-block;
+      margin-bottom: 20px;
+      font-weight: 500;
+      color: #FF0052;
+    }
+
+    & > .heading {
+
+      span {
+        font-size: 20px;
+      }
+
+      &::after {
+        display: none;
+      }
+    }
+
+    & > .document-section-content {
+      margin-left: 30px;
+      margin-bottom: 0;
+
+      ::v-deep {
+
+        .has-add-btn {
+          display: flex !important;
+          align-items: center;
+          gap: 8px;
+          line-height: 20px;
+
+          a.tag .icon {
+            width: 20px !important;
+            height: 20px !important;
+            margin: 0 !important;
+            padding: 0 !important;
+
+            .icon__line {
+              stroke: #FFFFFF;
+            }
+          }
+
+          a.tag:hover .icon circle {
+            fill: #C00055;
+          }
+
+        }
+
+      }
+    }
+
+  }
+
+}
+
+.delete-button {
+  flex: 38px 0 0;
+  padding: 0;
+
+  ::v-deep {
+
+    & > a.tag {
+      display: inline-block;
+      width: 38px;
+      max-width: unset;
+      max-height: unset;
+      height: 38px;
+      background: url(../../assets/images/icons/bouton_supprimer.svg) center / 38px auto no-repeat !important;
+      border-radius: 0!important;
+      border: none !important;
+      margin: 0;
+      text-indent: -9999px;
+
+      .icon {
+        display: none;
+      }
+    }
+  }
+}
+
 
 .slope-container {
   height: 3px;
@@ -526,30 +825,43 @@ export default {
   background-color: #baaf92;
 }
 
-.heading {
-  display: block;
-  background-color: $beige-lighter;
-  margin-bottom: 3px;
-  margin-top: 3px;
-  padding-left: 5px;
-  border-left: 3px solid $nice-grey;
-}
-.heading-content {
-  display: inline-block;
+.button.open-modal-button.has-add-btn {
+  display: flex !important;
+  align-items: center;
+  line-height: 20px;
 
-  color: $brown;
-  font-family: $bitter-family;
-  font-size: 18px;
-  padding: 5px;
-}
-.main-column-content {
-  padding-left: 0px !important;
-}
-.open-modal-button {
-  margin-top: 3px;
-  background-color: $beige-lighter !important;
-  &:hover {
-    background-color: $nice-grey !important;
+  height: 20px !important;
+  background-color: transparent !important;
+  border: none;
+  padding: 0;
+
+  ::v-deep {
+
+    span {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+
+      .icon {
+        width: 20px !important;
+        height: 20px !important;
+        margin: 0 0 0 8px !important;
+        padding: 0 !important;
+
+        .icon__line {
+          stroke: #FFFFFF;
+        }
+      }
+    }
   }
+
+  &:hover {
+    ::v-deep {
+      .icon circle {
+        fill: #C00055;
+      }
+    }
+  }
+
 }
 </style>

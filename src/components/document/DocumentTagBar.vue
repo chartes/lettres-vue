@@ -4,7 +4,7 @@
       :to="{ name: 'document', params: { docId } }"
       class="tag document-status-card__doc-tag"
     >
-      <span>{{ docId }}</span>
+      <span class="document-id">Lettre {{ docId }}</span>
     </router-link>
 
     <!--
@@ -12,8 +12,9 @@
     -->
     <badge
       v-if="withStatus && current_user && status"
+      class="tag publish-tag"
       classes-active="is-published tag"
-      classes-inactive="tag"
+      classes-inactive=""
       :action-when-on="publishDocument"
       :action-when-off="unpublishDocument"
       :starts-on="status.isPublished"
@@ -31,8 +32,9 @@
     -->
     <badge
       v-if="withStatus && current_user && status"
+      class="tag bookmark-tag"
       classes-active="is-bookmarked tag"
-      classes-inactive="tag"
+      classes-inactive=""
       :action-when-on="addBookmark"
       :action-when-off="removeBookmark"
       :starts-on="status.isBookmarked"
@@ -50,8 +52,9 @@
     -->
     <badge
       v-if="withStatus && current_user && status"
+      class="tag lock-tag"
       classes-active="is-locked tag"
-      classes-inactive="tag"
+      classes-inactive=""
       :action-when-on="startLockEditor"
       :action-when-off="startLockEditor"
       :starts-on="status.currentLock['is-active']"
@@ -189,4 +192,70 @@ export default {
 </script>
 <style scoped lang="scss">
 @import "@/assets/sass/main.scss";
+
+.tags {
+
+  a.tag:first-child {
+    padding: 0;
+
+    .document-id {
+      font-family: $family-primary;
+      font-size: 16px;
+      line-height: 20px;
+      font-weight: 500;
+      color: #000000;
+      text-transform: uppercase;
+    }
+  }
+
+  .tag:not(body) {
+    display: inline-block;
+    background-color: transparent !important;
+    margin: 0;
+    padding: 0;
+
+    a {
+      display: inline-block;
+      min-width: 40px;
+      height: 20px;
+    }
+
+    i {
+      display: none;
+    }
+
+    &::after {
+      display: none;
+    }
+  }
+
+  .publish-tag {
+    a {
+      background: url(../../assets/images/icons/published-neutre.svg) center / 20px auto no-repeat;
+    }
+    &.is-published a {
+      background-image: url(../../assets/images/icons/published-active.svg);
+    }
+  }
+
+  .bookmark-tag {
+    a {
+      background: url(../../assets/images/icons/favori_neutre.svg) center / 15px auto no-repeat;
+    }
+    &.is-bookmarked a {
+      background-image: url(../../assets/images/icons/favori_active.svg);
+    }
+  }
+
+  .lock-tag {
+    a {
+      background: url(../../assets/images/icons/verrou-ouvert.svg) center / 15px auto no-repeat !important;
+    }
+    &.is-locked a {
+      background-image: url(../../assets/images/icons/verrou-ferme.svg);
+    }
+  }
+
+}
+
 </style>

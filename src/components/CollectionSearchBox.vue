@@ -1,11 +1,7 @@
 <template>
   <div v-if="$route.name === 'search'">
     <section>
-      <div class="row is-flex is-justify-content-space-between">
-        <i
-          class="fas fa-list-ul m-2"
-          style="font-size:32px;"
-        />
+      <div class="row is-flex is-justify-content-space-between search-section-header-collections">
         <span class="advanced_search_header m-2">COLLECTIONS</span>
         <router-link
           :to="{ name: 'collections' }"
@@ -120,13 +116,19 @@ export default {
 </script>
 
 <style lang="scss">
+
 @import "@/assets/sass/main.scss";
+
 #tag_label {
   background-color: white;
   color: black;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
+}
+.search-section-header-collections {
+  padding-left: 30px;
+  background: url('../assets/images/icons/picto-collections.svg') center left no-repeat;
 }
 .advanced_search_header {
   align-self: center;
