@@ -14,7 +14,11 @@
       />
       <div v-else>
         <b-taglist>
-          <b-tag v-for="tag in tags" :key="tag.id" type="is-light">
+          <b-tag
+            v-for="tag in tags"
+            :key="tag.id"
+            type="is-light"
+          >
             {{ tag.label }}
           </b-tag>
         </b-taglist>

@@ -1,11 +1,12 @@
 <template>
   <div
-      class="document"
-      :class="documentCssClass"
+    class="document"
+    :class="documentCssClass"
   >
     <div
       v-if="!preview"
-      class="is-justify-content-left">
+      class="is-justify-content-left"
+    >
       <nav class="mb-3 previous-next-navigation">
         <a
           role="button"

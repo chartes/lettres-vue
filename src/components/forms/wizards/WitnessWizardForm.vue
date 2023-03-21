@@ -1,7 +1,6 @@
 <template>
   <div class="root-container box modal-card">
     <div class="root-grid-container">
-
       <div class="leftbar-header-area">
         <h1 class="step-label">
           {{ wizardLabel }}
@@ -9,24 +8,26 @@
         <h2
           v-if="currentStep.label"
           class="step-label"
-        >{{ currentStep.label }}</h2>
+        >
+          {{ currentStep.label }}
+        </h2>
       </div>
 
       <div class="center-content-area">
         <b-tabs v-model="activeTab">
           <b-tab-item
-              v-for="(stepItem, i) in stepItems"
-              :key="`center-step-${i}`"
-              :label="stepItem.center ? stepItem.center.label : `center-step-${i}`"
+            v-for="(stepItem, i) in stepItems"
+            :key="`center-step-${i}`"
+            :label="stepItem.center ? stepItem.center.label : `center-step-${i}`"
           >
             <keep-alive v-if="stepItem.center">
               <component
-                  :is="stepItem.center.component"
-                  v-bind="stepItem.center.attributes"
-                  @goto-wizard-step="gotoStep"
-                  @manage-manifest-data="manageManifestData"
-                  @manage-witness-data="manageWitnessData"
-                  @add-note="addNote"
+                :is="stepItem.center.component"
+                v-bind="stepItem.center.attributes"
+                @goto-wizard-step="gotoStep"
+                @manage-manifest-data="manageManifestData"
+                @manage-witness-data="manageWitnessData"
+                @add-note="addNote"
               />
             </keep-alive>
           </b-tab-item>

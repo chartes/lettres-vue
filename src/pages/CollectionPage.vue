@@ -16,8 +16,10 @@
     </div>
 
     <section>
-
-      <span v-if="totalCount" class="pagination-goto">
+      <span
+        v-if="totalCount"
+        class="pagination-goto"
+      >
         <input
           v-model="currentPage"
           name="page"

@@ -10,34 +10,33 @@
     </div>
 
     <div v-if="!isLoading">
-
       <div class="collection-list-header is-flex is-justify-content-space-between is-align-items-center">
         <div class="search-container">
           <b-field>
             <b-input
-                v-model="searchTerm"
-                placeholder="Rechercher une collection"
-                type="search"
-                icon-right="close-circle"
-                icon-right-clickable
-                @icon-right-click="searchTerm=''"
+              v-model="searchTerm"
+              placeholder="Rechercher une collection"
+              type="search"
+              icon-right="close-circle"
+              icon-right-clickable
+              @icon-right-click="searchTerm=''"
             />
           </b-field>
         </div>
         <span
-            v-if="current_user && current_user.isAdmin"
-            class="column"
+          v-if="current_user && current_user.isAdmin"
+          class="column"
         >
           <router-link
-              v-slot="{ navigate }"
-              to="/collections/create"
-              custom
+            v-slot="{ navigate }"
+            to="/collections/create"
+            custom
           >
             <b-button
-                type="is-primary"
-                label="Créer une collection"
-                class="create-collection-btn"
-                @click="navigate"
+              type="is-primary"
+              label="Créer une collection"
+              class="create-collection-btn"
+              @click="navigate"
             />
           </router-link>
         </span>
@@ -46,30 +45,26 @@
             <a
               class="first-page"
               href=""
-            >
-            </a>
+            />
             <a
               class="previous-page"
               href=""
-            >
-            </a>
+            />
             <input
               class="current-page"
               type="text"
               value="1"
-            />
+            >
             <span class="label-sur-page">sur</span>
             <span class="total-pages">150</span>
             <a
               class="next-page"
               href=""
-            >
-            </a>
+            />
             <a
               class="last-page"
               href=""
-            >
-            </a>
+            />
           </div>
         </span>
       </div>

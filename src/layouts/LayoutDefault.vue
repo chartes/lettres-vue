@@ -75,8 +75,7 @@
           <div
             class="hide-left-bar"
             @click="hideLeftSideBar"
-          >
-          </div>
+          />
           <advanced-search-form v-if="$route.name === 'search'" />
         </div>
         <div class="column main-column">
@@ -103,16 +102,18 @@
           <li>
             <a href="">
               <img
-                  class="enc-logo"
-                  src="@/assets/images/logos/logo-footer.png"
+                class="enc-logo"
+                src="@/assets/images/logos/logo-footer.png"
+                alt=""
               >
             </a>
           </li>
           <li>
             <a href="">
               <img
-                  class="cths-logo"
-                  src="@/assets/images/logos/logo-cths-footer.png"
+                class="cths-logo"
+                src="@/assets/images/logos/logo-cths-footer.png"
+                alt=""
               >
             </a>
           </li>

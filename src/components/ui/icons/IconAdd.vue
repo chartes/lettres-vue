@@ -4,7 +4,12 @@
     viewBox="0 0 20 20"
   >
     <g>
-      <circle cx="10" cy="10" r="10" fill="#6D7278" />
+      <circle
+        cx="10"
+        cy="10"
+        r="10"
+        fill="#6D7278"
+      />
       <line
         class="icon__line"
         x1="10"
