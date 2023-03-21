@@ -244,11 +244,7 @@ export default {
     },
 
     async load() {
-      const data = await this.fetchOne({
-        id: this.$props.collectionId,
-        numPage: null,
-      });
-      this.collection = data.collection;
+      this.collection = this.$store.state.collections.collectionsById[this.$props.collectionId]
     },
     async save() {
       if (this.collection.title.length < 1) {
