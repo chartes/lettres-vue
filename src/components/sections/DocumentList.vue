@@ -1,23 +1,71 @@
 <template>
   <div class="section">
-    <div class="document-list-header">
-      <div class="results-count">
-        <span class="total-count">{{ totalCount }}</span> résultat(s)
+    <div class="document-list-header is-flex is-justify-content-space-between is-align-items-center">
+      <div class="is-inline-block">
+        <div class="results-count">
+          <span class="total-count">{{ totalCount }}</span> résultat(s)
+        </div>
+      </div>
+      <div class="is-inline-block">
+        <div class="control">
+          <div class="switch-button-div">
+            <div
+              class="switch-button"
+              @click="toggle"
+            >
+              <input
+                class="switch-button-checkbox"
+                type="checkbox"
+              >
+              <label
+                class="switch-button-label"
+                for=""
+              >
+                <span class="switch-button-label-span">TABLEAU</span>
+              </label>
+            </div>
+          </div>
+        </div><!-- v-model="isResultTableMode"-->
       </div>
     </div>
 
-    <span v-if="totalCount" class="pagination-goto">
+    <div
+      v-if="totalPages"
+      class="pagination-controls"
+    >
+      <a
+        :class="currentPage <= 1 ? 'button first-page disabled' : 'button first-page'"
+        @click="currentPage <= 1 ? null : currentPage = 1"
+      >
+      </a>
+      <a
+        :class="currentPage <= 1 ? 'button previous-page disabled' : 'button previous-page'"
+        @click="currentPage <= 1 ? null : --currentPage"
+      >
+      </a>
       <input
         v-model="currentPage"
         name="page"
-        class="input"
-        type="text"
+        type="number"
+        min="1"
+        :max="totalPages"
         placeholder="Page..."
+        class="current-page"
         @change.prevent="currentPage = parseInt(p)"
       >
       <span class="label-sur-page">sur</span>
       <span class="total-pages">{{ totalPages }}</span>
-    </span>
+      <a
+        :class="currentPage < totalPages ? 'button next-page' : 'button next-page disabled'"
+        @click="currentPage < totalPages ? ++currentPage : null"
+      >
+      </a>
+      <a
+        :class="currentPage < totalPages ? 'button last-page' : 'button last-page disabled'"
+        @click="currentPage < totalPages ? currentPage = totalPages : null"
+      >
+      </a>
+    </div>
 
     <div class="">
       <b-table
@@ -25,7 +73,6 @@
         :data="tableData"
 
         :loading="loadingStatus"
-        paginated
         backend-pagination
         :total="totalCount"
         :per-page="pageSize"
@@ -47,45 +94,181 @@
         :narrowed="true"
         :mobile-cards="true"
         @sort="sortPressed"
-
         @sorting-priority-removed="sortingPriorityRemoved"
-        @page-change="onPageChange"
       >
         <b-table-column
-          v-slot="props"
           field="id"
           label="Lettre"
           :td-attrs="columnTdAttrs"
           sortable
         >
-          <document-tag-bar
-            :doc-id="props.row.id"
-            :with-status="withStatus"
-          />
+          <template v-slot:header="{ column }">
+            <div v-if="column.sortable">
+              <div v-if="sortingPriority.filter(obj => obj.field === column.field).length === 0">
+                <span
+                  class="icon button"
+                >
+                  <i class="fas fa-arrows-alt-v"></i>
+                </span>
+              </div>
+              <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'asc'">
+                <span class="icon button">
+                  <i class="fas fa-arrow-up"></i>
+                </span>
+                <span class="icon button">
+                  {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
+                  <button
+                    class="delete is-small multi-sort-cancel-icon"
+                    type="button"
+                    @click.stop="sortingPriorityRemoved(column.field)"
+                  />
+                </span>
+              </div>
+              <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'desc'">
+                <span class="icon button">
+                  <i class="fas fa-arrow-down"></i>
+                </span>
+                <span class="icon button">
+                  {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
+                  <button
+                    class="delete is-small multi-sort-cancel-icon"
+                    type="button"
+                    @click.stop="sortingPriorityRemoved(column.field)"
+                  />
+                </span>
+              </div>
+              <span>
+                {{ column.label }}
+              </span>
+            </div>
+            <div v-else>
+              {{ column.label }}
+            </div>
+          </template>
+          <template v-slot="props">
+            <document-tag-bar
+              :doc-id="props.row.id"
+              :with-status="withStatus"
+            />
+          </template>
         </b-table-column>
 
         <b-table-column
-          v-slot="props"
           field="creation"
           label="Date de rédaction"
           :td-attrs="columnTdAttrs"
           sortable
         >
-          {{ props.row.creation }}
+          <template v-slot:header="{ column }">
+            <div v-if="column.sortable">
+              <div v-if="sortingPriority.filter(obj => obj.field === column.field).length === 0">
+                <span
+                  class="icon button"
+                >
+                  <i class="fas fa-arrows-alt-v"></i>
+                </span>
+              </div>
+              <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'asc'">
+                <span class="icon button">
+                  <i class="fas fa-arrow-up"></i>
+                </span>
+                <span class="icon button">
+                  {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
+                  <button
+                    class="delete is-small multi-sort-cancel-icon"
+                    type="button"
+                    @click.stop="sortingPriorityRemoved(column.field)"
+                  />
+                </span>
+              </div>
+              <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'desc'">
+                <span class="icon button">
+                  <i class="fas fa-arrow-down"></i>
+                </span>
+                <span class="icon button">
+                  {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
+                  <button
+                    class="delete is-small multi-sort-cancel-icon"
+                    type="button"
+                    @click.stop="sortingPriorityRemoved(column.field)"
+                  />
+                </span>
+              </div>
+              <span>
+                {{ column.label }}
+              </span>
+            </div>
+            <div v-else>
+              {{ column.label }}
+            </div>
+          </template>
+          <template v-slot="props">
+            {{ props.row.creation }}
+          </template>
         </b-table-column>
 
         <b-table-column
-          v-slot="props"
           field="title"
           label="Titre"
           :td-attrs="columnTdAttrs"
         >
-          <router-link :to="{ name: 'document', params: { docId: props.row.id } }">
-            <h2
-              class="document-preview-card__title"
-              v-html="props.row.title"
-            />
-          </router-link>
+          <template v-slot:header="{ column }">
+            <div v-if="column.sortable">
+              <div v-if="sortingPriority.filter(obj => obj.field === column.field).length === 0">
+                <span
+                  class="icon button"
+                >
+                  <i class="fas fa-arrows-alt-v"></i>
+                </span>
+              </div>
+              <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'asc'">
+                <span class="icon button">
+                  <i class="fas fa-arrow-up"></i>
+                </span>
+                <span class="icon button">
+                  {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
+                  <button
+                    class="delete is-small multi-sort-cancel-icon"
+                    type="button"
+                    @click.stop="sortingPriorityRemoved(column.field)"
+                  />
+                </span>
+              </div>
+              <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'desc'">
+                <span class="icon button">
+                  <i class="fas fa-arrow-down"></i>
+                </span>
+                <span class="icon button">
+                  {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
+                  <button
+                    class="delete is-small multi-sort-cancel-icon"
+                    type="button"
+                    @click.stop="sortingPriorityRemoved(column.field)"
+                  />
+                </span>
+              </div>
+              <span>
+                {{ column.label }}
+              </span>
+            </div>
+            <div v-else>
+              {{ column.label }}
+            </div>
+          </template>
+          <template v-slot="props">
+            <router-link :to="{ name: 'document', params: { docId: props.row.id } }">
+              <h2
+                v-if="searchTerm && searchTerm.length > 0"
+                class="document-preview-card__title"
+                v-html="highlight(props.row.title)"
+              />
+              <h2
+                v-else
+                class="document-preview-card__title"
+                v-html="props.row.title"
+              />
+            </router-link>
+          </template>
         </b-table-column>
 
         <template #empty>
@@ -108,6 +291,7 @@
 
 <script>
 import { mapState, mapActions } from "vuex";
+import escapeRegExp from "lodash/escapeRegExp";
 
 export default {
   name: "DocumentList",
@@ -118,11 +302,13 @@ export default {
   props: {},
   data() {
     return {
-      tableData: []
+      tableData: [],
+      p: 1,
+      isActive: true,
     };
   },
   computed: {
-    ...mapState("search", ["documents", "loadingStatus", "numPage", "pageSize", "totalCount", "withStatus", "sorts"]),
+    ...mapState("search", ["searchTerm", "documents", "loadingStatus", "numPage", "pageSize", "totalCount", "withStatus", "sorts"]),
     ...mapState("user", ["current_user"]),
 
     sortingPriority: {
@@ -142,6 +328,7 @@ export default {
         set: function (newValue, oldValue) {
           newValue = parseInt(newValue)
           if (newValue && newValue !== oldValue) {
+            this.p = newValue
             this.setNumPage(newValue)
             this.performSearch(this.sortingPriority)
             this.loadAsyncData()
@@ -163,7 +350,13 @@ export default {
   },
   methods: {
     ...mapActions("search", ["setNumPage", "performSearch", "setSorts"]),
-
+    highlight(text) {
+      if (this.searchTerm.length > 0) {
+        const terms = this.searchTerm.split(new RegExp("\\s+")).map(escapeRegExp).filter(term => term !== "")
+        const re = new RegExp(`(${terms.join("|")})`)
+        return text.replace(new RegExp(re, 'gi'), (match => `<mark>${match}</mark>`))
+      }
+    },
     resetPriority(){
       console.log('reset')
       this.$refs.multiSortTable.resetMultiSorting()
@@ -215,6 +408,13 @@ export default {
         }));
       }
     },
+    toggle() {
+      if (this.isActive === true) {
+        this.isActive = false;
+      } else {
+        this.isActive = true;
+      }
+    },
     columnTdAttrs(row, column) {
       if (column.label === 'Titre') {
         return {
@@ -235,12 +435,6 @@ export default {
         return null
       }
     },
-         /*
-        * Handle page-change event
-        */
-            onPageChange(page) {
-                this.currentPage = page
-            },
   }
 };
 </script>
@@ -254,8 +448,94 @@ export default {
   width: 100%;
   padding: 70px 0 0 !important;
 }
-
 progress {
   margin-top: 30px;
+}
+
+a.disabled {
+    cursor: not-allowed !important;
+}
+a.first-page {
+  background: #C3C3C3 url(../../assets/images/icons/page_debut.svg)  center / 28px auto no-repeat;
+}
+
+.switch-button {
+  background-color: lightgrey;
+  border-radius: 30px;
+  overflow: hidden;
+  width: 240px;
+  text-align: center;
+  color: grey;
+  position: relative;
+  padding-right: 120px;
+  position: relative;
+
+  &:before {
+    content: "DEPLIE";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    width: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 3;
+    pointer-events: none;
+  }
+
+  &-checkbox {
+    cursor: pointer;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    z-index: 2;
+
+    &:checked + .switch-button-label:before {
+      transform: translateX(120px);
+      transition: transform 300ms linear;
+    }
+
+    & + .switch-button-label {
+      position: relative;
+      padding: 15px 0;
+      display: block;
+      user-select: none;
+      pointer-events: none;
+
+      &:before {
+        content: "";
+        background: rgb(255, 0, 83);
+        height: 100%;
+        width: 100%;
+        position: absolute;
+        left: 0;
+        top: 0;
+        border-radius: 30px;
+        transform: translateX(0);
+        transition: transform 300ms;
+      }
+
+      .switch-button-label-span {
+        position: relative;
+        color: white;
+      }
+    }
+  }
+}
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
 }
 </style>

@@ -10,68 +10,77 @@
     </div>
 
     <div v-if="!isLoading">
-
       <div class="collection-list-header is-flex is-justify-content-space-between is-align-items-center">
         <div class="search-container">
           <b-field>
             <b-input
-                v-model="searchTerm"
-                placeholder="Rechercher une collection"
-                type="search"
-                icon-right="close-circle"
-                icon-right-clickable
-                @icon-right-click="searchTerm=''"
+              v-model="searchTerm"
+              placeholder="Rechercher une collection"
+              type="search"
+              icon-right="close-circle"
+              icon-right-clickable
+              @icon-right-click="searchTerm=''"
             />
           </b-field>
         </div>
         <span
-            v-if="current_user && current_user.isAdmin"
-            class="column"
+          v-if="current_user && current_user.isAdmin"
+          class="column"
         >
           <router-link
-              v-slot="{ navigate }"
-              to="/collections/create"
-              custom
+            v-slot="{ navigate }"
+            to="/collections/create"
+            custom
           >
             <b-button
-                type="is-primary"
-                label="Créer une collection"
-                class="create-collection-btn"
-                @click="navigate"
+              type="is-primary"
+              label="Créer une collection"
+              class="create-collection-btn"
+              @click="navigate"
             />
           </router-link>
         </span>
-        <span>
-          <div class="pagination-controls">
-            <a
-              class="first-page"
-              href=""
-            >
-            </a>
-            <a
-              class="previous-page"
-              href=""
-            >
-            </a>
-            <input
-              class="current-page"
-              type="text"
-              value="1"
-            />
-            <span class="label-sur-page">sur</span>
-            <span class="total-pages">150</span>
-            <a
-              class="next-page"
-              href=""
-            >
-            </a>
-            <a
-              class="last-page"
-              href=""
-            >
-            </a>
+        <div class="is-inline-block">
+          <div
+            v-if="totalPages && !searchTerm"
+            class="has-text-centered"
+          >
+            <div class="pagination-controls">
+              <a
+                :class="currentPage <= 1 ? 'button first-page disabled' : 'button first-page'"
+                @click="currentPage <= 1 ? null : currentPage = 1"
+              >
+              </a>
+              <a
+                :class="currentPage <= 1 ? 'button previous-page disabled' : 'button previous-page'"
+                @click="currentPage <= 1 ? null : --currentPage"
+              >
+              </a>
+              <input
+                v-model="currentPage"
+                name="page"
+                type="number"
+                min="1"
+                :max="totalPages"
+                placeholder="Page..."
+                class="current-page"
+                @change.prevent="currentPage = parseInt(p)"
+              >
+              <span class="label-sur-page">sur</span>
+              <span class="total-pages">{{ totalPages }}</span>
+              <a
+                :class="currentPage < totalPages ? 'button next-page' : 'button next-page disabled'"
+                @click="currentPage < totalPages ? ++currentPage : null"
+              >
+              </a>
+              <a
+                :class="currentPage < totalPages ? 'button last-page' : 'button last-page disabled'"
+                @click="currentPage < totalPages ? currentPage = totalPages : null"
+              >
+              </a>
+            </div>
           </div>
-        </span>
+        </div>
       </div>
 
       <!-- if admin show default collection of unclassified documents -->
@@ -79,7 +88,7 @@
         <div v-if="searchTerm === ''">
           <!-- Collection cards -->
           <collection-list-item
-            v-for="rootCollection of rootCollections"
+            v-for="rootCollection of paginated"
             :key="rootCollection.id"
             :collection-id="rootCollection.id"
             class="collection-list-item"
@@ -100,7 +109,7 @@
         <div v-if="searchTerm === ''">
           <!-- Collection cards -->
           <collection-list-item
-            v-for="rootCollection of activeRootCollections"
+            v-for="rootCollection of paginated"
             :key="rootCollection.id"
             :collection-id="rootCollection.id"
             class="collection-list-item"
@@ -134,6 +143,10 @@ export default {
   data() {
     return {
       searchTerm: "",
+      numPage: 1,
+      p: 1,
+      pageSize: 10,
+      totalPages: 0,
     }
   },
 
@@ -141,6 +154,31 @@ export default {
     ...mapState("user", ["current_user"]),
     ...mapState("collections", ["isLoading"]),
     ...mapGetters("collections", ["rootCollections"]),
+    indexStart() {
+      console.log("indexStart", (this.currentPage-1) * this.pageSize)
+      return (this.currentPage-1) * this.pageSize;
+    },
+    indexEnd() {
+      console.log("indexEnd", this.indexStart + this.pageSize);
+      return this.indexStart + this.pageSize;
+    },
+    paginated() {
+      console.log("this.activeRootCollections.slice(this.indexStart, this.indexEnd)", this.activeRootCollections.slice(this.indexStart, this.indexEnd))
+      return this.activeRootCollections.slice(this.indexStart, this.indexEnd);
+    },
+    currentPage: {
+      get: function () {
+        console.log("currentPage / this.numPage", this.numPage)
+        return this.numPage;
+      },
+      set: async function (newValue, oldValue) {
+        newValue = parseInt(newValue);
+        if (newValue && newValue !== oldValue && newValue >=1 && newValue <= this.totalPages ) {
+          this.numPage = newValue;
+        }
+      },
+    },
+
     searchResults() {
       return this.$store.getters['collections/search'](this.searchTerm)
     },
@@ -159,8 +197,11 @@ export default {
       })
     }
   },
-  created() {
-    this.fetchCollections();
+  async created() {
+    await this.fetchCollections();
+    let amountRootCollections = this.$store.state.collections.rootCollectionsIds.length-1;
+    this.totalPages = amountRootCollections === 0 ? 1 : parseInt(Math.ceil(amountRootCollections / this.pageSize));
+    console.log("this.totalPages : ", this.totalPages);
   },
   methods: {
     ...mapActions("collections", { fetchCollections: "fetchAll" }),
@@ -202,7 +243,7 @@ input[type=search] {
 .pagination-controls {
   display: flex;
   align-items: center;
-  visibility: hidden;
+  /*visibility: hidden;*/
 
   & > * {
     display: inline-block;
@@ -217,8 +258,11 @@ input[type=search] {
     background-color: #C3C3C3;
     border-radius: 3.2px;
   }
+  & > a.disabled {
+    cursor: not-allowed !important;
+  }
   & > a.first-page {
-    background: #C3C3C3 url(../assets/images/icons/page_debut.svg) center / 28px auto no-repeat;
+    background: #C3C3C3 url(../assets/images/icons/page_debut.svg)  center / 28px auto no-repeat;
   }
   & > a.previous-page {
     background: #C3C3C3 url(../assets/images/icons/page_precedent.svg) center / 28px auto no-repeat;
@@ -229,7 +273,7 @@ input[type=search] {
   & > a.last-page {
     background: #C3C3C3 url(../assets/images/icons/page_fin.svg) center / 28px auto no-repeat;
   }
-  & > input[type=text] {
+  & > input.current-page {
     height: 38px !important;
     padding: 0 !important;
     border: 1px solid #C00055;
@@ -270,5 +314,15 @@ input[type=search] {
     text-transform: uppercase;
   }
 }
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
 
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
 </style>

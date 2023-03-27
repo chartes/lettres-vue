@@ -39,8 +39,8 @@
     <!-- Card body : description -->
     <div class="card-body card-content">
       <div
-          class="collection-description"
-          v-html="description"
+        class="collection-description"
+        v-html="description"
       />
       <div class="collection-metadata is-flex">
         <p>
@@ -52,7 +52,7 @@
     <footer
       v-if="collection.children.length > 0"
       class="card-footer collect-card__children is-flex is-flex-direction-column"
-      :class="hierarchyShown ? 'expanded': ''"
+      :class="expandedById[collection.id] ? 'expanded': ''"
     >
       <button
         class="show-children"
@@ -72,8 +72,7 @@
             v-if="childCollection.children.length > 0"
             class="expand-collection"
             @click="toggleExpanded(childCollection.id)"
-          >
-          </button>
+          />
           <router-link :to="{name: 'collection', params: {collectionId: childCollection.id}}">
             {{ childCollection.title }}&nbsp;-&nbsp; {{ childCollection.documentCount }} document{{ childCollection.documentCount > 1 ? "s" : "" }}
           </router-link>

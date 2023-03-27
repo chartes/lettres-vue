@@ -86,8 +86,8 @@
               </div>
               <div class="row">
                 <router-link
-                    :to="{ name: 'search' }"
-                    class="navbar-start-item"
+                  :to="{ name: 'search' }"
+                  class="navbar-start-item"
                 >
                   <span class="metadata">{{ lettersCount }}</span>
                 </router-link>
@@ -116,8 +116,8 @@
               </div>
               <div class="row">
                 <router-link
-                    :to="{ name: 'persons' }"
-                    class="navbar-start-item"
+                  :to="{ name: 'persons' }"
+                  class="navbar-start-item"
                 >
                   <span class="metadata">{{ personsCount }}</span>
                 </router-link>
@@ -197,7 +197,7 @@
                         class="card-img-top is-inline-block"
                         :src="getImgUrl(featured.id)"
                         alt="Card image cap"
-                      />
+                      >
                     </div>
                   </div>
                   <div class="card-body">

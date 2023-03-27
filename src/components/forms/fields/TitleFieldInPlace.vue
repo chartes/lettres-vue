@@ -1,6 +1,10 @@
 <template>
   <div class="field-title">
-    <div v-if="editable && editMode" ref="hover" class="field field-title__field">
+    <div
+      v-if="editable && editMode"
+      ref="hover"
+      class="field field-title__field"
+    >
       <div class="control">
         <rich-text-editor
           ref="input"
@@ -40,12 +44,19 @@
           :class="userClass"
           v-html="value || notSet"
         />
-        <component :is="editButtonIcon" class="field-title__icon" />
+        <component
+          :is="editButtonIcon"
+          class="field-title__icon"
+        />
       </div>
     </div>
 
     <div v-else>
-      <h1 class="document-title" :class="unknownClass" v-html="value || notSet" />
+      <h1
+        class="document-title"
+        :class="unknownClass"
+        v-html="value || notSet"
+      />
     </div>
   </div>
 </template>

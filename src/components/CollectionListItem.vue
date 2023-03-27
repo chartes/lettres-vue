@@ -15,8 +15,8 @@
       </div>
       <div class="collection-title-wrapper">
         <router-link
-            :to="{ name: 'collection', params: { collectionId: collection.id } }"
-            class="collection-title"
+          :to="{ name: 'collection', params: { collectionId: collection.id } }"
+          class="collection-title"
         >
           {{ collection.title }}
         </router-link>
@@ -70,8 +70,7 @@
             v-if="childCollection.children.length > 0"
             class="expand-collection"
             @click="toggleExpanded(childCollection.id)"
-          >
-          </button>
+          />
           <router-link :to="{name: 'collection', params: {collectionId: childCollection.id}}">
             {{ childCollection.title }}&nbsp;-&nbsp; {{ childCollection.documentCount }} document{{ childCollection.documentCount > 1 ? "s" : "" }}
           </router-link>

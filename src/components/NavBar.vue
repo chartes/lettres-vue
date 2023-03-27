@@ -26,30 +26,28 @@
 
       <div class="navbar-menu is-align-items-center">
         <ul class="navbar-end is-align-items-center">
-            <li class="navbar-start-item">
-              <router-link
-                  :to="{ name: 'search' }"
-
-              >
-                Recherche
-              </router-link>
-            </li>
-            <li class="navbar-start-item">
-              <router-link
-                  :to="{ name: 'collections' }"
-               >
-                Collections
-              </router-link>
-            </li>
-            <li class="navbar-start-item">
-              <router-link
-                  :to="{ name: 'documentation' }"
-              >
-                Documentation
-              </router-link>
-            </li>
+          <li class="navbar-start-item">
+            <router-link
+              :to="{ name: 'search' }"
+            >
+              Recherche
+            </router-link>
+          </li>
+          <li class="navbar-start-item">
+            <router-link
+              :to="{ name: 'collections' }"
+            >
+              Collections
+            </router-link>
+          </li>
+          <li class="navbar-start-item">
+            <router-link
+              :to="{ name: 'documentation' }"
+            >
+              Documentation
+            </router-link>
+          </li>
         </ul>
-
         <div class="navbar-end is-align-items-center">
           <div
             v-if="isAuthenticated"
@@ -58,9 +56,7 @@
             <a
               :title="current_user.username"
               class="user-account active"
-            >
-            </a>
-
+            />
             <div class="navbar-dropdown is-align-items-center">
               <div
                 v-if="current_user"
@@ -182,7 +178,10 @@
               v-if="!isAuthenticated"
               :to="{ name: 'login', query: { from: $route.name } }"
             >
-              <a title="Connectez-vous" class="user-account" ></a>
+              <a
+                title="Connectez-vous"
+                class="user-account"
+              />
             </router-link>
           </div>
         <!--<div class="navbar-end is-align-items-center">

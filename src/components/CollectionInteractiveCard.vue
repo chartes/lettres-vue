@@ -1,7 +1,6 @@
 <template>
   <div v-if="collection">
     <div class="collection-interactive-card">
-
       <div class="collection-card-header row is-flex">
         <div class="parent-collection-title">
           <!--<span v-if="!editMode">-->
@@ -146,8 +145,19 @@
 
         <div class="collection-actions central-column is-flex">
           <!-- Nouvelle sous-collection -->
-          <router-link v-if="current_user && current_user.isAdmin" to="create" custom v-slot="{ navigate }" append>
-            <b-button @click="navigate" type="is-primary" label="Créer une sous-collection" class="create-collection-btn"/>
+          <router-link
+            v-if="current_user && current_user.isAdmin"
+            v-slot="{ navigate }"
+            to="create"
+            custom
+            append
+          >
+            <b-button
+              type="is-primary"
+              label="Créer une sous-collection"
+              class="create-collection-btn"
+              @click="navigate"
+            />
           </router-link>
           <!-- Supprimer la collection -->
           <collection-deletion
@@ -161,7 +171,6 @@
         class="collection-card-body row is-flex"
         style="vertical-align: center"
       >
-
         <!-- Colonne 1 : vignette -->
         <div class="column thumbnail-column">
           <div class="collection-thumbnail">
@@ -178,7 +187,6 @@
 
         <!-- Colonne 2 : metadonnées de la collections -->
         <div class="column central-column metadata-column">
-
           <!-- Titre de la collection -->
           <span
             v-if="!editMode || collection.title === 'Non triées'"
@@ -190,7 +198,7 @@
               {{ collection.title }}
             </router-link>
           </span>
-          <span v-else>
+          <div v-else>
             <div class="field has-addons">
               <input
                 v-model="collection.title"
@@ -202,7 +210,8 @@
               >
               <div class="control">
                 <a
-                  type="submit" :disabled="!collection.title"
+                  type="submit"
+                  :disabled="!collection.title"
                   class="button is-primary"
                   :class="saving === 'loading' ? 'is-loading' : ''"
                   @click.stop="save"
@@ -211,7 +220,7 @@
                 </a>
               </div>
             </div>
-          </span>
+          </div>
 
           <!-- Date de la collection -->
           <div class="collection-dates">
@@ -264,9 +273,9 @@
                     {{ collection.admin.username }}
                   </option>
                   <option
-                      v-for="option in users.filter((u) => u.isAdmin === true && u.id !== collection.admin.id)"
-                      :key="option.id"
-                      :value="option.id"
+                    v-for="option in users.filter((u) => u.isAdmin === true && u.id !== collection.admin.id)"
+                    :key="option.id"
+                    :value="option.id"
                   >
                     {{ option.username }}
                   </option>
@@ -274,7 +283,6 @@
               </b-field>
             </div>
           </div>
-
         </div>
 
         <!-- not in Carine code {{ error.title }}
@@ -302,16 +310,16 @@
         <!-- Colonne 3 : Sommaire -->
         <div class="column toc-column">
           <b-button
-              class="TOC-button"
-              :class="showHierarchy ? 'opened' : ''"
-              @click="showHierarchy = !showHierarchy"
+            class="TOC-button"
+            :class="showHierarchy ? 'opened' : ''"
+            @click="showHierarchy = !showHierarchy"
           >
             SOMMAIRE
           </b-button>
           <div v-if="showHierarchy">
             <collection-hierarchy
-                :collection-id="collectionId"
-                class="TOC-content"
+              :collection-id="collectionId"
+              class="TOC-content"
             />
           </div>
         </div>
@@ -427,8 +435,7 @@
         </div>
       </div>-->
 
-      <footer class="card-footer is-flex is-justify-content-end">
-      </footer>
+      <footer class="card-footer is-flex is-justify-content-end" />
     </div>
   </div>
 </template>
@@ -458,9 +465,6 @@ export default {
     };
   },
   computed: {
-    collectionHierarchy() {
-      return CollectionHierarchy
-    },
     ...mapState("collections", ["collectionsById"]),
     ...mapState("user", ["current_user", "users"]),
     ...mapGetters("collections", ["findRoot"]),
@@ -498,11 +502,7 @@ export default {
     },
 
     async load() {
-      const data = await this.fetchOne({
-        id: this.$props.collectionId,
-        numPage: null,
-      });
-      this.collection = data.collection;
+      this.collection = this.$store.state.collections.collectionsById[this.$props.collectionId]
     },
     async save() {
       if (this.collection.title.length < 1) {

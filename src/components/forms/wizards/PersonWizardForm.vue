@@ -4,38 +4,56 @@
     :class="popupMode ? 'box modal-card' : ''"
     style="width: 1024px !important"
   >
-    <div class="root-grid-container" :class="popupMode ? 'popup-mode' : ''">
-
-      <div v-if="popupMode" class="leftbar-header-area">
+    <div
+      class="root-grid-container"
+      :class="popupMode ? 'popup-mode' : ''"
+    >
+      <div
+        v-if="popupMode"
+        class="leftbar-header-area"
+      >
         <h1 class="step-label">
           {{ wizardLabel }}
         </h1>
-        <h2 v-if="subtitle" class="step-label">{{ subtitle }}</h2>
-        <h2 v-if="currentStep.label" class="step-label is-uppercase is-size-5">
+        <h2
+          v-if="subtitle"
+          class="step-label"
+        >
+          {{ subtitle }}
+        </h2>
+        <h2
+          v-if="currentStep.label"
+          class="step-label is-uppercase is-size-5"
+        >
           {{ currentStep.label }}
         </h2>
       </div>
-
       <div class="center-content-area">
         <b-tabs v-model="activeTab">
           <b-tab-item
-              v-for="(stepItem, i) in stepItems"
-              :key="`center-step-${i}`"
-              :label="stepItem.center ? stepItem.center.label : `center-step-${i}`"
+            v-for="(stepItem, i) in stepItems"
+            :key="`center-step-${i}`"
+            :label="stepItem.center ? stepItem.center.label : `center-step-${i}`"
           >
             <keep-alive v-if="stepItem.center">
               <component
-                  :is="stepItem.center.component"
-                  v-bind="stepItem.center.attributes"
-                  @goto-wizard-step="gotoStep"
-                  @manage-person-data="managePersonData"
+                :is="stepItem.center.component"
+                v-bind="stepItem.center.attributes"
+                @goto-wizard-step="gotoStep"
+                @manage-person-data="managePersonData"
               />
             </keep-alive>
           </b-tab-item>
         </b-tabs>
       </div>
-      <div v-if="popupMode" class="leftbar-content-area">
-        <b-tabs v-model="activeTab" :animated="false">
+      <div
+        v-if="popupMode"
+        class="leftbar-content-area"
+      >
+        <b-tabs
+          v-model="activeTab"
+          :animated="false"
+        >
           <b-tab-item
             v-for="(stepItem, i) in stepItems"
             :key="`left-step-${i}`"
@@ -53,10 +71,20 @@
         </b-tabs>
       </div>
 
-      <div v-if="popupMode" class="leftbar-footer-area" />
-      <div v-if="popupMode" class="nav-footer-area">
+      <div
+        v-if="popupMode"
+        class="leftbar-footer-area"
+      />
+      <div
+        v-if="popupMode"
+        class="nav-footer-area"
+      >
         <div class="buttons">
-          <b-button type="is-primary" size="is-medium" @click="closeWizard">
+          <b-button
+            type="is-primary"
+            size="is-medium"
+            @click="closeWizard"
+          >
             Annuler
           </b-button>
 
@@ -79,7 +107,10 @@
             <span>Suivant</span>
           </b-button>
 
-          <span v-for="(stepItem, i) in stepItems" :key="`footer-buttons-step-${i}`">
+          <span
+            v-for="(stepItem, i) in stepItems"
+            :key="`footer-buttons-step-${i}`"
+          >
             <span v-if="stepItem.footer && activeTab === i">
               <b-button
                 v-for="(button, j) in stepItem.footer.buttons"
