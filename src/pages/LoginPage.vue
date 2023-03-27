@@ -5,7 +5,9 @@
   >
     <article class="message m-t-xxl">
       <div class="message-header">
-        Connexion
+        <p>
+          Connexion
+        </p>
       </div>
       <div class="message-body">
         <div
@@ -44,6 +46,8 @@
         <router-link :to="{name: 'forgot-password'}">
           Mot de passe oublié
         </router-link>
+      </div>
+      <div class="message-footer">
         <div class="field">
           <span class="control">
             <button
@@ -111,6 +115,81 @@ export default {
 }
 </script>
 
-<style>
+<style scoped  lang="scss">
+@import "@/assets/sass/main.scss";
+
+.message {
+  background-color: #FFFFFF;
+  box-shadow: -6px 6px 30px 0 #00000050;
+
+  .message-header {
+    background-color: #CB2158;
+    border: none;
+    border-radius: 5px;
+    padding: 12px 20px;
+    margin-bottom: 10px;
+
+    p {
+      font-family: $family-apptitle;
+      font-size: 30px;
+      color: #FFFFFF;
+      font-weight: 200;
+      letter-spacing: 0;
+    }
+  }
+
+  .message-body {
+    padding-top: 40px;
+    padding-bottom: 0;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+  }
+
+  .message-body,
+  .message-footer {
+    padding-left: 30px;
+    padding-right: 30px;
+  }
+
+  .message-footer {
+    justify-content: flex-end;
+    gap: 12px;
+    border-top: none;
+    padding-top: 20px;
+    padding-bottom: 20px;
+
+    button {
+      width: auto;
+      height: auto;
+      background-color: #CB2158;
+      border-radius: 5px;
+      padding: 6px 10px;
+      margin: 0 !important;
+
+      font-family: $family-primary;
+      font-size: 18px;
+      line-height: 1;
+      font-weight: 500;
+      color: #FFFFFF;
+      letter-spacing: 0;
+      text-transform: uppercase;
+
+      &:hover {
+        background-color: #CB2158;
+        color: #FFFFFF;
+      }
+    }
+  }
+
+  .message-body::after {
+    content: "";
+    display: block;
+    width: 100%;
+    margin-top: 80px;
+    height: 1px;
+    border-top: 1px solid #CB2158;
+  }
+
+}
 
 </style>

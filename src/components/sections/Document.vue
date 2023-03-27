@@ -512,6 +512,12 @@ export default {
       margin-top: 0;
     }
   }
+
+  &.is-preview .document-section-content {
+    margin-top: 10px;
+    margin-left: 0;
+  }
+
 }
 
 nav.previous-next-navigation {
