@@ -167,6 +167,7 @@
         <div class="document-section-content">
           <document-argument
             :editable="canEdit"
+            :preview="preview"
             @add-place="addPlace"
             @add-person="addPerson"
             @add-note="addNote"

@@ -56,6 +56,17 @@
           />
         </rich-text-editor>
         <div
+          v-else-if="preview && searchTerm && highlight(transcriptionContent).includes('mark')"
+          class="document__transcription--content">
+          <div class="document__transcription--content">
+            <span v-for="(phrase, index) in highlight(transcriptionContent).replaceAll('</p>', '</p>###').split('###')" :key="index">
+              <span
+                v-html="phrase"
+              />
+            </span>
+          </div>
+        </div>
+        <div
           v-else-if="preview"
           class="document__transcription--content"
           v-html="truncate(transcriptionContent, 399, true)"
@@ -82,6 +93,7 @@ import { mapState } from "vuex";
 import RichTextEditor from "../forms/fields/RichTextEditor";
 import EditorSaveButton from "../forms/fields/EditorSaveButton";
 import DocumentNotes from "./DocumentNotes";
+import escapeRegExp from "lodash/escapeRegExp";
 
 export default {
   name: "DocumentTranscription",
@@ -106,6 +118,7 @@ export default {
 
   computed: {
     ...mapState("document", ["document"]),
+    ...mapState("search", ["searchTerm"])
   },
   mounted() {
     this.transcriptionContent = this.document.transcription || "";
@@ -113,22 +126,29 @@ export default {
   },
   methods: {
     addPlace(evt, source) {
-      this.$emit("add-place", { ...evt, source });
+      this.$emit("add-place", {...evt, source});
     },
     addPerson(evt, source) {
-      this.$emit("add-person", { ...evt, source });
+      this.$emit("add-person", {...evt, source});
     },
     addNote(evt) {
-      this.$emit("add-note", { ...evt });
+      this.$emit("add-note", {...evt});
     },
-    truncate(str, n, useWordBoundary){
-      if (str.length <= n) { return str; }
-      const subString = str.slice(0, n-1);
+    truncate(str, n, useWordBoundary) {
+      if (str.length <= n) {
+        return str;
+      }
+      const subString = str.slice(0, n - 1);
       return (useWordBoundary
-        ? subString.slice(0, subString.lastIndexOf(" "))
-        : subString) + " (...)";
-    }
-  },
+          ? subString.slice(0, subString.lastIndexOf(" "))
+          : subString) + " (...)";
+    },
+    highlight(text) {
+      const terms = this.searchTerm.split(new RegExp("\\s+")).map(escapeRegExp).filter(term => term !== "")
+      const re = new RegExp(`(${terms.join("|")})`)
+      return text.replace(new RegExp(re, 'gi'), (match => `<mark>${match}</mark>`))
+    },
+  }
 };
 </script>
 

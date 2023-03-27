@@ -1,26 +1,5 @@
 <template>
   <div class="large-container">
-    <!--<router-link
-      :to="{ name: 'collections' }"
-      class="mt-5 mb-5"
-    >
-      <i class="fas fa-arrow-left ml-1 mr-3" />
-      Toutes les collections
-    </router-link>-->
-    <!-- TODO this was in the dev branch not in dev-css control !!!:
-    <router-link
-      v-if="current_user && current_user.isAdmin"
-      v-slot="{ navigate }"
-      to="create"
-      custom
-      append
-    >
-      <b-button
-        type="is-primary"
-        label="Créer une sous-collection"
-        @click="navigate"
-      />
-    </router-link>-->
     <div class="collection-card-parent">
       <collection-interactive-card
         :collection-id="collectionId"
@@ -51,49 +30,43 @@
       >
         <div class="is-inline-block">
           <div
-            v-if="totalPageNum"
+            v-if="totalPages"
             class="has-text-centered"
           >
-            <span class="pagination-goto">
-              <span
-                :class="currentPage === 1 ? 'button first-page disabled' : 'button first-page'"
-                @click="currentPage === 1 ? null : goToPage(1)"
+            <div class="pagination-controls">
+              <a
+                :class="currentPage <= 1 ? 'button first-page disabled' : 'button first-page'"
+                @click="currentPage <= 1 ? null : currentPage = 1 "
               >
-                <i class="fas fa-angle-double-left" />
-              </span>
-              <span
-                :class="currentPage === 1 ? 'button previous-page disabled' : 'button previous-page'"
-                @click="currentPage === 1 ? null : goToPage(--currentPage)"
+              </a>
+              <a
+                :class="currentPage <= 1 ? 'button previous-page disabled' : 'button previous-page'"
+                @click="currentPage <= 1 ? null : --currentPage"
               >
-                <i class="fas fa-arrow-left" />
-              </span>
-              <span class="pagination__button__input-box">
-                <input
-                  v-model="currentPage"
-                  name="page"
-                  type="number"
-                  min="1"
-                  :max="totalPageNum"
-                  placeholder="Page..."
-                  class="input is-medium"
-                  @change.prevent="currentPage = parseInt(p)"
-                >
-                <span>sur</span>
-                <span class="page-count">{{ totalPageNum }}</span>
-              </span>
-              <span
-                :class="currentPage < totalPageNum ? 'button next-page' : 'button next-page disabled'"
-                @click="currentPage < totalPageNum ? goToPage(++currentPage) : null"
+              </a>
+              <input
+                v-model="currentPage"
+                name="page"
+                type="number"
+                min="1"
+                :max="totalPages"
+                placeholder="Page..."
+                class="current-page"
+                @change.prevent="currentPage = parseInt(p)"
               >
-                <i class="fas fa-arrow-right" />
-              </span>
-              <span
-                :class="currentPage < totalPageNum ? 'button last-page' : 'button last-page disabled'"
-                @click="currentPage < totalPageNum ? goToPage(totalPageNum) : null"
+              <span class="label-sur-page">sur</span>
+              <span class="total-pages">{{ totalPages }}</span>
+              <a
+                :class="currentPage < totalPages ? 'button next-page' : 'button next-page disabled'"
+                @click="currentPage < totalPages ? ++currentPage : null"
               >
-                <i class="fas fa-angle-double-right" />
-              </span>
-            </span>
+              </a>
+              <a
+                :class="currentPage < totalPages ? 'button last-page' : 'button last-page disabled'"
+                @click="currentPage < totalPages ? currentPage = totalPages : null"
+              >
+              </a>
+            </div>
           </div>
         </div>
         <div
@@ -162,13 +135,6 @@
         </div>
         <div class="is-inline-block px-1">
           <div class="control">
-            <!--<Toggle
-              id="ToggleTableau"
-              on-label="Tableau"
-              off-label="Déplié"
-              v-model="isResultTableMode"
-              :width="120"
-            />-->
             <div class="switch-button-div">
               <div
                 class="switch-button"
@@ -186,20 +152,6 @@
                 </label>
               </div>
             </div>
-            <!--<button
-              class="ui button toggle"
-              :class="[isActive ? 'active' : '']"
-              @click="toggle"
-            >
-              Tableau
-            </button>
-            <button
-              class="ui button toggle"
-              :class="[!isActive ? 'active' : '']"
-              @click="toggle"
-            >
-              Déplié
-            </button>-->
           </div><!-- v-model="isResultTableMode"-->
         </div>
       </div>
@@ -229,43 +181,174 @@
           :mobile-cards="true"
           @sort="sortPressed"
           @sorting-priority-removed="sortingPriorityRemoved"
-          @page-change="onPageChange"
         >
           <b-table-column
-            v-slot="props"
             field="id"
             label="Lettre"
-            :th-attrs="columnHeaderAttr"
+            :td-attrs="columnTdAttrs"
             sortable
           >
-            <document-tag-bar
-              :doc-id="props.row.id"
-              :with-status="withStatus"
-            />
+            <template v-slot:header="{ column }">
+              <div v-if="column.sortable">
+                <div v-if="sortingPriority.filter(obj => obj.field === column.field).length === 0">
+                  <span
+                    class="icon button"
+                  >
+                    <i class="fas fa-arrows-alt-v"></i>
+                  </span>
+                </div>
+                <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'asc'">
+                  <span class="icon button">
+                    <i class="fas fa-arrow-up"></i>
+                  </span>
+                  <span class="icon button">
+                    {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
+                    <button
+                      class="delete is-small multi-sort-cancel-icon"
+                      type="button"
+                      @click.stop="sortingPriorityRemoved(column.field)"
+                    />
+                  </span>
+                </div>
+                <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'desc'">
+                  <span class="icon button">
+                    <i class="fas fa-arrow-down"></i>
+                  </span>
+                  <span class="icon button">
+                    {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
+                    <button
+                      class="delete is-small multi-sort-cancel-icon"
+                      type="button"
+                      @click.stop="sortingPriorityRemoved(column.field)"
+                    />
+                  </span>
+                </div>
+                <span>
+                  {{ column.label }}
+                </span>
+              </div>
+              <div v-else>
+                {{ column.label }}
+              </div>
+            </template>
+            <template v-slot="props">
+              <document-tag-bar
+                :doc-id="props.row.id"
+                :with-status="withStatus"
+              />
+            </template>
           </b-table-column>
 
           <b-table-column
-            v-slot="props"
             field="creation"
             label="Date de rédaction"
-            :th-attrs="columnHeaderAttr"
+            :td-attrs="columnTdAttrs"
             sortable
           >
-            {{ props.row.creation }}
+            <template v-slot:header="{ column }">
+              <div v-if="column.sortable">
+                <div v-if="sortingPriority.filter(obj => obj.field === column.field).length === 0">
+                  <span
+                    class="icon button"
+                  >
+                    <i class="fas fa-arrows-alt-v"></i>
+                  </span>
+                </div>
+                <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'asc'">
+                  <span class="icon button">
+                    <i class="fas fa-arrow-up"></i>
+                  </span>
+                  <span class="icon button">
+                    {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
+                    <button
+                      class="delete is-small multi-sort-cancel-icon"
+                      type="button"
+                      @click.stop="sortingPriorityRemoved(column.field)"
+                    />
+                  </span>
+                </div>
+                <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'desc'">
+                  <span class="icon button">
+                    <i class="fas fa-arrow-down"></i>
+                  </span>
+                  <span class="icon button">
+                    {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
+                    <button
+                      class="delete is-small multi-sort-cancel-icon"
+                      type="button"
+                      @click.stop="sortingPriorityRemoved(column.field)"
+                    />
+                  </span>
+                </div>
+                <span>
+                  {{ column.label }}
+                </span>
+              </div>
+              <div v-else>
+                {{ column.label }}
+              </div>
+            </template>
+            <template v-slot="props">
+              {{ props.row.creation }}
+            </template>
           </b-table-column>
 
           <b-table-column
-            v-slot="props"
             field="title"
             label="Titre"
-            :td-attrs="columnHeaderAttr"
+            :td-attrs="columnTdAttrs"
           >
-            <router-link :to="{ name: 'document', params: { docId: props.row.id } }">
-              <h2
-                class="document-preview-card__title"
-                v-html="props.row.title"
-              />
-            </router-link>
+            <template v-slot:header="{ column }">
+              <div v-if="column.sortable">
+                <div v-if="sortingPriority.filter(obj => obj.field === column.field).length === 0">
+                  <span
+                    class="icon button"
+                  >
+                    <i class="fas fa-arrows-alt-v"></i>
+                  </span>
+                </div>
+                <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'asc'">
+                  <span class="icon button">
+                    <i class="fas fa-arrow-up"></i>
+                  </span>
+                  <span class="icon button">
+                    {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
+                    <button
+                      class="delete is-small multi-sort-cancel-icon"
+                      type="button"
+                      @click.stop="sortingPriorityRemoved(column.field)"
+                    />
+                  </span>
+                </div>
+                <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'desc'">
+                  <span class="icon button">
+                    <i class="fas fa-arrow-down"></i>
+                  </span>
+                  <span class="icon button">
+                    {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
+                    <button
+                      class="delete is-small multi-sort-cancel-icon"
+                      type="button"
+                      @click.stop="sortingPriorityRemoved(column.field)"
+                    />
+                  </span>
+                </div>
+                <span>
+                  {{ column.label }}
+                </span>
+              </div>
+              <div v-else>
+                {{ column.label }}
+              </div>
+            </template>
+            <template v-slot="props">
+              <router-link :to="{ name: 'document', params: { docId: props.row.id } }">
+                <h2
+                  class="document-preview-card__title"
+                  v-html="props.row.title"
+                />
+              </router-link>
+            </template>
           </b-table-column>
 
           <template #empty>
@@ -314,7 +397,7 @@ export default {
       p: 1,
       pageSize: 30,
       totalCount: 0,
-      totalPageNum: 0,
+      totalPages: 0,
       isLoading: false,
       showHierarchy: false,
       isActive: true
@@ -328,32 +411,34 @@ export default {
       },
       set: async function (newValue, oldValue) {
         newValue = parseInt(newValue);
-        if (newValue && newValue !== oldValue && newValue >=1 && newValue <= this.totalPageNum ) {
+        if (newValue && newValue !== oldValue && newValue >=1 && newValue <= this.totalPages ) {
+          this.p = newValue;
           this.numPage = newValue;
+          console.log("set 1")
           await this.fetchData();
+          console.log("set 2")
         }
       },
-    },
-    totalPages: function() {
-      return Math.ceil(this.totalCount / this.pageSize)
     },
     ...mapState("user", ["current_user"]),
   },
   watch: {
     collectionId: async function () {
-      console.log("Watch")
+      console.log("Watch");
       await this.fetchData();
+      this.totalPages = this.fetchedData.totalCount === 0 ? 1 : parseInt(Math.ceil(this.fetchedData.totalCount / this.pageSize));
+      console.log("this.totalPages : ", this.totalPages);
     },
   },
   async created() {
     console.log("Created")
     await this.fetchData();
-    this.totalPageNum = this.fetchedData.totalCount === 0 ? 1 : parseInt(Math.ceil(this.fetchedData.totalCount / this.pageSize))
-    console.log("this.totalPageNum : ", this.totalPageNum)
+    this.totalPages = this.fetchedData.totalCount === 0 ? 1 : parseInt(Math.ceil(this.fetchedData.totalCount / this.pageSize));
+    console.log("this.totalPages : ", this.totalPages);
   },
   methods: {
     ...mapActions("collections", ["fetchOne", "fetchAll"]),
-    columnHeaderAttr(row, column) {
+    columnTdAttrs(row, column) {
       if (row.label === 'Lettre') {
         return {
           class: 'lettre',
@@ -374,13 +459,13 @@ export default {
         this.isActive = true;
       }
     },
-    async goToPage(num) {
+    /*async goToPage(num) {
       if (!parseInt(num)) {
         num = 1;
       }
 
-      if (num > this.totalPageNum) {
-        num = this.totalPageNum;
+      if (num > this.totalPages) {
+        num = this.totalPages;
       } else if (num < 1) {
         num = 1;
       }
@@ -389,7 +474,7 @@ export default {
       if (this.numPage !== num) {
         //await this.fetchData();
       }
-    },
+    },*/
     async fetchData() {
       this.isLoading = true;
       console.log("this.fetchAll()")
@@ -458,11 +543,11 @@ export default {
     },
     /*
      * Handle page-change event
-     */
+
     onPageChange(page) {
       console.log("page change")
       this.currentPage = page;
-    },
+    },*/
   },
 };
 </script>
@@ -479,86 +564,14 @@ export default {
   position: relative;
   margin-top: 60px;
 }
-
 .collection-card-parent {
   padding-bottom: 40px;
-}
-
-.pagination-goto {
-  display: flex;
-  float: right;
-  position: relative;
-  margin-left: 50px;
 }
 progress {
   margin-top: 30px;
 }
-span {
-  margin: 0 5px;
-  font-family: "Barlow", sans-serif;
-  font-size: 14px;
-  text-align: center;
-  font-weight: 500;
-  color: #979797;
-  text-transform: uppercase;
-}
-.pagination__button__input-box .input,
-span.page-count,
-span.button {
-  height: 47px !important;
-  width: 47px !important;
-  margin: 0 5px !important;
-}
-span.button {
-  color: #FFF;
-  background-color: #C3C3C3;
-}
-span.button.disabled {
-  cursor: not-allowed !important;
-}
 ::v-deep .lettre span {
     background-color: red;
-}
-/*span.button > i {
-  display: none;
-}*/
-/*span.button.first-page {
-  background: url(../assets/images/page_debut.svg) center / cover no-repeat;
-}
-span.button.previous-page {
-  background: url(../assets/images/page_avant.svg) center / cover no-repeat;
-}
-span.button.next-page {
-  background: url(../assets/images/page_suivant.svg) center / cover no-repeat;
-}
-span.button.last-page {
-  background: url(../assets/images/page_fin.svg) center / cover no-repeat;
-}*/
-.page-count {
-  display: inline-block;
-  border: solid 1px #dbdbdb;
-  background-color: #DFDFDF;
-  border-radius: 4px;
-  color: #9B9B9B;
-  vertical-align: middle;
-  line-height: 45px;
-}
-.pagination__button__input-box {
-  margin: 0 5px;
-}
-span.page-count,
-.pagination__button__input-box .input {
-  font-family: "Barlow", sans-serif;
-  font-size: 24px;
-  font-weight: 800;
-}
-.pagination__button__input-box .input {
-  color: #B9192F;
-  border: solid 1px #B9192F;
-  line-height: 1;
-  padding-left: 2px;
-  padding-right: 2px;
-  text-align: center;
 }
 .collection-documents {
   flex-grow: 1;
@@ -577,11 +590,6 @@ span.page-count,
   padding-left: 2px;
   padding-right: 2px;
   background-color: transparent;
-}
-.button.toggle {
-  background-color: rgb(255, 0, 83);
-  border-color: rgb(255, 0, 83);
-  border-left-radius: 24px;
 }
 .switch-button {
   background-color: lightgrey;
@@ -649,6 +657,80 @@ span.page-count,
         color: white;
       }
     }
+  }
+}
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  /*visibility: hidden;*/
+
+  & > * {
+    display: inline-block;
+    width: 38px;
+    height: 38px;
+    margin-right: 4px;
+  }
+  & > a {
+    display: inline-block;
+    width: 38px;
+    height: 38px;
+    background-color: #C3C3C3;
+    border-radius: 3.2px;
+  }
+  & > a.disabled {
+    cursor: not-allowed !important;
+  }
+  & > a.first-page {
+    background: #C3C3C3 url(../assets/images/icons/page_debut.svg)  center / 28px auto no-repeat;
+  }
+  & > a.previous-page {
+    background: #C3C3C3 url(../assets/images/icons/page_precedent.svg) center / 28px auto no-repeat;
+  }
+  & > a.next-page {
+    background: #C3C3C3 url(../assets/images/icons/page_suivant.svg) center / 28px auto no-repeat;
+  }
+  & > a.last-page {
+    background: #C3C3C3 url(../assets/images/icons/page_fin.svg) center / 28px auto no-repeat;
+  }
+  & > input[type=text] {
+    height: 38px !important;
+    padding: 0 !important;
+    border: 1px solid #C00055;
+    border-radius: 3.2px;
+
+    font-family: $family-primary;
+    font-size: 18px;
+    color: #CB2158;
+    font-weight: 800;
+    text-align: center;
+    text-decoration: none;
+
+    &:focus {
+      outline: 1px solid #C00055;
+    }
+  }
+
+  & > span.label-sur-page {
+    font-family: $family-primary;
+    font-size: 11px;
+    line-height: 38px;
+    color: #979797;
+    font-weight: 500;
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  & > span.total-pages {
+    background-color: #DFDFDF;
+    border-radius: 3.2px;
+
+    font-family: $family-primary;
+    font-size: 18px;
+    line-height: 38px;
+    color: #818181;
+    text-align: center;
+    font-weight: 600;
+    text-transform: uppercase;
   }
 }
 /* Chrome, Safari, Edge, Opera */

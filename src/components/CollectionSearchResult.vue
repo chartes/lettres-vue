@@ -52,7 +52,7 @@
     <footer
       v-if="collection.children.length > 0"
       class="card-footer collect-card__children is-flex is-flex-direction-column"
-      :class="hierarchyShown ? 'expanded': ''"
+      :class="expandedById[collection.id] ? 'expanded': ''"
     >
       <button
         class="show-children"

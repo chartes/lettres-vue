@@ -1,8 +1,8 @@
 <template>
   <div
-    v-if="(document.argument && document.argument.length) || editable > 0"
+    v-if="document.argument && document.argument.length || editable > 0"
     class="panel mt-5"
-  >
+  ><!-- (document.argument && document.argument.length) || editable > 0 -->
     <div class="panel-block">
       <rich-text-editor
         v-if="editable"
@@ -24,10 +24,15 @@
         />
       </rich-text-editor>
       <div
+        v-else-if="preview && searchTerm && highlight(form).includes('mark')"
+        class="argument__content"
+        v-html="highlight(form)">
+      </div>
+      <div
         v-else
         class="argument__content"
-        v-html="form"
-      />
+        v-html="form">
+      </div>
     </div>
   </div>
 </template>
@@ -36,6 +41,7 @@
 import { mapState } from "vuex";
 import RichTextEditor from "../forms/fields/RichTextEditor";
 import EditorSaveButton from "../forms/fields/EditorSaveButton";
+import escapeRegExp from "lodash/escapeRegExp";
 
 export default {
   name: "DocumentArgument",
@@ -45,6 +51,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    preview: {
+      type: Boolean,
+      default: false,
+    }
   },
   emits: ["add-place", "add-person", "add-note"],
   data() {
@@ -55,9 +65,13 @@ export default {
   },
   computed: {
     ...mapState("document", ["document"]),
+    ...mapState("search", ["searchTerm"])
   },
   mounted() {
     this.form = this.document.argument || "";
+  },
+  created() {
+    console.log("this.searchTerm : ", this.searchTerm)
   },
   methods: {
     addPlace(evt, source) {
@@ -68,6 +82,11 @@ export default {
     },
     addNote(evt) {
       this.$emit("add-note", { ...evt });
+    },
+    highlight(text) {
+      const terms = this.searchTerm.split(new RegExp("\\s+")).map(escapeRegExp).filter(term => term !== "")
+      const re = new RegExp(`(${terms.join("|")})`)
+      return text.replace(new RegExp(re, 'gi'), (match => `<mark>${match}</mark>`))
     },
   },
 };
