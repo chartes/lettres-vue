@@ -1,5 +1,5 @@
 <template>
-  <div class="large-container">
+  <div class="large-container" :class="toggleCssClass">
     <div class="collection-card-parent">
       <collection-interactive-card
         :collection-id="collectionId"
@@ -8,9 +8,11 @@
     </div>
     <section class="mb-5">
       <div class="is-flex">
-        <span class="collection-documents">{{ totalCount }} DOCUMENTS</span>
+        <span class="collection-documents">
+          <span class="documents-count">{{ totalCount }}</span> DOCUMENTS
+        </span>
       </div>
-      <div class="is-flex is-justify-content-flex-end">
+      <div class="search-collection-parent is-flex is-justify-content-flex-end">
         <router-link
           :to="{ name: 'search'}"
         >
@@ -138,6 +140,7 @@
             <div class="switch-button-div">
               <div
                 class="switch-button"
+                :class="toggleCssClass"
                 @click="toggle"
               >
                 <input
@@ -420,6 +423,9 @@ export default {
         }
       },
     },
+    toggleCssClass: function() {
+      return this.isActive ? 'is-active' : 'is-inactive';
+    },
     ...mapState("user", ["current_user"]),
   },
   watch: {
@@ -574,33 +580,82 @@ progress {
     background-color: red;
 }
 .collection-documents {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+
   flex-grow: 1;
-  text-align: left;
-  color: #B9192F;
   margin: 5px;
   padding-left: 2px;
   padding-right: 2px;
-  border-bottom: solid 1px #B9192F;
+
+  font-size: 14px;
+  color: #FF0052;
+  font-weight: 500;
+  text-transform: uppercase;
+  white-space: nowrap;
+
+  &::after {
+    content: '';
+    display: inline-block;
+    border-bottom: 1px solid #FF0052;
+    width: 100%;
+    transform: translateY(-2px);
+  }
+
+  span.documents-count {
+    font-weight: 700;
+  }
 }
+
+.search-collection-parent {
+  border-bottom: 1px solid #D5D5D5;
+  padding-bottom: 15px;
+}
+
 .search-collection {
-  color: #b9192f;
-  border-color: #b9192f;
-  border-radius: 10px;
-  margin: 5px;
-  padding-left: 2px;
-  padding-right: 2px;
+  margin: 40px 5px 5px;
+  padding: 10px;
   background-color: transparent;
+  border: #C00055 solid 1px;
+  border-radius: 5px;
+
+  font-family: $family-primary;
+  font-size: 14px;
+  font-weight: 400;
+  color: #C00055;
+  text-transform: uppercase;
 }
+
 .switch-button {
   background-color: lightgrey;
   border-radius: 30px;
   overflow: hidden;
   width: 240px;
+  height: 35px;
   text-align: center;
-  color: grey;
   position: relative;
   padding-right: 120px;
-  position: relative;
+
+  font-family: $family-primary;
+  font-size: 14px;
+
+  color: white;
+  transition: all ease-in-out 300ms;
+
+  &.is-active {
+    color: grey;
+    .switch-button-label-span {
+      color: white;
+    }
+  }
+
+  &.is-inactive {
+    color: white;
+    .switch-button-label-span {
+      color: grey;
+    }
+  }
 
   &:before {
     content: "DEPLIE";
@@ -609,6 +664,7 @@ progress {
     bottom: 0;
     right: 0;
     width: 120px;
+    height: 35px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -634,15 +690,17 @@ progress {
 
     & + .switch-button-label {
       position: relative;
-      padding: 15px 0;
-      display: block;
+      display: flex;
+      justify-content: center;
+      align-items: center;
       user-select: none;
       pointer-events: none;
+      height: 100%;
 
       &:before {
         content: "";
         background: rgb(255, 0, 83);
-        height: 100%;
+        height: 35px;
         width: 100%;
         position: absolute;
         left: 0;

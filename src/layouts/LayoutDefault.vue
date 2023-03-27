@@ -16,14 +16,16 @@
             class="row"
           >
             <p class="homepage_title">
-              Lettres
+              Ecco
             </p>
           </div>
           <div
             class="row"
           >
             <p class="homepage_subtitle">
-              de la Première Modernité
+              Édition collaborative
+              <br/>
+              des correspondances modernes
             </p>
           </div>
           <div
@@ -370,11 +372,10 @@ footer {
   max-height: 250px;
 }
 .homepage_title {
-  margin-top: 20px;
   font-family: $family-apptitle;
   font-weight: 200;
   font-size: 210px;
-  line-height: 1;
+  line-height: 1.1;
   color: white;
   text-align: center;
 
@@ -383,16 +384,18 @@ footer {
   }
 }
 .homepage_subtitle {
+  max-width: 500px;
+  margin: 0 auto;
   font-family: $family-apptitle;
-  font-weight: 200;
-  font-size: 58px;
-  line-height: 1;
+  font-size: 26px;
+  font-weight: 600;
+  line-height: 1.2;
   color: white;
   text-align: center;
-  transform: translateY(-18px);
+  transform: translateY(-20px);
 
   @include on-tablet {
-    font-size: 30px;
+    font-size: 22px;
     transform: none;
   }
 }
@@ -413,7 +416,7 @@ footer {
   color: rgb(255, 0, 83);
 }
 a.portail_button {
-  margin-top: 26px;
+  margin: 50px 0;
   padding: 0 1em;
   background-color: transparent;
   border-color: #FFFFFF;

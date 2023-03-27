@@ -20,7 +20,7 @@
           :to="{ name: 'home' }"
           class="navbar-item title is-4 navbar-title is-inline-block"
         >
-          Lettres
+          Ecco
         </router-link>
       </div>
 
@@ -231,6 +231,7 @@ export default {
     padding: 5px;
     font-family: $family-apptitle;
     font-size: 60px;
+    font-weight: 300;
     line-height: 1;
     text-transform: none;
     text-decoration: none !important;
