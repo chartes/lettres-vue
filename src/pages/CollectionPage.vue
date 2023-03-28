@@ -76,7 +76,7 @@
           class="field is-inline-block px-1"
         >
           <!--v-if="!isActive && isFulltextSearch"-->
-          <div class="control mb-6 block is-inline-block sort-options">
+          <div class="control block is-inline-block sort-options">
             <span> Tris </span>
             <div class="is-inline-block">
               <select
@@ -626,7 +626,9 @@ progress {
   color: #C00055;
   text-transform: uppercase;
 }
-
+.sort-options {
+  margin-bottom: 0 !important;
+}
 .switch-button {
   background-color: lightgrey;
   border-radius: 30px;
@@ -712,7 +714,6 @@ progress {
 
       .switch-button-label-span {
         position: relative;
-        color: white;
       }
     }
   }
