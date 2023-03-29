@@ -1,5 +1,8 @@
 <template>
-  <div class="large-container" :class="toggleCssClass">
+  <div
+    class="large-container"
+    :class="toggleCssClass"
+  >
     <div class="collection-card-parent">
       <collection-interactive-card
         :collection-id="collectionId"

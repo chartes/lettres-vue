@@ -1,5 +1,8 @@
 <template>
-  <div class="section">
+  <div
+      class="section"
+      :class="toggleCssClass"
+  >
     <div class="document-list-header is-flex is-justify-content-space-between is-align-items-center">
       <div class="is-inline-block">
         <div class="results-count">
@@ -11,6 +14,7 @@
           <div class="switch-button-div">
             <div
               class="switch-button"
+              :class="toggleCssClass"
               @click="toggle"
             >
               <input
@@ -106,16 +110,16 @@
             <div v-if="column.sortable">
               <div v-if="sortingPriority.filter(obj => obj.field === column.field).length === 0">
                 <span
-                  class="icon button"
+                  class="icon button arrows-alt-v"
                 >
                   <i class="fas fa-arrows-alt-v"></i>
                 </span>
               </div>
               <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'asc'">
-                <span class="icon button">
+                <span class="icon button arrow-up">
                   <i class="fas fa-arrow-up"></i>
                 </span>
-                <span class="icon button">
+                <span class="icon button multi-sort-cancel-icon">
                   {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
                   <button
                     class="delete is-small multi-sort-cancel-icon"
@@ -125,7 +129,7 @@
                 </span>
               </div>
               <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'desc'">
-                <span class="icon button">
+                <span class="icon button arrow-down">
                   <i class="fas fa-arrow-down"></i>
                 </span>
                 <span class="icon button">
@@ -163,16 +167,16 @@
             <div v-if="column.sortable">
               <div v-if="sortingPriority.filter(obj => obj.field === column.field).length === 0">
                 <span
-                  class="icon button"
+                  class="icon button arrows-alt-v"
                 >
                   <i class="fas fa-arrows-alt-v"></i>
                 </span>
               </div>
               <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'asc'">
-                <span class="icon button">
+                <span class="icon button arrow-up">
                   <i class="fas fa-arrow-up"></i>
                 </span>
-                <span class="icon button">
+                <span class="icon button sort-index">
                   {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
                   <button
                     class="delete is-small multi-sort-cancel-icon"
@@ -182,10 +186,10 @@
                 </span>
               </div>
               <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'desc'">
-                <span class="icon button">
+                <span class="icon button arrow-down">
                   <i class="fas fa-arrow-down"></i>
                 </span>
-                <span class="icon button">
+                <span class="icon button sort-index">
                   {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
                   <button
                     class="delete is-small multi-sort-cancel-icon"
@@ -216,16 +220,16 @@
             <div v-if="column.sortable">
               <div v-if="sortingPriority.filter(obj => obj.field === column.field).length === 0">
                 <span
-                  class="icon button"
+                  class="icon button arrows-alt-v"
                 >
                   <i class="fas fa-arrows-alt-v"></i>
                 </span>
               </div>
               <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'asc'">
-                <span class="icon button">
+                <span class="icon button arrow-up">
                   <i class="fas fa-arrow-up"></i>
                 </span>
-                <span class="icon button">
+                <span class="icon button sort-index">
                   {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
                   <button
                     class="delete is-small multi-sort-cancel-icon"
@@ -235,10 +239,10 @@
                 </span>
               </div>
               <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'desc'">
-                <span class="icon button">
+                <span class="icon button arrow-down">
                   <i class="fas fa-arrow-down"></i>
                 </span>
-                <span class="icon button">
+                <span class="icon button sort-index">
                   {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
                   <button
                     class="delete is-small multi-sort-cancel-icon"
@@ -338,7 +342,9 @@ export default {
     totalPages: function() {
       return Math.ceil(this.totalCount / this.pageSize)
     },
-
+    toggleCssClass: function() {
+      return this.isActive ? 'is-active' : 'is-inactive';
+    },
   },
   watch: {
     documents() {
@@ -452,23 +458,35 @@ progress {
   margin-top: 30px;
 }
 
-a.disabled {
-    cursor: not-allowed !important;
-}
-a.first-page {
-  background: #C3C3C3 url(../../assets/images/icons/page_debut.svg)  center / 28px auto no-repeat;
-}
-
 .switch-button {
   background-color: lightgrey;
   border-radius: 30px;
   overflow: hidden;
   width: 240px;
+  height: 35px;
   text-align: center;
-  color: grey;
   position: relative;
   padding-right: 120px;
-  position: relative;
+
+  font-family: $family-primary;
+  font-size: 14px;
+
+  color: white;
+  transition: all ease-in-out 300ms;
+
+  &.is-active {
+    color: grey;
+    .switch-button-label-span {
+      color: white;
+    }
+  }
+
+  &.is-inactive {
+    color: white;
+    .switch-button-label-span {
+      color: grey;
+    }
+  }
 
   &:before {
     content: "DEPLIE";
@@ -477,6 +495,7 @@ a.first-page {
     bottom: 0;
     right: 0;
     width: 120px;
+    height: 35px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -502,15 +521,17 @@ a.first-page {
 
     & + .switch-button-label {
       position: relative;
-      padding: 15px 0;
-      display: block;
+      display: flex;
+      justify-content: center;
+      align-items: center;
       user-select: none;
       pointer-events: none;
+      height: 100%;
 
       &:before {
         content: "";
         background: rgb(255, 0, 83);
-        height: 100%;
+        height: 35px;
         width: 100%;
         position: absolute;
         left: 0;
@@ -522,9 +543,84 @@ a.first-page {
 
       .switch-button-label-span {
         position: relative;
-        color: white;
       }
     }
+  }
+}
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  /*visibility: hidden;*/
+
+  & > * {
+    display: inline-block;
+    width: 38px;
+    height: 38px;
+    margin-right: 4px;
+  }
+  & > a {
+    display: inline-block;
+    width: 38px;
+    height: 38px;
+    background-color: #C3C3C3;
+    border-radius: 3.2px;
+  }
+  & > a.disabled {
+    cursor: not-allowed !important;
+  }
+  & > a.first-page {
+    background: #C3C3C3 url(../../assets/images/icons/page_debut.svg)  center / 28px auto no-repeat;
+  }
+  & > a.previous-page {
+    background: #C3C3C3 url(../../assets/images/icons/page_precedent.svg) center / 28px auto no-repeat;
+  }
+  & > a.next-page {
+    background: #C3C3C3 url(../../assets/images/icons/page_suivant.svg) center / 28px auto no-repeat;
+  }
+  & > a.last-page {
+    background: #C3C3C3 url(../../assets/images/icons/page_fin.svg) center / 28px auto no-repeat;
+  }
+  & > input[type=number],
+  & > input[type=text] {
+    height: 38px !important;
+    padding: 0 !important;
+    border: 1px solid #C00055;
+    border-radius: 3.2px;
+
+    font-family: $family-primary;
+    font-size: 18px;
+    color: #CB2158;
+    font-weight: 800;
+    text-align: center;
+    text-decoration: none;
+
+    &:focus {
+      outline: 1px solid #C00055;
+    }
+  }
+
+  & > span.label-sur-page {
+    font-family: $family-primary;
+    font-size: 11px;
+    line-height: 38px;
+    color: #979797;
+    font-weight: 500;
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  & > span.total-pages {
+    background-color: #DFDFDF;
+    border-radius: 3.2px;
+
+    font-family: $family-primary;
+    font-size: 18px;
+    line-height: 38px;
+    color: #818181;
+    text-align: center;
+    font-weight: 600;
+    text-transform: uppercase;
   }
 }
 /* Chrome, Safari, Edge, Opera */
