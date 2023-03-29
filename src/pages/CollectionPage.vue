@@ -76,9 +76,9 @@
           class="field is-inline-block px-1"
         >
           <!--v-if="!isActive && isFulltextSearch"-->
-          <div class="control block is-inline-block sort-options">
-            <span> Tris </span>
-            <div class="is-inline-block">
+          <div class="control block is-flex is-align-items-center sort-options">
+            <span>Tris</span>
+            <div class="is-inline-block select-parent">
               <select
                 id="tri-select"
                 v-model="sortingPriority"
@@ -117,22 +117,22 @@
                   Période du sujet (borne sup.)
                 </option>
               </select>
-              <span
-                v-if="sortingPriority"
-                class="icon button"
-                @click="sortingPriority = sortingPriority.replace('-', '')"
-              >
-                <i class="fas fa-arrow-up" />
-              </span>
-              <span
-                v-else
-                v-show="sortingPriority.length > 0"
-                class="icon button"
-                @click="sortingPriority = `-${sortingPriority}`"
-              >
-                <i class="fas fa-arrow-down" />
-              </span>
             </div>
+            <span
+              v-if="sortingPriority"
+              class="icon button arrow-up"
+              @click="sortingPriority = sortingPriority.replace('-', '')"
+            >
+              <i class="fas fa-arrow-up" />
+            </span>
+            <span
+              v-else
+              v-show="sortingPriority.length > 0"
+              class="icon button arrow-down"
+              @click="sortingPriority = `-${sortingPriority}`"
+            >
+              <i class="fas fa-arrow-down" />
+            </span>
           </div>
         </div>
         <div class="is-inline-block px-1">
@@ -195,16 +195,16 @@
               <div v-if="column.sortable">
                 <div v-if="sortingPriority.filter(obj => obj.field === column.field).length === 0">
                   <span
-                    class="icon button"
+                    class="icon button arrows-alt-v"
                   >
                     <i class="fas fa-arrows-alt-v"></i>
                   </span>
                 </div>
                 <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'asc'">
-                  <span class="icon button">
+                  <span class="icon button arrow-up">
                     <i class="fas fa-arrow-up"></i>
                   </span>
-                  <span class="icon button">
+                  <span class="icon button sort-index">
                     {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
                     <button
                       class="delete is-small multi-sort-cancel-icon"
@@ -214,10 +214,10 @@
                   </span>
                 </div>
                 <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'desc'">
-                  <span class="icon button">
+                  <span class="icon button arrow-down">
                     <i class="fas fa-arrow-down"></i>
                   </span>
-                  <span class="icon button">
+                  <span class="icon button sort-index">
                     {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
                     <button
                       class="delete is-small multi-sort-cancel-icon"
@@ -252,16 +252,16 @@
               <div v-if="column.sortable">
                 <div v-if="sortingPriority.filter(obj => obj.field === column.field).length === 0">
                   <span
-                    class="icon button"
+                    class="icon button arrows-alt-v"
                   >
                     <i class="fas fa-arrows-alt-v"></i>
                   </span>
                 </div>
                 <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'asc'">
-                  <span class="icon button">
+                  <span class="icon button arrow-up">
                     <i class="fas fa-arrow-up"></i>
                   </span>
-                  <span class="icon button">
+                  <span class="icon button sort-index">
                     {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
                     <button
                       class="delete is-small multi-sort-cancel-icon"
@@ -271,10 +271,10 @@
                   </span>
                 </div>
                 <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'desc'">
-                  <span class="icon button">
+                  <span class="icon button arrow-down">
                     <i class="fas fa-arrow-down"></i>
                   </span>
-                  <span class="icon button">
+                  <span class="icon button sort-index">
                     {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
                     <button
                       class="delete is-small multi-sort-cancel-icon"
@@ -305,16 +305,16 @@
               <div v-if="column.sortable">
                 <div v-if="sortingPriority.filter(obj => obj.field === column.field).length === 0">
                   <span
-                    class="icon button"
+                    class="icon button arrows-alt-v"
                   >
                     <i class="fas fa-arrows-alt-v"></i>
                   </span>
                 </div>
                 <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'asc'">
-                  <span class="icon button">
+                  <span class="icon button arrow-up">
                     <i class="fas fa-arrow-up"></i>
                   </span>
-                  <span class="icon button">
+                  <span class="icon button sort-index">
                     {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
                     <button
                       class="delete is-small multi-sort-cancel-icon"
@@ -324,10 +324,10 @@
                   </span>
                 </div>
                 <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'desc'">
-                  <span class="icon button">
+                  <span class="icon button arrow-down">
                     <i class="fas fa-arrow-down"></i>
                   </span>
-                  <span class="icon button">
+                  <span class="icon button sort-index">
                     {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
                     <button
                       class="delete is-small multi-sort-cancel-icon"
@@ -459,6 +459,7 @@ export default {
       this.$store.state.layout.showLeftSideBar = true
     },
     toggle() {
+      console.log(this.sortingPriority)
       if (this.isActive === true) {
         this.isActive = false;
       } else {
@@ -560,6 +561,7 @@ export default {
 
 <style scoped lang="scss">
 @import "@/assets/sass/main.scss";
+@import "@/assets/sass/elements/_select.scss";
 @import "@/assets/sass/components/_search_results_table.scss";
 @import "@/assets/sass/components/_search_results_pagination.scss";
 
@@ -614,7 +616,7 @@ progress {
 }
 
 .search-collection {
-  margin: 40px 5px 5px;
+  margin: 32px 5px 5px;
   padding: 10px;
   background-color: transparent;
   border: #C00055 solid 1px;
@@ -626,9 +628,45 @@ progress {
   color: #C00055;
   text-transform: uppercase;
 }
+
 .sort-options {
+  gap: 10px;
   margin-bottom: 0 !important;
+
+  .icon.button {
+    width: 25px;
+    height: 25px;
+    border: none !important;
+
+    &::after {
+      content: '';
+      display: inline-block;
+      width: 100%;
+      height: 100%;
+      background-size: cover;
+      background-repeat: no-repeat;
+      transform-origin: 50% 50%;
+      background-image: url(../assets/images/icons/tri-fleche.svg);
+    }
+
+    &.arrow-down {
+      transform: rotate(180deg);
+    }
+
+    i {
+      display: none;
+    }
+  }
+
+  & > span {
+    font-family: $family-primary;
+    font-size: 16px;
+    color: #C00055;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
 }
+
 .switch-button {
   background-color: lightgrey;
   border-radius: 30px;
