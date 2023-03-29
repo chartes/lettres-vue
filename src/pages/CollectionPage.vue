@@ -73,10 +73,10 @@
         </div>
         <div
           v-if="!isActive"
-          class="field is-inline-block px-1"
+          class="field is-inline-block mb-0 px-1"
         >
           <!--v-if="!isActive && isFulltextSearch"-->
-          <div class="control block is-flex is-align-items-center sort-options">
+          <div class="control block is-flex is-align-items-center mb-0 sort-options">
             <span>Tris</span>
             <div class="is-inline-block select-parent">
               <select
@@ -789,6 +789,7 @@ progress {
   & > a.last-page {
     background: #C3C3C3 url(../assets/images/icons/page_fin.svg) center / 28px auto no-repeat;
   }
+  & > input[type=number],
   & > input[type=text] {
     height: 38px !important;
     padding: 0 !important;

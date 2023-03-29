@@ -13,17 +13,21 @@
   }
 }
 
-.document__transcription--content {
-  padding-left: 100px;
-  background: url(#{$image-path}/icons/guillemet.svg) no-repeat;
+.document__transcription--tr-content {
+  .document__transcription--content {
+    margin-top: 20px;
+    padding-top: 10px;
+    padding-left: 75px;
+    background: url(#{$image-path}/icons/guillemet.svg) no-repeat;
 
-  font-size: 18px;
-  color: #333333;
-  font-weight: 400;
-  line-height: 28px;
+    font-size: 18px;
+    color: #333333;
+    font-weight: 400;
+    line-height: 28px;
 
-  ::v-deep > *:last-child::after {
-    content:'(...)'
+    ::v-deep > *:last-child::after {
+      content:'(...)'
+    }
   }
 }
 

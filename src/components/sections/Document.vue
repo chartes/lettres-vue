@@ -179,7 +179,7 @@
       <section
         class="document-section"
       >
-        <div class="heading is-size-5 is-uppercase">
+        <div class="heading is-uppercase">
           <span class="heading-content">Transcription</span>
           <div class="slope-container">
             <span class="slope tier-1" />
