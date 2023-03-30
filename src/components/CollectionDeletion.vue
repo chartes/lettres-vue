@@ -6,13 +6,14 @@
     <a
       class="delete-collection-btn button is-primary"
       :class="deleting === 'loading' ? 'is-loading' : ''"
-      @click.stop="collectionIdToBeDeleted = collectionId"
+      @click.stop="collectionIdToBeDeleted = collectionId; collectionTitleToBeDeleted = collectionTitle "
     >
       <delete-button-icon :status="deleting === 'error' ? 'error' : deleting === 'normal' ? 'normal' : ''" />
     </a>
     <modal-confirm-collection-delete
       v-if="collectionIdToBeDeleted && current_user.isAdmin"
       :collection-id="collectionIdToBeDeleted"
+      :collection-title="collectionTitleToBeDeleted"
       :cancel="cancelCollectionDelete"
       :submit="confirmCollectionDelete"
     />
@@ -30,11 +31,13 @@ export default {
   components: {ModalConfirmCollectionDelete, DeleteButtonIcon},
   props: {
     collectionId: { required: true, type: Number },
+    collectionTitle: { type: String, required: true},
     editable: { type: Boolean, default: false },
   },
   data() {
     return {
       collectionIdToBeDeleted: null,
+      collectionTitleToBeDeleted: null,
       deleting: "normal",
       curatorId: null,
       error: {},
@@ -61,6 +64,7 @@ export default {
     },
     cancelCollectionDelete() {
       this.collectionIdToBeDeleted = null;
+      this.collectionTitleToBeDeleted = null;
     },
     async deleteCollectionUI() {
       this.deleting = "loading";

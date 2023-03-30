@@ -55,33 +55,44 @@ const actions = {
       }, {root: true});
     });
   },
-  fetchFullChangelog ({ rootState, commit }, {pageId=1, pageSize=15, filters}) {
+  fetchFullChangelog ({ rootState, commit }, {numPage = 1, pageSize = 30, sortingPriority, filters}) {
     commit('SET_LOADING', true)
     const http = http_with_auth(rootState.user.jwt);
-    return http.get(`changes?include=user&sort=-event-date&page[size]=${pageSize}&page[number]=${pageId}${filters ? '&'+filters : ''}`)
-      .then( response => {
-        commit('UPDATE_FULL_CHANGELOG', {
-          changes: response.data.data,
-          included: response.data.included,
-          meta: response.data.meta
-        });
-    }).finally(() => {
-      commit('SET_LOADING', false);
-    })
+    if (numPage !== null) {
+      let sorts = sortingPriority ? sortingPriority.map(s => `${s.order === 'desc' ? '-' : ''}${s.field}`) : []
+      sorts = `&sort=${sorts.length ? sorts.join(',') : '-event-date'}`
+
+      return http.get(`changes?include=user${sorts}&page[size]=${pageSize}&page[number]=${numPage}${filters ? '&'+filters : ''}`)
+        .then( response => {
+          commit('UPDATE_FULL_CHANGELOG', {
+            changes: response.data.data,
+            included: response.data.included,
+            meta: response.data.meta
+          });
+      }).finally(() => {
+        commit('SET_LOADING', false);
+      })
+    }
   },
-  fetchFullChangelogForUser ({ rootState, commit }, {pageId=1, pageSize=15, user, filters}) {
+  fetchFullChangelogForUser ({ rootState, commit }, {user, numPage = 1 , pageSize = 30 , sortingPriority, filters}) {
     commit('SET_LOADING', true)
     const http = http_with_auth(rootState.user.jwt);
-    return http.get(`users/${user}/changes?include=user&sort=-event-date&page[size]=${pageSize}&page[number]=${pageId}${filters ? '&'+filters : ''}`)
-      .then( response => {
-        commit('UPDATE_FULL_CHANGELOG', {
-          changes: response.data.data,
-          included: response.data.included,
-          meta: response.data.meta
-        });
-    }).finally(() => {
-      commit('SET_LOADING', false);
-    })
+
+    if (numPage !== null) {
+      let sorts = sortingPriority ? sortingPriority.map(s => `${s.order === 'desc' ? '-' : ''}${s.field}`) : []
+      sorts = `&sort=${sorts.length ? sorts.join(',') : '-event-date'}`
+
+      return http.get(`users/${user}/changes?include=user${sorts}&page[size]=${pageSize}&page[number]=${numPage}${filters ? '&' + filters : ''}`)
+          .then(response => {
+            commit('UPDATE_FULL_CHANGELOG', {
+              changes: response.data.data,
+              included: response.data.included,
+              meta: response.data.meta
+            });
+          }).finally(() => {
+            commit('SET_LOADING', false);
+          })
+    }
   }
 };
 

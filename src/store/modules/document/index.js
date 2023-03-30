@@ -326,6 +326,7 @@ const actions = {
           d => `'${TRANSLATION_MAPPING[d] ? TRANSLATION_MAPPING[d] : d}'`
         ).join(', ')}`;
       }
+      console.log("dispatch changelog")
       this.dispatch('changelog/trackChanges', {
         objId: state.document.id,
         objType: 'document',

@@ -2,7 +2,7 @@
   <div
     class="document"
     :class="documentCssClass"
-  >
+  ><!-- Not preview mode -->
     <div
       v-if="!preview"
       class="is-justify-content-left"
@@ -37,274 +37,461 @@
           </span>
         </a>
       </nav>
-    </div>
-    <div class="columns">
-      <document-tag-bar
-        v-if="!preview && !isLoading && current_user"
-        class="column"
-        :doc-id="docId"
-        :with-status="true"
-      />
-      <document-deletion
-        v-if="!preview && !isLoading && current_user && current_user.isAdmin"
-        class="column delete-button"
-        :doc-id="docId"
-      />
-    </div>
-    <article
-      v-if="document && !isLoading"
-      class="document__content"
-    >
-      <!-- titre et langue -->
-      <section class="document-section columns">
-        <document-title
-          v-if="!preview"
-          :editable="canEdit"
-          :preview="preview"
-          class="column is-three-quarters"
-          @add-note="addNote"
-        />
-        <document-languages
-          :editable="canEdit"
-          class="column"
-        />
-      </section>
-      <!-- dates de lieux et de temps -->
-
-      <section class="document-section">
-        <div class="heading is-uppercase">
-          <span class="heading-content">Dates</span>
-          <div class="slope-container">
-            <span class="slope tier-1" />
-            <span class="slope tier-2" />
-            <span class="slope tier-3" />
-            <span class="slope tier-4" />
-          </div>
-        </div>
-        <div class="document-section-content">
-          <document-date-attributes :editable="canEdit" />
-          <document-placenames
-            :editable="canEdit"
-            @add-place="addPlace"
-            @unlink-place="unlinkPlace"
-          />
-        </div>
-      </section>
-
-      <!-- correspondents -->
-      <section class="document-section">
-        <div class="heading is-uppercase">
-          <span class="heading-content">Correspondants</span>
-          <div class="slope-container">
-            <span class="slope tier-1" />
-            <span class="slope tier-2" />
-            <span class="slope tier-3" />
-            <span class="slope tier-4" />
-          </div>
-        </div>
-        <div class="document-section-content">
-          <document-persons
-            :editable="canEdit"
-            @add-person="addPerson"
-            @unlink-person="unlinkPerson"
-          />
-        </div>
-      </section>
-
-      <!-- témoins
-      <document-witnesses :editable="canEdit" :list="witnesses" />
-       -->
-
-      <section class="document-section">
-        <div class="heading is-uppercase">
-          <span class="heading-content "> Témoins </span>
-          <b-button
-            v-if="canEdit"
-            value="+"
-            class="open-modal-button has-add-btn"
-            @click="openWitnessModal = true"
-          >
-            <icon-add />
-          </b-button>
-          <div class="slope-container">
-            <span class="slope tier-1" />
-            <span class="slope tier-2" />
-            <span class="slope tier-3" />
-            <span class="slope tier-4" />
-          </div>
-        </div>
-        <div class="document-section-content">
-          <witness-list
-            :editable="canEdit"
-            :open-modal="openWitnessModal"
-            @add-note="addNote"
-            @close-witness-modal="openWitnessModal = false"
-          />
-        </div>
-      </section>
-
-      <section class="document-section">
-        <!-- collections -->
-        <div class="heading is-uppercase">
-          <span class="heading-content">Collections</span>
-        </div>
-        <div class="document-section-content">
-          <document-collections :editable="canEdit" />
-        </div>
-      </section>
-
-      <!-- analyse -->
-      <section class="document-section">
-        <div class="heading is-uppercase">
-          <span class="heading-content">Analyse</span>
-          <div class="slope-container">
-            <span class="slope tier-1" />
-            <span class="slope tier-2" />
-            <span class="slope tier-3" />
-            <span class="slope tier-4" />
-          </div>
-        </div>
-        <div class="document-section-content">
-          <document-argument
-            :editable="canEdit"
-            :preview="preview"
-            @add-place="addPlace"
-            @add-person="addPerson"
-            @add-note="addNote"
-          />
-        </div>
-      </section>
-
-      <!-- transcription -->
-      <section
-        class="document-section"
-      >
-        <div class="heading is-size-5 is-uppercase">
-          <span class="heading-content">Transcription</span>
-          <div class="slope-container">
-            <span class="slope tier-1" />
-            <span class="slope tier-2" />
-            <span class="slope tier-3" />
-            <span class="slope tier-4" />
-          </div>
-        </div>
-        <div class="document-section-content">
-          <document-transcription
-            :editable="canEdit"
-            :preview="preview"
-            @add-place="addPlace"
-            @add-person="addPerson"
-            @add-note="addNote"
-          />
-        </div>
-      </section>
-
       <div
-        v-if="!preview && current_user"
-        class=""
-        style="margin-left: 0; margin-top: 50px"
+        class="document"
+        :class="documentCssClass"
       >
-        <header class="subtitle mb-3">
-          Historique des modifications
-        </header>
-        <changelog
-          :doc-id="docId"
-          :per-page="10"
+        <div class="columns">
+          <document-tag-bar
+            v-if="!isLoading && current_user"
+            class="column"
+            :doc-id="docId"
+            :with-status="true"
+            :preview="preview"
+          />
+          <document-deletion
+            v-if="!isLoading && current_user && current_user.isAdmin"
+            class="column delete-button"
+            :doc-id="docId"
+          />
+        </div>
+        <article
+          v-if="document && !isLoading"
+          class="document__content"
+        >
+          <!-- titre et langue -->
+          <section class="document-section">
+            <div class="heading is-uppercase is-flex is-justify-content-space-between">
+              <span class="heading-content">Titre</span>
+              <span
+                class="icon"
+                @click="isTitleOpen = !isTitleOpen"
+                :aria-expanded="isTitleOpen"
+                aria-controls="titleSection"
+              >
+                <i :class="isTitleOpen ? 'fas fa-angle-up' : 'fas fa-angle-down'"></i>
+              </span>
+            </div>
+            <b-collapse
+              aria-id="titleSection"
+              v-model="isTitleOpen"
+            >
+              <template>
+                <div class="document-section-content">
+                  <document-title
+                    v-if="!preview"
+                    :editable="canEdit"
+                    :preview="preview"
+                    @add-note="addNote"
+                  />
+                  <document-languages
+                    :editable="canEdit"
+                  />
+                </div>
+              </template>
+            </b-collapse>
+          </section>
+
+          <!-- correspondents -->
+          <section class="document-section">
+            <div class="heading is-uppercase is-flex is-justify-content-space-between">
+              <span class="heading-content">Correspondants</span>
+              <span
+                class="icon"
+                @click="isPersonsOpen = !isPersonsOpen"
+                :aria-expanded="isPersonsOpen"
+                aria-controls="personsSection"
+              >
+                <i :class="isPersonsOpen ? 'fas fa-angle-up' : 'fas fa-angle-down'"></i>
+              </span>
+              <!--<div class="slope-container">
+                <span class="slope tier-1" />
+                <span class="slope tier-2" />
+                <span class="slope tier-3" />
+                <span class="slope tier-4" />
+              </div>-->
+            </div>
+            <b-collapse
+              aria-id="personsSection"
+              v-model="isPersonsOpen"
+            >
+              <template>
+                <div class="document-section-content">
+                  <document-persons
+                    :editable="canEdit"
+                    @add-person="addPerson"
+                    @unlink-person="unlinkPerson"
+                  />
+                </div>
+              </template>
+            </b-collapse>
+          </section>
+
+          <!-- dates de temps -->
+          <section class="document-section">
+            <div class="heading is-uppercase is-flex is-justify-content-space-between">
+              <span class="heading-content">Dates</span>
+              <span
+                class="icon"
+                @click="isDatesOpen = !isDatesOpen"
+                :aria-expanded="isDatesOpen"
+                aria-controls="datesSection"
+              >
+                <i :class="isDatesOpen ? 'fas fa-angle-up' : 'fas fa-angle-down'"></i>
+              </span>
+              <!--<div class="slope-container">
+                <span class="slope tier-1" />
+                <span class="slope tier-2" />
+                <span class="slope tier-3" />
+                <span class="slope tier-4" />
+              </div>-->
+            </div>
+            <b-collapse
+              aria-id="datesSection"
+              v-model="isDatesOpen"
+            >
+              <template>
+                <div class="document-section-content">
+                  <document-date-attributes :editable="canEdit" />
+                </div>
+              </template>
+            </b-collapse>
+          </section>
+
+          <!-- dates de lieux -->
+          <section class="document-section">
+            <div class="heading is-uppercase is-flex is-justify-content-space-between">
+              <span class="heading-content">Lieux</span>
+              <span
+                class="icon"
+                @click="isPlacesOpen = !isPlacesOpen"
+                :aria-expanded="isPlacesOpen"
+                aria-controls="placesSection"
+              >
+                <i :class="isPlacesOpen ? 'fas fa-angle-up' : 'fas fa-angle-down'"></i>
+              </span>
+              <!--<div class="slope-container">
+                <span class="slope tier-1" />
+                <span class="slope tier-2" />
+                <span class="slope tier-3" />
+                <span class="slope tier-4" />
+              </div>-->
+            </div>
+            <b-collapse
+              aria-id="placesSection"
+              v-model="isPlacesOpen"
+            >
+              <template>
+                <div class="document-section-content">
+                  <document-placenames
+                    :editable="canEdit"
+                    @add-place="addPlace"
+                    @unlink-place="unlinkPlace"
+                  />
+                </div>
+              </template>
+            </b-collapse>
+          </section>
+
+          <!-- analyse -->
+          <section class="document-section">
+            <div class="heading is-uppercase is-flex is-justify-content-space-between">
+              <span class="heading-content">Analyse</span>
+              <span
+                class="icon"
+                @click="isAnalyseOpen = !isAnalyseOpen"
+                :aria-expanded="isAnalyseOpen"
+                aria-controls="analyseSection"
+              >
+                <i :class="isAnalyseOpen ? 'fas fa-angle-up' : 'fas fa-angle-down'"></i>
+              </span>
+              <!--<div class="slope-container">
+                <span class="slope tier-1" />
+                <span class="slope tier-2" />
+                <span class="slope tier-3" />
+                <span class="slope tier-4" />
+              </div>-->
+            </div>
+            <b-collapse
+              aria-id="analyseSection"
+              v-model="isAnalyseOpen"
+            >
+              <template>
+                <div class="document-section-content">
+                  <document-argument
+                    :editable="canEdit"
+                    :preview="preview"
+                    @add-place="addPlace"
+                    @add-person="addPerson"
+                    @add-note="addNote"
+                  />
+                </div>
+              </template>
+            </b-collapse>
+          </section>
+
+          <!-- transcription -->
+          <section class="document-section">
+            <div class="heading is-uppercase is-flex is-justify-content-space-between">
+              <span class="heading-content">Transcription</span>
+              <span
+                class="icon"
+                @click="isTranscriptionOpen = !isTranscriptionOpen"
+                :aria-expanded="isTranscriptionOpen"
+                aria-controls="transcriptionSection"
+              >
+                <i :class="isTranscriptionOpen ? 'fas fa-angle-up' : 'fas fa-angle-down'"></i>
+              </span>
+              <!--<div class="slope-container">
+                <span class="slope tier-1" />
+                <span class="slope tier-2" />
+                <span class="slope tier-3" />
+                <span class="slope tier-4" />
+              </div>-->
+            </div>
+            <b-collapse
+              aria-id="transcriptionSection"
+              v-model="isTranscriptionOpen"
+            >
+              <template>
+                <div class="document-section-content">
+                  <document-transcription
+                    :editable="canEdit"
+                    :preview="preview"
+                    @add-place="addPlace"
+                    @add-person="addPerson"
+                    @add-note="addNote"
+                  />
+                </div>
+              </template>
+            </b-collapse>
+          </section>
+
+          <!-- témoins
+          <document-witnesses :editable="canEdit" :list="witnesses" />
+           -->
+          <section class="document-section">
+            <div class="heading is-uppercase is-flex is-justify-content-space-between">
+              <div class="is-flex is-align-items-center is-justify-content-center">
+                <span class="heading-content"> Témoins </span>
+                <b-button
+                  v-if="canEdit"
+                  value="+"
+                  class="open-modal-button has-add-btn"
+                  @click="openWitnessModal = true"
+                >
+                  <icon-add />
+                </b-button>
+              </div>
+              <span
+                class="icon"
+                @click="isWitnessOpen = !isWitnessOpen"
+                :aria-expanded="isWitnessOpen"
+                aria-controls="witnessSection"
+              >
+                <i :class="isWitnessOpen ? 'fas fa-angle-up' : 'fas fa-angle-down'"></i>
+              </span>
+              <!--<div class="slope-container">
+                <span class="slope tier-1" />
+                <span class="slope tier-2" />
+                <span class="slope tier-3" />
+                <span class="slope tier-4" />
+              </div>-->
+            </div>
+            <b-collapse
+              aria-id="witnessSection"
+              v-model="isWitnessOpen"
+            >
+              <template>
+                <div class="document-section-content">
+                  <witness-list
+                    :editable="canEdit"
+                    :open-modal="openWitnessModal"
+                    @add-note="addNote"
+                    @close-witness-modal="openWitnessModal = false"
+                  />
+                </div>
+              </template>
+            </b-collapse>
+          </section>
+
+          <!-- collections -->
+          <section class="document-section">
+            <div class="heading is-uppercase is-flex is-justify-content-space-between">
+              <span class="heading-content">Collections</span>
+              <span
+                class="icon"
+                @click="isCollectionsOpen = !isCollectionsOpen"
+                :aria-expanded="isCollectionsOpen"
+                aria-controls="collectionsSection"
+              >
+                <i :class="isCollectionsOpen ? 'fas fa-angle-up' : 'fas fa-angle-down'"></i>
+              </span>
+            </div>
+            <b-collapse
+              aria-id="collectionsSection"
+              v-model="isCollectionsOpen"
+            >
+              <template>
+                <div class="document-section-content">
+                  <document-collections :editable="canEdit" />
+                </div>
+              </template>
+            </b-collapse>
+          </section>
+
+          <div
+            v-if="current_user"
+            class=""
+            style="margin-left: 0; margin-top: 50px"
+          >
+            <header class="subtitle mb-3">
+              Historique des modifications
+            </header>
+            <changelog
+              :doc-id="docId"
+              :per-page="10"
+            />
+          </div>
+        </article>
+
+        <document-skeleton
+          v-if="isLoading"
+          class="mt-5"
         />
+
+        <!-- modals -->
+        <b-modal
+          v-if="canEdit"
+          v-model="isNoteFormModalActive"
+          trap-focus
+          has-modal-card
+          :can-cancel="['escape', 'x']"
+          scroll="clip"
+          width="80%"
+          :destroy-on-hide="true"
+          aria-role="dialog"
+          aria-label="Note"
+          aria-modal
+        >
+          <template #default="props">
+            <note-form
+              title="Note"
+              :input-data="noteInputData"
+              @add-place="addPlace($event)"
+              @add-person="addPerson($event)"
+              @close="
+                () => {
+                  props.close();
+                }
+              "
+            />
+          </template>
+        </b-modal>
+
+        <b-modal
+          v-if="canEdit"
+          v-model="isPlaceWizardFormModalActive"
+          trap-focus
+          has-modal-card
+          :can-cancel="['escape', 'x']"
+          scroll="clip"
+          width="80%"
+          :destroy-on-hide="true"
+          aria-role="dialog"
+          aria-label="Date de lieu"
+          aria-modal
+        >
+          <template #default="props">
+            <place-wizard-form
+              subtitle=""
+              :input-data="placeInputData"
+              @close="
+                () => {
+                  props.close();
+                }
+              "
+            />
+          </template>
+        </b-modal>
+
+        <b-modal
+          v-if="canEdit"
+          v-model="isPersonWizardFormModalActive"
+          trap-focus
+          has-modal-card
+          :can-cancel="['escape', 'x']"
+          scroll="clip"
+          width="80%"
+          :destroy-on-hide="true"
+          aria-role="dialog"
+          aria-label="Expéditeur et destinataire"
+          aria-modal
+        >
+          <template #default="props">
+            <person-wizard-form
+              subtitle=""
+              :input-data="personInputData"
+              @close="
+                () => {
+                  props.close();
+                }
+              "
+            />
+          </template>
+        </b-modal>
       </div>
-    </article>
+    </div>
 
-    <document-skeleton
-      v-if="isLoading"
-      class="mt-5"
-    />
-
-    <!-- modals -->
-    <b-modal
-      v-if="canEdit"
-      v-model="isNoteFormModalActive"
-      trap-focus
-      has-modal-card
-      :can-cancel="['escape', 'x']"
-      scroll="clip"
-      width="80%"
-      :destroy-on-hide="true"
-      aria-role="dialog"
-      aria-label="Note"
-      aria-modal
-    >
-      <template #default="props">
-        <note-form
-          title="Note"
-          :input-data="noteInputData"
-          @add-place="addPlace($event)"
-          @add-person="addPerson($event)"
-          @close="
-            () => {
-              props.close();
-            }
-          "
-        />
-      </template>
-    </b-modal>
-
-    <b-modal
-      v-if="canEdit"
-      v-model="isPlaceWizardFormModalActive"
-      trap-focus
-      has-modal-card
-      :can-cancel="['escape', 'x']"
-      scroll="clip"
-      width="80%"
-      :destroy-on-hide="true"
-      aria-role="dialog"
-      aria-label="Date de lieu"
-      aria-modal
-    >
-      <template #default="props">
-        <place-wizard-form
-          subtitle=""
-          :input-data="placeInputData"
-          @close="
-            () => {
-              props.close();
-            }
-          "
-        />
-      </template>
-    </b-modal>
-
-    <b-modal
-      v-if="canEdit"
-      v-model="isPersonWizardFormModalActive"
-      trap-focus
-      has-modal-card
-      :can-cancel="['escape', 'x']"
-      scroll="clip"
-      width="80%"
-      :destroy-on-hide="true"
-      aria-role="dialog"
-      aria-label="Expéditeur et destinataire"
-      aria-modal
-    >
-      <template #default="props">
-        <person-wizard-form
-          subtitle=""
-          :input-data="personInputData"
-          @close="
-            () => {
-              props.close();
-            }
-          "
-        />
-      </template>
-    </b-modal>
-    <!--<modal-confirm-document-delete
-      v-if="delete_documentId && this.current_user.isAdmin"
-      :doc-id="delete_documentId"
-      :cancel="cancelDocumentDelete"
-      :submit="confirmDocumentDelete"
-    />-->
+    <!-- preview mode -->
+    <div v-else>
+      <article
+        v-if="document && !isLoading"
+        class="document__content"
+      >
+        <!-- transcription -->
+        <section class="document-section">
+          <div class="document-section-content">
+            <document-transcription
+              :editable="canEdit"
+              :preview="preview"
+            />
+          </div>
+        </section>
+        <!-- analyse -->
+        <section class="document-section">
+          <div class="heading is-uppercase">
+            <span class="heading-content">Analyse</span>
+          </div>
+          <div class="document-section-content">
+            <document-argument
+              :editable="canEdit"
+              :preview="preview"
+            />
+          </div>
+        </section>
+        <!-- témoins -->
+        <section class="document-section">
+          <div class="heading is-uppercase">
+            <span class="heading-content "> Témoins </span>
+          </div>
+          <div class="document-section-content">
+            <witness-list
+              :editable="canEdit"
+            />
+          </div>
+        </section>
+        <!-- collections -->
+        <section class="document-section">
+          <div class="heading is-uppercase">
+            <span class="heading-content">Collections</span>
+          </div>
+          <div class="document-section-content">
+            <document-collections :editable="canEdit" />
+          </div>
+        </section>
+      </article>
+    </div>
   </div>
 </template>
 
@@ -359,6 +546,15 @@ export default {
   },
   data() {
     return {
+      isTitleOpen: false,
+      isPersonsOpen: false,
+      isDatesOpen: false,
+      isPlacesOpen: false,
+      isAnalyseOpen: false,
+      isTranscriptionOpen: false,
+      isWitnessOpen: false,
+      isCollectionsOpen: false,
+
       lastDocId: 0,
       isLoading: true,
 
@@ -403,29 +599,52 @@ export default {
       }/collection/default`;
     },
     canEdit() {
-      if (this.preview) {
-        return false;
-      }
-      /*
-       * Can edit if 1) You are connected 2) You are an admin or there is no active lock or the active lock is yours
-       * */
-      if (!this.current_user || !this.jwt) {
-        return false;
-      }
+      if (this.isLoading === false) {
+        if (this.preview) {
+          //console.log("canEdit false if preview", this.preview)
+          return false;
+        }
+        /*
+         * Can edit if 1) You are connected 2) There is no active lock or the active lock is yours
+         * */
+        if (!this.current_user || !this.jwt) {
+          //console.log("canEdit false not connected", !this.current_user || !this.jwt)
+          return false;
+        }
+        /* old rule
+        if (this.current_user.isAdmin) {
+          console.log("canEdit false not admin", this.current_user.isAdmin)
+          return true;
+        }*/
+        if (!this.currentLock || this.currentLock.id === null) {
+          //console.log("this.currentLock", this.currentLock)
+          //console.log("this.currentLock.id", this.currentLock.id)
+          //console.log("canEdit true because no lock", !this.currentLock || this.currentLock.id === null)
+          return true
+        }
+        if (this.lockOwner && this.lockOwner[this.docId]) {
+          return (
+              (this.lockOwner[this.docId] &&
+                  this.lockOwner[this.docId].id === this.current_user.id)
+          )
 
-      if (this.current_user.isAdmin) {
-        return true;
+          /*old rule outdated and not working (this.preview should be this.status ???)
+          console.log("canEdit based on locks", (this.preview && this.currentLock.id === null) ||
+          (this.lockOwner[this.docId] &&
+            this.lockOwner[this.docId].id === this.current_user.id))
+          return (
+          (this.preview && this.preview.currentLock.id === null) ||
+          (this.lockOwner[this.docId] &&
+            this.lockOwner[this.docId].id === this.current_user.id))
+        );*/
+        }
+        return false
       }
-
-      return (
-        (this.preview && this.preview.currentLock.id === null) ||
-        (this.lockOwner[this.docId] &&
-          this.lockOwner[this.docId].id === this.current_user.id)
-      );
+      return false
     },
   },
   watch: {},
-   async created() {
+  async created() {
     this.isLoading = true;
     try {
       let documentsTotal = await this.getDocumentsTotal().then(resp => {
@@ -446,6 +665,7 @@ export default {
     this.isLoading = false;
   },
   methods: {
+    ...mapActions("locks", ["fetchLockOwner"]),
     ...mapActions("layout", ["setLastSeen"]),
     ...mapActions("search", ["getDocumentsTotal"]),
     addPlace(evt) {
@@ -459,7 +679,6 @@ export default {
         roleId,
       });
     },
-
     addPerson(evt) {
       this.personInputData = evt;
       this.isPersonWizardFormModalActive = true;
@@ -471,7 +690,6 @@ export default {
         roleId,
       });
     },
-
     addNote(evt) {
       this.noteInputData = evt;
       this.isNoteFormModalActive = true;
@@ -716,7 +934,7 @@ nav.previous-next-navigation {
     &.columns {
       margin: 30px 0 40px !important;
     }
-
+    /* TODO Denis : supprimer le ::before pour la section Titre (ajouté au HTML comme pour les autres sections, columns supprimées)*/
     // Section du titre
     &.columns::before {
       content: "TITRE";

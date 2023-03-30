@@ -235,6 +235,7 @@
               <document-tag-bar
                 :doc-id="props.row.id"
                 :with-status="withStatus"
+                :preview="true"
               />
             </template>
           </b-table-column>
@@ -692,7 +693,7 @@ progress {
   & > a.last-page {
     background: #C3C3C3 url(../assets/images/icons/page_fin.svg) center / 28px auto no-repeat;
   }
-  & > input[type=text] {
+  & > input {
     height: 38px !important;
     padding: 0 !important;
     border: 1px solid #C00055;
@@ -733,15 +734,15 @@ progress {
     text-transform: uppercase;
   }
 }
-/* Chrome, Safari, Edge, Opera */
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
+  /* Chrome, Safari, Edge, Opera */
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
 
-/* Firefox */
-input[type=number] {
-  -moz-appearance: textfield;
-}
+  /* Firefox */
+  input[type=number] {
+    -moz-appearance: textfield;
+  }
 </style>
