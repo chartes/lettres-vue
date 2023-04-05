@@ -182,7 +182,7 @@
             >
           </div>
           <div class="collection-thumbnail-caption">
-            Légende éventuelle
+            Légende (TEST)
           </div>
         </div>
 

@@ -9,6 +9,18 @@
         :editable="true"
       />
     </div>
+
+    <section class="collection-section mb-5">
+      <div class="heading is-uppercase">
+        <span class="heading-content">Historique (TEST)</span>
+      </div>
+      <div class="collection-section-content">
+        <p>Catherine de Médicis (1519-1589) est la fille du duc d’Urbino Laurent de Médicis et sde Madeleine de La Tour d’Auvergne. Épouse du duc d’orléans, second fils de François Ier, elle devient reine de France lorsque celui accède au trône de France en 1547. Trois de ses fils se succèdent ensuite comme rois de France, François II (1559-1560), Charles IX (1560-1574) et Henri III (1574-1589). Elle assure la régence du royaume à deux reprises (décembre 1560-août 1563 et février-septembre 1574), mais son influence sur le gouvernement de la France durant plus de trois décennies est très importante, ainsi qu’en témoigne sa correspondance.</p>
+        <p>Ses lettres autographes reflètent la double culture de cette femme à la double culture, italienne et française. Son intense activité d’épistolière est  toutefois avant tout documentée par les très nombreuses lettres écrites pour elle par ses secrétaires à des destinataires très variés, souverains étrangers, membres de sa famille ou de la cour, mais aussi agents royaux en France et en poste en Europe.</p>
+        <p>Gouverner par correspondance fut un moteur et un instrument essentiels de l’action de cette reine, puis reine-mère qui oscilla entre une politique de conciliation entre catholiques et protestants, puis une défense ferme de la monarchie contre tous ceux (réformés ou catholiques radicaux) qui menaçaient l’unité du royaume autour du souverain incarné par ses fils.</p>
+      </div>
+    </section>
+
     <section class="mb-5">
       <div class="is-flex">
         <span class="collection-documents">
@@ -568,16 +580,65 @@ export default {
 ::v-deep .sidebar-content {
   width: 500px;
 }
+
+
 .large-container {
   position: relative;
   margin-top: 60px;
 }
 .collection-card-parent {
-  padding-bottom: 40px;
+  padding-bottom: 20px;
 }
+
+::v-deep .card-footer {
+  border: none !important;
+}
+
 progress {
   margin-top: 30px;
 }
+
+// Sections : Termes et contenus des metadonnées de la collection
+.collection-section {
+
+  & > .heading {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 20px;
+
+    font-size: 16px;
+    line-height: 1;
+    font-weight: 500;
+    color: #FF0052;
+    letter-spacing: 0;
+    text-transform: uppercase;
+
+    .heading-content {
+      display: inline-block;
+      white-space: pre;
+    }
+
+    &::after {
+      display: block;
+      content: '';
+      width: 100%;
+      border-bottom: 1px solid #FF0052;
+    }
+  }
+
+  & > .collection-section-content {
+    padding: 30px 140px 30px 90px;
+    font-size: 20px;
+    line-height: 26px;
+
+    p {
+      margin-bottom: 20px;
+    }
+  }
+}
+
+
+
 ::v-deep .lettre span {
     background-color: red;
 }
@@ -587,7 +648,7 @@ progress {
   gap: 4px;
 
   flex-grow: 1;
-  margin: 5px;
+  margin: 5px 0;
   padding-left: 2px;
   padding-right: 2px;
 
