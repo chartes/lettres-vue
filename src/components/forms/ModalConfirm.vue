@@ -23,7 +23,7 @@
           class="button"
           @click="cancel"
         >
-          Annuler
+          {{ cancelText }}
         </button>
         <button
           class="button is-danger"
@@ -43,6 +43,7 @@ export default {
     type: { type: String, default: "" },
     title: { type: String, default: "" },
     submitText: { type: String, default: "" },
+    cancelText: { type: String, default: "ANNULER" },
     submit: { type: Function, default: () => {} },
     cancel: { type: Function, default: () => {} },
   },

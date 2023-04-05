@@ -153,6 +153,7 @@
             <document-tag-bar
               :doc-id="props.row.id"
               :with-status="withStatus"
+              :preview="true"
             />
           </template>
         </b-table-column>
@@ -496,57 +497,38 @@ progress {
     right: 0;
     width: 120px;
     height: 35px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 3;
-    pointer-events: none;
+
   }
 
-  &-checkbox {
-    cursor: pointer;
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    width: 100%;
+  & + .switch-button-label {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    user-select: none;
+    pointer-events: none;
     height: 100%;
-    opacity: 0;
-    z-index: 2;
 
-    &:checked + .switch-button-label:before {
-      transform: translateX(120px);
-      transition: transform 300ms linear;
+    &:before {
+      content: "";
+      background: rgb(255, 0, 83);
+      height: 35px;
+      width: 100%;
+      position: absolute;
+      left: 0;
+      top: 0;
+      border-radius: 30px;
+      transform: translateX(0);
+      transition: transform 300ms;
     }
 
     & + .switch-button-label {
       position: relative;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      user-select: none;
-      pointer-events: none;
-      height: 100%;
-
-      &:before {
-        content: "";
-        background: rgb(255, 0, 83);
-        height: 35px;
-        width: 100%;
-        position: absolute;
-        left: 0;
-        top: 0;
-        border-radius: 30px;
-        transform: translateX(0);
-        transition: transform 300ms;
-      }
-
-      .switch-button-label-span {
-        position: relative;
-      }
     }
   }
 }
+
+
 .pagination-controls {
   display: flex;
   align-items: center;
@@ -634,4 +616,5 @@ input::-webkit-inner-spin-button {
 input[type=number] {
   -moz-appearance: textfield;
 }
+
 </style>

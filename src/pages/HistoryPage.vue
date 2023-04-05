@@ -16,44 +16,43 @@ export default {
   data() {
     return {
       data: [],
-      sortField: "date",
-      sortOrder: "desc",
-      defaultSortOrder: "desc",
-      page: 1,
-      perPage: 20,
+      sortingPriority: [{ field: "event-date", order: "desc" }],
+      numPage: 1,
+      pageSize: 30,
+      p: 1,
     };
   },
   computed: {
     ...mapState("user", ["current_user"]),
     ...mapState("changelog", ["fullChangelog", "isLoading", "totalCount"]),
   },
-  watch: {
-    fullChangelog() {
-      this.data = this.fullChangelog.map((c) => {
-        return {
-          docId: c.data.attributes["object-id"],
-          date: c.data.attributes["event-date"],
-          user: c.user.username,
-          description: c.data.attributes.description,
-        };
-      });
-    },
-  },
   created() {
     this.loadAsyncData();
   },
   methods: {
-    ...mapActions("changelog", ["fetchFullChangelogForUser"]),
-    /*
-     * Load async data
-     */
+    ...mapActions("changelog", ["fetchFullChangelog"]),
     loadAsyncData() {
-      this.fetchFullChangelogForUser({
-        pageId: this.page,
-        pageSize: this.perPage,
-        user: this.current_user.id,
-        filters: "",
-      });
+      if (this.current_user.isAdmin) {
+        // user is admin, can only full history (HistoryPage)
+        this.fetchFullChangelog({
+          numPage: this.numPage,
+          pageSize: this.pageSize,
+          sortingPriority: this.sortingPriority,
+          filters: "",
+        });
+      } else {
+        // user not admin, can only access his own history (HistoryPage)
+        let filters = "";
+        if (this.current_user) {
+          filters = `filter[user_id]="${this.current_user.id}"`;
+        }
+        this.fetchFullChangelog({
+          numPage: this.numPage,
+          pageSize: this.pageSize,
+          sortingPriority: this.sortingPriority,
+          filters: filters,
+        });
+      }
     },
   },
 };

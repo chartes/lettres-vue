@@ -163,6 +163,7 @@
           <collection-deletion
             v-if="current_user && current_user.isAdmin"
             :collection-id="collectionId"
+            :collection-title="collection.title"
           />
         </div>
       </div>

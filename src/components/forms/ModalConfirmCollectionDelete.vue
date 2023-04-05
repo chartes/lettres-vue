@@ -1,12 +1,14 @@
 <template>
   <modal-confirm
-    :title="'Supprimer la (sous-)collection '+this.collectionId+ '?'"
-    :submit-text="'Oui je veux la supprimer'"
+    :title="'Suppression'"
+    :submit-text="'OUI'"
+    :cancel-text="'NON'"
     :cancel="cancelAction"
     :submit="submitAction"
     class="has-text-danger"
   >
-    <p>Vous êtes sur le point de supprimer la (sous-)collection {{this.collectionId}}.</p>
+    <p>Voulez-vous supprimer la (sous) collection : </p>
+    <p>{{this.collectionTitle}}</p>
   </modal-confirm>
 </template>
 
@@ -22,6 +24,7 @@ export default {
     cancel: { type: Function, required: true },
     submit: { type: Function, required: true },
     collectionId: { type: Number, required: true },
+    collectionTitle: {type: String, required: true}
   },
   methods: {
     submitAction() {

@@ -76,6 +76,7 @@
             :key="props.row.docId"
             :doc-id="props.row.docId"
             :with-status="true"
+            :preview="true"
           />
         </b-table-column>
         <b-table-column

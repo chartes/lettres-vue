@@ -125,13 +125,54 @@
     </div>
 
     <div>
-      <div class="document-list-header">
-        <div class="results-count">
-          <span class="total-count">{{ totalCount }}</span> résultat(s)
+      <div class="is-flex is-justify-content-space-between is-align-items-center">
+        <div class="popup-list-header is-inline-block">
+          <div class="results-count">
+            <span class="total-count">{{ totalCount }}</span> résultat(s)
+          </div>
+        </div>
+        <div class="is-inline-block">
+          <div
+            v-if="totalPages"
+            class="pagination-controls"
+          >
+            <a
+              :class="currentPage <= 1 ? 'button first-page disabled' : 'button first-page'"
+              @click="currentPage <= 1 ? null : currentPage = 1"
+            >
+            </a>
+            <a
+              :class="currentPage <= 1 ? 'button previous-page disabled' : 'button previous-page'"
+              @click="currentPage <= 1 ? null : --currentPage"
+            >
+            </a>
+            <input
+              v-model="currentPage"
+              name="page"
+              type="number"
+              min="1"
+              :max="totalPages"
+              placeholder="Page..."
+              class="current-page"
+              @change.prevent="currentPage = parseInt(p)"
+            >
+            <span class="label-sur-page">sur</span>
+            <span class="total-pages">{{ totalPages }}</span>
+            <a
+              :class="currentPage < totalPages ? 'button next-page' : 'button next-page disabled'"
+              @click="currentPage < totalPages ? ++currentPage : null"
+            >
+            </a>
+            <a
+              :class="currentPage < totalPages ? 'button last-page' : 'button last-page disabled'"
+              @click="currentPage < totalPages ? currentPage = totalPages : null"
+            >
+            </a>
+          </div>
         </div>
       </div>
       <div class="result-container">
-        <span class="pagination-goto">
+        <!--<span class="pagination-goto">
           <span> Page : </span>
           <input
             v-model="currentPage"
@@ -141,22 +182,18 @@
             placeholder="Page..."
             @change.prevent="currentPage = parseInt(p)"
           >
-        </span>
+        </span>-->
 
         <b-table
           ref="multiSortTable"
           :data="tableData"
           :loading="loadingStatus"
-          paginated
+
           backend-pagination
           :total="totalCount"
           :per-page="pageSize"
           :current-page.sync="currentPage"
-          pagination-position="both"
-          aria-next-label="Page suivante"
-          aria-previous-label="Page précédente"
-          aria-page-label="Page"
-          aria-current-label="Page courante"
+
           :detailed="!popupMode"
           :backend-sorting="true"
           :sort-multiple="true"
@@ -168,7 +205,6 @@
           :selected.sync="selected"
           @sort="sortPressed"
           @sorting-priority-removed="sortingPriorityRemoved"
-          @page-change="onPageChange"
         >
           <!--
           <b-table-column
@@ -182,13 +218,57 @@
           </b-table-column>
           -->
           <b-table-column
-            v-slot="props"
             field="label.keyword"
             label="Lieu"
             :td-attrs="columnTdAttrs"
             sortable
           >
-            {{ props.row.label }}
+            <template v-slot:header="{ column }">
+              <div v-if="column.sortable">
+                <div v-if="sortingPriority.filter(obj => obj.field === column.field).length === 0">
+                  <span
+                    class="icon button"
+                  >
+                    <i class="fas fa-arrows-alt-v"></i>
+                  </span>
+                </div>
+                <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'asc'">
+                  <span class="icon button">
+                    <i class="fas fa-arrow-up"></i>
+                  </span>
+                  <!--<span class="icon button">
+                    {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
+                    <button
+                      class="delete is-small multi-sort-cancel-icon"
+                      type="button"
+                      @click.stop="sortingPriorityRemoved(column.field)"
+                    />
+                  </span>-->
+                </div>
+                <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'desc'">
+                  <span class="icon button">
+                    <i class="fas fa-arrow-down"></i>
+                  </span>
+                  <!--<span class="icon button">
+                    {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
+                    <button
+                      class="delete is-small multi-sort-cancel-icon"
+                      type="button"
+                      @click.stop="sortingPriorityRemoved(column.field)"
+                    />
+                  </span>-->
+                </div>
+                <span>
+                  {{ column.label }}
+                </span>
+              </div>
+              <div v-else>
+                {{ column.label }}
+              </div>
+            </template>
+            <template v-slot="props">
+              {{ props.row.label }}
+            </template>
           </b-table-column>
 
           <b-table-column
@@ -469,7 +549,9 @@ export default {
         }
       },
     },
-
+    totalPages: function() {
+      return Math.ceil(this.totalCount / this.pageSize)
+    },
     labeledInputTerm() {
       return this.inputTerm ? `label:*${this.inputTerm}*` : null;
     },
@@ -714,11 +796,13 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
 @import "@/assets/sass/main.scss";
+@import "@/assets/sass/components/_search_results_table.scss";
+@import "@/assets/sass/components/_search_results_pagination.scss";
 
 .place-list {
-  .pagination-goto {
+  /*.pagination-goto {
     display: flex;
     float: right;
     position: relative;
@@ -732,7 +816,7 @@ export default {
       margin-left: 4px;
       display: inline;
     }
-  }
+  }*/
   progress {
     margin-top: 30px;
   }
@@ -767,6 +851,115 @@ export default {
     .columns {
       margin: 0px;
     }
+  }
+  .pagination-controls {
+    display: flex;
+    align-items: center;
+    /*visibility: hidden;*/
+
+    & > * {
+      display: inline-block;
+      width: 38px;
+      height: 38px;
+      margin-right: 4px;
+    }
+    & > a {
+      display: inline-block;
+      width: 38px;
+      height: 38px;
+      background-color: #C3C3C3;
+      border-radius: 3.2px;
+    }
+    & > a.disabled {
+      cursor: not-allowed !important;
+    }
+    & > a.first-page {
+      background: #C3C3C3 url(../../assets/images/icons/page_debut.svg)  center / 28px auto no-repeat;
+    }
+    & > a.previous-page {
+      background: #C3C3C3 url(../../assets/images/icons/page_precedent.svg) center / 28px auto no-repeat;
+    }
+    & > a.next-page {
+      background: #C3C3C3 url(../../assets/images/icons/page_suivant.svg) center / 28px auto no-repeat;
+    }
+    & > a.last-page {
+      background: #C3C3C3 url(../../assets/images/icons/page_fin.svg) center / 28px auto no-repeat;
+    }
+    & > input {
+      height: 38px !important;
+      padding: 0 !important;
+      border: 1px solid #C00055;
+      border-radius: 3.2px;
+
+      font-family: $family-primary;
+      font-size: 18px;
+      color: #CB2158;
+      font-weight: 800;
+      text-align: center;
+      text-decoration: none;
+
+      &:focus {
+        outline: 1px solid #C00055;
+      }
+    }
+
+    & > span.label-sur-page {
+      font-family: $family-primary;
+      font-size: 11px;
+      line-height: 38px;
+      color: #979797;
+      font-weight: 500;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    & > span.total-pages {
+      background-color: #DFDFDF;
+      border-radius: 3.2px;
+
+      font-family: $family-primary;
+      font-size: 18px;
+      line-height: 38px;
+      color: #818181;
+      text-align: center;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+  }
+  .popup-list-header {
+    /*border-top: solid 1px #FDB3CC;
+    border-bottom: solid 1px #C7C7C7;*/
+    margin-bottom: 25px;
+
+    .results-count {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      font-family: $family-primary;
+      font-size: 14px;
+      color: #6D7278;
+      font-weight: 600;
+      text-transform: uppercase;
+
+      .total-count {
+        font-size: 50px;
+        color: #FF0052;
+        text-align: center;
+        font-weight: 700;
+      }
+    }
+  }
+  /* Chrome, Safari, Edge, Opera */
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  /* Firefox */
+  input[type=number] {
+    -moz-appearance: textfield;
   }
 }
 </style>

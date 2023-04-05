@@ -4,7 +4,17 @@
       :to="{ name: 'document', params: { docId } }"
       class="tag document-status-card__doc-tag"
     >
-      <span class="document-id">{{ docId }}</span>
+      <span
+        v-if="!preview"
+        class="document-id"
+      >
+        LETTRE {{ docId }}
+      </span>
+      <span
+        v-else
+        class="document-id"
+      >{{ docId }}
+      </span>
     </router-link>
 
     <!--
@@ -66,9 +76,8 @@
         <span
           v-if="$route.name === 'document' && lockOwner[docId]"
           class="badge-label"
-        >{{
-          lockOwner[docId].attributes.username
-        }}</span>
+        >{{ lockOwner[docId].attributes.username }}
+        </span>
       </template>
       <template #inactive>
         <a><i class="fas fa-unlock" /></a>
@@ -96,6 +105,10 @@ export default {
   props: {
     docId: { required: true, type: Number },
     withStatus: { required: true, type: Boolean, default: false },
+    preview: {
+      type: Boolean,
+      default: false,
+    }
   },
   data() {
     return {

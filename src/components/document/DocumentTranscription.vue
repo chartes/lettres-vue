@@ -70,7 +70,8 @@
           v-else-if="preview"
           class="document__transcription--content"
           v-html="truncate(transcriptionContent, 399, true)"
-        />
+        >
+        </div>
         <div
           v-else
           class="document__transcription--content"
@@ -78,13 +79,14 @@
         />
       </div>
     </div>
-
-    <document-notes
-      :editable="editable"
-      @add-place="addPlace($event, 'note')"
-      @add-person="addPerson($event, 'note')"
-      @add-note="addNote($event)"
-    />
+    <div v-if="!preview">
+      <document-notes
+        :editable="editable"
+        @add-place="addPlace($event, 'note')"
+        @add-person="addPerson($event, 'note')"
+        @add-note="addNote($event)"
+      />
+    </div>
   </div>
 </template>
 
@@ -147,7 +149,7 @@ export default {
       const terms = this.searchTerm.split(new RegExp("\\s+")).map(escapeRegExp).filter(term => term !== "")
       const re = new RegExp(`(${terms.join("|")})`)
       return text.replace(new RegExp(re, 'gi'), (match => `<mark>${match}</mark>`))
-    },
+    }
   }
 };
 </script>
