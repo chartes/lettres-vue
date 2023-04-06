@@ -2,7 +2,7 @@
 
   .table-wrapper {
     border-top: #CB2158 8px solid;
-    padding-top: 20px;
+    padding-top: 15px;
 
     th {
       font-family: $family-secondary;
@@ -11,7 +11,7 @@
       color: #4A4A4A;
       text-transform: uppercase;
       border-bottom: 1px solid #fdb3cc;
-      padding: 0 10px 10px 0;
+      padding: 0 10px 10px 0 !important;
 
       /* En-tete "Lettre" (seconde colonne) calée tout à gauche, sur la première colonne du chevron */
       &:nth-child(2) {
@@ -81,7 +81,7 @@
       td {
         vertical-align: middle;
         border-color: #fdb3cc;
-        padding: 8px 20px 8px 0;
+        padding: 8px 15px 8px 0;
 
         /* Chevron */
         &:nth-child(1) {
@@ -260,14 +260,14 @@
       tr:not(.detail) {
         display: grid;
 
-        grid-template-columns: 10% auto auto auto;
+        grid-template-columns: 120px auto auto auto;
         grid-template-rows: auto auto auto;
         grid-template-areas:
           "document-date document-title document-title document-title"
           "document-id document-sender document-location-origin document-detail-toggle"
           "document-id document-recipients document-location-destination  document-detail-toggle";
 
-        padding-top: 20px;
+        padding-top: 15px;
         border-bottom: #CB2158 2px solid;
 
         &:first-of-type {
@@ -293,7 +293,7 @@
           &:nth-child(6),
           &:nth-child(7),
           &:nth-child(8) {
-            padding: 20px 0;
+            padding: 15px 0;
 
             font-size: 16px;
             font-weight: 500;
@@ -330,8 +330,11 @@
           /* Chevron */
           &:nth-child(1) {
             grid-area: document-detail-toggle;
-            text-align: right;
-            margin-right: 30px;
+
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding-right: 30px;
 
             a {
               display: inline;
@@ -362,14 +365,14 @@
           &:nth-child(4) {
             grid-area: document-title;
             border-left: solid 6px #000000;
-            max-width: 100%;
+            max-width: 100% !important;
             padding-left: 20px;
 
             a {
               h2 {
                 font-size: 22px;
                 font-weight: 500;
-                line-height: 20px;
+                line-height: 1.2;
                 color: #000000;
               }
             }
