@@ -171,7 +171,7 @@
       </div>
     </section>
     <section>
-      <div class="">
+      <div :class="toggleCssClass">
         <b-table
           ref="multiSortTable"
           :data="tableData"
@@ -363,6 +363,50 @@
                   v-html="props.row.title"
                 />
               </router-link>
+            </template>
+          </b-table-column>
+
+          <b-table-column
+              field="expéditeur"
+              label="Expéditeur"
+              :td-attrs="columnTdAttrs"
+              sortable
+          >
+            <template v-slot="props">
+              <p>(personne) {{ props.row.sender }}</p>
+            </template>
+          </b-table-column>
+
+          <b-table-column
+              field="destinataire"
+              label="Destinataire"
+              :td-attrs="columnTdAttrs"
+              sortable
+          >
+            <template v-slot="props">
+              <p>(personnes) {{ props.row.recipient }}</p>
+            </template>
+          </b-table-column>
+
+          <b-table-column
+              field="lieu-expedition"
+              label="Lieu d'expédition"
+              :td-attrs="columnTdAttrs"
+              sortable
+          >
+            <template v-slot="props">
+              <p>(lieu) {{ props.row.origin }}</p>
+            </template>
+          </b-table-column>
+
+          <b-table-column
+              field="lieu-destination"
+              label="Lieu de destination"
+              :td-attrs="columnTdAttrs"
+              sortable
+          >
+            <template v-slot="props">
+              <p>(lieu) {{ props.row.destination }}</p>
             </template>
           </b-table-column>
 
