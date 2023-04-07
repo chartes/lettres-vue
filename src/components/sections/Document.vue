@@ -61,10 +61,11 @@
           class="document__content"
         >
           <!-- titre et langue -->
-          <section class="document-section">
-            <div class="heading is-uppercase is-flex is-justify-content-space-between">
+          <section class="document-section columns">
+            <div v-if="canEdit" class="heading is-uppercase is-flex is-justify-content-space-between">
               <span class="heading-content">Titre</span>
               <span
+                v-if="canEdit"
                 class="icon"
                 :aria-expanded="isTitleOpen"
                 aria-controls="titleSection"
@@ -74,19 +75,21 @@
               </span>
             </div>
             <b-collapse
-              v-model="isTitleOpen"
+              :class="!canEdit? '' : isTitleOpen? '' : 'hiddendiv'"
               aria-id="titleSection"
             >
               <template #default>
-                <div class="document-section-content">
+                <div>
                   <document-title
                     v-if="!preview"
                     :editable="canEdit"
                     :preview="preview"
+                    class="column is-three-quarters"
                     @add-note="addNote"
                   />
                   <document-languages
                     :editable="canEdit"
+                    class="column"
                   />
                 </div>
               </template>
@@ -98,6 +101,7 @@
             <div class="heading is-uppercase is-flex is-justify-content-space-between">
               <span class="heading-content">Correspondants</span>
               <span
+                v-if="canEdit"
                 class="icon"
                 :aria-expanded="isPersonsOpen"
                 aria-controls="personsSection"
@@ -113,7 +117,7 @@
               </div>-->
             </div>
             <b-collapse
-              v-model="isPersonsOpen"
+              :class="!canEdit? '' : isPersonsOpen? '' : 'hiddendiv'"
               aria-id="personsSection"
             >
               <template #default>
@@ -133,6 +137,7 @@
             <div class="heading is-uppercase is-flex is-justify-content-space-between">
               <span class="heading-content">Dates</span>
               <span
+                v-if="canEdit"
                 class="icon"
                 :aria-expanded="isDatesOpen"
                 aria-controls="datesSection"
@@ -148,7 +153,7 @@
               </div>-->
             </div>
             <b-collapse
-              v-model="isDatesOpen"
+              :class="!canEdit? '' : isDatesOpen? '' : 'hiddendiv'"
               aria-id="datesSection"
             >
               <template #default>
@@ -164,6 +169,7 @@
             <div class="heading is-uppercase is-flex is-justify-content-space-between">
               <span class="heading-content">Lieux</span>
               <span
+                v-if="canEdit"
                 class="icon"
                 :aria-expanded="isPlacesOpen"
                 aria-controls="placesSection"
@@ -179,7 +185,7 @@
               </div>-->
             </div>
             <b-collapse
-              v-model="isPlacesOpen"
+              :class="!canEdit? '' : isPlacesOpen? '' : 'hiddendiv'"
               aria-id="placesSection"
             >
               <template #default>
@@ -199,6 +205,7 @@
             <div class="heading is-uppercase is-flex is-justify-content-space-between">
               <span class="heading-content">Analyse</span>
               <span
+                v-if="canEdit"
                 class="icon"
                 :aria-expanded="isAnalyseOpen"
                 aria-controls="analyseSection"
@@ -214,7 +221,7 @@
               </div>-->
             </div>
             <b-collapse
-              v-model="isAnalyseOpen"
+              :class="!canEdit? '' : isAnalyseOpen? '' : 'hiddendiv'"
               aria-id="analyseSection"
             >
               <template #default>
@@ -236,6 +243,7 @@
             <div class="heading is-uppercase is-flex is-justify-content-space-between">
               <span class="heading-content">Transcription</span>
               <span
+                v-if="canEdit"
                 class="icon"
                 :aria-expanded="isTranscriptionOpen"
                 aria-controls="transcriptionSection"
@@ -251,7 +259,7 @@
               </div>-->
             </div>
             <b-collapse
-              v-model="isTranscriptionOpen"
+              :class="!canEdit? '' : isTranscriptionOpen? '' : 'hiddendiv'"
               aria-id="transcriptionSection"
             >
               <template #default>
@@ -285,6 +293,7 @@
                 </b-button>
               </div>
               <span
+                v-if="canEdit"
                 class="icon"
                 :aria-expanded="isWitnessOpen"
                 aria-controls="witnessSection"
@@ -300,7 +309,7 @@
               </div>-->
             </div>
             <b-collapse
-              v-model="isWitnessOpen"
+              :class="!canEdit? '' : isWitnessOpen? '' : 'hiddendiv'"
               aria-id="witnessSection"
             >
               <template #default>
@@ -321,6 +330,7 @@
             <div class="heading is-uppercase is-flex is-justify-content-space-between">
               <span class="heading-content">Collections</span>
               <span
+                v-if="canEdit"
                 class="icon"
                 :aria-expanded="isCollectionsOpen"
                 aria-controls="collectionsSection"
@@ -330,7 +340,7 @@
               </span>
             </div>
             <b-collapse
-              v-model="isCollectionsOpen"
+              :class="!canEdit? '' : isCollectionsOpen? '' : 'hiddendiv'"
               aria-id="collectionsSection"
             >
               <template #default>
@@ -838,7 +848,7 @@ nav.previous-next-navigation {
     }
   }
 
-  & > .document-section-content {
+  & .document-section-content {
     margin-left: 60px;
     margin-bottom: 40px;
 
@@ -935,17 +945,17 @@ nav.previous-next-navigation {
     &.columns {
       margin: 30px 0 40px !important;
     }
-    /* TODO Denis : supprimer le ::before pour la section Titre (ajouté au HTML comme pour les autres sections, columns supprimées)*/
+    /* TODO Denis : supprimer le ::before pour la section Titre (ajouté au HTML comme pour les autres sections)*/
     // Section du titre
     &.columns::before {
-      content: "TITRE";
+      //content: "TITRE";
       display: inline-block;
       margin-bottom: 20px;
       font-weight: 500;
       color: #FF0052;
     }
 
-    & > .heading {
+    & .heading {
 
       span {
         font-size: 20px;
@@ -956,7 +966,7 @@ nav.previous-next-navigation {
       }
     }
 
-    & > .document-section-content {
+    & .document-section-content {
       margin-left: 30px;
       margin-bottom: 0;
 
@@ -1083,5 +1093,8 @@ nav.previous-next-navigation {
     }
   }
 
+}
+.hiddendiv {
+  display: none;
 }
 </style>
