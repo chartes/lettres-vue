@@ -282,6 +282,7 @@
           <document
             class="document-page"
             :doc-id="props.row.id"
+            :can-edit="canEdit"
             :preview="true"
           />
         </template>
@@ -303,6 +304,7 @@ export default {
   props: {},
   data() {
     return {
+      canEdit: false,
       tableData: [],
       p: 1,
       isActive: true,

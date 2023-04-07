@@ -37,13 +37,11 @@
               <a
                 :class="currentPage <= 1 ? 'button first-page disabled' : 'button first-page'"
                 @click="currentPage <= 1 ? null : currentPage = 1 "
-              >
-              </a>
+              />
               <a
                 :class="currentPage <= 1 ? 'button previous-page disabled' : 'button previous-page'"
                 @click="currentPage <= 1 ? null : --currentPage"
-              >
-              </a>
+              />
               <input
                 v-model="currentPage"
                 name="page"
@@ -59,13 +57,11 @@
               <a
                 :class="currentPage < totalPages ? 'button next-page' : 'button next-page disabled'"
                 @click="currentPage < totalPages ? ++currentPage : null"
-              >
-              </a>
+              />
               <a
                 :class="currentPage < totalPages ? 'button last-page' : 'button last-page disabled'"
                 @click="currentPage < totalPages ? currentPage = totalPages : null"
-              >
-              </a>
+              />
             </div>
           </div>
         </div>
@@ -166,11 +162,6 @@
           :total="totalCount"
           :per-page="pageSize"
           :current-page.sync="currentPage"
-          pagination-position="both"
-          aria-next-label="Page suivante"
-          aria-previous-label="Page précédente"
-          aria-page-label="Page"
-          aria-current-label="Page courante"
           detailed
           :backend-sorting="true"
           :sort-multiple="true"
@@ -188,18 +179,18 @@
             :td-attrs="columnTdAttrs"
             sortable
           >
-            <template v-slot:header="{ column }">
+            <template #header="{ column }">
               <div v-if="column.sortable">
                 <div v-if="sortingPriority.filter(obj => obj.field === column.field).length === 0">
                   <span
                     class="icon button"
                   >
-                    <i class="fas fa-arrows-alt-v"></i>
+                    <i class="fas fa-arrows-alt-v" />
                   </span>
                 </div>
                 <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'asc'">
                   <span class="icon button">
-                    <i class="fas fa-arrow-up"></i>
+                    <i class="fas fa-arrow-up" />
                   </span>
                   <span class="icon button">
                     {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
@@ -212,7 +203,7 @@
                 </div>
                 <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'desc'">
                   <span class="icon button">
-                    <i class="fas fa-arrow-down"></i>
+                    <i class="fas fa-arrow-down" />
                   </span>
                   <span class="icon button">
                     {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
@@ -231,7 +222,7 @@
                 {{ column.label }}
               </div>
             </template>
-            <template v-slot="props">
+            <template #default="props">
               <document-tag-bar
                 :doc-id="props.row.id"
                 :with-status="withStatus"
@@ -246,18 +237,18 @@
             :td-attrs="columnTdAttrs"
             sortable
           >
-            <template v-slot:header="{ column }">
+            <template #header="{ column }">
               <div v-if="column.sortable">
                 <div v-if="sortingPriority.filter(obj => obj.field === column.field).length === 0">
                   <span
                     class="icon button"
                   >
-                    <i class="fas fa-arrows-alt-v"></i>
+                    <i class="fas fa-arrows-alt-v" />
                   </span>
                 </div>
                 <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'asc'">
                   <span class="icon button">
-                    <i class="fas fa-arrow-up"></i>
+                    <i class="fas fa-arrow-up" />
                   </span>
                   <span class="icon button">
                     {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
@@ -270,7 +261,7 @@
                 </div>
                 <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'desc'">
                   <span class="icon button">
-                    <i class="fas fa-arrow-down"></i>
+                    <i class="fas fa-arrow-down" />
                   </span>
                   <span class="icon button">
                     {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
@@ -289,7 +280,7 @@
                 {{ column.label }}
               </div>
             </template>
-            <template v-slot="props">
+            <template #default="props">
               {{ props.row.creation }}
             </template>
           </b-table-column>
@@ -299,18 +290,18 @@
             label="Titre"
             :td-attrs="columnTdAttrs"
           >
-            <template v-slot:header="{ column }">
+            <template #header="{ column }">
               <div v-if="column.sortable">
                 <div v-if="sortingPriority.filter(obj => obj.field === column.field).length === 0">
                   <span
                     class="icon button"
                   >
-                    <i class="fas fa-arrows-alt-v"></i>
+                    <i class="fas fa-arrows-alt-v" />
                   </span>
                 </div>
                 <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'asc'">
                   <span class="icon button">
-                    <i class="fas fa-arrow-up"></i>
+                    <i class="fas fa-arrow-up" />
                   </span>
                   <span class="icon button">
                     {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
@@ -323,7 +314,7 @@
                 </div>
                 <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'desc'">
                   <span class="icon button">
-                    <i class="fas fa-arrow-down"></i>
+                    <i class="fas fa-arrow-down" />
                   </span>
                   <span class="icon button">
                     {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
@@ -342,7 +333,7 @@
                 {{ column.label }}
               </div>
             </template>
-            <template v-slot="props">
+            <template #default="props">
               <router-link :to="{ name: 'document', params: { docId: props.row.id } }">
                 <h2
                   class="document-preview-card__title"
@@ -490,7 +481,7 @@ export default {
       this.loadAsyncData();
       this.isLoading = false;
     },
-    async resetPriority() {
+    /*async resetPriority() {
       console.log("reset");
       this.$refs.multiSortTable.resetMultiSorting();
       // reset local backend sorting
@@ -498,16 +489,22 @@ export default {
         this.sortingPriority = [];
         await this.fetchData();
       }
-    },
+    },*/
 
     // Backend sorting
     async sortingPriorityRemoved(field) {
-      console.log("sorting removed")
+      console.log("sorting removed", field)
       const newPriority = this.sortingPriority.filter(
         (priority) => priority.field !== field
       );
       this.sortingPriority = [...newPriority];
-      console.log(newPriority, this.sortingPriority);
+      if (this.sortingPriority.length > 0) {
+          console.log(newPriority, this.sortingPriority);
+      } else {
+          // default sorting on descending creation date
+          this.sortingPriority = [{ field: "creation", order: "desc" }];
+          console.log("Default sorting new Priority", newPriority, this.sortingPriority);
+      }
       await this.fetchData();
     },
 

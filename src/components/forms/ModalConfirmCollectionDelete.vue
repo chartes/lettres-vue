@@ -8,7 +8,7 @@
     class="has-text-danger"
   >
     <p>Voulez-vous supprimer la (sous) collection : </p>
-    <p>{{this.collectionTitle}}</p>
+    <p> {{ collectionTitle }} </p>
   </modal-confirm>
 </template>
 

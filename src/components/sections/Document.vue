@@ -2,7 +2,8 @@
   <div
     class="document"
     :class="documentCssClass"
-  ><!-- Not preview mode -->
+  >
+    <!-- Not preview mode -->
     <div
       v-if="!preview"
       class="is-justify-content-left"
@@ -65,18 +66,18 @@
               <span class="heading-content">Titre</span>
               <span
                 class="icon"
-                @click="isTitleOpen = !isTitleOpen"
                 :aria-expanded="isTitleOpen"
                 aria-controls="titleSection"
+                @click="isTitleOpen = !isTitleOpen"
               >
-                <i :class="isTitleOpen ? 'fas fa-angle-up' : 'fas fa-angle-down'"></i>
+                <i :class="isTitleOpen ? 'fas fa-angle-up' : 'fas fa-angle-down'" />
               </span>
             </div>
             <b-collapse
-              aria-id="titleSection"
               v-model="isTitleOpen"
+              aria-id="titleSection"
             >
-              <template>
+              <template #default>
                 <div class="document-section-content">
                   <document-title
                     v-if="!preview"
@@ -98,11 +99,11 @@
               <span class="heading-content">Correspondants</span>
               <span
                 class="icon"
-                @click="isPersonsOpen = !isPersonsOpen"
                 :aria-expanded="isPersonsOpen"
                 aria-controls="personsSection"
+                @click="isPersonsOpen = !isPersonsOpen"
               >
-                <i :class="isPersonsOpen ? 'fas fa-angle-up' : 'fas fa-angle-down'"></i>
+                <i :class="isPersonsOpen ? 'fas fa-angle-up' : 'fas fa-angle-down'" />
               </span>
               <!--<div class="slope-container">
                 <span class="slope tier-1" />
@@ -112,10 +113,10 @@
               </div>-->
             </div>
             <b-collapse
-              aria-id="personsSection"
               v-model="isPersonsOpen"
+              aria-id="personsSection"
             >
-              <template>
+              <template #default>
                 <div class="document-section-content">
                   <document-persons
                     :editable="canEdit"
@@ -133,11 +134,11 @@
               <span class="heading-content">Dates</span>
               <span
                 class="icon"
-                @click="isDatesOpen = !isDatesOpen"
                 :aria-expanded="isDatesOpen"
                 aria-controls="datesSection"
+                @click="isDatesOpen = !isDatesOpen"
               >
-                <i :class="isDatesOpen ? 'fas fa-angle-up' : 'fas fa-angle-down'"></i>
+                <i :class="isDatesOpen ? 'fas fa-angle-up' : 'fas fa-angle-down'" />
               </span>
               <!--<div class="slope-container">
                 <span class="slope tier-1" />
@@ -147,10 +148,10 @@
               </div>-->
             </div>
             <b-collapse
-              aria-id="datesSection"
               v-model="isDatesOpen"
+              aria-id="datesSection"
             >
-              <template>
+              <template #default>
                 <div class="document-section-content">
                   <document-date-attributes :editable="canEdit" />
                 </div>
@@ -164,11 +165,11 @@
               <span class="heading-content">Lieux</span>
               <span
                 class="icon"
-                @click="isPlacesOpen = !isPlacesOpen"
                 :aria-expanded="isPlacesOpen"
                 aria-controls="placesSection"
+                @click="isPlacesOpen = !isPlacesOpen"
               >
-                <i :class="isPlacesOpen ? 'fas fa-angle-up' : 'fas fa-angle-down'"></i>
+                <i :class="isPlacesOpen ? 'fas fa-angle-up' : 'fas fa-angle-down'" />
               </span>
               <!--<div class="slope-container">
                 <span class="slope tier-1" />
@@ -178,10 +179,10 @@
               </div>-->
             </div>
             <b-collapse
-              aria-id="placesSection"
               v-model="isPlacesOpen"
+              aria-id="placesSection"
             >
-              <template>
+              <template #default>
                 <div class="document-section-content">
                   <document-placenames
                     :editable="canEdit"
@@ -199,11 +200,11 @@
               <span class="heading-content">Analyse</span>
               <span
                 class="icon"
-                @click="isAnalyseOpen = !isAnalyseOpen"
                 :aria-expanded="isAnalyseOpen"
                 aria-controls="analyseSection"
+                @click="isAnalyseOpen = !isAnalyseOpen"
               >
-                <i :class="isAnalyseOpen ? 'fas fa-angle-up' : 'fas fa-angle-down'"></i>
+                <i :class="isAnalyseOpen ? 'fas fa-angle-up' : 'fas fa-angle-down'" />
               </span>
               <!--<div class="slope-container">
                 <span class="slope tier-1" />
@@ -213,10 +214,10 @@
               </div>-->
             </div>
             <b-collapse
-              aria-id="analyseSection"
               v-model="isAnalyseOpen"
+              aria-id="analyseSection"
             >
-              <template>
+              <template #default>
                 <div class="document-section-content">
                   <document-argument
                     :editable="canEdit"
@@ -236,11 +237,11 @@
               <span class="heading-content">Transcription</span>
               <span
                 class="icon"
-                @click="isTranscriptionOpen = !isTranscriptionOpen"
                 :aria-expanded="isTranscriptionOpen"
                 aria-controls="transcriptionSection"
+                @click="isTranscriptionOpen = !isTranscriptionOpen"
               >
-                <i :class="isTranscriptionOpen ? 'fas fa-angle-up' : 'fas fa-angle-down'"></i>
+                <i :class="isTranscriptionOpen ? 'fas fa-angle-up' : 'fas fa-angle-down'" />
               </span>
               <!--<div class="slope-container">
                 <span class="slope tier-1" />
@@ -250,10 +251,10 @@
               </div>-->
             </div>
             <b-collapse
-              aria-id="transcriptionSection"
               v-model="isTranscriptionOpen"
+              aria-id="transcriptionSection"
             >
-              <template>
+              <template #default>
                 <div class="document-section-content">
                   <document-transcription
                     :editable="canEdit"
@@ -285,11 +286,11 @@
               </div>
               <span
                 class="icon"
-                @click="isWitnessOpen = !isWitnessOpen"
                 :aria-expanded="isWitnessOpen"
                 aria-controls="witnessSection"
+                @click="isWitnessOpen = !isWitnessOpen"
               >
-                <i :class="isWitnessOpen ? 'fas fa-angle-up' : 'fas fa-angle-down'"></i>
+                <i :class="isWitnessOpen ? 'fas fa-angle-up' : 'fas fa-angle-down'" />
               </span>
               <!--<div class="slope-container">
                 <span class="slope tier-1" />
@@ -299,10 +300,10 @@
               </div>-->
             </div>
             <b-collapse
-              aria-id="witnessSection"
               v-model="isWitnessOpen"
+              aria-id="witnessSection"
             >
-              <template>
+              <template #default>
                 <div class="document-section-content">
                   <witness-list
                     :editable="canEdit"
@@ -321,18 +322,18 @@
               <span class="heading-content">Collections</span>
               <span
                 class="icon"
-                @click="isCollectionsOpen = !isCollectionsOpen"
                 :aria-expanded="isCollectionsOpen"
                 aria-controls="collectionsSection"
+                @click="isCollectionsOpen = !isCollectionsOpen"
               >
-                <i :class="isCollectionsOpen ? 'fas fa-angle-up' : 'fas fa-angle-down'"></i>
+                <i :class="isCollectionsOpen ? 'fas fa-angle-up' : 'fas fa-angle-down'" />
               </span>
             </div>
             <b-collapse
-              aria-id="collectionsSection"
               v-model="isCollectionsOpen"
+              aria-id="collectionsSection"
             >
-              <template>
+              <template #default>
                 <div class="document-section-content">
                   <document-collections :editable="canEdit" />
                 </div>
