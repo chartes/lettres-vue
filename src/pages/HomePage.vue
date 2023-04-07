@@ -412,6 +412,7 @@ article > section .content h3 {
   font-family: $family-primary;
   font-size: 28px;
   color: #000000;
+  margin-bottom: 40px;
 }
 
 article > section .content p {

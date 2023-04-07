@@ -3,3 +3,8 @@
     color: $almost-black;
     font-size: 0.75em;
 }
+
+a:hover {
+    text-decoration-style: dotted;
+    text-underline-offset: 4px;
+}

@@ -81,7 +81,7 @@
       td {
         vertical-align: middle;
         border-color: #fdb3cc;
-        padding: 8px 15px 8px 0;
+        padding: 15px 15px 15px 0;
 
         /* Chevron */
         &:nth-child(1) {
@@ -173,28 +173,19 @@
         background-color: #F8F8F8;
 
         .detail-container {
+          padding: 20px 0 20px 40px;
           overflow: hidden;
 
           .document-page {
 
             .heading {
-              background: none;
-              border: none;
-              padding: 0;
-            }
-
-            .heading-content {
               display: flex;
               align-items: flex-end;
               gap: 4px;
 
-              font-family: $family-primary;
-              font-size: 16px;
-              line-height: 16px;
-              color: #CB2158;
-              font-weight: 600;
-              letter-spacing: 0;
-              text-transform: uppercase;
+              background: none;
+              border: none;
+              padding: 0;
 
               &::after {
                 content: "";
@@ -204,6 +195,17 @@
                 transform: translateY(-2px);
               }
             }
+
+            .heading-content {
+              font-family: $family-primary;
+              font-size: 16px;
+              line-height: 16px;
+              color: #CB2158;
+              font-weight: 600;
+              letter-spacing: 0;
+              text-transform: uppercase;
+            }
+
 
             .document-section {
               font-family: $family-primary;

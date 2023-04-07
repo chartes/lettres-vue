@@ -601,7 +601,7 @@ progress {
     display: inline-block;
     width: 38px;
     height: 38px;
-    margin-right: 4px;
+    margin-right: 6px;
   }
   & > a {
     display: inline-block;
