@@ -13,6 +13,9 @@
     <section class="collection-section mb-5">
       <div class="heading is-uppercase">
         <span class="heading-content">Historique (TEST)</span>
+        <span aria-controls="section" class="icon">
+          <i class="fas fa-angle-down"></i>
+        </span>
       </div>
       <div class="collection-section-content">
         <p>Catherine de Médicis (1519-1589) est la fille du duc d’Urbino Laurent de Médicis et sde Madeleine de La Tour d’Auvergne. Épouse du duc d’orléans, second fils de François Ier, elle devient reine de France lorsque celui accède au trône de France en 1547. Trois de ses fils se succèdent ensuite comme rois de France, François II (1559-1560), Charles IX (1560-1574) et Henri III (1574-1589). Elle assure la régence du royaume à deux reprises (décembre 1560-août 1563 et février-septembre 1574), mais son influence sur le gouvernement de la France durant plus de trois décennies est très importante, ainsi qu’en témoigne sa correspondance.</p>
@@ -629,7 +632,12 @@ export default {
 .large-container {
   position: relative;
   margin-top: 60px;
+
+  @include on-tablet {
+    margin-top: 30px;
+  }
 }
+
 .collection-card-parent {
   padding-bottom: 20px;
 }
@@ -674,6 +682,17 @@ progress {
     padding: 30px 140px 30px 90px;
     font-size: 20px;
     line-height: 26px;
+
+    @include on-tablet {
+      padding: 10px 20px;
+      font-size: $font-size-text-tablet;
+      line-height: 1.2;
+    }
+
+    @include on-mobile {
+      font-size: $font-size-text-mobile;
+      line-height: 1.25;
+    }
 
     p {
       margin-bottom: 20px;

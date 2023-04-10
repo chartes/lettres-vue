@@ -485,7 +485,7 @@ export default {
       } else {
         return null
       }
-    },
+    }
   }
 };
 </script>

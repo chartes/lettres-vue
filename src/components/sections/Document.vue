@@ -725,16 +725,36 @@ export default {
     .document-section {
       margin-bottom: 60px;
 
-      // Cas particulier du Titre du document
-      &.document-section-for-title .heading,
       .heading span.icon {
         display: none !important;
+      }
+
+      // Cas particulier du Titre du document
+      &.document-section-for-title {
+
+        .heading {
+          display: none !important;
+        }
+
+        & > .collapse {
+          ::v-deep {
+            .collapse-content {
+              padding: 0;
+            }
+          }
+        }
       }
 
       & > .collapse {
         ::v-deep {
           .collapse-content {
             display: block !important;
+            padding: 0 20px;
+
+            .panel-block {
+              padding-left: 0;
+              padding-right: 0;
+            }
           }
         }
       }
@@ -867,7 +887,9 @@ nav.previous-next-navigation {
       background: url(../../assets/images/icons/lettre_nav_precedent.svg) center / 30px auto no-repeat !important;
     }
 
+    &.pagination-next,
     &.pagination-previous {
+      flex-grow: 0;
     }
 
     &.pagination-next::after {

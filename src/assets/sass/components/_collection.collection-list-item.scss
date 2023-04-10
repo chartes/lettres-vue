@@ -34,6 +34,14 @@
         line-height: 1.2;
         color: #FFFFFF;
 
+        @include on-tablet {
+          font-size: $font-size-title-tablet;
+        }
+
+        @include on-mobile {
+          font-size: $font-size-title-mobile;
+        }
+
         &:hover {
           text-decoration: underline;
           text-decoration-style: dotted;
@@ -52,19 +60,40 @@
       text-align: right;
       text-transform: uppercase;
 
+      @include on-tablet {
+        font-size: $font-size-text-tablet;
+        line-height: 1.2;
+      }
+
+      @include on-mobile {
+        font-size: $font-size-text-mobile;
+        line-height: 1.25;
+      }
+
       & > .collection-dates span:first-child::after {
         content: ">";
         margin: 0 8px;
       }
     }
 
-    .documents-count {
+    .documents-count,
+    .documents-count-label {
       font-size: 18px;
+
+      @include on-tablet {
+        font-size: 16px;
+      }
+
+      @include on-mobile {
+        font-size: 14px;
+      }
+    }
+
+    .documents-count {
       font-weight: 600;
     }
 
     .documents-count-label {
-      font-size: 18px;
       font-weight: 400;
     }
 
@@ -104,10 +133,20 @@
   .card-body,
   .card-footer {
     font-family: $family-primary;
-    font-size: 20px;
+    font-size: $font-size-text;
     font-weight: 400;
     line-height: 26px;
     color: #707070;
+
+    @include on-tablet {
+      font-size: $font-size-text-tablet;
+      line-height: 1.2;
+    }
+
+    @include on-mobile {
+      font-size: $font-size-text-mobile;
+      line-height: 1.25;
+    }
   }
 
   .card-footer {
@@ -131,6 +170,8 @@
 
       &:hover {
         text-decoration: underline;
+        text-decoration-style: dotted;
+        text-underline-offset: 2px;
       }
     }
 
@@ -188,6 +229,20 @@
     padding-left: 30px;
     font-size: 18px;
     text-transform: uppercase;
+
+    @include on-tablet {
+      font-size: 16px;
+    }
+
+    @include on-mobile {
+      font-size: 14px;
+    }
+
+    &:hover {
+      text-decoration: underline;
+      text-decoration-style: dotted;
+      text-underline-offset: 2px;
+    }
   }
 
   button.expand-collection {

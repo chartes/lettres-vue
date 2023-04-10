@@ -143,6 +143,10 @@ export default {
     padding-bottom: 0;
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
+
+    input[type="text"] {
+      padding-left: 40px !important;
+    }
   }
 
   .message-body,

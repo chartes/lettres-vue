@@ -145,6 +145,8 @@
 
             &:hover {
               text-decoration: underline;
+              text-decoration-style: dotted;
+              text-underline-offset: 4px;
             }
           }
         }

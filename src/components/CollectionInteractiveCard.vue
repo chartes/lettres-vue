@@ -269,18 +269,20 @@
             </p>
             <div class="is-inline-block">
               <b-field>
-                <select @change="updateCuratorId">
-                  <option :value="collection.admin.id">
-                    {{ collection.admin.username }}
-                  </option>
-                  <option
-                    v-for="option in users.filter((u) => u.isAdmin === true && u.id !== collection.admin.id)"
-                    :key="option.id"
-                    :value="option.id"
-                  >
-                    {{ option.username }}
-                  </option>
-                </select>
+                <div class="select-parent">
+                  <select @change="updateCuratorId">
+                    <option :value="collection.admin.id">
+                      {{ collection.admin.username }}
+                    </option>
+                    <option
+                      v-for="option in users.filter((u) => u.isAdmin === true && u.id !== collection.admin.id)"
+                      :key="option.id"
+                      :value="option.id"
+                    >
+                      {{ option.username }}
+                    </option>
+                  </select>
+                </div>
               </b-field>
             </div>
           </div>
@@ -561,6 +563,7 @@ export default {
 
 <style lang="scss">
 @import "@/assets/sass/main.scss";
+@import "@/assets/sass/elements/_select.scss";
 @import "@/assets/sass/objects/collection.scss";
 @import "@/assets/sass/components/_buttons.scss";
 
@@ -572,6 +575,10 @@ export default {
     gap: 55px;
     align-items: flex-end;
     margin-bottom: 22px;
+
+    @include on-tablet {
+      gap: 30px;
+    }
 
     .parent-collection-title {
       flex: $collection-thumbnail-size 0 0;
@@ -607,12 +614,16 @@ export default {
     }
 
     @include on-tablet {
-      width: calc( 100% - $collection-thumbnail-tablet-size - 290px - 2 * 55px );
+      width: calc( 100% - $collection-thumbnail-tablet-size - 290px - 2 * 30px );
     }
   }
 
   .collection-card-body {
     gap: 55px;
+
+    @include on-tablet {
+      gap: 30px;
+    }
 
     .column {
       padding: 0;
@@ -717,6 +728,10 @@ export default {
     color: #000000;
     font-weight: 400;
     line-height: 24px;
+  }
+
+  .select-parent {
+    margin-top: 5px;
   }
 
   .collection-user-roles {
