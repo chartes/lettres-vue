@@ -1,47 +1,79 @@
 <template>
   <div>
+    <div class="is-flex is-justify-content-space-between is-align-items-center">
+      <div class="popup-list-header is-inline-block">
+        <div class="results-count">
+          <span class="total-count">{{ totalCount }}</span> résultat(s)
+        </div>
+      </div>
+      <div class="is-inline-block">
+        <div
+          v-if="totalPages"
+          class="pagination-controls"
+        >
+          <a
+            :class="currentPage <= 1 ? 'button first-page disabled' : 'button first-page'"
+            @click="currentPage <= 1 ? null : currentPage = 1"
+          />
+          <a
+            :class="currentPage <= 1 ? 'button previous-page disabled' : 'button previous-page'"
+            @click="currentPage <= 1 ? null : --currentPage"
+          />
+          <input
+            v-model="currentPage"
+            name="page"
+            type="number"
+            min="1"
+            :max="totalPages"
+            placeholder="Page..."
+            class="current-page"
+            @change.prevent="currentPage = parseInt(p)"
+          >
+          <span class="label-sur-page">sur</span>
+          <span class="total-pages">{{ totalPages }}</span>
+          <a
+            :class="currentPage < totalPages ? 'button next-page' : 'button next-page disabled'"
+            @click="currentPage < totalPages ? ++currentPage : null"
+          />
+          <a
+            :class="currentPage < totalPages ? 'button last-page' : 'button last-page disabled'"
+            @click="currentPage < totalPages ? currentPage = totalPages : null"
+          />
+        </div>
+      </div>
+    </div>
     <div>
       <b-table
         ref="multiSortTable"
         :data="data"
         detailed
-        detail-key="docId"
+        detail-key="object-id"
         show-detail-icon
 
         striped
         :loading="isLoading"
-
-        paginated
         backend-pagination
-        :per-page="pageSize"
         :current-page.sync="currentPage"
-        pagination-position="both"
-        :page-input="true"
-        page-input-position="is-input-left"
-        aria-next-label="Page suivante"
-        aria-previous-label="Page précédente"
-        aria-page-label="Page"
-        aria-current-label="Page courante"
+        :per-page="pageSize"
         :total="totalCount"
-        sort-icon="menu-up"
-        sort-icon-size="is-medium"
+
         :backend-sorting="true"
         :sort-multiple="true"
         :sort-multiple-data="sortingPriority"
 
+        backend-filtering
+        :debounce-search="1000"
+
         checkable
         checkbox-position="right"
         :checked-rows.sync="checkedRows"
-        :custom-is-checked="(a, b) => { return a.docId === b.docId }"
-
-        backend-filtering
-        :debounce-search="1000"
+        :custom-is-checked="(a, b) => { return a['object-id'] === b['object-id'] }"
 
         @sort="sortPressed"
         @sorting-priority-removed="sortingPriorityRemoved"
         @filters-change="onFilter"
-        @page-change="onPageChange"
-        @details-open="(row, index) => $buefy.toast.open(`Expanded ${row.docId}`)"
+
+        @details-open="(row, index) => $buefy.toast.open(`Expanded ${row['object-id']}`)"
       >
         <template #top-left>
           <span class="table_title">Status des verrouillages</span>
@@ -59,12 +91,11 @@
         <template #detail="props">
           <document
             class="document-page"
-            :doc-id="props.row.docId"
+            :doc-id="props.row['object-id']"
             :preview="true"
           />
         </template>
         <b-table-column
-          v-slot="props"
           field="object-id"
           label="Lettre"
           width="20%"
@@ -72,73 +103,344 @@
           numeric
           searchable
         >
-          <document-tag-bar
-            :key="props.row.docId"
-            :doc-id="props.row.docId"
-            :with-status="true"
-            :preview="true"
-          />
+          <template #header="{ column }">
+            <div v-if="column.sortable">
+              <div v-if="sortingPriority.filter(obj => obj.field === column.field).length === 0">
+                <span
+                  class="icon button"
+                >
+                  <i class="fas fa-arrows-alt-v" />
+                </span>
+              </div>
+              <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'asc'">
+                <span class="icon button">
+                  <i class="fas fa-arrow-up" />
+                </span>
+                <span class="icon button">
+                  {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
+                  <button
+                    class="delete is-small multi-sort-cancel-icon"
+                    type="button"
+                    @click.stop="sortingPriorityRemoved(column.field)"
+                  />
+                </span>
+              </div>
+              <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'desc'">
+                <span class="icon button">
+                  <i class="fas fa-arrow-down" />
+                </span>
+                <span class="icon button">
+                  {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
+                  <button
+                    class="delete is-small multi-sort-cancel-icon"
+                    type="button"
+                    @click.stop="sortingPriorityRemoved(column.field)"
+                  />
+                </span>
+              </div>
+              <span>
+                {{ column.label }}
+              </span>
+            </div>
+            <div v-else>
+              {{ column.label }}
+            </div>
+          </template>
+          <template #default="props">
+            <document-tag-bar
+              :key="props.row['object-id']"
+              :doc-id="props.row['object-id']"
+              :with-status="true"
+              :preview="true"
+            />
+          </template>
         </b-table-column>
         <b-table-column
-          v-slot="props"
           field="collections"
           label="Collection"
           width="20%"
           sortable
           searchable
         >
-          <span v-html="props.row.collections" />
+          <template #header="{ column }">
+            <div v-if="column.sortable">
+              <div v-if="sortingPriority.filter(obj => obj.field === column.field).length === 0">
+                <span
+                  class="icon button"
+                >
+                  <i class="fas fa-arrows-alt-v" />
+                </span>
+              </div>
+              <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'asc'">
+                <span class="icon button">
+                  <i class="fas fa-arrow-up" />
+                </span>
+                <span class="icon button">
+                  {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
+                  <button
+                    class="delete is-small multi-sort-cancel-icon"
+                    type="button"
+                    @click.stop="sortingPriorityRemoved(column.field)"
+                  />
+                </span>
+              </div>
+              <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'desc'">
+                <span class="icon button">
+                  <i class="fas fa-arrow-down" />
+                </span>
+                <span class="icon button">
+                  {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
+                  <button
+                    class="delete is-small multi-sort-cancel-icon"
+                    type="button"
+                    @click.stop="sortingPriorityRemoved(column.field)"
+                  />
+                </span>
+              </div>
+              <span>
+                {{ column.label }}
+              </span>
+            </div>
+            <div v-else>
+              {{ column.label }}
+            </div>
+          </template>
+          <template #default="props">
+            <span
+              v-for="collection in props.row.collections"
+              :key="collection.id"
+              class="is-block"
+              v-html="collection.title"
+            />
+          </template>
         </b-table-column>
         <b-table-column
-          v-slot="props"
-          field="userName"
+          field="username"
           label="User name"
           width="10%"
-          searchable
+          :sortable="current_user.isAdmin"
+          :searchable="current_user.isAdmin"
         >
-          <span v-html="props.row.username" />
+          <template #header="{ column }">
+            <div v-if="column.sortable">
+              <div v-if="sortingPriority.filter(obj => obj.field === column.field).length === 0">
+                <span
+                  class="icon button"
+                >
+                  <i class="fas fa-arrows-alt-v" />
+                </span>
+              </div>
+              <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'asc'">
+                <span class="icon button">
+                  <i class="fas fa-arrow-up" />
+                </span>
+                <span class="icon button">
+                  {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
+                  <button
+                    class="delete is-small multi-sort-cancel-icon"
+                    type="button"
+                    @click.stop="sortingPriorityRemoved(column.field)"
+                  />
+                </span>
+              </div>
+              <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'desc'">
+                <span class="icon button">
+                  <i class="fas fa-arrow-down" />
+                </span>
+                <span class="icon button">
+                  {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
+                  <button
+                    class="delete is-small multi-sort-cancel-icon"
+                    type="button"
+                    @click.stop="sortingPriorityRemoved(column.field)"
+                  />
+                </span>
+              </div>
+              <span>
+                {{ column.label }}
+              </span>
+            </div>
+            <div v-else>
+              {{ column.label }}
+            </div>
+          </template>
+          <template #default="props">
+            <span v-html="props.row.username" />
+          </template>
         </b-table-column>
         <b-table-column
-          v-slot="props"
           field="description"
           label="Description"
           width="40%"
           sortable
           searchable
         >
-          <span v-html="props.row.description" />
+          <template #header="{ column }">
+            <div v-if="column.sortable">
+              <div v-if="sortingPriority.filter(obj => obj.field === column.field).length === 0">
+                <span
+                  class="icon button"
+                >
+                  <i class="fas fa-arrows-alt-v" />
+                </span>
+              </div>
+              <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'asc'">
+                <span class="icon button">
+                  <i class="fas fa-arrow-up" />
+                </span>
+                <span class="icon button">
+                  {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
+                  <button
+                    class="delete is-small multi-sort-cancel-icon"
+                    type="button"
+                    @click.stop="sortingPriorityRemoved(column.field)"
+                  />
+                </span>
+              </div>
+              <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'desc'">
+                <span class="icon button">
+                  <i class="fas fa-arrow-down" />
+                </span>
+                <span class="icon button">
+                  {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
+                  <button
+                    class="delete is-small multi-sort-cancel-icon"
+                    type="button"
+                    @click.stop="sortingPriorityRemoved(column.field)"
+                  />
+                </span>
+              </div>
+              <span>
+                {{ column.label }}
+              </span>
+            </div>
+            <div v-else>
+              {{ column.label }}
+            </div>
+          </template>
+          <template #default="props">
+            <span v-html="props.row.description" />
+          </template>
         </b-table-column>
         <b-table-column
-          v-slot="props"
           field="event-date"
           label="Date"
           width="15%"
           sortable
           searchable
         >
-          <span
-            class="tag"
-            v-html="new Date(props.row.event_date).toLocaleDateString()"
-          />
+          <template #header="{ column }">
+            <div v-if="column.sortable">
+              <div v-if="sortingPriority.filter(obj => obj.field === column.field).length === 0">
+                <span
+                  class="icon button"
+                >
+                  <i class="fas fa-arrows-alt-v" />
+                </span>
+              </div>
+              <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'asc'">
+                <span class="icon button">
+                  <i class="fas fa-arrow-up" />
+                </span>
+                <span class="icon button">
+                  {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
+                  <button
+                    class="delete is-small multi-sort-cancel-icon"
+                    type="button"
+                    @click.stop="sortingPriorityRemoved(column.field)"
+                  />
+                </span>
+              </div>
+              <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'desc'">
+                <span class="icon button">
+                  <i class="fas fa-arrow-down" />
+                </span>
+                <span class="icon button">
+                  {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
+                  <button
+                    class="delete is-small multi-sort-cancel-icon"
+                    type="button"
+                    @click.stop="sortingPriorityRemoved(column.field)"
+                  />
+                </span>
+              </div>
+              <span>
+                {{ column.label }}
+              </span>
+            </div>
+            <div v-else>
+              {{ column.label }}
+            </div>
+          </template>
+          <template #default="props">
+            <span
+              class="tag"
+              v-html="new Date(props.row['event-date']).toLocaleDateString()"
+            />
+          </template>
         </b-table-column>
         <b-table-column
-          v-slot="props"
           field="expiration-date"
           label="Expire"
           width="15%"
           sortable
           searchable
         >
-          <span
-            v-if="props.row.is_active"
-            class="tag is-success"
-            v-html="new Date(props.row.expiration_date).toLocaleDateString()"
-          />
-          <span
-            v-else
-            class="tag is-warning"
-            v-html="new Date(props.row.expiration_date).toLocaleDateString()"
-          />
+          <template #header="{ column }">
+            <div v-if="column.sortable">
+              <div v-if="sortingPriority.filter(obj => obj.field === column.field).length === 0">
+                <span
+                  class="icon button"
+                >
+                  <i class="fas fa-arrows-alt-v" />
+                </span>
+              </div>
+              <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'asc'">
+                <span class="icon button">
+                  <i class="fas fa-arrow-up" />
+                </span>
+                <span class="icon button">
+                  {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
+                  <button
+                    class="delete is-small multi-sort-cancel-icon"
+                    type="button"
+                    @click.stop="sortingPriorityRemoved(column.field)"
+                  />
+                </span>
+              </div>
+              <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'desc'">
+                <span class="icon button">
+                  <i class="fas fa-arrow-down" />
+                </span>
+                <span class="icon button">
+                  {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
+                  <button
+                    class="delete is-small multi-sort-cancel-icon"
+                    type="button"
+                    @click.stop="sortingPriorityRemoved(column.field)"
+                  />
+                </span>
+              </div>
+              <span>
+                {{ column.label }}
+              </span>
+            </div>
+            <div v-else>
+              {{ column.label }}
+            </div>
+          </template>
+          <template #default="props">
+            <span
+              v-if="props.row['is-active']"
+              class="tag is-success"
+              v-html="new Date(props.row['expiration-date']).toLocaleDateString()"
+            />
+            <span
+              v-else
+              class="tag is-warning"
+              v-html="new Date(props.row['expiration-date']).toLocaleDateString()"
+            />
+          </template>
         </b-table-column>
       </b-table>
       <lock-form
@@ -178,19 +480,24 @@ export default {
       sortingPriority: [{ field: "expiration-date", order: "desc" }],
       filters: [],
       numPage: 1,
-      pageSize: 25,
+      p: 1,
+      pageSize: 3,
       totalCount: 0,
       isLoading: false,
     };
   },
   computed: {
+    totalPages: function() {
+      return Math.ceil(this.totalCount / this.pageSize)
+    },
     currentPage: {
       get: function () {
         return this.numPage;
       },
       set: async function (newValue, oldValue) {
         newValue = parseInt(newValue);
-        if (newValue && newValue !== oldValue) {
+        if (newValue && newValue !== oldValue && newValue >=1 && newValue <= this.totalPages) {
+          this.p = newValue;
           this.numPage = newValue;
           await this.loadAsyncData();
         }
@@ -198,7 +505,6 @@ export default {
     },
     ...mapState("user", ["current_user", "jwt"]),
     ...mapState("locks", ["fullLocks"]),
-    ...mapGetters("document", []),
     ...mapGetters("document", ["getDocumentStatus"])
   },
   watch: {
@@ -217,51 +523,19 @@ export default {
   },
   async created() {
     if (this.current_user) {
-      await this.fetchUsers();
+      if (this.current_user.isAdmin) {
+        await this.fetchUsers();
+      }
       await this.fetchData();
+    }
+    if (this.fetchedData) {
+          this.totalCount = this.fetchedData.locksWithCollections.length
     }
     this.loadAsyncData();
   },
   methods: {
-    ...mapActions("collections", ["getCollectionByDocId"]),
     ...mapActions("locks", ["fetchFullLocks"]),
     ...mapActions("user", ["fetchUsers"]),
-    async getCollectionTitle(docId) {
-      let response = await this.getCollectionByDocId(docId);
-      if (response) {
-        const start = response.reduce((object, {docId}) => ({...object, [docId]: []}), {});
-        console.log('start', start)
-        const result = response.reduce((object, {docId, title}) => ({...object, [docId]: [object[docId], [title]].flat(1)}), start);
-        console.log('result', result)
-        //let docIdCollectionsList = Object.entries(result).map(([name, value]) => ({docId: name, title: value}));
-
-          let groupBy = function(xs, key) {
-            return xs.reduce(function(rv, x) {
-              (rv[x[key]] = rv[x[key]] || []).push(x);
-              return rv;
-            }, {});
-          };
-
-          let groupedItems = groupBy(response, "docId");
-          let docIdCollectionsList = Object.keys(groupedItems).map(it => ({
-            docId: it,
-            title: groupedItems[it].map(r => r.title)
-          }));
-
-        /*let docIdCollectionsList = response.reduce((acc, {name, value}) => {
-          acc[name] ??= {name: name, value: []};
-          if(Array.isArray(value)) // if it's array type then concat
-            acc[name].value = acc[name].value.concat(value);
-          else
-            acc[name].value.push(value);
-
-          return acc;
-        }, {});*/
-        console.log("docIdCollectionsList", docIdCollectionsList);
-        //console.log("reducedArr", dataToPost);
-        return docIdCollectionsList;
-      }
-    },
     async fetchStatus(docId) {
       this.status = await this.getDocumentStatus(docId);
       console.log("status", docId, this.status);
@@ -272,19 +546,20 @@ export default {
       let filtered_users = [];
       if (this.filters) {
         for (let i = 0; i < Object.keys(this.filters).length; i++) {
-          // si filtre username, get user_ids
-          if (Object.keys(this.filters)[i] === 'userName') {
-            filtered_users = this.$store.state.user.users.map(u => u.username.includes(Object.values(this.filters)[i]) ? u.id : false).filter(Boolean);
-            console.log('filtered_users : ', filtered_users)
-            if (filtered_users.length > 0){
-            // assign array of users as list (backend expects list)
-            filters_list.push('filter[user_id]=[' + filtered_users + ']');}
-            else {
-              console.log('TADA')
-              this.fetchedData = [];
-              this.data = [];
-              this.isLoading = false;
-              return;
+          // If username filter, get user_ids
+          if (Object.keys(this.filters)[i] === 'username') {
+            if (this.current_user.isAdmin) {
+              filtered_users = this.$store.state.user.users.map(u => u.username.toLowerCase().includes(Object.values(this.filters)[i].toLowerCase()) ? u.id : false).filter(Boolean);
+              console.log('filtered_users for admins: ', filtered_users)
+              if (filtered_users.length > 0) {
+                  // assign array of users as list (backend expects list)
+                  filters_list.push('filter[user_id]=[' + filtered_users + ']');
+              } else {
+                  this.fetchedData = [];
+                  this.data = [];
+                  this.isLoading = false;
+                  return;
+              }
             }
           }
           else filters_list.push('filter[' + Object.keys(this.filters)[i] + ']=' + Object.values(this.filters)[i]);
@@ -292,7 +567,7 @@ export default {
       }
       if (!this.current_user.isAdmin){
         console.log("For non-admin users, only fetch their own locks");
-        filtered_users = this.$store.state.user.users.map(u => u.id === this.current_user.id ? u.id : false).filter(Boolean);
+        filtered_users = [this.current_user.id]
         if (filtered_users.length > 0){
           filters_list.push('filter[user_id]=[' + filtered_users + ']');
         } else {
@@ -311,18 +586,6 @@ export default {
         filters: filters_list.length ? filters_list : null,
       });
       console.log('async fetchData() / this.fetchedData : ', this.fetchedData);
-      this.documentsCollections = [];
-      for (let i = 0; i < this.fetchedData.locks.length; i++) {
-          let collectionMaps = await this.getCollectionTitle(this.fetchedData.locks[i].data.attributes['object-id'])
-          this.documentsCollections.push(collectionMaps[0])
-          console.log('this.fetchedData.locks[i].data.attributes[\'object-id\'])', this.fetchedData.locks[i].data.attributes['object-id'])
-          console.log('this.documentsCollections', this.documentsCollections)
-        }
-      if (this.documentsCollections.length >0) {
-        let ids = this.documentsCollections.map(m => m.docId)
-        this.documentsCollections = this.documentsCollections.filter(({docId}, index) => !ids.includes(docId, index + 1))
-      }
-      console.log('this.documentsCollections after dedupe', this.documentsCollections)
       return this.fetchedData;
     },
     /*TODO add lock sort reset button
@@ -346,12 +609,18 @@ export default {
     },
     // Backend sorting
     async sortingPriorityRemoved(field) {
-      console.log('sortingPriorityRemoved');
+      console.log('sortingPriorityRemoved', field);
       const newPriority = this.sortingPriority.filter(
         (priority) => priority.field !== field
       );
       this.sortingPriority = [...newPriority];
-      console.log(newPriority, this.sortingPriority);
+      if (this.sortingPriority.length > 0) {
+          console.log(newPriority, this.sortingPriority);
+      } else {
+          // default sorting on descending locks expiration date
+          this.sortingPriority = [{ field: "expiration-date", order: "desc" }];
+          console.log("Default sorting new Priority", newPriority, this.sortingPriority);
+      }
       await this.fetchData();
       this.loadAsyncData();
     },
@@ -374,7 +643,7 @@ export default {
         }
         await this.fetchData();
         this.loadAsyncData();
-        //this.currentPage = 1;
+        this.currentPage = 1;
       } else {
         // request regular sorted data from backend
         console.log('no change order', field, order );
@@ -422,19 +691,12 @@ export default {
           return flatLockByDoc;
           })*/
 
-        this.data = this.fetchedData.locks.map((l) =>  {
-            return {
-              docId: l.data.attributes['object-id'],
-              description: l.data.attributes.description,
-              event_date: l.data.attributes['event-date'],
-              expiration_date: l.data.attributes['expiration-date'],
-              is_active: l.data.attributes['is-active'],
-              user_id: l.user.id,
-              username: l.user.username,
-              collections: this.documentsCollections.filter((map) => parseInt(map.docId) === l.data.attributes['object-id'])[0].title
-            };
-          })
-
+        this.data = this.fetchedData.locksWithCollections
+          // local pagination
+          .slice(
+            (this.numPage- 1) * this.pageSize,
+            this.numPage * this.pageSize,
+          )
         //console.log('this.rootCollections : ', this.getCollectionAdmin());
         console.log('loadAsyncData() / this.data : ', this.data);
         this.isLoading = false;
@@ -453,12 +715,6 @@ export default {
       await this.fetchData();
       this.loadAsyncData();
     },
-    /*
-     * Handle page-change event
-     */
-    onPageChange(page) {
-      this.currentPage = page;
-    },
   },
 }
 </script>
@@ -467,12 +723,123 @@ export default {
 @import "@/assets/sass/main.scss";
 @import "@/assets/sass/components/_search_results_table.scss";
 @import "@/assets/sass/components/_search_results_pagination.scss";
+  .pagination-controls {
+    display: flex;
+    align-items: center;
+    /*visibility: hidden;*/
 
-.table_title {
-  margin-bottom: 25px;
-  font-family: $family-primary;
-  font-size: 20px;
-  font-weight: 500;
-  color: #C00055;
-}
+    & > * {
+      display: inline-block;
+      width: 38px;
+      height: 38px;
+      margin-right: 4px;
+    }
+    & > a {
+      display: inline-block;
+      width: 38px;
+      height: 38px;
+      background-color: #C3C3C3;
+      border-radius: 3.2px;
+    }
+    & > a.disabled {
+      cursor: not-allowed !important;
+    }
+    & > a.first-page {
+      background: #C3C3C3 url(../assets/images/icons/page_debut.svg)  center / 28px auto no-repeat;
+    }
+    & > a.previous-page {
+      background: #C3C3C3 url(../assets/images/icons/page_precedent.svg) center / 28px auto no-repeat;
+    }
+    & > a.next-page {
+      background: #C3C3C3 url(../assets/images/icons/page_suivant.svg) center / 28px auto no-repeat;
+    }
+    & > a.last-page {
+      background: #C3C3C3 url(../assets/images/icons/page_fin.svg) center / 28px auto no-repeat;
+    }
+    & > input {
+      height: 38px !important;
+      padding: 0 !important;
+      border: 1px solid #C00055;
+      border-radius: 3.2px;
+
+      font-family: $family-primary;
+      font-size: 18px;
+      color: #CB2158;
+      font-weight: 800;
+      text-align: center;
+      text-decoration: none;
+
+      &:focus {
+        outline: 1px solid #C00055;
+      }
+    }
+
+    & > span.label-sur-page {
+      font-family: $family-primary;
+      font-size: 11px;
+      line-height: 38px;
+      color: #979797;
+      font-weight: 500;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    & > span.total-pages {
+      background-color: #DFDFDF;
+      border-radius: 3.2px;
+
+      font-family: $family-primary;
+      font-size: 18px;
+      line-height: 38px;
+      color: #818181;
+      text-align: center;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+  }
+  .popup-list-header {
+    /*border-top: solid 1px #FDB3CC;
+    border-bottom: solid 1px #C7C7C7;*/
+    margin-bottom: 25px;
+
+    .results-count {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      font-family: $family-primary;
+      font-size: 14px;
+      color: #6D7278;
+      font-weight: 600;
+      text-transform: uppercase;
+
+      .total-count {
+        font-size: 50px;
+        color: #FF0052;
+        text-align: center;
+        font-weight: 700;
+      }
+    }
+  }
+  .table_title {
+    margin-bottom: 25px;
+    font-family: $family-primary;
+    font-size: 20px;
+    font-weight: 500;
+    color: #C00055;
+  }
+
+  /* Chrome, Safari, Edge, Opera */
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  /* Firefox */
+  ::v-deep {
+    input[type=number] {
+      -moz-appearance: textfield;
+    }
+  }
 </style>

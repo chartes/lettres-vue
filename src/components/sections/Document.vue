@@ -2,7 +2,8 @@
   <div
     class="document"
     :class="documentCssClass"
-  ><!-- Not preview mode -->
+  >
+    <!-- Not preview mode -->
     <div
       v-if="!preview"
       class="is-justify-content-left"
@@ -64,28 +65,31 @@
             <div class="heading is-uppercase is-flex is-justify-content-space-between">
               <span class="heading-content">Titre</span>
               <span
+                v-if="canEdit"
                 class="icon"
-                @click="isTitleOpen = !isTitleOpen"
                 :aria-expanded="isTitleOpen"
                 aria-controls="titleSection"
+                @click="isTitleOpen = !isTitleOpen"
               >
-                <i :class="isTitleOpen ? 'fas fa-angle-up' : 'fas fa-angle-down'"></i>
+                <i :class="isTitleOpen ? 'fas fa-angle-up' : 'fas fa-angle-down'" />
               </span>
             </div>
             <b-collapse
+              :class="!canEdit? '' : isTitleOpen? '' : 'hiddendiv'"
               aria-id="titleSection"
-              v-model="isTitleOpen"
             >
-              <template>
-                <div class="document-section-content">
+              <template #default>
+                <div>
                   <document-title
                     v-if="!preview"
                     :editable="canEdit"
                     :preview="preview"
+                    class="column is-three-quarters"
                     @add-note="addNote"
                   />
                   <document-languages
                     :editable="canEdit"
+                    class="column"
                   />
                 </div>
               </template>
@@ -97,12 +101,13 @@
             <div class="heading is-uppercase is-flex is-justify-content-space-between">
               <span class="heading-content">Correspondants</span>
               <span
+                v-if="canEdit"
                 class="icon"
-                @click="isPersonsOpen = !isPersonsOpen"
                 :aria-expanded="isPersonsOpen"
                 aria-controls="personsSection"
+                @click="isPersonsOpen = !isPersonsOpen"
               >
-                <i :class="isPersonsOpen ? 'fas fa-angle-up' : 'fas fa-angle-down'"></i>
+                <i :class="isPersonsOpen ? 'fas fa-angle-up' : 'fas fa-angle-down'" />
               </span>
               <!--<div class="slope-container">
                 <span class="slope tier-1" />
@@ -112,10 +117,10 @@
               </div>-->
             </div>
             <b-collapse
+              :class="!canEdit? '' : isPersonsOpen? '' : 'hiddendiv'"
               aria-id="personsSection"
-              v-model="isPersonsOpen"
             >
-              <template>
+              <template #default>
                 <div class="document-section-content">
                   <document-persons
                     :editable="canEdit"
@@ -132,12 +137,13 @@
             <div class="heading is-uppercase is-flex is-justify-content-space-between">
               <span class="heading-content">Dates</span>
               <span
+                v-if="canEdit"
                 class="icon"
-                @click="isDatesOpen = !isDatesOpen"
                 :aria-expanded="isDatesOpen"
                 aria-controls="datesSection"
+                @click="isDatesOpen = !isDatesOpen"
               >
-                <i :class="isDatesOpen ? 'fas fa-angle-up' : 'fas fa-angle-down'"></i>
+                <i :class="isDatesOpen ? 'fas fa-angle-up' : 'fas fa-angle-down'" />
               </span>
               <!--<div class="slope-container">
                 <span class="slope tier-1" />
@@ -147,10 +153,10 @@
               </div>-->
             </div>
             <b-collapse
+              :class="!canEdit? '' : isDatesOpen? '' : 'hiddendiv'"
               aria-id="datesSection"
-              v-model="isDatesOpen"
             >
-              <template>
+              <template #default>
                 <div class="document-section-content">
                   <document-date-attributes :editable="canEdit" />
                 </div>
@@ -163,12 +169,13 @@
             <div class="heading is-uppercase is-flex is-justify-content-space-between">
               <span class="heading-content">Lieux</span>
               <span
+                v-if="canEdit"
                 class="icon"
-                @click="isPlacesOpen = !isPlacesOpen"
                 :aria-expanded="isPlacesOpen"
                 aria-controls="placesSection"
+                @click="isPlacesOpen = !isPlacesOpen"
               >
-                <i :class="isPlacesOpen ? 'fas fa-angle-up' : 'fas fa-angle-down'"></i>
+                <i :class="isPlacesOpen ? 'fas fa-angle-up' : 'fas fa-angle-down'" />
               </span>
               <!--<div class="slope-container">
                 <span class="slope tier-1" />
@@ -178,10 +185,10 @@
               </div>-->
             </div>
             <b-collapse
+              :class="!canEdit? '' : isPlacesOpen? '' : 'hiddendiv'"
               aria-id="placesSection"
-              v-model="isPlacesOpen"
             >
-              <template>
+              <template #default>
                 <div class="document-section-content">
                   <document-placenames
                     :editable="canEdit"
@@ -198,12 +205,13 @@
             <div class="heading is-uppercase is-flex is-justify-content-space-between">
               <span class="heading-content">Analyse</span>
               <span
+                v-if="canEdit"
                 class="icon"
-                @click="isAnalyseOpen = !isAnalyseOpen"
                 :aria-expanded="isAnalyseOpen"
                 aria-controls="analyseSection"
+                @click="isAnalyseOpen = !isAnalyseOpen"
               >
-                <i :class="isAnalyseOpen ? 'fas fa-angle-up' : 'fas fa-angle-down'"></i>
+                <i :class="isAnalyseOpen ? 'fas fa-angle-up' : 'fas fa-angle-down'" />
               </span>
               <!--<div class="slope-container">
                 <span class="slope tier-1" />
@@ -213,10 +221,10 @@
               </div>-->
             </div>
             <b-collapse
+              :class="!canEdit? '' : isAnalyseOpen? '' : 'hiddendiv'"
               aria-id="analyseSection"
-              v-model="isAnalyseOpen"
             >
-              <template>
+              <template #default>
                 <div class="document-section-content">
                   <document-argument
                     :editable="canEdit"
@@ -235,12 +243,13 @@
             <div class="heading is-uppercase is-flex is-justify-content-space-between">
               <span class="heading-content">Transcription</span>
               <span
+                v-if="canEdit"
                 class="icon"
-                @click="isTranscriptionOpen = !isTranscriptionOpen"
                 :aria-expanded="isTranscriptionOpen"
                 aria-controls="transcriptionSection"
+                @click="isTranscriptionOpen = !isTranscriptionOpen"
               >
-                <i :class="isTranscriptionOpen ? 'fas fa-angle-up' : 'fas fa-angle-down'"></i>
+                <i :class="isTranscriptionOpen ? 'fas fa-angle-up' : 'fas fa-angle-down'" />
               </span>
               <!--<div class="slope-container">
                 <span class="slope tier-1" />
@@ -250,10 +259,10 @@
               </div>-->
             </div>
             <b-collapse
+              :class="!canEdit? '' : isTranscriptionOpen? '' : 'hiddendiv'"
               aria-id="transcriptionSection"
-              v-model="isTranscriptionOpen"
             >
-              <template>
+              <template #default>
                 <div class="document-section-content">
                   <document-transcription
                     :editable="canEdit"
@@ -284,12 +293,13 @@
                 </b-button>
               </div>
               <span
+                v-if="canEdit"
                 class="icon"
-                @click="isWitnessOpen = !isWitnessOpen"
                 :aria-expanded="isWitnessOpen"
                 aria-controls="witnessSection"
+                @click="isWitnessOpen = !isWitnessOpen"
               >
-                <i :class="isWitnessOpen ? 'fas fa-angle-up' : 'fas fa-angle-down'"></i>
+                <i :class="isWitnessOpen ? 'fas fa-angle-up' : 'fas fa-angle-down'" />
               </span>
               <!--<div class="slope-container">
                 <span class="slope tier-1" />
@@ -299,10 +309,10 @@
               </div>-->
             </div>
             <b-collapse
+              :class="!canEdit? '' : isWitnessOpen? '' : 'hiddendiv'"
               aria-id="witnessSection"
-              v-model="isWitnessOpen"
             >
-              <template>
+              <template #default>
                 <div class="document-section-content">
                   <witness-list
                     :editable="canEdit"
@@ -320,19 +330,20 @@
             <div class="heading is-uppercase is-flex is-justify-content-space-between">
               <span class="heading-content">Collections</span>
               <span
+                v-if="canEdit"
                 class="icon"
-                @click="isCollectionsOpen = !isCollectionsOpen"
                 :aria-expanded="isCollectionsOpen"
                 aria-controls="collectionsSection"
+                @click="isCollectionsOpen = !isCollectionsOpen"
               >
-                <i :class="isCollectionsOpen ? 'fas fa-angle-up' : 'fas fa-angle-down'"></i>
+                <i :class="isCollectionsOpen ? 'fas fa-angle-up' : 'fas fa-angle-down'" />
               </span>
             </div>
             <b-collapse
+              :class="!canEdit? '' : isCollectionsOpen? '' : 'hiddendiv'"
               aria-id="collectionsSection"
-              v-model="isCollectionsOpen"
             >
-              <template>
+              <template #default>
                 <div class="document-section-content">
                   <document-collections :editable="canEdit" />
                 </div>
@@ -762,7 +773,6 @@ export default {
   }
 
   // Mode preview
-
   &.is-preview {
     margin-top: 0;
 
@@ -782,7 +792,6 @@ export default {
   }
 
   // Mode édition
-
   &.can-edit {
 
     nav.previous-next-navigation {
@@ -973,7 +982,7 @@ nav.previous-next-navigation {
     }
   }
 
-  & > .document-section-content {
+  & .document-section-content {
     margin-left: 60px;
     margin-bottom: 40px;
 
@@ -1049,8 +1058,6 @@ nav.previous-next-navigation {
   }
 
 }
-
-
 
 .delete-button {
   flex: 38px 0 0;
@@ -1143,5 +1150,8 @@ nav.previous-next-navigation {
     }
   }
 
+}
+.hiddendiv {
+  display: none;
 }
 </style>

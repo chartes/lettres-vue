@@ -96,7 +96,8 @@ const actions = {
         children: children.data.map((child) => child.id),
         parent: parents.data[0] !== undefined ? parents.data[0].id : null,
         admin: {
-          username: included.find(({type, id: adminId}) => type === "user" && adminId === admin.data.id).attributes.username
+          username: included.find(({type, id: adminId}) => type === "user" && adminId === admin.data.id).attributes.username,
+          id: included.find(({type, id: adminId}) => type === "user" && adminId === admin.data.id).id
         }
       }));
 
@@ -138,7 +139,13 @@ const actions = {
       let sorts = sortingPriority ? sortingPriority.map(s => `${s.order === 'desc' ? '-' : ''}${s.field}`) : []
       sorts = `&sort=${sorts.length ? sorts.join(',') : 'creation'}`
 
-      response = await http.get(`/search?query=collections.id:${id}&page[number]=${numPage}&page[size]=${pageSize||50}${sorts}&without-relationships`);
+      let query ='';
+      if (!rootState.user.current_user){
+        query = `(collections.id:${id} AND is-published:true)`
+      } else {
+        query = `collections.id:${id}`
+      }
+      response = await http.get(`/search?query=${query}&page[number]=${numPage}&page[size]=${pageSize||50}${sorts}&without-relationships`);
       documents = response.data.data;
     }
     console.log('COLLECTION DATA FETCHED', documents, collection, response.data.meta)
@@ -165,7 +172,10 @@ const actions = {
       id: collection.id,
       title: collection.title,
       description: collection.description,
-      admin: {username: admin.username}
+      admin: {
+        username: admin.username,
+        id: admin.id
+      }
     })
     return response
   },
@@ -224,9 +234,12 @@ const actions = {
     const http = http_with_auth(rootState.user.jwt);
     const response = await http.get(`documents/${docId}/collections`);
     if (response) {
-      const collections = response.data.data.map(collection => {
-        return { docId: docId, collectionId: collection.id, title: collection.attributes.title };
-      });
+      const collections =
+        {docId: docId,
+         collections: response.data.data.map((collection) =>
+             ({collectionId: collection.id,
+          title: collection.attributes.title }))
+        };
       console.log('const collections : ', collections);
       return collections;
     }

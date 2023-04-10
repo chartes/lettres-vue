@@ -14,13 +14,11 @@
           <a
             :class="currentPage <= 1 ? 'button first-page disabled' : 'button first-page'"
             @click="currentPage <= 1 ? null : currentPage = 1"
-          >
-          </a>
+          />
           <a
             :class="currentPage <= 1 ? 'button previous-page disabled' : 'button previous-page'"
             @click="currentPage <= 1 ? null : --currentPage"
-          >
-          </a>
+          />
           <input
             v-model="currentPage"
             name="page"
@@ -36,13 +34,11 @@
           <a
             :class="currentPage < totalPages ? 'button next-page' : 'button next-page disabled'"
             @click="currentPage < totalPages ? ++currentPage : null"
-          >
-          </a>
+          />
           <a
             :class="currentPage < totalPages ? 'button last-page' : 'button last-page disabled'"
             @click="currentPage < totalPages ? currentPage = totalPages : null"
-          >
-          </a>
+          />
         </div>
       </div>
     </div>
@@ -63,7 +59,7 @@
         @sort="sortPressed"
         @sorting-priority-removed="sortingPriorityRemoved"
       >
-        <template slot="empty">
+        <template #empty>
           <section class="section">
             <div class="content has-text-grey has-text-centered">
               <p>Aucun historique de modifications</p>
@@ -72,45 +68,221 @@
         </template>
 
         <b-table-column
-          v-slot="props"
           field="object-id"
           label="Lettre"
           sortable
           width="100"
         >
-          <router-link
-            :to="{ name: 'document', params: { docId: props.row.docId } }"
-            class="tag document-preview-card__doc-tag"
-          >
-            <span>{{ props.row.docId }}</span>
-          </router-link>
+          <template #header="{ column }">
+            <div v-if="column.sortable">
+              <div v-if="sortingPriority.filter(obj => obj.field === column.field).length === 0">
+                <span
+                  class="icon button"
+                >
+                  <i class="fas fa-arrows-alt-v" />
+                </span>
+              </div>
+              <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'asc'">
+                <span class="icon button">
+                  <i class="fas fa-arrow-up" />
+                </span>
+                <span class="icon button">
+                  {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
+                  <button
+                    class="delete is-small multi-sort-cancel-icon"
+                    type="button"
+                    @click.stop="sortingPriorityRemoved(column.field)"
+                  />
+                </span>
+              </div>
+              <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'desc'">
+                <span class="icon button">
+                  <i class="fas fa-arrow-down" />
+                </span>
+                <span class="icon button">
+                  {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
+                  <button
+                    class="delete is-small multi-sort-cancel-icon"
+                    type="button"
+                    @click.stop="sortingPriorityRemoved(column.field)"
+                  />
+                </span>
+              </div>
+              <span>
+                {{ column.label }}
+              </span>
+            </div>
+            <div v-else>
+              {{ column.label }}
+            </div>
+          </template>
+          <template #default="props">
+            <router-link
+              :to="{ name: 'document', params: { docId: props.row.docId } }"
+              class="tag document-preview-card__doc-tag"
+            >
+              <span>{{ props.row.docId }}</span>
+            </router-link>
+          </template>
         </b-table-column>
         <b-table-column
-          v-slot="props"
           field="event-date"
           label="Date"
           width="200"
           sortable
         >
-          <span v-html="props.row['event-date']" />
+          <template #header="{ column }">
+            <div v-if="column.sortable">
+              <div v-if="sortingPriority.filter(obj => obj.field === column.field).length === 0">
+                <span
+                  class="icon button"
+                >
+                  <i class="fas fa-arrows-alt-v" />
+                </span>
+              </div>
+              <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'asc'">
+                <span class="icon button">
+                  <i class="fas fa-arrow-up" />
+                </span>
+                <span class="icon button">
+                  {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
+                  <button
+                    class="delete is-small multi-sort-cancel-icon"
+                    type="button"
+                    @click.stop="sortingPriorityRemoved(column.field)"
+                  />
+                </span>
+              </div>
+              <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'desc'">
+                <span class="icon button">
+                  <i class="fas fa-arrow-down" />
+                </span>
+                <span class="icon button">
+                  {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
+                  <button
+                    class="delete is-small multi-sort-cancel-icon"
+                    type="button"
+                    @click.stop="sortingPriorityRemoved(column.field)"
+                  />
+                </span>
+              </div>
+              <span>
+                {{ column.label }}
+              </span>
+            </div>
+            <div v-else>
+              {{ column.label }}
+            </div>
+          </template>
+          <template #default="props">
+            <span v-html="props.row['event-date']" />
+          </template>
         </b-table-column>
         <b-table-column
-          v-slot="props"
           field="user_id"
           label="Utilisateur"
           width="200"
           sortable
         >
-          <span v-html="props.row.user" />
+          <template #header="{ column }">
+            <div v-if="column.sortable">
+              <div v-if="sortingPriority.filter(obj => obj.field === column.field).length === 0">
+                <span
+                  class="icon button"
+                >
+                  <i class="fas fa-arrows-alt-v" />
+                </span>
+              </div>
+              <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'asc'">
+                <span class="icon button">
+                  <i class="fas fa-arrow-up" />
+                </span>
+                <span class="icon button">
+                  {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
+                  <button
+                    class="delete is-small multi-sort-cancel-icon"
+                    type="button"
+                    @click.stop="sortingPriorityRemoved(column.field)"
+                  />
+                </span>
+              </div>
+              <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'desc'">
+                <span class="icon button">
+                  <i class="fas fa-arrow-down" />
+                </span>
+                <span class="icon button">
+                  {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
+                  <button
+                    class="delete is-small multi-sort-cancel-icon"
+                    type="button"
+                    @click.stop="sortingPriorityRemoved(column.field)"
+                  />
+                </span>
+              </div>
+              <span>
+                {{ column.label }}
+              </span>
+            </div>
+            <div v-else>
+              {{ column.label }}
+            </div>
+          </template>
+          <template #default="props">
+            <span v-html="props.row.user" />
+          </template>
         </b-table-column>
 
         <b-table-column
-          v-slot="props"
           field="description"
           label="Description"
           sortable
         >
-          <span>{{ props.row.description }} </span>
+          <template #header="{ column }">
+            <div v-if="column.sortable">
+              <div v-if="sortingPriority.filter(obj => obj.field === column.field).length === 0">
+                <span
+                  class="icon button"
+                >
+                  <i class="fas fa-arrows-alt-v" />
+                </span>
+              </div>
+              <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'asc'">
+                <span class="icon button">
+                  <i class="fas fa-arrow-up" />
+                </span>
+                <span class="icon button">
+                  {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
+                  <button
+                    class="delete is-small multi-sort-cancel-icon"
+                    type="button"
+                    @click.stop="sortingPriorityRemoved(column.field)"
+                  />
+                </span>
+              </div>
+              <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'desc'">
+                <span class="icon button">
+                  <i class="fas fa-arrow-down" />
+                </span>
+                <span class="icon button">
+                  {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
+                  <button
+                    class="delete is-small multi-sort-cancel-icon"
+                    type="button"
+                    @click.stop="sortingPriorityRemoved(column.field)"
+                  />
+                </span>
+              </div>
+              <span>
+                {{ column.label }}
+              </span>
+            </div>
+            <div v-else>
+              {{ column.label }}
+            </div>
+          </template>
+          <template #default="props">
+            <span>{{ props.row.description }} </span>
+          </template>
         </b-table-column>
       </b-table>
     </div>
@@ -174,12 +346,18 @@ export default {
     ...mapActions("changelog", ["fetchFullChangelog"]),
     // Backend sorting
     async sortingPriorityRemoved(field) {
-      console.log("sorting removed")
+      console.log("sorting removed", field)
       const newPriority = this.sortingPriority.filter(
         (priority) => priority.field !== field
       );
       this.sortingPriority = [...newPriority];
-      console.log(newPriority, this.sortingPriority);
+      if (this.sortingPriority.length > 0) {
+          console.log(newPriority, this.sortingPriority);
+      } else {
+          // default sorting on descending event-date
+          this.sortingPriority = [{ field: "event-date", order: "desc" }];
+          console.log("Default sorting new Priority", newPriority, this.sortingPriority);
+      }
       await this.loadAsyncData();
     },
 
