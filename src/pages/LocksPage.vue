@@ -107,13 +107,13 @@
             <div v-if="column.sortable">
               <div v-if="sortingPriority.filter(obj => obj.field === column.field).length === 0">
                 <span
-                  class="icon button"
+                  class="icon button arrows-alt-v"
                 >
                   <i class="fas fa-arrows-alt-v" />
                 </span>
               </div>
               <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'asc'">
-                <span class="icon button">
+                <span class="icon button arrow-up">
                   <i class="fas fa-arrow-up" />
                 </span>
                 <span class="icon button">
@@ -126,7 +126,7 @@
                 </span>
               </div>
               <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'desc'">
-                <span class="icon button">
+                <span class="icon button arrow-down">
                   <i class="fas fa-arrow-down" />
                 </span>
                 <span class="icon button">
@@ -166,13 +166,13 @@
             <div v-if="column.sortable">
               <div v-if="sortingPriority.filter(obj => obj.field === column.field).length === 0">
                 <span
-                  class="icon button"
+                  class="icon button arrows-alt-v"
                 >
                   <i class="fas fa-arrows-alt-v" />
                 </span>
               </div>
               <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'asc'">
-                <span class="icon button">
+                <span class="icon button arrow-up">
                   <i class="fas fa-arrow-up" />
                 </span>
                 <span class="icon button">
@@ -185,7 +185,7 @@
                 </span>
               </div>
               <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'desc'">
-                <span class="icon button">
+                <span class="icon button arrow-down">
                   <i class="fas fa-arrow-down" />
                 </span>
                 <span class="icon button">
@@ -225,13 +225,13 @@
             <div v-if="column.sortable">
               <div v-if="sortingPriority.filter(obj => obj.field === column.field).length === 0">
                 <span
-                  class="icon button"
+                  class="icon button arrows-alt-v"
                 >
                   <i class="fas fa-arrows-alt-v" />
                 </span>
               </div>
               <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'asc'">
-                <span class="icon button">
+                <span class="icon button arrow-up">
                   <i class="fas fa-arrow-up" />
                 </span>
                 <span class="icon button">
@@ -244,7 +244,7 @@
                 </span>
               </div>
               <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'desc'">
-                <span class="icon button">
+                <span class="icon button arrow-down">
                   <i class="fas fa-arrow-down" />
                 </span>
                 <span class="icon button">
@@ -279,13 +279,13 @@
             <div v-if="column.sortable">
               <div v-if="sortingPriority.filter(obj => obj.field === column.field).length === 0">
                 <span
-                  class="icon button"
+                  class="icon button arrows-alt-v"
                 >
                   <i class="fas fa-arrows-alt-v" />
                 </span>
               </div>
               <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'asc'">
-                <span class="icon button">
+                <span class="icon button arrow-up">
                   <i class="fas fa-arrow-up" />
                 </span>
                 <span class="icon button">
@@ -298,7 +298,7 @@
                 </span>
               </div>
               <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'desc'">
-                <span class="icon button">
+                <span class="icon button arrow-down">
                   <i class="fas fa-arrow-down" />
                 </span>
                 <span class="icon button">
@@ -333,13 +333,13 @@
             <div v-if="column.sortable">
               <div v-if="sortingPriority.filter(obj => obj.field === column.field).length === 0">
                 <span
-                  class="icon button"
+                  class="icon button arrows-alt-v"
                 >
                   <i class="fas fa-arrows-alt-v" />
                 </span>
               </div>
               <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'asc'">
-                <span class="icon button">
+                <span class="icon button arrow-up">
                   <i class="fas fa-arrow-up" />
                 </span>
                 <span class="icon button">
@@ -352,7 +352,7 @@
                 </span>
               </div>
               <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'desc'">
-                <span class="icon button">
+                <span class="icon button arrow-down">
                   <i class="fas fa-arrow-down" />
                 </span>
                 <span class="icon button">
@@ -390,13 +390,13 @@
             <div v-if="column.sortable">
               <div v-if="sortingPriority.filter(obj => obj.field === column.field).length === 0">
                 <span
-                  class="icon button"
+                  class="icon button arrows-alt-v"
                 >
                   <i class="fas fa-arrows-alt-v" />
                 </span>
               </div>
               <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'asc'">
-                <span class="icon button">
+                <span class="icon button arrow-up">
                   <i class="fas fa-arrow-up" />
                 </span>
                 <span class="icon button">
@@ -409,7 +409,7 @@
                 </span>
               </div>
               <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'desc'">
-                <span class="icon button">
+                <span class="icon button arrow-down">
                   <i class="fas fa-arrow-down" />
                 </span>
                 <span class="icon button">
