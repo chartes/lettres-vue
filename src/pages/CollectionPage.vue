@@ -656,6 +656,7 @@ progress {
   & > .heading {
     display: flex;
     gap: 4px;
+    align-items: center;
     margin-bottom: 20px;
 
     font-size: 16px;
@@ -666,11 +667,29 @@ progress {
     text-transform: uppercase;
 
     .heading-content {
+      order: 1;
       display: inline-block;
       white-space: pre;
     }
 
+    span.icon {
+      display: inline-block;
+      width: 24px;
+      height: 24px;
+      background: url(../assets/images/icons/open_text.svg) center / 24px auto no-repeat;
+      order: 3;
+
+      i {
+        display: none;
+      }
+    }
+
+    &.is-closed span.icon {
+      background: url(../assets/images/icons/close_text.svg) center / 18px auto no-repeat;
+    }
+
     &::after {
+      order: 2;
       display: block;
       content: '';
       width: 100%;

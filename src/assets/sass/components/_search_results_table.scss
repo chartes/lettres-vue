@@ -175,7 +175,7 @@
         background-color: #F8F8F8;
 
         .detail-container {
-          padding: 20px 0 20px 40px;
+          padding: 20px 0;
           overflow: hidden;
 
           .document-page {
@@ -208,12 +208,16 @@
               text-transform: uppercase;
             }
 
-
             .document-section {
               font-family: $family-primary;
               font-size: 18px;
               line-height: 23px;
               color: #373737;
+              padding-left: 40px;
+
+              &:first-child {
+                border-bottom: solid 5px #FFFFFF;
+              }
 
               .witness-list {
                 ul.list-group {
