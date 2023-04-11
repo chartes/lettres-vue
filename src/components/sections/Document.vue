@@ -828,7 +828,20 @@ export default {
 
         span.icon {
           display: inline-block;
+          width: 24px;
+          height: 24px;
+          background: url(../../assets/images/icons/open_text.svg) center / 24px auto no-repeat;
+          order: 3;
+
+          i {
+            display: none;
+          }
+
+          &[aria-expanded=true] {
+            background: url(../../assets/images/icons/close_text.svg) center / 18px auto no-repeat;
+          }
         }
+
 
         span {
           font-size: 20px;

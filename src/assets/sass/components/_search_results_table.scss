@@ -214,24 +214,47 @@
               line-height: 23px;
               color: #373737;
               padding-left: 40px;
+              margin-bottom: 40px;
 
               &:first-child {
                 border-bottom: solid 5px #FFFFFF;
               }
 
+              &:last-child {
+                margin-bottom: 0;
+              }
+
+              .document-section-content {
+                margin-bottom: 20px;
+              }
+
+              /* Liste des témoins version preview (oeil seulement, colonnes inversées) */
               .witness-list {
                 ul.list-group {
                   list-style-position: inside;
 
                   li.list-group-item {
-                    background: url(#{$image-path}/icons/voir.svg) top 6px left / 24px auto no-repeat;
-                    padding: 0 0 0 32px;
+                    padding: 0 !important;
+                    border: none !important;
+                    margin: 0 0 10px !important;
+
+                    &:last-child {
+                      margin-bottom: 0 !important;
+                    }
 
                     .columns {
+                      flex-direction: row-reverse !important;
+                      gap: 10px;
                       margin: 0;
 
-                      &:last-child {
-                        margin-bottom: 10px;
+                      .column:first-child {
+                        flex: calc( 100% - 40px ) 0 0 !important;
+                        width: calc( 100% - 40px );
+                      }
+
+                      .column:last-child {
+                        flex: 30px 0 0 !important;
+                        width: 30px;
                       }
 
                       .column {
@@ -240,6 +263,15 @@
                         & > div > * {
                           display: inline-block;
                           margin-right: 5px;
+                        }
+
+                        .witness-actions {
+                          .controls {
+                            display: none !important;
+                          }
+                          .control {
+                            margin: 0 !important;
+                          }
                         }
                       }
                     }
