@@ -6,6 +6,10 @@
   @media screen and (max-width:1024px) { @content }
 }
 
+@mixin on-small-tablet {
+  @media screen and (max-width:800px) { @content }
+}
+
 @mixin on-mobile {
   @media screen and (max-width:640px) { @content }
 }

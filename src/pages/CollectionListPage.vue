@@ -225,7 +225,7 @@ export default {
 input[type=text],
 input[type=search] {
   height: auto;
-  padding: 4px 10px 5px 30px !important;
+  padding: 4px 30px 5px 10px !important;
   background-color: #FFFFFF;
   border: solid 1px #C5C5C5;
   border-radius: 5px;

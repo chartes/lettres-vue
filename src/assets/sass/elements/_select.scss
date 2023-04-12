@@ -1,0 +1,24 @@
+.select-parent {
+  display: inline-block;
+  overflow-x: hidden;
+  border: #C7C7C7 1px solid;
+  border-radius: 5px;
+
+  & > select {
+    width: calc(100% + 16px);
+    border: none;
+    background: url(#{$image-path}/icons/open_menu_coll.svg) right 26px center / 10px auto no-repeat;
+    padding: 8px 10px;
+
+    font-family: $family-primary;
+    font-size: 16px;
+    color: #6B6B6B;
+    font-weight: 400;
+
+    & > option {
+      font-weight: normal;
+    }
+  }
+
+}
+

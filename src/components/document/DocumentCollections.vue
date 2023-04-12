@@ -1,7 +1,6 @@
 <template>
   <div
     v-if="!collectionsLoading"
-    class="pt-5 pb-5"
   >
     <b-autocomplete
       v-if="editable"

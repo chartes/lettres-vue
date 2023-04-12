@@ -30,90 +30,94 @@
                     grouped
                     group-multiline
                   >
-                    <div class="control">
-                      <b-taglist attached>
-                        <b-tag>status</b-tag>
-                        <b-tag type="is-success is-light">
-                          {{ witness.status }}
-                        </b-tag>
-                      </b-taglist>
-                    </div>
-                    <div
-                      v-if="witness.tradition"
-                      class="control"
-                    >
-                      <b-taglist attached>
-                        <b-tag>tradition</b-tag>
-                        <b-tag type="is-success is-light">
-                          {{ witness.tradition }}
-                        </b-tag>
-                      </b-taglist>
-                    </div>
-                    <div
-                      v-if="witness.institution"
-                      class="control"
-                    >
-                      <b-taglist attached>
-                        <b-tag>institution</b-tag>
-                        <b-tag type="is-success is-light">
-                          {{ witness.institution.name }}
-                        </b-tag>
-                      </b-taglist>
-                    </div>
-                    <b-field v-if="editable">
-                      <div class="field has-addons">
-                        <p class="handle control">
-                          <button class="button is-small is-light">
-                            <span class="icon is-small">
-                              <i class="fas fa-arrows-alt" />
-                            </span>
-                          </button>
-                        </p>
-                        <p class="control">
-                          <button
-                            class="button is-small is-light"
-                            @click="
-                              () => {
-                                selectedWitness = witness;
-                                isComponentModalActive = true;
-                              }
-                            "
-                          >
-                            <span class="icon is-small">
-                              <i class="fas fa-edit" />
-                            </span>
-                          </button>
-                        </p>
-                        <p class="control">
-                          <button
-                            class="button is-small is-danger is-light"
-                            @click="deleteWitness(witness)"
-                          >
-                            <span class="icon is-small">
-                              <i class="fas fa-trash-alt" />
-                            </span>
-                          </button>
-                        </p>
+                    <div class="controls">
+                      <div class="control">
+                        <b-taglist attached>
+                          <b-tag>status</b-tag>
+                          <b-tag type="is-success is-light">
+                            {{ witness.status }}
+                          </b-tag>
+                        </b-taglist>
                       </div>
-                    </b-field>
-                    <b-field>
-                      <p class="control">
-                        <button
-                          rounded
-                          class="button is-small is-rounded display-manifest-button"
-                          :class="
-                            displayedWitness && displayedWitness.id === witness.id
-                              ? 'is-success'
-                              : 'is-light'
-                          "
-                          @click="showWitness(witness)"
-                        >
-                          <span class="icon is-small">
-                            <i class="far fa-eye" />
-                          </span>
-                        </button>
-                      </p>
-                    </b-field>
+                      <div
+                        v-if="witness.tradition"
+                        class="control"
+                      >
+                        <b-taglist attached>
+                          <b-tag>tradition</b-tag>
+                          <b-tag type="is-success is-light">
+                            {{ witness.tradition }}
+                          </b-tag>
+                        </b-taglist>
+                      </div>
+                      <div
+                        v-if="witness.institution"
+                        class="control"
+                      >
+                        <b-taglist attached>
+                          <b-tag>institution</b-tag>
+                          <b-tag type="is-success is-light">
+                            {{ witness.institution.name }}
+                          </b-tag>
+                        </b-taglist>
+                      </div>
+                    </div>
+                    <div class="buttons">
+                      <b-field v-if="editable">
+                        <div class="field has-addons">
+                          <p class="handle control">
+                            <button class="button is-small is-light arrows-btn">
+                              <span class="icon is-small">
+                                <i class="fas fa-arrows-alt" />
+                              </span>
+                            </button>
+                          </p>
+                          <p class="control">
+                            <button
+                              class="button is-small is-light edit-btn"
+                              @click="
+                                () => {
+                                  selectedWitness = witness;
+                                  isComponentModalActive = true;
+                                }
+                              "
+                            >
+                              <span class="icon is-small">
+                                <i class="fas fa-edit" />
+                              </span>
+                            </button>
+                          </p>
+                          <p class="control">
+                            <button
+                              class="button is-small is-danger is-light trash-btn"
+                              @click="deleteWitness(witness)"
+                            >
+                              <span class="icon is-small">
+                                <i class="fas fa-trash-alt" />
+                              </span>
+                            </button>
+                          </p>
+                        </div>
+                      </b-field>
+                      <b-field>
+                        <p class="control">
+                          <button
+                            rounded
+                            class="button is-small display-manifest-button eye-btn"
+                            :class="
+                              displayedWitness && displayedWitness.id === witness.id
+                                ? 'is-success'
+                                : 'is-light'
+                            "
+                            @click="showWitness(witness)"
+                          >
+                            <span class="icon is-small">
+                              <i class="far fa-eye" />
+                            </span>
+                          </button>
+                        </p>
+                      </b-field>
+                    </div>
                   </b-field>
                 </div>
               </div>
@@ -286,7 +290,8 @@ export default {
 .list-group-item {
   padding-top: 12px;
   padding-bottom: 17px;
-  border-bottom: 1px solid #f2f2f2;
+  border-bottom: 1px solid #FDB3CC;
+  margin-bottom: 20px;
 }
 
 .list-group-item i {
@@ -295,7 +300,105 @@ export default {
 
 .witness-actions {
   display: inline-flex;
-  width: max-content;
+  width: 100%;
+
+  ::v-deep {
+    & > .field {
+      width: 100%;
+
+      .field-body {
+        .field.is-grouped {
+          justify-content: space-between;
+          width: 100%;
+
+          .controls {
+            display: flex;
+            gap: 5px;
+
+            .control {
+              font-family: $family-primary;
+              font-weight: 400;
+              text-transform: uppercase;
+
+              &:not(:last-child) .tags:after {
+                content: "|";
+                margin: 0 5px 0 8px;
+              }
+
+              .tags {
+                gap: 2px;
+
+                & > .tag:first-child > span {
+                  font-size: 16px;
+                  color: #71757B;
+
+                  &:after {
+                    content: ":";
+                    margin: 0 3px;
+                  }
+                }
+                & > .tag:not(body).is-success.is-light {
+                  background: none;
+                  font-size: 16px;
+                  color: #363636;
+                }
+              }
+            }
+          }
+
+          .buttons {
+            display: flex;
+
+            .field {
+              margin-right: 0;
+
+              .control {
+                width: 29px;
+                margin-left: 20px;
+              }
+
+              .button {
+                width: 100%;
+                padding: 0;
+                background-color: transparent;
+
+                span.icon {
+                  display: inline-block;
+                  width: 25px;
+                  height: 25px;
+                  margin: 0;
+                  padding: 0;
+                  background-repeat: no-repeat;
+                  background-position: center;
+
+                  & > i {
+                    display: none;
+                  }
+                }
+
+                &.arrows-btn span.icon {
+                  background-image: url(../../assets/images/icons/bouton_bouge.svg);
+                }
+
+                &.trash-btn span.icon {
+                  background-image: url(../../assets/images/icons/bouton_supprimer_sans_bord.svg);
+                }
+
+                &.edit-btn span.icon {
+                  background-image: url(../../assets/images/icons/bouton_edit.svg);
+                }
+
+                &.eye-btn span.icon {
+                  width: 29px;
+                  background-image: url(../../assets/images/icons/bouton_voir.svg);
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 }
 .display-manifest-button {
   width: 52px;

@@ -179,7 +179,7 @@
         </div>
         <div class="row m-auto">
           <div
-            class="container columns cards is-vcentered"
+            class="container columns cards"
           >
             <div
               v-for="featured in featured_collections"
@@ -397,27 +397,69 @@ export default {
 
 article > section:first-child > .narrow-container {
   margin-top: 115px;
+
+  @include on-tablet {
+    margin-top: 50px;
+  }
+
+  @include on-mobile {
+    margin-top: 25px;
+    margin-bottom: 50px;
+  }
+
 }
 
 article > section > .narrow-container > .numbers,
 article > section > .narrow-container {
   margin-bottom: 85px;
+
+  @include on-mobile {
+    margin-bottom: 50px;
+  }
 }
 
 article > section .homepage-intro {
   gap: 95px;
+
+  @include on-tablet {
+    gap: 40px;
+  }
+
+  @include on-mobile {
+    flex-direction: column;
+    gap: 0;
+  }
 }
 
 article > section .content h3 {
   font-family: $family-primary;
   font-size: 28px;
   color: #000000;
+  margin-bottom: 40px;
+
+  @include on-tablet {
+    font-size: $font-size-title-tablet;
+    margin-bottom: 20px;
+  }
+
+  @include on-mobile {
+    font-size: $font-size-title-mobile;
+    margin-bottom: 20px;
+  }
 }
 
 article > section .content p {
   font-family: $family-primary;
   font-size: 20px;
   line-height: 1.25;
+
+  @include on-tablet {
+    font-size: $font-size-text-tablet;
+  }
+
+  @include on-mobile {
+    font-size: $font-size-text-mobile;
+  }
 }
 
 #card_image {
@@ -438,6 +480,14 @@ article > section .content p {
   line-height: 1;
   font-weight: 700;
   text-align: center;
+
+  @include on-tablet {
+    font-size: 40px;
+  }
+
+  @include on-mobile {
+    font-size: 25px;
+  }
 }
 
 .column.col_meta {
@@ -471,15 +521,36 @@ article > section .content p {
 
 
 .cards {
+  display: flex;
+  flex-wrap: wrap;
   gap: 30px;
   width: 100%;
   margin: 0;
+
+  @include on-small-tablet {
+    gap: 20px
+  }
+
 }
+
 .cards .column {
   flex: calc( 33.33% - 20px) 0 0;
+  width: calc( 33.33% - 20px) !important;
   padding: 0;
+
+  @include on-small-tablet {
+    flex: calc( 50% - 10px) 0 0;
+    width: calc( 50% - 10px) !important;
+  }
+
+  @include on-mobile {
+    flex: 100% 0 0;
+    width: 100% !important;
+  }
+
 }
 .card {
+  height: 100%;
   overflow: hidden;
   background-color: #F0F0F0;
   border-radius: 10px;
@@ -491,6 +562,16 @@ article > section .content p {
     font-size: 18px;
     font-weight: 400;
     color: #4A4A4A;
+
+    &:hover {
+      .card-body {
+        h5.card-title {
+          text-decoration: underline;
+          text-decoration-style: dotted;
+          text-underline-offset: 2px;
+        }
+      }
+    }
   }
 
   .card-header {
@@ -523,6 +604,11 @@ article > section .content p {
 
   .card-footer {
     padding-top: 30px;
+
+    @include on-tablet {
+      flex-direction: column;
+    }
+
   }
 }
 

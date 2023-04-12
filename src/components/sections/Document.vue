@@ -61,8 +61,8 @@
           class="document__content"
         >
           <!-- titre et langue -->
-          <section class="document-section columns">
-            <div v-if="canEdit" class="heading is-uppercase is-flex is-justify-content-space-between">
+          <section class="document-section document-section-for-title">
+            <div class="heading is-uppercase is-flex is-justify-content-space-between">
               <span class="heading-content">Titre</span>
               <span
                 v-if="canEdit"
@@ -96,7 +96,7 @@
             </b-collapse>
           </section>
 
-          <!-- correspondents -->
+          <!-- correspondants -->
           <section class="document-section">
             <div class="heading is-uppercase is-flex is-justify-content-space-between">
               <span class="heading-content">Correspondants</span>
@@ -557,7 +557,7 @@ export default {
   },
   data() {
     return {
-      isTitleOpen: false,
+      isTitleOpen: true,
       isPersonsOpen: false,
       isDatesOpen: false,
       isPlacesOpen: false,
@@ -716,10 +716,6 @@ export default {
   width: 100%;
   margin-top: 30px;
 
-  &.is-preview {
-    margin-top: 0;
-  }
-
   & > .columns {
     align-items: center;
     margin: 0 !important;
@@ -731,18 +727,167 @@ export default {
   }
 
   & > .document__content {
-    margin-top: 20px;
     margin-bottom: 20px;
   }
 
-  &.is-preview > .document__content {
-    margin-top: 0;
-    margin-bottom: 0;
+  // Mode lecture
+  &:not(.can-edit) {
 
-    & > .document-section:first-child {
-      margin-top: 0;
+    .document-section {
+      margin-bottom: 60px;
+
+      .heading span.icon {
+        display: none !important;
+      }
+
+      // Cas particulier du Titre du document
+      &.document-section-for-title {
+
+        .heading {
+          display: none !important;
+        }
+
+        & > .collapse {
+          ::v-deep {
+            .collapse-content {
+              padding: 0;
+            }
+          }
+        }
+      }
+
+      & > .collapse {
+        ::v-deep {
+          .collapse-content {
+            display: block !important;
+            padding: 0 20px;
+
+            .panel-block {
+              padding-left: 0;
+              padding-right: 0;
+            }
+          }
+        }
+      }
     }
   }
+
+  // Mode preview
+  &.is-preview {
+    margin-top: 0;
+
+    & > .document__content {
+      margin-top: 0;
+      margin-bottom: 0;
+
+      & > .document-section:first-child {
+        margin-top: 0;
+      }
+    }
+
+    .document-section-content {
+      margin-top: 10px;
+      margin-left: 0;
+    }
+  }
+
+  // Mode édition
+  &.can-edit {
+
+    nav.previous-next-navigation {
+      padding-bottom: 10px;
+      border-bottom: #FDB3CC solid 1px;
+      margin-bottom: 30px;
+    }
+
+    & > .document__content {
+      margin-top: 20px;
+    }
+
+    .document-section {
+      border: 1px solid #FF0052;
+      border-radius: 5px;
+      padding: 30px;
+      margin-bottom: 30px;
+
+      &.columns {
+        margin: 30px 0 40px !important;
+      }
+
+      /* TODO Denis : supprimer le ::before pour la section Titre (ajouté au HTML comme pour les autres sections, columns supprimées)*/
+      // Section du titre
+      &.columns::before {
+        content: "TITRE";
+        display: inline-block;
+        margin-bottom: 20px;
+        font-weight: 500;
+        color: #FF0052;
+      }
+
+      & > .heading {
+
+        span.icon {
+          display: inline-block;
+          width: 24px;
+          height: 24px;
+          background: url(../../assets/images/icons/open_text.svg) center / 24px auto no-repeat;
+          order: 3;
+
+          i {
+            display: none;
+          }
+
+          &[aria-expanded=true] {
+            background: url(../../assets/images/icons/close_text.svg) center / 18px auto no-repeat;
+          }
+        }
+
+
+        span {
+          font-size: 20px;
+        }
+
+        &::after {
+          display: none;
+        }
+      }
+
+      & > .document-section-content {
+        margin-left: 30px;
+        margin-bottom: 0;
+
+        ::v-deep {
+
+          .has-add-btn {
+            display: flex !important;
+            align-items: center;
+            gap: 8px;
+            line-height: 20px;
+
+            a.tag .icon {
+              width: 20px !important;
+              height: 20px !important;
+              margin: 0 !important;
+              padding: 0 !important;
+
+              .icon__line {
+                stroke: #FFFFFF;
+              }
+            }
+
+            a.tag:hover .icon circle {
+              fill: #C00055;
+            }
+
+          }
+
+        }
+      }
+
+    }
+
+  }
+
 }
 
 nav.previous-next-navigation {
@@ -764,7 +909,9 @@ nav.previous-next-navigation {
       background: url(../../assets/images/icons/lettre_nav_precedent.svg) center / 30px auto no-repeat !important;
     }
 
+    &.pagination-next,
     &.pagination-previous {
+      flex-grow: 0;
     }
 
     &.pagination-next::after {
@@ -921,83 +1068,6 @@ nav.previous-next-navigation {
       }
 
     }
-  }
-
-}
-
-
-// Mode édition
-
-.document.can-edit {
-
-  nav.previous-next-navigation {
-    padding-bottom: 10px;
-    border-bottom: #FDB3CC solid 1px;
-    margin-bottom: 30px;
-  }
-
-  .document-section {
-    border: 1px solid #FF0052;
-    border-radius: 5px;
-    padding: 30px;
-    margin-bottom: 30px;
-
-    &.columns {
-      margin: 30px 0 40px !important;
-    }
-    /* TODO Denis : supprimer le ::before pour la section Titre (ajouté au HTML comme pour les autres sections)*/
-    // Section du titre
-    &.columns::before {
-      //content: "TITRE";
-      display: inline-block;
-      margin-bottom: 20px;
-      font-weight: 500;
-      color: #FF0052;
-    }
-
-    & .heading {
-
-      span {
-        font-size: 20px;
-      }
-
-      &::after {
-        display: none;
-      }
-    }
-
-    & .document-section-content {
-      margin-left: 30px;
-      margin-bottom: 0;
-
-      ::v-deep {
-
-        .has-add-btn {
-          display: flex !important;
-          align-items: center;
-          gap: 8px;
-          line-height: 20px;
-
-          a.tag .icon {
-            width: 20px !important;
-            height: 20px !important;
-            margin: 0 !important;
-            padding: 0 !important;
-
-            .icon__line {
-              stroke: #FFFFFF;
-            }
-          }
-
-          a.tag:hover .icon circle {
-            fill: #C00055;
-          }
-
-        }
-
-      }
-    }
-
   }
 
 }

@@ -16,14 +16,16 @@
             class="row"
           >
             <p class="homepage_title">
-              Lettres
+              Ecco
             </p>
           </div>
           <div
             class="row"
           >
             <p class="homepage_subtitle">
-              de la Première Modernité
+              Édition collaborative
+              <br/>
+              des correspondances modernes
             </p>
           </div>
           <div
@@ -222,21 +224,6 @@ export default {
   width: $container-max-width;
   margin: 18px auto;
   background-color: white;
-
-  @include on-small-desktop {
-    width: calc( 100vw - 2 * $container-small-desktop-margin );
-    margin: 18px $container-small-desktop-margin;
-  }
-
-  @include on-tablet {
-    width: calc( 100vw - 2 * $container-tablet-margin );
-    margin: 18px $container-tablet-margin;
-  }
-
-  @include on-mobile {
-    width: calc( 100vw - 2 * $container-mobile-margin );
-    margin: 18px $container-mobile-margin;
-  }
 }
 .main-column-content section .container {
   margin: 0 !important;
@@ -252,13 +239,13 @@ export default {
   }
 
   @include on-tablet {
-    margin-left: 5%;
-    margin-right: 5%;
+    margin-left: 6%;
+    margin-right: 6%;
   }
 
   @include on-mobile {
-    margin-left: 0;
-    margin-right: 0;
+    margin-left: 2%;
+    margin-right: 2%;
   }
 }
 
@@ -301,6 +288,19 @@ footer {
   nav {
     width: $container-max-width;
     margin: 0 auto;
+
+    @include on-small-desktop {
+      width: 100%;
+      padding: 0 $container-small-desktop-margin;
+    }
+
+    @include on-tablet {
+      padding: 0 $container-tablet-margin;
+    }
+
+    @include on-mobile {
+      padding: 0 $container-mobile-margin;
+    }
 
     .enc-logo {
       height: 70px;
@@ -370,30 +370,40 @@ footer {
   max-height: 250px;
 }
 .homepage_title {
-  margin-top: 20px;
   font-family: $family-apptitle;
   font-weight: 200;
   font-size: 210px;
-  line-height: 1;
+  line-height: 1.1;
   color: white;
   text-align: center;
 
   @include on-tablet {
     font-size: 100px;
   }
+
+  @include on-mobile {
+    font-size: 80px;
+  }
 }
+
 .homepage_subtitle {
+  max-width: 500px;
+  margin: 0 auto;
   font-family: $family-apptitle;
-  font-weight: 200;
-  font-size: 58px;
-  line-height: 1;
+  font-size: 26px;
+  font-weight: 600;
+  line-height: 1.2;
   color: white;
   text-align: center;
-  transform: translateY(-18px);
+  transform: translateY(-20px);
 
   @include on-tablet {
-    font-size: 30px;
+    font-size: 22px;
     transform: none;
+  }
+
+  @include on-mobile {
+    font-size: 16px;
   }
 }
 .metadata {
@@ -404,6 +414,7 @@ footer {
   text-align: center;
 }
 .card {
+  height: 100%;
   overflow: hidden;
   background-color: #F0F0F0;
   border-radius: 10px;
@@ -413,7 +424,7 @@ footer {
   color: rgb(255, 0, 83);
 }
 a.portail_button {
-  margin-top: 26px;
+  margin: 50px 0;
   padding: 0 1em;
   background-color: transparent;
   border-color: #FFFFFF;
@@ -445,7 +456,18 @@ a.portail_button:hover {
     padding-left: $container-small-desktop-margin;
     padding-right: $container-small-desktop-margin;
   }
+
+  @include on-tablet {
+    padding-left: $container-tablet-margin;
+    padding-right: $container-tablet-margin;
+  }
+
+  @include on-mobile {
+    padding-left: $container-mobile-margin;
+    padding-right: $container-mobile-margin;
+  }
 }
+
 .search_row {
   background-color: #230914;
   padding-top: 25px;
@@ -464,6 +486,7 @@ a.portail_button:hover {
   display: flex;
   align-items: flex-start;
   gap: 40px;
+  overflow: hidden;
 
   & > .filters-column {
     flex: 350px 0 0;
@@ -484,15 +507,21 @@ a.portail_button:hover {
   }
 
   & > .main-column {
+    width: 100%;
     flex: 100% 0 0;
 
     .main-column-content {
       width: 100%;
+
+      .container {
+        max-width: 100%;
+      }
     }
   }
 
   &.with-side-bar  > .main-column {
-    flex: calc( 100% - 350px ) 0 0;
+    flex: calc( 100% - 350px - 40px ) 0 0;
+    width: calc( 100% - 350px - 40px );
   }
 }
 

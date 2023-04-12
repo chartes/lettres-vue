@@ -62,6 +62,12 @@ export default {
 
     a {
       position: relative;
+
+      &:hover {
+        text-decoration: underline;
+        text-decoration-style: dotted;
+        text-underline-offset: 2px;
+      }
     }
 
     &:not(:first-child) a::after {

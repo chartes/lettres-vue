@@ -1,5 +1,8 @@
 <template>
-  <div class="section">
+  <div
+      class="section"
+      :class="toggleCssClass"
+  >
     <div class="document-list-header is-flex is-justify-content-space-between is-align-items-center">
       <div class="is-inline-block">
         <div class="results-count">
@@ -11,6 +14,7 @@
           <div class="switch-button-div">
             <div
               class="switch-button"
+              :class="toggleCssClass"
               @click="toggle"
             >
               <input
@@ -67,7 +71,7 @@
       </a>
     </div>
 
-    <div class="">
+    <div :class="toggleCssClass">
       <b-table
         ref="multiSortTable"
         :data="tableData"
@@ -106,16 +110,16 @@
             <div v-if="column.sortable">
               <div v-if="sortingPriority.filter(obj => obj.field === column.field).length === 0">
                 <span
-                  class="icon button"
+                  class="icon button arrows-alt-v"
                 >
                   <i class="fas fa-arrows-alt-v"></i>
                 </span>
               </div>
               <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'asc'">
-                <span class="icon button">
+                <span class="icon button arrow-up">
                   <i class="fas fa-arrow-up"></i>
                 </span>
-                <span class="icon button">
+                <span class="icon button multi-sort-cancel-icon">
                   {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
                   <button
                     class="delete is-small multi-sort-cancel-icon"
@@ -125,7 +129,7 @@
                 </span>
               </div>
               <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'desc'">
-                <span class="icon button">
+                <span class="icon button arrow-down">
                   <i class="fas fa-arrow-down"></i>
                 </span>
                 <span class="icon button">
@@ -164,16 +168,16 @@
             <div v-if="column.sortable">
               <div v-if="sortingPriority.filter(obj => obj.field === column.field).length === 0">
                 <span
-                  class="icon button"
+                  class="icon button arrows-alt-v"
                 >
                   <i class="fas fa-arrows-alt-v"></i>
                 </span>
               </div>
               <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'asc'">
-                <span class="icon button">
+                <span class="icon button arrow-up">
                   <i class="fas fa-arrow-up"></i>
                 </span>
-                <span class="icon button">
+                <span class="icon button sort-index">
                   {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
                   <button
                     class="delete is-small multi-sort-cancel-icon"
@@ -183,10 +187,10 @@
                 </span>
               </div>
               <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'desc'">
-                <span class="icon button">
+                <span class="icon button arrow-down">
                   <i class="fas fa-arrow-down"></i>
                 </span>
-                <span class="icon button">
+                <span class="icon button sort-index">
                   {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
                   <button
                     class="delete is-small multi-sort-cancel-icon"
@@ -217,16 +221,16 @@
             <div v-if="column.sortable">
               <div v-if="sortingPriority.filter(obj => obj.field === column.field).length === 0">
                 <span
-                  class="icon button"
+                  class="icon button arrows-alt-v"
                 >
                   <i class="fas fa-arrows-alt-v"></i>
                 </span>
               </div>
               <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'asc'">
-                <span class="icon button">
+                <span class="icon button arrow-up">
                   <i class="fas fa-arrow-up"></i>
                 </span>
-                <span class="icon button">
+                <span class="icon button sort-index">
                   {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
                   <button
                     class="delete is-small multi-sort-cancel-icon"
@@ -236,10 +240,10 @@
                 </span>
               </div>
               <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'desc'">
-                <span class="icon button">
+                <span class="icon button arrow-down">
                   <i class="fas fa-arrow-down"></i>
                 </span>
-                <span class="icon button">
+                <span class="icon button sort-index">
                   {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
                   <button
                     class="delete is-small multi-sort-cancel-icon"
@@ -284,6 +288,50 @@
           label="Destinataire(s)"
         >
           {{ props.row.recipients }}
+        </b-table-column>
+
+        <b-table-column
+            field="expéditeur"
+            label="Expéditeur"
+            :td-attrs="columnTdAttrs"
+            sortable
+        >
+          <template v-slot="props">
+            <p>(personne) {{ props.row.sender }}</p>
+          </template>
+        </b-table-column>
+
+        <b-table-column
+            field="destinataire"
+            label="Destinataire"
+            :td-attrs="columnTdAttrs"
+            sortable
+        >
+          <template v-slot="props">
+            <p>(personnes) {{ props.row.recipient }}</p>
+          </template>
+        </b-table-column>
+
+        <b-table-column
+            field="lieu-expedition"
+            label="Lieu d'expédition"
+            :td-attrs="columnTdAttrs"
+            sortable
+        >
+          <template v-slot="props">
+            <p>(lieu) {{ props.row.origin }}</p>
+          </template>
+        </b-table-column>
+
+        <b-table-column
+            field="lieu-destination"
+            label="Lieu de destination"
+            :td-attrs="columnTdAttrs"
+            sortable
+        >
+          <template v-slot="props">
+            <p>(lieu) {{ props.row.destination }}</p>
+          </template>
         </b-table-column>
 
         <template #empty>
@@ -357,7 +405,9 @@ export default {
     totalPages: function() {
       return Math.ceil(this.totalCount / this.pageSize)
     },
-
+    toggleCssClass: function() {
+      return this.isActive ? 'is-active' : 'is-inactive';
+    },
   },
   watch: {
     documents() {
@@ -457,7 +507,7 @@ export default {
       } else {
         return null
       }
-    },
+    }
   }
 };
 </script>
@@ -467,165 +517,188 @@ export default {
 @import "@/assets/sass/components/_search_results_table.scss";
 @import "@/assets/sass/components/_search_results_pagination.scss";
 
-  .section {
-    width: 100%;
-    padding: 70px 0 0 !important;
+.section {
+  width: 100%;
+  padding: 70px 0 0 !important;
+}
+progress {
+  margin-top: 30px;
+}
+.switch-button {
+  background-color: lightgrey;
+  border-radius: 30px;
+  overflow: hidden;
+  width: 240px;
+  height: 35px;
+  text-align: center;
+  position: relative;
+  padding-right: 120px;
+
+  font-family: $family-primary;
+  font-size: 14px;
+
+  color: white;
+  transition: all ease-in-out 300ms;
+
+  &.is-active {
+    color: grey;
+    .switch-button-label-span {
+      color: white;
+    }
   }
-  progress {
-    margin-top: 30px;
+
+  &.is-inactive {
+    color: white;
+    .switch-button-label-span {
+      color: grey;
+    }
   }
-  .pagination-controls {
+
+  &:before {
+    content: "DEPLIE";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    width: 120px;
+    height: 35px;
     display: flex;
     align-items: center;
-    /*visibility: hidden;*/
-
-    & > * {
-      display: inline-block;
-      width: 38px;
-      height: 38px;
-      margin-right: 4px;
-    }
-    & > a {
-      display: inline-block;
-      width: 38px;
-      height: 38px;
-      background-color: #C3C3C3;
-      border-radius: 3.2px;
-    }
-    & > a.disabled {
-      cursor: not-allowed !important;
-    }
-    & > a.first-page {
-      background: #C3C3C3 url(../../assets/images/icons/page_debut.svg)  center / 28px auto no-repeat;
-    }
-    & > a.previous-page {
-      background: #C3C3C3 url(../../assets/images/icons/page_precedent.svg) center / 28px auto no-repeat;
-    }
-    & > a.next-page {
-      background: #C3C3C3 url(../../assets/images/icons/page_suivant.svg) center / 28px auto no-repeat;
-    }
-    & > a.last-page {
-      background: #C3C3C3 url(../../assets/images/icons/page_fin.svg) center / 28px auto no-repeat;
-    }
-    & > input {
-      height: 38px !important;
-      padding: 0 !important;
-      border: 1px solid #C00055;
-      border-radius: 3.2px;
-
-      font-family: $family-primary;
-      font-size: 18px;
-      color: #CB2158;
-      font-weight: 800;
-      text-align: center;
-      text-decoration: none;
-
-      &:focus {
-        outline: 1px solid #C00055;
-      }
-    }
-
-    & > span.label-sur-page {
-      font-family: $family-primary;
-      font-size: 11px;
-      line-height: 38px;
-      color: #979797;
-      font-weight: 500;
-      text-align: center;
-      text-transform: uppercase;
-    }
-
-    & > span.total-pages {
-      background-color: #DFDFDF;
-      border-radius: 3.2px;
-
-      font-family: $family-primary;
-      font-size: 18px;
-      line-height: 38px;
-      color: #818181;
-      text-align: center;
-      font-weight: 600;
-      text-transform: uppercase;
-    }
+    justify-content: center;
+    z-index: 3;
+    pointer-events: none;
   }
 
-  .switch-button {
-    background-color: lightgrey;
-    border-radius: 30px;
-    overflow: hidden;
-    width: 240px;
-    text-align: center;
-    color: grey;
-    position: relative;
-    padding-right: 120px;
-    position: relative;
+  &-checkbox {
+    cursor: pointer;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    z-index: 2;
 
-    &:before {
-      content: "DEPLIE";
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      right: 0;
-      width: 120px;
+    &:checked + .switch-button-label:before {
+      transform: translateX(120px);
+      transition: transform 300ms linear;
+    }
+
+    & + .switch-button-label {
+      position: relative;
       display: flex;
-      align-items: center;
       justify-content: center;
-      z-index: 3;
+      align-items: center;
+      user-select: none;
       pointer-events: none;
-    }
-
-    &-checkbox {
-      cursor: pointer;
-      position: absolute;
-      top: 0;
-      left: 0;
-      bottom: 0;
-      width: 100%;
       height: 100%;
-      opacity: 0;
-      z-index: 2;
 
-      &:checked + .switch-button-label:before {
-        transform: translateX(120px);
-        transition: transform 300ms linear;
+      &:before {
+        content: "";
+        background: rgb(255, 0, 83);
+        height: 35px;
+        width: 100%;
+        position: absolute;
+        left: 0;
+        top: 0;
+        border-radius: 30px;
+        transform: translateX(0);
+        transition: transform 300ms;
       }
 
-      & + .switch-button-label {
+      .switch-button-label-span {
         position: relative;
-        padding: 15px 0;
-        display: block;
-        user-select: none;
-        pointer-events: none;
-
-        &:before {
-          content: "";
-          background: rgb(255, 0, 83);
-          height: 100%;
-          width: 100%;
-          position: absolute;
-          left: 0;
-          top: 0;
-          border-radius: 30px;
-          transform: translateX(0);
-          transition: transform 300ms;
-        }
-
-        .switch-button-label-span {
-          position: relative;
-          color: white;
-        }
       }
     }
   }
-  /* Chrome, Safari, Edge, Opera */
-  input::-webkit-outer-spin-button,
-  input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
+}
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  /*visibility: hidden;*/
+
+  & > * {
+    display: inline-block;
+    width: 38px;
+    height: 38px;
+    margin-right: 6px;
+  }
+  & > a {
+    display: inline-block;
+    width: 38px;
+    height: 38px;
+    background-color: #C3C3C3;
+    border-radius: 3.2px;
+  }
+  & > a.disabled {
+    cursor: not-allowed !important;
+  }
+  & > a.first-page {
+    background: #C3C3C3 url(../../assets/images/icons/page_debut.svg)  center / 28px auto no-repeat;
+  }
+  & > a.previous-page {
+    background: #C3C3C3 url(../../assets/images/icons/page_precedent.svg) center / 28px auto no-repeat;
+  }
+  & > a.next-page {
+    background: #C3C3C3 url(../../assets/images/icons/page_suivant.svg) center / 28px auto no-repeat;
+  }
+  & > a.last-page {
+    background: #C3C3C3 url(../../assets/images/icons/page_fin.svg) center / 28px auto no-repeat;
+  }
+  & > input[type=number],
+  & > input[type=text] {
+    height: 38px !important;
+    padding: 0 !important;
+    border: 1px solid #C00055;
+    border-radius: 3.2px;
+
+    font-family: $family-primary;
+    font-size: 18px;
+    color: #CB2158;
+    font-weight: 800;
+    text-align: center;
+    text-decoration: none;
+
+    &:focus {
+      outline: 1px solid #C00055;
+    }
   }
 
-  /* Firefox */
-  input[type=number] {
-    -moz-appearance: textfield;
+  & > span.label-sur-page {
+    font-family: $family-primary;
+    font-size: 11px;
+    line-height: 38px;
+    color: #979797;
+    font-weight: 500;
+    text-align: center;
+    text-transform: uppercase;
   }
+
+  & > span.total-pages {
+    background-color: #DFDFDF;
+    border-radius: 3.2px;
+
+    font-family: $family-primary;
+    font-size: 18px;
+    line-height: 38px;
+    color: #818181;
+    text-align: center;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+}
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
 </style>

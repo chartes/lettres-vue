@@ -1,16 +1,39 @@
 <template>
-  <div class="large-container">
+  <div
+    class="large-container"
+    :class="toggleCssClass"
+  >
     <div class="collection-card-parent">
       <collection-interactive-card
         :collection-id="collectionId"
         :editable="true"
       />
     </div>
+
+    <section class="collection-section mb-5">
+      <div class="heading is-uppercase">
+        <span class="heading-content">Historique (TEST)</span>
+        <span
+            aria-controls="section"
+            class="icon"
+        >
+          <i class="fas fa-angle-down"></i>
+        </span>
+      </div>
+      <div class="collection-section-content">
+        <p>Catherine de Médicis (1519-1589) est la fille du duc d’Urbino Laurent de Médicis et sde Madeleine de La Tour d’Auvergne. Épouse du duc d’orléans, second fils de François Ier, elle devient reine de France lorsque celui accède au trône de France en 1547. Trois de ses fils se succèdent ensuite comme rois de France, François II (1559-1560), Charles IX (1560-1574) et Henri III (1574-1589). Elle assure la régence du royaume à deux reprises (décembre 1560-août 1563 et février-septembre 1574), mais son influence sur le gouvernement de la France durant plus de trois décennies est très importante, ainsi qu’en témoigne sa correspondance.</p>
+        <p>Ses lettres autographes reflètent la double culture de cette femme à la double culture, italienne et française. Son intense activité d’épistolière est  toutefois avant tout documentée par les très nombreuses lettres écrites pour elle par ses secrétaires à des destinataires très variés, souverains étrangers, membres de sa famille ou de la cour, mais aussi agents royaux en France et en poste en Europe.</p>
+        <p>Gouverner par correspondance fut un moteur et un instrument essentiels de l’action de cette reine, puis reine-mère qui oscilla entre une politique de conciliation entre catholiques et protestants, puis une défense ferme de la monarchie contre tous ceux (réformés ou catholiques radicaux) qui menaçaient l’unité du royaume autour du souverain incarné par ses fils.</p>
+      </div>
+    </section>
+
     <section class="mb-5">
       <div class="is-flex">
-        <span class="collection-documents">{{ totalCount }} DOCUMENTS</span>
+        <span class="collection-documents">
+          <span class="documents-count">{{ totalCount }}</span> DOCUMENTS
+        </span>
       </div>
-      <div class="is-flex is-justify-content-flex-end">
+      <div class="search-collection-parent is-flex is-justify-content-flex-end">
         <router-link
           :to="{ name: 'search'}"
         >
@@ -67,12 +90,12 @@
         </div>
         <div
           v-if="!isActive"
-          class="field is-inline-block px-1"
+          class="field is-inline-block mb-0 px-1"
         >
           <!--v-if="!isActive && isFulltextSearch"-->
-          <div class="control mb-6 block is-inline-block sort-options">
-            <span> Tris </span>
-            <div class="is-inline-block">
+          <div class="control block is-flex is-align-items-center mb-0 sort-options">
+            <span>Tris</span>
+            <div class="is-inline-block select-parent">
               <select
                 id="tri-select"
                 v-model="sortingPriority"
@@ -111,22 +134,22 @@
                   Période du sujet (borne sup.)
                 </option>
               </select>
-              <span
-                v-if="sortingPriority"
-                class="icon button"
-                @click="sortingPriority = sortingPriority.replace('-', '')"
-              >
-                <i class="fas fa-arrow-up" />
-              </span>
-              <span
-                v-else
-                v-show="sortingPriority.length > 0"
-                class="icon button"
-                @click="sortingPriority = `-${sortingPriority}`"
-              >
-                <i class="fas fa-arrow-down" />
-              </span>
             </div>
+            <span
+              v-if="sortingPriority"
+              class="icon button arrow-up"
+              @click="sortingPriority = sortingPriority.replace('-', '')"
+            >
+              <i class="fas fa-arrow-up" />
+            </span>
+            <span
+              v-else
+              v-show="sortingPriority.length > 0"
+              class="icon button arrow-down"
+              @click="sortingPriority = `-${sortingPriority}`"
+            >
+              <i class="fas fa-arrow-down" />
+            </span>
           </div>
         </div>
         <div class="is-inline-block px-1">
@@ -134,6 +157,7 @@
             <div class="switch-button-div">
               <div
                 class="switch-button"
+                :class="toggleCssClass"
                 @click="toggle"
               >
                 <input
@@ -153,7 +177,7 @@
       </div>
     </section>
     <section>
-      <div class="">
+      <div :class="toggleCssClass">
         <b-table
           ref="multiSortTable"
           :data="tableData"
@@ -183,16 +207,16 @@
               <div v-if="column.sortable">
                 <div v-if="sortingPriority.filter(obj => obj.field === column.field).length === 0">
                   <span
-                    class="icon button"
+                    class="icon button arrows-alt-v"
                   >
                     <i class="fas fa-arrows-alt-v" />
                   </span>
                 </div>
                 <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'asc'">
-                  <span class="icon button">
-                    <i class="fas fa-arrow-up" />
+                  <span class="icon button arrow-up">
+                    <i class="fas fa-arrow-up"></i>
                   </span>
-                  <span class="icon button">
+                  <span class="icon button sort-index">
                     {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
                     <button
                       class="delete is-small multi-sort-cancel-icon"
@@ -202,10 +226,10 @@
                   </span>
                 </div>
                 <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'desc'">
-                  <span class="icon button">
-                    <i class="fas fa-arrow-down" />
+                  <span class="icon button arrow-down">
+                    <i class="fas fa-arrow-down"></i>
                   </span>
-                  <span class="icon button">
+                  <span class="icon button sort-index">
                     {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
                     <button
                       class="delete is-small multi-sort-cancel-icon"
@@ -241,16 +265,16 @@
               <div v-if="column.sortable">
                 <div v-if="sortingPriority.filter(obj => obj.field === column.field).length === 0">
                   <span
-                    class="icon button"
+                    class="icon button arrows-alt-v"
                   >
                     <i class="fas fa-arrows-alt-v" />
                   </span>
                 </div>
                 <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'asc'">
-                  <span class="icon button">
-                    <i class="fas fa-arrow-up" />
+                  <span class="icon button arrow-up">
+                    <i class="fas fa-arrow-up"></i>
                   </span>
-                  <span class="icon button">
+                  <span class="icon button sort-index">
                     {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
                     <button
                       class="delete is-small multi-sort-cancel-icon"
@@ -260,10 +284,10 @@
                   </span>
                 </div>
                 <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'desc'">
-                  <span class="icon button">
-                    <i class="fas fa-arrow-down" />
+                  <span class="icon button arrow-down">
+                    <i class="fas fa-arrow-down"></i>
                   </span>
-                  <span class="icon button">
+                  <span class="icon button sort-index">
                     {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
                     <button
                       class="delete is-small multi-sort-cancel-icon"
@@ -294,16 +318,16 @@
               <div v-if="column.sortable">
                 <div v-if="sortingPriority.filter(obj => obj.field === column.field).length === 0">
                   <span
-                    class="icon button"
+                    class="icon button arrows-alt-v"
                   >
                     <i class="fas fa-arrows-alt-v" />
                   </span>
                 </div>
                 <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'asc'">
-                  <span class="icon button">
-                    <i class="fas fa-arrow-up" />
+                  <span class="icon button arrow-up">
+                    <i class="fas fa-arrow-up"></i>
                   </span>
-                  <span class="icon button">
+                  <span class="icon button sort-index">
                     {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
                     <button
                       class="delete is-small multi-sort-cancel-icon"
@@ -313,10 +337,10 @@
                   </span>
                 </div>
                 <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'desc'">
-                  <span class="icon button">
-                    <i class="fas fa-arrow-down" />
+                  <span class="icon button arrow-down">
+                    <i class="fas fa-arrow-down"></i>
                   </span>
-                  <span class="icon button">
+                  <span class="icon button sort-index">
                     {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
                     <button
                       class="delete is-small multi-sort-cancel-icon"
@@ -340,6 +364,50 @@
                   v-html="props.row.title"
                 />
               </router-link>
+            </template>
+          </b-table-column>
+
+          <b-table-column
+            field="expéditeur"
+            label="Expéditeur"
+            :td-attrs="columnTdAttrs"
+            sortable
+          >
+            <template v-slot="props">
+              <p>(personne) {{ props.row.sender }}</p>
+            </template>
+          </b-table-column>
+
+          <b-table-column
+            field="destinataire"
+            label="Destinataire"
+            :td-attrs="columnTdAttrs"
+            sortable
+          >
+            <template v-slot="props">
+              <p>(personnes) {{ props.row.recipient }}</p>
+            </template>
+          </b-table-column>
+
+          <b-table-column
+            field="lieu-expedition"
+            label="Lieu d'expédition"
+            :td-attrs="columnTdAttrs"
+            sortable
+          >
+            <template v-slot="props">
+              <p>(lieu) {{ props.row.origin }}</p>
+            </template>
+          </b-table-column>
+
+          <b-table-column
+              field="lieu-destination"
+              label="Lieu de destination"
+              :td-attrs="columnTdAttrs"
+              sortable
+          >
+            <template v-slot="props">
+              <p>(lieu) {{ props.row.destination }}</p>
             </template>
           </b-table-column>
 
@@ -412,6 +480,9 @@ export default {
         }
       },
     },
+    toggleCssClass: function() {
+      return this.isActive ? 'is-active' : 'is-inactive';
+    },
     ...mapState("user", ["current_user"]),
   },
   watch: {
@@ -445,6 +516,7 @@ export default {
       this.$store.state.layout.showLeftSideBar = true
     },
     toggle() {
+      console.log(this.sortingPriority)
       if (this.isActive === true) {
         this.isActive = false;
       } else {
@@ -552,53 +624,225 @@ export default {
 
 <style scoped lang="scss">
 @import "@/assets/sass/main.scss";
+@import "@/assets/sass/elements/_select.scss";
 @import "@/assets/sass/components/_search_results_table.scss";
 @import "@/assets/sass/components/_search_results_pagination.scss";
 
 ::v-deep .sidebar-content {
   width: 500px;
 }
+
+
 .large-container {
   position: relative;
   margin-top: 60px;
+
+  @include on-tablet {
+    margin-top: 30px;
+  }
 }
+
 .collection-card-parent {
-  padding-bottom: 40px;
+  padding-bottom: 20px;
 }
+
+::v-deep .card-footer {
+  border: none !important;
+}
+
 progress {
   margin-top: 30px;
 }
+
+// Sections : Termes et contenus des metadonnées de la collection
+.collection-section {
+
+  & > .heading {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    margin-bottom: 20px;
+
+    font-size: 16px;
+    line-height: 1;
+    font-weight: 500;
+    color: #FF0052;
+    letter-spacing: 0;
+    text-transform: uppercase;
+
+    .heading-content {
+      order: 1;
+      display: inline-block;
+      white-space: pre;
+    }
+
+    span.icon {
+      display: inline-block;
+      width: 24px;
+      height: 24px;
+      background: url(../assets/images/icons/open_text.svg) center / 24px auto no-repeat;
+      order: 3;
+
+      i {
+        display: none;
+      }
+    }
+
+    &.is-closed span.icon {
+      background: url(../assets/images/icons/close_text.svg) center / 18px auto no-repeat;
+    }
+
+    &::after {
+      order: 2;
+      display: block;
+      content: '';
+      width: 100%;
+      border-bottom: 1px solid #FF0052;
+    }
+  }
+
+  & > .collection-section-content {
+    padding: 30px 140px 30px 90px;
+    font-size: 20px;
+    line-height: 26px;
+
+    @include on-tablet {
+      padding: 10px 20px;
+      font-size: $font-size-text-tablet;
+      line-height: 1.2;
+    }
+
+    @include on-mobile {
+      font-size: $font-size-text-mobile;
+      line-height: 1.25;
+    }
+
+    p {
+      margin-bottom: 20px;
+    }
+  }
+}
+
+
+
 ::v-deep .lettre span {
     background-color: red;
 }
 .collection-documents {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+
   flex-grow: 1;
-  text-align: left;
-  color: #B9192F;
-  margin: 5px;
+  margin: 5px 0;
   padding-left: 2px;
   padding-right: 2px;
-  border-bottom: solid 1px #B9192F;
+
+  font-size: 14px;
+  color: #FF0052;
+  font-weight: 500;
+  text-transform: uppercase;
+  white-space: nowrap;
+
+  &::after {
+    content: '';
+    display: inline-block;
+    border-bottom: 1px solid #FF0052;
+    width: 100%;
+    transform: translateY(-2px);
+  }
+
+  span.documents-count {
+    font-weight: 700;
+  }
 }
+
+.search-collection-parent {
+  border-bottom: 1px solid #D5D5D5;
+  padding-bottom: 15px;
+}
+
 .search-collection {
-  color: #b9192f;
-  border-color: #b9192f;
-  border-radius: 10px;
-  margin: 5px;
-  padding-left: 2px;
-  padding-right: 2px;
+  margin: 32px 5px 5px;
+  padding: 10px;
   background-color: transparent;
+  border: #C00055 solid 1px;
+  border-radius: 5px;
+
+  font-family: $family-primary;
+  font-size: 14px;
+  font-weight: 400;
+  color: #C00055;
+  text-transform: uppercase;
 }
+
+.sort-options {
+  gap: 10px;
+  margin-bottom: 0 !important;
+
+  .icon.button {
+    width: 25px;
+    height: 25px;
+    border: none !important;
+
+    &::after {
+      content: '';
+      display: inline-block;
+      width: 100%;
+      height: 100%;
+      background-size: cover;
+      background-repeat: no-repeat;
+      transform-origin: 50% 50%;
+      background-image: url(../assets/images/icons/tri-fleche.svg);
+    }
+
+    &.arrow-down {
+      transform: rotate(180deg);
+    }
+
+    i {
+      display: none;
+    }
+  }
+
+  & > span {
+    font-family: $family-primary;
+    font-size: 16px;
+    color: #C00055;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+}
+
 .switch-button {
   background-color: lightgrey;
   border-radius: 30px;
   overflow: hidden;
   width: 240px;
+  height: 35px;
   text-align: center;
-  color: grey;
   position: relative;
   padding-right: 120px;
-  position: relative;
+
+  font-family: $family-primary;
+  font-size: 14px;
+
+  color: white;
+  transition: all ease-in-out 300ms;
+
+  &.is-active {
+    color: grey;
+    .switch-button-label-span {
+      color: white;
+    }
+  }
+
+  &.is-inactive {
+    color: white;
+    .switch-button-label-span {
+      color: grey;
+    }
+  }
 
   &:before {
     content: "DEPLIE";
@@ -607,6 +851,7 @@ progress {
     bottom: 0;
     right: 0;
     width: 120px;
+    height: 35px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -632,15 +877,17 @@ progress {
 
     & + .switch-button-label {
       position: relative;
-      padding: 15px 0;
-      display: block;
+      display: flex;
+      justify-content: center;
+      align-items: center;
       user-select: none;
       pointer-events: none;
+      height: 100%;
 
       &:before {
         content: "";
         background: rgb(255, 0, 83);
-        height: 100%;
+        height: 35px;
         width: 100%;
         position: absolute;
         left: 0;
@@ -652,7 +899,6 @@ progress {
 
       .switch-button-label-span {
         position: relative;
-        color: white;
       }
     }
   }
@@ -690,6 +936,11 @@ progress {
   & > a.last-page {
     background: #C3C3C3 url(../assets/images/icons/page_fin.svg) center / 28px auto no-repeat;
   }
+  /*
+  & > input[type=number],
+  & > input[type=text] {
+   */
+
   & > input {
     height: 38px !important;
     padding: 0 !important;

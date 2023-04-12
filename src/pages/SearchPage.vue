@@ -88,6 +88,8 @@ export default {
   &:focus,
   &:hover {
     text-decoration: underline;
+    text-decoration-style: dotted;
+    text-underline-offset: 2px;
     background: transparent;
   }
 }
