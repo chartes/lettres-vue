@@ -64,7 +64,42 @@ function formatDate(year, month, day) {
   console.log('formatted', formatted)
   return formatted
 }
+function transformKeys(obj) {
+  return Object.keys(obj).reduce(function(o, prop) {
+    let value = obj[prop];
+    let newProp = prop.replace('-', '_');
+    o[newProp] = value;
+    return o;
+  }, {});
+}
+const toCamel = (str) => {
+  return str.replace(/([-_][a-z])/ig, ($1) => {
+    return $1.replace('-', '_')
+  });
+};
 
+const isObject = function (obj) {
+  return obj === Object(obj) && !Array.isArray(obj) && typeof obj !== 'function';
+};
+
+const keysToCamel = function (obj) {
+  if (isObject(obj)) {
+    const n = {};
+
+    Object.keys(obj)
+      .forEach((k) => {
+        n[toCamel(k)] = keysToCamel(obj[k]);
+      });
+
+    return n;
+  } else if (Array.isArray(obj)) {
+    return obj.map((i) => {
+      return keysToCamel(i);
+    });
+  }
+
+  return obj;
+};
 const state = {
 
   searchTerm: null,
@@ -431,14 +466,42 @@ const actions = {
 
     /* =========== execution =========== */
     try {
-      const toInclude = ['roles-within-documents@placenameHasRoleWithIds']; //['collections', 'persons', 'persons-having-roles', 'roles', 'witnesses', 'languages'];
+      const toInclude = []; //['collections', 'persons', 'persons-having-roles', 'roles', 'witnesses', 'languages'];
       const includes = toInclude.length ? `&include=${[toInclude].join(',')}` : '';
       
       const http = http_with_auth(rootState.user.jwt);
-      const response = await http.get(`/search?query=${query}${filters}${includes}&without-relationships&sort=${sorts}&page[size]=${state.pageSize}&page[number]=${state.numPage}`);
+      const response = await http.get(`/search?query=${query}${filters}${includes}&sort=${sorts}&page[size]=${state.pageSize}&page[number]=${state.numPage}`);
       const {data, links, meta, included} = response.data
+      console.log('keysToCamel(data) : ', keysToCamel(data))
+      const phr = [];
+      //const rel = data.relationships
+      const datawithPersons = keysToCamel(data).map(({
+        id,
+        attributes: {title, argument, creation, creation_not_after, creation_label, is_published},
+        relationships: {persons_having_roles, person_roles, persons}
+      }) => ({
+        id,
+        title,
+        argument,
+        creation,
+        creation_not_after,
+        creation_label,
+        is_published,
+        sender: persons.data.map(function(item, index) {
+          return {id: item.id, role: person_roles.data[index].id}
+        }).filter(s => s.role === 1),
+        recipients: persons.data.map(function(item, index) {
+          return {id: item.id, role: person_roles.data[index].id}
+        }).filter(s => s.role === 2),
+        /*admin: {
+          username: included.find(({type, id: adminId}) => type === "user" && adminId === admin.data.id).attributes.username
+        }*/
+      }));
+      console.log('datawithPersons', datawithPersons)
+      console.log('phr', phr)
 
-      commit('UPDATE_ALL', {documents: data, totalCount: meta['total-count'] , links, included: included || []});
+      commit('UPDATE_ALL', {documents: datawithPersons, totalCount: meta['total-count'] , links, included: included || []});
+      //commit('UPDATE_ALL', {documents: data, totalCount: meta['total-count'] , links, included: included || []});
       commit('SET_LOADING_STATUS', false);
     } catch (reason) {
       console.warn('cant search:', reason);

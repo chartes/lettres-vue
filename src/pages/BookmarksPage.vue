@@ -55,7 +55,6 @@
         :sort-multiple="true"
         :sort-multiple-data="sortingPriority"
         @sort="sortPressed"
-        @sorting-priority-removed="sortingPriorityRemoved"
       >
         <template #empty>
           <section class="section">
@@ -85,11 +84,11 @@
                 </span>
                 <span class="icon button">
                   {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
-                  <button
+                  <!--<button
                     class="delete is-small multi-sort-cancel-icon"
                     type="button"
                     @click.stop="sortingPriorityRemoved(column.field)"
-                  />
+                  />-->
                 </span>
               </div>
               <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'desc'">
@@ -98,11 +97,11 @@
                 </span>
                 <span class="icon button">
                   {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
-                  <button
+                  <!--<button
                     class="delete is-small multi-sort-cancel-icon"
                     type="button"
                     @click.stop="sortingPriorityRemoved(column.field)"
-                  />
+                  />-->
                 </span>
               </div>
               <span>
@@ -143,11 +142,11 @@
                 </span>
                 <span class="icon button">
                   {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
-                  <button
+                  <!--<button
                     class="delete is-small multi-sort-cancel-icon"
                     type="button"
                     @click.stop="sortingPriorityRemoved(column.field)"
-                  />
+                  />-->
                 </span>
               </div>
               <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'desc'">
@@ -156,11 +155,11 @@
                 </span>
                 <span class="icon button">
                   {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
-                  <button
+                  <!--<button
                     class="delete is-small multi-sort-cancel-icon"
                     type="button"
                     @click.stop="sortingPriorityRemoved(column.field)"
-                  />
+                  />-->
                 </span>
               </div>
               <span>
@@ -335,10 +334,10 @@ export default {
       if ((this.customKey && event[this.customKey]) || !this.customKey) {
         let existingPriority = this.sortingPriority.filter((i) => i.field === field)[0];
         if (existingPriority) {
-          existingPriority.order = existingPriority.order === "desc" ? "asc" : "desc";
+          existingPriority.order = existingPriority.order === "asc" ? "desc" : existingPriority.order === "desc" ? this.sortingPriorityRemoved(field) : "asc" ;
         } else {
           // request sorted data from backend
-          this.sortingPriority.push({ field, order });
+          this.sortingPriority.push({ field, order : "asc"});
           console.log("this.sortingPriority", this.sortingPriority)
         }
       } else {

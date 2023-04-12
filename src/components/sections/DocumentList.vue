@@ -271,6 +271,20 @@
             </router-link>
           </template>
         </b-table-column>
+        <b-table-column
+          v-slot="props"
+          field="senders"
+          label="Expéditeur"
+        >
+          {{ props.row.senders }}
+        </b-table-column>
+        <b-table-column
+          v-slot="props"
+          field="recipients"
+          label="Destinataire(s)"
+        >
+          {{ props.row.recipients }}
+        </b-table-column>
 
         <template #empty>
           <div class="has-text-centered">
@@ -292,7 +306,7 @@
 </template>
 
 <script>
-import { mapState, mapActions } from "vuex";
+import { mapState, mapActions, mapGetters } from "vuex";
 import escapeRegExp from "lodash/escapeRegExp";
 
 export default {
@@ -311,8 +325,10 @@ export default {
     };
   },
   computed: {
-    ...mapState("search", ["searchTerm", "documents", "loadingStatus", "numPage", "pageSize", "totalCount", "withStatus", "sorts"]),
+    ...mapState("search", ["searchTerm", "included", "documents", "loadingStatus", "numPage", "pageSize", "totalCount", "withStatus", "sorts"]),
     ...mapState("user", ["current_user"]),
+    //...mapGetters("document", ["documentSender", "documentRecipients"]),
+
 
     sortingPriority: {
       get: function() {
@@ -402,11 +418,15 @@ export default {
 
     async loadAsyncData() {
       if (this.documents) {
+        console.log('this.included : ', this.included);
+        const phr = [];
         this.tableData = await Promise.all(this.documents.map(async d => {
         return {
           id: d.id,
-          title:  d.attributes.title,
-          creation:  d.attributes.creation,
+          title:  d.title,
+          creation:  d.creation,
+          senders: d.sender.map(sender => (this.$store.state.persons.persons_roles[0].persons.find(p => p.person_id === sender.id) || {}).label).filter(Boolean).join(", "),
+          recipients: d.recipients.map(recipient => (this.$store.state.persons.persons_roles[1].persons.find(p => p.person_id === recipient.id) || {}).label).filter(Boolean).join(", ")
         }
         }));
       }
