@@ -17,6 +17,11 @@
       &:nth-child(2) {
         .th-wrap {
           transform: translateX(-40px);
+
+          &.is-numeric {
+            flex-direction: revert;
+            text-align: left;
+          }
         }
       }
 
@@ -126,6 +131,7 @@
             font-weight: 400;
             color: #515151;
           }
+
         }
 
         /* Date lettre */
@@ -168,7 +174,6 @@
         &:nth-child(8) {
           display: none;
         }
-
       }
 
       tr.detail {
@@ -283,6 +288,59 @@
           }
         }
       }
+    }
+  }
+
+  /* Table des locks */
+  &.locks-table .table-wrapper {
+
+    thead tr:not(:first-of-type) {
+      .th-wrap {
+        padding-top: 10px;
+      }
+    }
+
+    th {
+      &:nth-child(2) {
+        .th-wrap {
+          transform: translateX(-20px);
+        }
+      }
+    }
+
+    th, td {
+      &:nth-child(7),
+      &:nth-child(8) {
+        display: table-cell !important;
+      }
+    }
+
+    td:nth-child(2) {
+      .tags {
+        display: flex;
+        justify-content: flex-end;
+        position: relative;
+        margin: 0;
+
+        & > .tag:first-child {
+          position: absolute;
+          left: 0;
+          min-width: 50px;
+          text-align: left;
+          margin-left: 10px;
+        }
+      }
+
+    }
+
+    .checkbox-cell {
+      text-align: right;
+      padding-right: 0 !important;
+
+      label.b-checkbox.checkbox:not(.button) {
+        margin-right: 0;
+      }
+
     }
   }
 
