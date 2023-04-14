@@ -229,6 +229,14 @@ export default {
   margin: 0 !important;
 }
 
+.mirador-container {
+  position: fixed;
+  top: 100px;
+  right: 0;
+  box-shadow: 0px 0px 5px 5px #00000040;
+  z-index: 10;
+}
+
 ::v-deep .narrow-container {
   margin-left: $container-narrow-margin;
   margin-right: $container-narrow-margin;
