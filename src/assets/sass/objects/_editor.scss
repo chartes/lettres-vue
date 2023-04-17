@@ -21,8 +21,10 @@
   }
 }
 .editor-controls-group {
+  gap: 10px;
   margin-right: 2em;
   margin-bottom: .5em;
+
   &:last-child {
     margin-right: 0;
   }
@@ -32,9 +34,10 @@
     font-variant: small-caps;
   }
   .button {
-
-    padding-bottom: calc(.5em - 1px);
-    padding-top: calc(.5em - 1px);
+    width: 47px;
+    height: 47px;
+    background-color: #C3C3C3;
+    border-radius: 4px !important;
   }
   .icon {
     height: 100%;
