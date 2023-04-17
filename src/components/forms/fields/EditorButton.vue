@@ -62,6 +62,26 @@ export default {
       background-size: 10px auto;
     }
 
+    /* Manquent les icônes */
+
+    &.bold-btn {
+      background-image: url(../../../assets/images/icons/editor_bold.svg);
+    }
+
+    &.underline-btn {
+      background-image: url(../../../assets/images/icons/editor_underline.svg);
+    }
+
+    &.del-btn {
+      background-image: url(../../../assets/images/icons/editor_del.svg);
+    }
+
+    &.cite-btn {
+      background-image: url(../../../assets/images/icons/editor_quote.svg);
+    }
+
+    /* */
+
     &.superscript-btn {
       background-image: url(../../../assets/images/icons/editor_exposant.svg);
       background-size: 20px auto;

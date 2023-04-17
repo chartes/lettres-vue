@@ -544,4 +544,40 @@ export default {
 };
 </script>
 
-<style scoped></style>
+
+<style lang="scss" scoped>
+@import "@/assets/sass/main.scss";
+
+::v-deep {
+
+  header.modal-card-head {
+    background-color: #CB2158;
+    border: none;
+    border-radius: 5px;
+    padding: 3px 20px;
+    margin-bottom: 10px !important;
+
+    p.modal-card-title {
+      display: block;
+      padding: 10px 0;
+      font-family: $family-apptitle;
+      font-size: 30px;
+      color: #FFFFFF;
+      font-weight: 200;
+      letter-spacing: 0;
+      text-transform: none;
+    }
+  }
+
+  .modal-card-body {
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+  }
+
+  footer.modal-card-foot {
+    background-color: #FFFFFF;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+  }
+}
+</style>
