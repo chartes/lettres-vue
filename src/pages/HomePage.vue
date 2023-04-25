@@ -146,7 +146,7 @@
           <div class="content is-inline-block">
             <h3>Des correspondances <br> du XV<sup>e</sup> au XVII<sup>e</sup> siècle</h3>
             <p class="has-text-justified">
-              LPM présente le contenu de lettres missives de la fin du Moyen Âge et du début de l’époque moderne (vers
+              Ecco présente le contenu de lettres missives de la fin du Moyen Âge et du début de l’époque moderne (vers
               1460-vers 1660). Il réunit des correspondances de toute nature – politiques, diplomatiques, commerciales ou
               savantes –, émanant d’hommes et de femmes d’État ou de personnages plus humbles, à travers des collections
               qui
@@ -156,7 +156,7 @@
           <div class="content is-inline-block">
             <h3>Un portail d’éditions <br> collaboratives</h3>
             <p class="has-text-justified mb-2">
-              LPM rassemble des projets conduits par des partenaires différents qui mettent en commun leurs apports
+              Ecco rassemble des projets conduits par des partenaires différents qui mettent en commun leurs apports
               éditoriaux à travers une unique application de recherche. La participation aux entreprises éditoriales peut
               se
               faire à différents niveaux, conception et proposition de nouvelles collections, signalisation et
@@ -320,6 +320,11 @@ export default {
   components: {
     /*SearchBox,*/
   },
+  data: function () {
+      return {
+          documentsTotal: 0,
+      };
+  },
   computed: {
     ...mapState("collections", {
       collectionTree: "fullHierarchy",
@@ -344,9 +349,13 @@ export default {
       console.log('allCollections # keys : ', Object.keys(this.allCollections).length);
       return Object.keys(this.allCollections).length - 1;
     },
-    lettersCount: function () {
+    /*previous 17/04/23 lettersCount: function () {
       return Object.values(this.allCollections).reduce((sum, collection) => sum + collection.documentCount, 0);
-    },
+    },*/
+    lettersCount: function () {
+      this.documentsCount();
+      return this.documentsTotal
+      },
     personsCount: function () {
       console.log('All persons : ', this.$store.state.persons.persons);
       return this.$store.state.persons.persons.length;
@@ -364,10 +373,10 @@ export default {
       return featured;
     }
   },
-  created() {
-    this.fetchCollections();
-    this.fetchPersons();
-    this.fetchPlaces();
+  async created() {
+    await this.fetchCollections();
+    await this.fetchPersons();
+    await this.fetchPlaces();
   },
   methods: {
     ...mapActions("search", ["performSearch"]),
@@ -375,6 +384,12 @@ export default {
     //...mapState("collections", ["collectionsById"]),
     ...mapActions("persons", { fetchPersons: "fetchAllPersons" }),
     ...mapActions("placenames", { fetchPlaces: "fetchAllPlacenames"}),
+    ...mapActions("search", ["getDocumentsTotal"]),
+    documentsCount: async function () {
+        let response = await this.getDocumentsTotal();
+        this.documentsTotal = response.documentsTotal
+        console.log("response", response)
+    },
     getImgUrl: function (img) {
       try {
         return require('@/assets/images/collections/collection' + img + '.jpg')
