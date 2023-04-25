@@ -16,7 +16,7 @@
             class="row"
           >
             <p class="homepage_title">
-              Ecco
+              ecco
             </p>
           </div>
           <div

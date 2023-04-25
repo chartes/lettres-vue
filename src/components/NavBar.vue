@@ -20,7 +20,7 @@
           :to="{ name: 'home' }"
           class="navbar-item title is-4 navbar-title is-inline-block"
         >
-          Ecco
+          ecco
         </router-link>
       </div>
 
