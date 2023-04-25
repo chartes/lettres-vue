@@ -86,10 +86,17 @@ export default {
   watch: {
     tags() {
       this.setSelectedCollections(this.tags);
-      this.performSearch();
+      if (this.init) {
+        console.log("Collection Watch tags this.performSearch NO ACTION");
+        this.init = false;
+      } else {
+        console.log("Collection Watch tags this.performSearch");
+        this.performSearch();
+      }
     },
   },
   async created() {
+    this.init = true;
     await this.fetchAll();
     this.tags = this.selectedCollections;
   },

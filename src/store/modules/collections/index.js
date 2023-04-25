@@ -4,6 +4,7 @@ import {getIncludedRelation} from "../../../modules/document-helpers";
 const state = {
   collectionsById: {},
   rootCollectionsIds: [],
+  selectedCollection: {},
 
   isLoading: true
 };
@@ -34,6 +35,7 @@ const mutations = {
   RESET(state) {
     state.collectionsById = {};
     state.rootCollectionsIds = [];
+    state.selectedCollection = {};
 
     state.isLoading = false;
   },
@@ -60,6 +62,10 @@ const mutations = {
 
     state.collectionsById = collectionsById
   },
+  SET_SELECTED_COLLECTION(state, coll) {
+    state.selectedCollection = coll;
+  },
+
   UPDATE_ONE(state, {id, title, description, admin}) {
     const collection = state.collectionsById[id]
     collection.title = title
@@ -72,6 +78,10 @@ const actions = {
 
   reset({commit}) {
     commit('RESET');
+  },
+
+  setSelectedCollection({commit}, coll) {
+    commit('SET_SELECTED_COLLECTION', coll)
   },
 
   async fetchAll({rootState, commit}) {

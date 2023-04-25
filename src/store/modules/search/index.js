@@ -1,6 +1,8 @@
 import {debounce} from 'lodash';
 import {http_with_auth} from "@/modules/http-common";
 import {cloneDeep} from 'lodash';
+import personsModule from "@/store/modules/persons";
+import store from "@/store";
 
 
 const creationDateTemplate = {
@@ -72,6 +74,49 @@ function transformKeys(obj) {
     return o;
   }, {});
 }
+function sortMethodAsc(a, b) {
+    return a == b ? 0 : a > b ? 1 : -1;
+}
+
+function sortMethodWithDirection(direction) {
+    if (direction === undefined || direction == "asc") {
+        return sortMethodAsc;
+    } else {
+        return function(a, b) {
+            return -sortMethodAsc(a, b);
+        }
+    }
+}
+
+function sortMethodWithDirectionByColumn(columnName, direction){
+    const sortMethod = sortMethodWithDirection(direction)
+    return function(a, b){
+        if (columnName === 'sender' || columnName === 'recipients') {
+            return sortMethod(a[columnName][0].label, b[columnName][0].label);
+        } else {
+            return sortMethod(a[columnName], b[columnName]);
+        }
+    }
+}
+function sortMethodWithDirectionMultiColumn(sortArray) {
+    //sample of sortArray
+    // sortArray = [
+    //     { column: "column5", direction: "asc" },
+    //     { column: "column3", direction: "desc" }
+    // ]
+    console.log("sortArray", sortArray)
+    const sortMethodsForColumn = (sortArray || []).map( item => sortMethodWithDirectionByColumn(item.field, item.order) );
+    return function(a,b) {
+        let sorted = 0;
+        let index = 0;
+        while (sorted === 0 && index < sortMethodsForColumn.length) {
+            sorted = sortMethodsForColumn[index++](a,b);
+        }
+        return sorted;
+    }
+}
+
+
 const toCamel = (str) => {
   return str.replace(/([-_][a-z])/ig, ($1) => {
     return $1.replace('-', '_')
@@ -126,6 +171,8 @@ const state = {
   selectedPersonFrom: [],
   selectedPersonTo: [],
   selectedPersonCited: [],
+  currentFilters: '',
+  currentQuery: '',
   numPage: 1,
   pageSize: 30,
 
@@ -161,7 +208,9 @@ const mutations = {
     state.creationDateFrom = Object.assign({}, state.creationDateFrom, from)
   },
   SET_CREATION_DATE_TO(state, to) {
+    console.log('SET_CREATION_DATE_TO', to)
     state.creationDateTo = Object.assign({}, state.creationDateTo, to)
+    console.log('state.creationDateTo', to)
   },
   SET_LOADING_STATUS(state, s) {
     state.loadingStatus = s;
@@ -187,7 +236,12 @@ const mutations = {
   SET_SELECTED_PERSON_CITED(state, personCited) {
     state.selectedPersonCited = personCited;
   },
-
+  CURRENT_SEARCH_FILTERS(state, filters) {
+    state.currentFilters = filters;
+  },
+  CURRENT_SEARCH_QUERY(state, query) {
+    state.currentQuery = query;
+  },
   UPDATE_ALL (state, {documents, totalCount, links, included}) {
     state.documents = documents;
     state.included = included
@@ -265,12 +319,20 @@ const actions = {
   },
   async getDocumentsTotal ({commit, rootState}) {
     const http = http_with_auth(rootState.user.jwt);
-    const response = await http.get(`/search?query=*&without-relationships&sort=-id`);
+    let query ='';
+    if (!query || query.length === 0) {
+      query = '*'
+    }
+    if (!rootState.user.current_user){
+      query = `${query} AND (is-published:true)`
+    }
+    const response = await http.get(`/search?query=${query}&without-relationships&sort=-id`);
     const documentsTotal = response.data.meta['total-count'];
     const lastDocId = response.data.data[0].id;
-    return {documentsTotal: documentsTotal, lastDocId: lastDocId};
+    const docIdList = response.data.data.map(id => id);
+    return {documentsTotal: documentsTotal, lastDocId: lastDocId, docIdList: docIdList};
   },
-  performSearch: debounce(async ({commit, state, rootState}) => {
+  performSearch: debounce(async ({commit, state, rootState}, type) => {
     commit('SET_LOADING_STATUS', true);
 
     /* =========== filters =========== */
@@ -324,7 +386,7 @@ const actions = {
     // combine places criteriae :
     let place_query = ''
     if (place_query_from.length > 0 || place_query_to.length > 0 || place_query_cited.length > 0) {
-      place_query = [place_query_from, place_query_to, place_query_cited].filter(Boolean).join(' OR ');
+      place_query = [place_query_from, place_query_to, place_query_cited].filter(Boolean).join(' AND ');
     }
 
     let person_query_from = ''
@@ -359,7 +421,7 @@ const actions = {
     // combine persons criteriae :
     let person_query = ''
     if (person_query_from.length > 0 || person_query_to.length > 0 || person_query_cited.length > 0) {
-      person_query = [person_query_from, person_query_to, person_query_cited].filter(Boolean).join(' OR ');
+      person_query = [person_query_from, person_query_to, person_query_cited].filter(Boolean).join(' AND ');
     }
 
     // combine query, places and persons criteriae :
@@ -374,7 +436,7 @@ const actions = {
     /* =========== sorts ===========*/
     let sorts = state.sorts.map(s => `${s.order === 'desc' ? '-' : ''}${s.field}`)
     sorts = sorts.length ? sorts.join(',') : 'creation'
-  
+
     /* =========== date ranges ===========*/
     const cdf = state.creationDateFrom.selection
     //console.log('cdf', cdf)
@@ -463,22 +525,26 @@ const actions = {
     }
     
     let filters = `${creationDateRange}`
+    if (type === 'simple') {
+      filters = ''
+    }
 
     /* =========== execution =========== */
     try {
-      const toInclude = []; //['collections', 'persons', 'persons-having-roles', 'roles', 'witnesses', 'languages'];
+      const toInclude = ['persons-having-roles', 'persons', 'placenames-having-roles', 'placenames']; //['collections', 'persons', 'persons-having-roles', 'roles', 'witnesses', 'languages'];
       const includes = toInclude.length ? `&include=${[toInclude].join(',')}` : '';
       
       const http = http_with_auth(rootState.user.jwt);
       const response = await http.get(`/search?query=${query}${filters}${includes}&sort=${sorts}&page[size]=${state.pageSize}&page[number]=${state.numPage}`);
+      //const response = await http.get(`/search?query=${query}${filters}${includes}&sort=${sorts}&page[size]=${state.pageSize}&page[number]=${state.numPage}`);
       const {data, links, meta, included} = response.data
       console.log('keysToCamel(data) : ', keysToCamel(data))
       const phr = [];
-      //const rel = data.relationships
+
       const datawithPersons = keysToCamel(data).map(({
         id,
         attributes: {title, argument, creation, creation_not_after, creation_label, is_published},
-        relationships: {persons_having_roles, person_roles, persons}
+        relationships: {person_roles, persons, placename_roles, placenames}
       }) => ({
         id,
         title,
@@ -488,17 +554,332 @@ const actions = {
         creation_label,
         is_published,
         sender: persons.data.map(function(item, index) {
-          return {id: item.id, role: person_roles.data[index].id}
+          return {id: item.id, role: person_roles.data[index].id, label: included.find(p => p.id === item.id && p.type === "person").attributes.label}
         }).filter(s => s.role === 1),
         recipients: persons.data.map(function(item, index) {
-          return {id: item.id, role: person_roles.data[index].id}
+          return {id: item.id, role: person_roles.data[index].id, label: included.find(p => p.id === item.id && p.type === "person").attributes.label}
         }).filter(s => s.role === 2),
+        origin: placenames.data.map(function(item, index) {
+          return {id: item.id, role: placename_roles.data[index].id}
+        }).filter(o => o.role === 1),
+        destinations: placenames.data.map(function (item, index) {
+          return {id: item.id, role: placename_roles.data[index].id}
+        }).filter(d => d.role === 2)
         /*admin: {
           username: included.find(({type, id: adminId}) => type === "user" && adminId === admin.data.id).attributes.username
         }*/
       }));
       console.log('datawithPersons', datawithPersons)
-      console.log('phr', phr)
+      console.log('included', included)
+
+      if (type !== 'simple' && (query !== state.currentQuery || filters !== state.currentFilters))
+      {
+
+        // fetch persons associated with search criteriae :
+        const searchScopePersonsFrom = await http.get(`/search?query=${query}${filters}&groupby[doc-type]=person&groupby[field]=senders.id&without-relationships`);
+        const searchScopePersonsTo = await http.get(`/search?query=${query}${filters}&groupby[doc-type]=person&groupby[field]=recipients.id&without-relationships`);
+        const searchScopePersonsCit = await http.get(`/search?query=${query}${filters}&groupby[doc-type]=person&groupby[field]=person-inlined.id&without-relationships`);
+        console.log('searchScopePersonsFrom', searchScopePersonsFrom)
+        let uniqueSearchScopePersonsFrom = searchScopePersonsFrom.data.data.map(({
+                                                                                   id,
+                                                                                   type,
+                                                                                   label,
+                                                                                   attributes,
+                                                                                   meta,
+                                                                                   links,
+                                                                                   relationships
+                                                                                 }) =>
+            ({
+              role_id: 1,
+              person_id: id,
+              label: label
+            })
+        )
+        console.log('uniqueSearchScopePersonsFrom', uniqueSearchScopePersonsFrom)
+
+        let uniqueSearchScopePersonsTo = searchScopePersonsTo.data.data.map(({
+                                                                               id,
+                                                                               type,
+                                                                               label,
+                                                                               attributes,
+                                                                               meta,
+                                                                               links,
+                                                                               relationships
+                                                                             }) =>
+            ({
+              role_id: 2,
+              person_id: id,
+              label: label
+            })
+        )
+        console.log('uniqueSearchScopePersonsTo', uniqueSearchScopePersonsTo)
+
+        let uniqueSearchScopePersonsCit = searchScopePersonsCit.data.data.map(({
+                                                                                 id,
+                                                                                 type,
+                                                                                 label,
+                                                                                 attributes,
+                                                                                 meta,
+                                                                                 links,
+                                                                                 relationships
+                                                                               }) =>
+            ({
+              role_id: 3,
+              person_id: id,
+              label: label
+            })
+        )
+        console.log('uniqueSearchScopePersonsCit', uniqueSearchScopePersonsCit)
+
+        // update state persons
+        const persons_roles = [
+          {role_id: "Expéditeur", persons: uniqueSearchScopePersonsFrom},
+          {role_id: "Destinataire", persons: uniqueSearchScopePersonsTo},
+          {role_id: "Personne citée", persons: uniqueSearchScopePersonsCit}
+        ]
+        console.log('persons_roles : ', persons_roles)
+        commit('persons/SET_PERSONS_ROLES', persons_roles, {root: true})
+
+        // fetch placenames associated with search criteriae :
+        const searchScopePlacesFrom = await http.get(`/search?query=${query}${filters}&groupby[doc-type]=placename&groupby[field]=location-date-from.id&without-relationships`);
+        const searchScopePlacesTo = await http.get(`/search?query=${query}${filters}&groupby[doc-type]=placename&groupby[field]=location-date-to.id&without-relationships`);
+        const searchScopePlacesCit = await http.get(`/search?query=${query}${filters}&groupby[doc-type]=placename&groupby[field]=location-inlined.id&without-relationships`);
+        console.log('searchScopePlacesFrom', searchScopePlacesFrom)
+        let uniqueSearchScopePlacesFrom = searchScopePlacesFrom.data.data.map(({
+                                                                                 id,
+                                                                                 type,
+                                                                                 label,
+                                                                                 attributes,
+                                                                                 meta,
+                                                                                 links,
+                                                                                 relationships
+                                                                               }) =>
+            ({
+              role_id: 1,
+              placename_id: id,
+              label: attributes.label
+            })
+        )
+        console.log('uniqueSearchScopePlacesFrom', uniqueSearchScopePlacesFrom)
+
+        let uniqueSearchScopePlacesTo = searchScopePlacesTo.data.data.map(({
+                                                                             id,
+                                                                             type,
+                                                                             label,
+                                                                             attributes,
+                                                                             meta,
+                                                                             links,
+                                                                             relationships
+                                                                           }) =>
+            ({
+              role_id: 2,
+              placename_id: id,
+              label: attributes.label
+            })
+        )
+        console.log('uniqueSearchScopePlacesTo', uniqueSearchScopePlacesTo)
+
+        let uniqueSearchScopePlacesCit = searchScopePlacesCit.data.data.map(({
+                                                                               id,
+                                                                               type,
+                                                                               label,
+                                                                               attributes,
+                                                                               meta,
+                                                                               links,
+                                                                               relationships
+                                                                             }) =>
+            ({
+              role_id: 3,
+              placename_id: id,
+              label: attributes.label
+            })
+        )
+        console.log('uniqueSearchScopePlacesCit', uniqueSearchScopePlacesCit)
+
+        // update state placenames
+        const places = [
+          {role_id: "Lieu d'expédition", places: uniqueSearchScopePlacesFrom},
+          {role_id: "Lieu de destination", places: uniqueSearchScopePlacesTo},
+          {role_id: "Lieu mentionné", places: uniqueSearchScopePlacesCit}
+        ]
+        //console.log('places : ', places)
+        commit('placenames/SET_ALL', places, {root: true})
+      }
+      /*if (included) {
+        // find persons involved in search filter
+        let searchScopePersons = included.filter(p => p.type === "person")
+        console.log('searchScopePersons', searchScopePersons)
+
+        // find persons' relationships (roles) involved in search filter
+        let searchScopeRelationships = included.filter(rel => rel.type === "person-has-role")
+        console.log('searchScopeRelationships', searchScopeRelationships)
+
+        // Map persons data (name) within relationships type Sender
+        let searchScopePersonsFrom = searchScopeRelationships.map(({
+                                                                     id, // unused
+                                                                     relationships
+                                                                   }) => ({
+          //rel_id: id,
+          role_id: relationships['person-role'].data.id,
+          person_id: relationships.person.data.id,
+          label: searchScopePersons.find(p => p.id === relationships.person.data.id).attributes.label
+        })).filter((p) => p.role_id === 1)
+        //console.log('searchScopePersonsFrom', searchScopePersonsFrom)
+        // dedupe
+        let uniqueSearchScopePersonsFrom = [...new Map(searchScopePersonsFrom.map(item => [item.person_id, item])).values()]
+        console.log('uniqueSearchScopePersonsFrom', uniqueSearchScopePersonsFrom)
+
+        // Map persons data (name) within relationships type Recipient
+        let searchScopePersonsTo = searchScopeRelationships.map(({
+                                                                   id, // unused
+                                                                   relationships
+                                                                 }) => ({
+          //rel_id: id,
+          role_id: relationships['person-role'].data.id,
+          person_id: relationships.person.data.id,
+          label: searchScopePersons.find(p => p.id === relationships.person.data.id).attributes.label
+        })).filter((p) => p.role_id === 2)
+        //console.log('searchScopePersonsTo', searchScopePersonsTo)
+        // dedupe
+        let uniqueSearchScopePersonsTo = [...new Map(searchScopePersonsTo.map(item => [item.person_id, item])).values()]
+        console.log('uniqueSearchScopePersonsTo', uniqueSearchScopePersonsTo)
+
+        // Map persons data (name) within relationships type cited inline
+        let searchScopePersonsCit = searchScopeRelationships.map(({
+                                                                    id, // unused
+                                                                    relationships
+                                                                  }) => ({
+          //rel_id: id,
+          role_id: relationships['person-role'].data.id,
+          person_id: relationships.person.data.id,
+          label: searchScopePersons.find(p => p.id === relationships.person.data.id).attributes.label
+        })).filter((p) => p.role_id === 3)
+        //console.log('searchScopePersonsCit', searchScopePersonsCit)
+        // dedupe
+        let uniqueSearchScopePersonsCit = [...new Map(searchScopePersonsCit.map(item => [item.person_id, item])).values()]
+        console.log('uniqueSearchScopePersonsCit', uniqueSearchScopePersonsCit)
+
+        // update state persons
+        const persons_roles = [
+          {role_id: "Expéditeur", persons: uniqueSearchScopePersonsFrom},
+          {role_id: "Destinataire", persons: uniqueSearchScopePersonsTo},
+          {role_id: "Personne citée", persons: uniqueSearchScopePersonsCit}
+        ]
+        //console.log('persons_roles : ', persons_roles)
+        if (included.length > 0) {
+          commit('persons/SET_PERSONS_ROLES', persons_roles, {root: true})
+        }
+
+
+        // find places involved in search filter
+        let searchScopePlaces = included.filter(p => p.type === "placename")
+        console.log('searchScopePlaces', searchScopePlaces)
+
+        // find places' relationships (roles) involved in search filter
+        let searchScopePlacesRelationships = included.filter(rel => rel.type === "placename-has-role")
+        console.log('searchScopePlacesRelationships', searchScopePlacesRelationships)
+
+        // Map places data (name) within relationships type placeFrom
+        let searchScopePlacesFrom = searchScopePlacesRelationships.map(({
+                                                                          id, // unused
+                                                                          relationships
+                                                                        }) => ({
+          //rel_id: id,
+          role_id: relationships['placename-role'].data.id,
+          placename_id: relationships.placename.data.id,
+          label: searchScopePlaces.find(pl => pl.id === relationships.placename.data.id).attributes.label
+        })).filter((p) => p.role_id === 1)
+        //console.log('searchScopePlacesFrom', searchScopePlacesFrom)
+        // dedupe
+        let uniqueSearchScopePlacesFrom = [...new Map(searchScopePlacesFrom.map(item => [item.placename_id, item])).values()]
+        console.log('uniqueSearchScopePlacesFrom', uniqueSearchScopePlacesFrom)
+
+        // Map places data (name) within relationships type placeTo
+        let searchScopePlacesTo = searchScopePlacesRelationships.map(({
+                                                                        id, // unused
+                                                                        relationships
+                                                                      }) => ({
+          //rel_id: id,
+          role_id: relationships['placename-role'].data.id,
+          placename_id: relationships.placename.data.id,
+          label: searchScopePlaces.find(pl => pl.id === relationships.placename.data.id).attributes.label
+        })).filter((p) => p.role_id === 2)
+        //console.log('searchScopePlacesTo', searchScopePlacesTo)
+        // dedupe
+        let uniqueSearchScopePlacesTo = [...new Map(searchScopePlacesTo.map(item => [item.placename_id, item])).values()]
+        console.log('uniqueSearchScopePlacesTo', uniqueSearchScopePlacesTo)
+
+        // Map places data (name) within relationships type place cited inline
+        let searchScopePlacesCit = searchScopePlacesRelationships.map(({
+                                                                         id, // unused
+                                                                         relationships
+                                                                       }) => ({
+          //rel_id: id,
+          role_id: relationships['placename-role'].data.id,
+          placename_id: relationships.placename.data.id,
+          label: searchScopePlaces.find(pl => pl.id === relationships.placename.data.id).attributes.label
+        })).filter((p) => p.role_id === 3)
+        //console.log('searchScopePlacesCit', searchScopePlacesCit)
+        // dedupe
+        let uniqueSearchScopePlacesCit = [...new Map(searchScopePlacesCit.map(item => [item.placename_id, item])).values()]
+        console.log('uniqueSearchScopePlacesCit', uniqueSearchScopePlacesCit)
+
+        // update state placenames
+        const places = [
+          {role_id: "Lieu d'expédition", places: uniqueSearchScopePlacesFrom},
+          {role_id: "Lieu de destination", places: uniqueSearchScopePlacesTo},
+          {role_id: "Lieu mentionné", places: uniqueSearchScopePlacesCit}
+        ]
+        //console.log('places : ', places)
+        if (included.length > 0) {
+          commit('placenames/SET_ALL', places, {root: true})
+        } else {
+          if (query.length >1) {
+            // multisearch with no Persons and no Places
+            const persons_roles = [
+              {role_id: "Expéditeur", persons: []},
+              {role_id: "Destinataire", persons: []},
+              {role_id: "Personne citée", persons: []}
+            ]
+            commit('persons/SET_PERSONS_ROLES', persons_roles, {root: true});
+            const places = [
+              {role_id: "Lieu d'expédition", places: []},
+              {role_id: "Lieu de destination", places: []},
+              {role_id: "Lieu mentionné", places: []}
+            ]
+            commit('placenames/SET_ALL', places, {root: true});
+          } else {
+            console.log("search no included : store.dispatch('persons/fetchAll'")
+            await store.dispatch('persons/fetchAll', null, {root: true});
+            console.log("search no included : store.dispatch('placenames/fetchAll'")
+            await store.dispatch('placenames/fetchAll', null, {root: true});
+          }
+        }
+      } else {
+        // no included returned
+        if (query.length > 1 || meta['total-count'] === 0) {
+          // search with no Persons and no Places or no results
+          const persons_roles = [
+            {role_id: "Expéditeur", persons: []},
+            {role_id: "Destinataire", persons: []},
+            {role_id: "Personne citée", persons: []}
+          ]
+          commit('persons/SET_PERSONS_ROLES', persons_roles, {root: true});
+          const places = [
+            {role_id: "Lieu d'expédition", places: []},
+            {role_id: "Lieu de destination", places: []},
+            {role_id: "Lieu mentionné", places: []}
+          ]
+          commit('placenames/SET_ALL', places, {root: true});
+        }
+      }*/
+      // Local sorting
+      // const sortMethod = sortMethodWithDirectionMultiColumn(state.sorts);
+      // let sortedData = datawithPersons.sort(sortMethod);
+      // console.log("sortedData", sortedData)
+
+      commit('CURRENT_SEARCH_FILTERS', filters);
+      commit('CURRENT_SEARCH_QUERY', query);
 
       commit('UPDATE_ALL', {documents: datawithPersons, totalCount: meta['total-count'] , links, included: included || []});
       //commit('UPDATE_ALL', {documents: data, totalCount: meta['total-count'] , links, included: included || []});

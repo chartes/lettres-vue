@@ -109,11 +109,11 @@ const actions = {
             //building list of places and respective roles :
             const placesRoles = included.map(({
                 type, // unused
-                id,
+                id, // unused
                 attributes: {field, placename_id, document_id, role_id, document_title, document_creation_label}, // also has function (unnecessary) field causing error
             }) => ({
                 //type,
-                id,
+                //id,
                 //unused attributes : function, field, document_id, document_title, document_creation_label
                 placename_id,
                 // fetching placenames label from response data by placename_id:
@@ -160,7 +160,7 @@ const actions = {
             ]
             //console.log('places : ', places)
             commit('SET_ALL', places)
-            commit('SET_LOADING', false)
+            //commit('SET_LOADING', false)
 
         } catch(e) {
           console.error('issue with placeRoles loading', e);

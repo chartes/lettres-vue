@@ -1,76 +1,350 @@
 <template>
-  <div
-      class="section"
-      :class="toggleCssClass"
-  >
-    <div class="document-list-header is-flex is-justify-content-space-between is-align-items-center">
-      <div class="is-inline-block">
-        <div class="results-count">
-          <span class="total-count">{{ totalCount }}</span> résultat(s)
-        </div>
-      </div>
-      <div class="is-inline-block">
-        <div class="control">
-          <div class="switch-button-div">
-            <div
-              class="switch-button"
-              :class="toggleCssClass"
-              @click="toggle"
-            >
-              <input
-                class="switch-button-checkbox"
-                type="checkbox"
-              >
-              <label
-                class="switch-button-label"
-                for=""
-              >
-                <span class="switch-button-label-span">TABLEAU</span>
-              </label>
+  <div>
+    <div v-if="$route.name === 'search'">
+      <div
+        class="section"
+        :class="toggleCssClass"
+      >
+        <div class="document-list-header is-flex is-justify-content-space-between is-align-items-center">
+          <div class="is-inline-block">
+            <div class="results-count">
+              <span class="total-count">{{ totalCount }}</span> résultat(s)
             </div>
           </div>
-        </div><!-- v-model="isResultTableMode"-->
+          <div class="is-inline-block px-1">
+            <div class="control">
+              <div class="switch-button-div">
+                <div
+                  class="switch-button"
+                  :class="toggleCssClass"
+                  @click="toggle"
+                >
+                  <input
+                    class="switch-button-checkbox"
+                    type="checkbox"
+                  >
+                  <label
+                    class="switch-button-label"
+                    for=""
+                  >
+                    <span class="switch-button-label-span">TABLEAU</span>
+                  </label>
+                </div>
+              </div>
+            </div><!-- v-model="isResultTableMode"-->
+          </div>
+        </div>
+        <div class="is-flex toggle-list-and-pagination is-justify-content-space-between">
+          <div
+            v-if="!isActive"
+            class="field is-inline-block mb-0 px-1"
+          >
+            <!--v-if="!isActive && isFulltextSearch"-->
+            <div class="control block is-flex is-align-items-center mb-0 sort-options">
+              <span>Tris</span>
+              <div class="is-inline-block select-parent">
+                <select
+                  id="tri-select"
+                  v-model="sortingPriority"
+                  name="tri"
+                >
+                  <option
+                    :value="sortingPriority[0].field === 'creation' && sortingPriority[0].order === 'asc'
+                      ? [{field: 'creation', order: 'asc'}]
+                      : sortingPriority[0].field === 'creation' && sortingPriority[0].order === 'desc'
+                        ? [{field: 'creation', order: 'desc'}]
+                        : [{field: 'creation', order: 'asc'}]
+                    "
+                  >
+                    Creation
+                  </option>
+                  <option
+                    :value="sortingPriority[0].field === 'id' && sortingPriority[0].order === 'asc'
+                      ? [{field: 'id', order: 'asc'}]
+                      : sortingPriority[0].field === 'id' && sortingPriority[0].order === 'desc'
+                        ? [{field: 'id', order: 'desc'}]
+                        : [{field: 'id', order: 'asc'}]
+                    "
+                  >
+                    Lettre Id
+                  </option>
+                  <option
+                    :value="sortingPriority[0].field === 'senders.label.keyword' && sortingPriority[0].order === 'asc'
+                      ? [{field: 'senders.label.keyword', order: 'asc'}]
+                      : sortingPriority[0].field === 'senders.label.keyword' && sortingPriority[0].order === 'desc'
+                        ? [{field: 'senders.label.keyword', order: 'desc'}]
+                        : [{field: 'senders.label.keyword', order: 'asc'}]
+                    "
+                  >
+                    Expéditeur
+                  </option>
+                  <option
+                    :value="sortingPriority[0].field === 'recipients.label.keyword' && sortingPriority[0].order === 'asc'
+                      ? [{field: 'recipients.label.keyword', order: 'asc'}]
+                      : sortingPriority[0].field === 'recipients.label.keyword' && sortingPriority[0].order === 'desc'
+                        ? [{field: 'recipients.label.keyword', order: 'desc'}]
+                        : [{field: 'recipients.label.keyword', order: 'asc'}]
+                    "
+                  >
+                    Destinataire
+                  </option>
+                  <option
+                    :value="sortingPriority[0].field === 'location-date-from.label.keyword' && sortingPriority[0].order === 'asc'
+                      ? [{field: 'location-date-from.label.keyword', order: 'asc'}]
+                      : sortingPriority[0].field === 'location-date-from.label.keyword' && sortingPriority[0].order === 'desc'
+                        ? [{field: 'location-date-from.label.keyword', order: 'desc'}]
+                        : [{field: 'location-date-from.label.keyword', order: 'asc'}]
+                    "
+                  >
+                    Lieu d'expédition
+                  </option>
+                  <option
+                    :value="sortingPriority[0].field === 'location-date-to.label.keyword' && sortingPriority[0].order === 'asc'
+                      ? [{field: 'location-date-to.label.keyword', order: 'asc'}]
+                      : sortingPriority[0].field === 'location-date-to.label.keyword' && sortingPriority[0].order === 'desc'
+                        ? [{field: 'location-date-to.label.keyword', order: 'desc'}]
+                        : [{field: 'location-date-to.label.keyword', order: 'asc'}]
+                    "
+                  >Lieu de destination
+                  </option>
+                </select>
+              </div>
+              <span
+                v-if="sortingPriority.length > 0 && sortingPriority[0].order === 'asc'"
+                class="icon button arrow-up"
+                @click="sortPressed(sortingPriority[0].field, 'desc', 'escape')"
+              >
+              </span>
+              <span
+                v-else
+                v-show="sortingPriority.length > 0"
+                class="icon button arrow-down"
+                @click="sortPressed(sortingPriority[0].field, 'asc', 'escape')"
+              >
+              </span>
+            </div>
+          </div>
+          <div
+            v-if="totalPages"
+            class="pagination-controls"
+          >
+            <a
+              :class="currentPage <= 1 ? 'button first-page disabled' : 'button first-page'"
+              @click="currentPage <= 1 ? null : currentPage = 1"
+            >
+            </a>
+            <a
+              :class="currentPage <= 1 ? 'button previous-page disabled' : 'button previous-page'"
+              @click="currentPage <= 1 ? null : --currentPage"
+            >
+            </a>
+            <input
+              v-model="currentPage"
+              name="page"
+              type="number"
+              min="1"
+              :max="totalPages"
+              placeholder="Page..."
+              class="current-page"
+              @change.prevent="currentPage = parseInt(p)"
+            >
+            <span class="label-sur-page">sur</span>
+            <span class="total-pages">{{ totalPages }}</span>
+            <a
+              :class="currentPage < totalPages ? 'button next-page' : 'button next-page disabled'"
+              @click="currentPage < totalPages ? ++currentPage : null"
+            >
+            </a>
+            <a
+              :class="currentPage < totalPages ? 'button last-page' : 'button last-page disabled'"
+              @click="currentPage < totalPages ? currentPage = totalPages : null"
+            >
+            </a>
+          </div>
+        </div>
       </div>
     </div>
-
-    <div
-      v-if="totalPages"
-      class="pagination-controls"
-    >
-      <a
-        :class="currentPage <= 1 ? 'button first-page disabled' : 'button first-page'"
-        @click="currentPage <= 1 ? null : currentPage = 1"
+    <div v-else>
+      <div
+        class="section mb-5"
+        :class="toggleCssClass"
       >
-      </a>
-      <a
-        :class="currentPage <= 1 ? 'button previous-page disabled' : 'button previous-page'"
-        @click="currentPage <= 1 ? null : --currentPage"
-      >
-      </a>
-      <input
-        v-model="currentPage"
-        name="page"
-        type="number"
-        min="1"
-        :max="totalPages"
-        placeholder="Page..."
-        class="current-page"
-        @change.prevent="currentPage = parseInt(p)"
-      >
-      <span class="label-sur-page">sur</span>
-      <span class="total-pages">{{ totalPages }}</span>
-      <a
-        :class="currentPage < totalPages ? 'button next-page' : 'button next-page disabled'"
-        @click="currentPage < totalPages ? ++currentPage : null"
-      >
-      </a>
-      <a
-        :class="currentPage < totalPages ? 'button last-page' : 'button last-page disabled'"
-        @click="currentPage < totalPages ? currentPage = totalPages : null"
-      >
-      </a>
+        <section class="mb-5">
+          <div class="is-flex">
+            <span class="collection-documents">
+              <span class="documents-count">{{ totalCount }}</span> DOCUMENTS
+            </span>
+          </div>
+          <div class="search-collection-parent is-flex is-justify-content-flex-end">
+            <router-link
+              :to="{ name: 'search'}"
+            >
+              <b-button
+                class="search-collection"
+                label="Rechercher dans la collection"
+                @click="searchCollection"
+              />
+            </router-link>
+          </div>
+        </section>
+        <section class="mb-5">
+          <!-- Table toggle + pagination -->
+          <div
+            v-if="totalCount"
+            class="is-flex toggle-list-and-pagination is-justify-content-space-between"
+          >
+            <div class="is-inline-block">
+              <div
+                v-if="totalPages"
+                class="has-text-centered"
+              >
+                <div class="pagination-controls">
+                  <a
+                    :class="currentPage <= 1 ? 'button first-page disabled' : 'button first-page'"
+                    @click="currentPage <= 1 ? null : currentPage = 1 "
+                  />
+                  <a
+                    :class="currentPage <= 1 ? 'button previous-page disabled' : 'button previous-page'"
+                    @click="currentPage <= 1 ? null : --currentPage"
+                  />
+                  <input
+                    v-model="currentPage"
+                    name="page"
+                    type="number"
+                    min="1"
+                    :max="totalPages"
+                    placeholder="Page..."
+                    class="current-page"
+                    @change.prevent="currentPage = parseInt(p)"
+                  >
+                  <span class="label-sur-page">sur</span>
+                  <span class="total-pages">{{ totalPages }}</span>
+                  <a
+                    :class="currentPage < totalPages ? 'button next-page' : 'button next-page disabled'"
+                    @click="currentPage < totalPages ? ++currentPage : null"
+                  />
+                  <a
+                    :class="currentPage < totalPages ? 'button last-page' : 'button last-page disabled'"
+                    @click="currentPage < totalPages ? currentPage = totalPages : null"
+                  />
+                </div>
+              </div>
+            </div>
+            <div
+              v-if="!isActive"
+              class="field is-inline-block mb-0 px-1"
+            >
+              <!--v-if="!isActive && isFulltextSearch"-->
+              <div class="control block is-flex is-align-items-center mb-0 sort-options">
+                <span>Tris</span>
+                <div class="is-inline-block select-parent">
+                  <select
+                    id="tri-select"
+                    v-model="sortingPriority"
+                    name="tri"
+                  >
+                    <option
+                      :value="sortingPriority[0].field === 'creation' && sortingPriority[0].order === 'asc'
+                        ? [{field: 'creation', order: 'asc'}]
+                        : sortingPriority[0].field === 'creation' && sortingPriority[0].order === 'desc'
+                          ? [{field: 'creation', order: 'desc'}]
+                          : [{field: 'creation', order: 'asc'}]
+                      "
+                    >
+                      Creation
+                    </option>
+                    <option
+                      :value="sortingPriority[0].field === 'id' && sortingPriority[0].order === 'asc'
+                        ? [{field: 'id', order: 'asc'}]
+                        : sortingPriority[0].field === 'id' && sortingPriority[0].order === 'desc'
+                          ? [{field: 'id', order: 'desc'}]
+                          : [{field: 'id', order: 'asc'}]
+                      "
+                    >
+                      Lettre Id
+                    </option>
+                    <option
+                      :value="sortingPriority[0].field === 'senders.label.keyword' && sortingPriority[0].order === 'asc'
+                        ? [{field: 'senders.label.keyword', order: 'asc'}]
+                        : sortingPriority[0].field === 'senders.label.keyword' && sortingPriority[0].order === 'desc'
+                          ? [{field: 'senders.label.keyword', order: 'desc'}]
+                          : [{field: 'senders.label.keyword', order: 'asc'}]
+                      "
+                    >
+                      Expéditeur
+                    </option>
+                    <option
+                      :value="sortingPriority[0].field === 'recipients.label.keyword' && sortingPriority[0].order === 'asc'
+                        ? [{field: 'recipients.label.keyword', order: 'asc'}]
+                        : sortingPriority[0].field === 'recipients.label.keyword' && sortingPriority[0].order === 'desc'
+                          ? [{field: 'recipients.label.keyword', order: 'desc'}]
+                          : [{field: 'recipients.label.keyword', order: 'asc'}]
+                      "
+                    >
+                      Destinataire
+                    </option>
+                    <option
+                      :value="sortingPriority[0].field === 'location-date-from.label.keyword' && sortingPriority[0].order === 'asc'
+                        ? [{field: 'location-date-from.label.keyword', order: 'asc'}]
+                        : sortingPriority[0].field === 'location-date-from.label.keyword' && sortingPriority[0].order === 'desc'
+                          ? [{field: 'location-date-from.label.keyword', order: 'desc'}]
+                          : [{field: 'location-date-from.label.keyword', order: 'asc'}]
+                      "
+                    >
+                      Lieu d'expédition
+                    </option>
+                    <option
+                      :value="sortingPriority[0].field === 'location-date-to.label.keyword' && sortingPriority[0].order === 'asc'
+                        ? [{field: 'location-date-to.label.keyword', order: 'asc'}]
+                        : sortingPriority[0].field === 'location-date-to.label.keyword' && sortingPriority[0].order === 'desc'
+                          ? [{field: 'location-date-to.label.keyword', order: 'desc'}]
+                          : [{field: 'location-date-to.label.keyword', order: 'asc'}]
+                      "
+                    >Lieu de destination
+                    </option>
+                  </select>
+                </div>
+                <span
+                  v-if="sortingPriority.length > 0 && sortingPriority[0].order === 'asc'"
+                  class="icon button arrow-up"
+                  @click="sortPressed(sortingPriority[0].field, 'desc', 'escape')"
+                >
+                </span>
+                <span
+                  v-else
+                  v-show="sortingPriority.length > 0"
+                  class="icon button arrow-down"
+                  @click="sortPressed(sortingPriority[0].field, 'asc', 'escape')"
+                >
+                </span>
+              </div>
+            </div>
+            <div class="is-inline-block px-1">
+              <div class="control">
+                <div class="switch-button-div">
+                  <div
+                    class="switch-button"
+                    :class="toggleCssClass"
+                    @click="toggle"
+                  >
+                    <input
+                      class="switch-button-checkbox"
+                      type="checkbox"
+                    >
+                    <label
+                      class="switch-button-label"
+                      for=""
+                    >
+                      <span class="switch-button-label-span">TABLEAU</span>
+                    </label>
+                  </div>
+                </div>
+              </div><!-- v-model="isResultTableMode"-->
+            </div>
+          </div>
+        </section>
+      </div>
     </div>
-
     <div :class="toggleCssClass">
       <b-table
         ref="multiSortTable"
@@ -109,36 +383,18 @@
           <template v-slot:header="{ column }">
             <div v-if="column.sortable">
               <div v-if="sortingPriority.filter(obj => obj.field === column.field).length === 0">
-                <span
-                  class="icon button arrows-alt-v"
-                >
-                  <i class="fas fa-arrows-alt-v"></i>
-                </span>
+                <span class="icon button arrows-alt-v" />
               </div>
               <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'asc'">
-                <span class="icon button arrow-up">
-                  <i class="fas fa-arrow-up"></i>
-                </span>
-                <span class="icon button multi-sort-cancel-icon">
+                <span class="icon button arrow-up" />
+                <span class="icon button sort-index">
                   {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
-                  <button
-                    class="delete is-small multi-sort-cancel-icon"
-                    type="button"
-                    @click.stop="sortingPriorityRemoved(column.field)"
-                  />
                 </span>
               </div>
               <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'desc'">
-                <span class="icon button arrow-down">
-                  <i class="fas fa-arrow-down"></i>
-                </span>
-                <span class="icon button">
+                <span class="icon button arrow-down" />
+                <span class="icon button sort-index">
                   {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
-                  <button
-                    class="delete is-small multi-sort-cancel-icon"
-                    type="button"
-                    @click.stop="sortingPriorityRemoved(column.field)"
-                  />
                 </span>
               </div>
               <span>
@@ -167,36 +423,18 @@
           <template v-slot:header="{ column }">
             <div v-if="column.sortable">
               <div v-if="sortingPriority.filter(obj => obj.field === column.field).length === 0">
-                <span
-                  class="icon button arrows-alt-v"
-                >
-                  <i class="fas fa-arrows-alt-v"></i>
-                </span>
+                <span class="icon button arrows-alt-v" />
               </div>
               <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'asc'">
-                <span class="icon button arrow-up">
-                  <i class="fas fa-arrow-up"></i>
-                </span>
+                <span class="icon button arrow-up" />
                 <span class="icon button sort-index">
                   {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
-                  <button
-                    class="delete is-small multi-sort-cancel-icon"
-                    type="button"
-                    @click.stop="sortingPriorityRemoved(column.field)"
-                  />
                 </span>
               </div>
               <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'desc'">
-                <span class="icon button arrow-down">
-                  <i class="fas fa-arrow-down"></i>
-                </span>
+                <span class="icon button arrow-down" />
                 <span class="icon button sort-index">
                   {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
-                  <button
-                    class="delete is-small multi-sort-cancel-icon"
-                    type="button"
-                    @click.stop="sortingPriorityRemoved(column.field)"
-                  />
                 </span>
               </div>
               <span>
@@ -220,36 +458,18 @@
           <template v-slot:header="{ column }">
             <div v-if="column.sortable">
               <div v-if="sortingPriority.filter(obj => obj.field === column.field).length === 0">
-                <span
-                  class="icon button arrows-alt-v"
-                >
-                  <i class="fas fa-arrows-alt-v"></i>
-                </span>
+                <span class="icon button arrows-alt-v" />
               </div>
               <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'asc'">
-                <span class="icon button arrow-up">
-                  <i class="fas fa-arrow-up"></i>
-                </span>
+                <span class="icon button arrow-up" />
                 <span class="icon button sort-index">
                   {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
-                  <button
-                    class="delete is-small multi-sort-cancel-icon"
-                    type="button"
-                    @click.stop="sortingPriorityRemoved(column.field)"
-                  />
                 </span>
               </div>
               <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'desc'">
-                <span class="icon button arrow-down">
-                  <i class="fas fa-arrow-down"></i>
-                </span>
+                <span class="icon button arrow-down" />
                 <span class="icon button sort-index">
                   {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
-                  <button
-                    class="delete is-small multi-sort-cancel-icon"
-                    type="button"
-                    @click.stop="sortingPriorityRemoved(column.field)"
-                  />
                 </span>
               </div>
               <span>
@@ -276,61 +496,146 @@
           </template>
         </b-table-column>
         <b-table-column
-          v-slot="props"
-          field="senders"
-          label="Expéditeur"
+          field="senders.label.keyword"
+          label="Expéditeur(s)"
+          :td-attrs="columnTdAttrs"
+          sortable
         >
-          {{ props.row.senders }}
+          <template v-slot:header="{ column }">
+            <div v-if="column.sortable">
+              <div v-if="sortingPriority.filter(obj => obj.field === column.field).length === 0">
+                <span class="icon button arrows-alt-v" />
+              </div>
+              <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'asc'">
+                <span class="icon button arrow-up" />
+                <span class="icon button sort-index">
+                  {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
+                </span>
+              </div>
+              <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'desc'">
+                <span class="icon button arrow-down" />
+                <span class="icon button sort-index">
+                  {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
+                </span>
+              </div>
+              <span>
+                {{ column.label }}
+              </span>
+            </div>
+            <div v-else>
+              {{ column.label }}
+            </div>
+          </template>
+          <template v-slot="props">
+            {{ props.row.senders }}
+          </template>
         </b-table-column>
+
         <b-table-column
-          v-slot="props"
-          field="recipients"
+          field="recipients.label.keyword"
           label="Destinataire(s)"
+          :td-attrs="columnTdAttrs"
+          sortable
         >
-          {{ props.row.recipients }}
-        </b-table-column>
-
-        <b-table-column
-            field="expéditeur"
-            label="Expéditeur"
-            :td-attrs="columnTdAttrs"
-            sortable
-        >
+          <template v-slot:header="{ column }">
+            <div v-if="column.sortable">
+              <div v-if="sortingPriority.filter(obj => obj.field === column.field).length === 0">
+                <span class="icon button arrows-alt-v" />
+              </div>
+              <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'asc'">
+                <span class="icon button arrow-up" />
+                <span class="icon button sort-index">
+                  {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
+                </span>
+              </div>
+              <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'desc'">
+                <span class="icon button arrow-down" />
+                <span class="icon button sort-index">
+                  {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
+                </span>
+              </div>
+              <span>
+                {{ column.label }}
+              </span>
+            </div>
+            <div v-else>
+              {{ column.label }}
+            </div>
+          </template>
           <template v-slot="props">
-            <p>(personne) {{ props.row.sender }}</p>
+            {{ props.row.recipients }}
           </template>
         </b-table-column>
 
         <b-table-column
-            field="destinataire"
-            label="Destinataire"
-            :td-attrs="columnTdAttrs"
-            sortable
+          field="location-date-from.label.keyword"
+          label="Lieu d'expédition"
+          :td-attrs="columnTdAttrs"
+          sortable
         >
+          <template v-slot:header="{ column }">
+            <div v-if="column.sortable">
+              <div v-if="sortingPriority.filter(obj => obj.field === column.field).length === 0">
+                <span class="icon button arrows-alt-v" />
+              </div>
+              <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'asc'">
+                <span class="icon button arrow-up" />
+                <span class="icon button sort-index">
+                  {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
+                </span>
+              </div>
+              <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'desc'">
+                <span class="icon button arrow-down" />
+                <span class="icon button sort-index">
+                  {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
+                </span>
+              </div>
+              <span>
+                {{ column.label }}
+              </span>
+            </div>
+            <div v-else>
+              {{ column.label }}
+            </div>
+          </template>
           <template v-slot="props">
-            <p>(personnes) {{ props.row.recipient }}</p>
+            <p>{{ props.row.origins }}</p>
           </template>
         </b-table-column>
 
         <b-table-column
-            field="lieu-expedition"
-            label="Lieu d'expédition"
-            :td-attrs="columnTdAttrs"
-            sortable
+          field="location-date-to.label.keyword"
+          label="Lieu de destination"
+          :td-attrs="columnTdAttrs"
+          sortable
         >
-          <template v-slot="props">
-            <p>(lieu) {{ props.row.origin }}</p>
+          <template v-slot:header="{ column }">
+            <div v-if="column.sortable">
+              <div v-if="sortingPriority.filter(obj => obj.field === column.field).length === 0">
+                <span class="icon button arrows-alt-v" />
+              </div>
+              <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'asc'">
+                <span class="icon button arrow-up" />
+                <span class="icon button sort-index">
+                  {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
+                </span>
+              </div>
+              <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'desc'">
+                <span class="icon button arrow-down" />
+                <span class="icon button sort-index">
+                  {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
+                </span>
+              </div>
+              <span>
+                {{ column.label }}
+              </span>
+            </div>
+            <div v-else>
+              {{ column.label }}
+            </div>
           </template>
-        </b-table-column>
-
-        <b-table-column
-            field="lieu-destination"
-            label="Lieu de destination"
-            :td-attrs="columnTdAttrs"
-            sortable
-        >
           <template v-slot="props">
-            <p>(lieu) {{ props.row.destination }}</p>
+            {{ props.row.destinations }}
           </template>
         </b-table-column>
 
@@ -363,10 +668,17 @@ export default {
     DocumentTagBar: () => import("@/components/document/DocumentTagBar"),
     Document: () => import("@/components/sections/Document")
   },
-  props: {},
+  props: {
+      "collectionId": {
+          type: Number,
+          default: undefined,
+          required: false,
+      }
+  },
   data() {
     return {
       canEdit: false,
+      //sortingPriority: [{field: 'creation', order: 'asc'}],
       tableData: [],
       p: 1,
       isActive: true,
@@ -380,11 +692,34 @@ export default {
 
     sortingPriority: {
       get: function() {
-        return this.sorts
+        console.log('sortingPriority GET');
+        console.log('this.sorts', this.sorts);
+        return this.sorts;
+        /*if (this.sorts) {
+            console.log('sortingPriority GET')
+            console.log('this.sorts', this.sorts)
+            console.log('sortingPriority', this.sortingPriority)
+            return this.sorts
+        } else {
+            console.log('sortingPriority GET default')
+            console.log('this.sorts', this.sorts)
+            console.log('sortingPriority', this.sortingPriority)
+            //this.setSorts([{field: 'creation', order: 'asc'}]);
+            //console.log('this.sorts2', this.sorts)
+            //console.log('sortingPriority2', this.sortingPriority)
+            return [{field: 'creation', order: 'asc'}];
+        }*/
       },
 
       set: function (value) {
-        this.setSorts(value)
+        console.log('sortingPriority SET');
+        console.log('this.sorts', this.sorts);
+        console.log('SET value', value);
+        if (this.sorts !== value) {
+            this.setSorts(value)
+            this.performSearch()
+            this.loadAsyncData()
+        }
       }
     },
 
@@ -415,10 +750,15 @@ export default {
     }
   },
   created() {
-    this.loadAsyncData()
+    this.setSorts([{field: 'creation', order: 'asc'}]);
+    this.loadAsyncData();
   },
   methods: {
-    ...mapActions("search", ["setNumPage", "performSearch", "setSorts"]),
+    ...mapActions("search", ["setNumPage", "performSearch", "setSorts", "setSelectedCollections"]),
+    searchCollection() {
+      this.$store.state.search.selectedCollections = [this.collection];
+      this.$store.state.layout.showLeftSideBar = true
+    },
     highlight(text) {
       if (this.searchTerm.length > 0) {
         const terms = this.searchTerm.split(new RegExp("\\s+")).map(escapeRegExp).filter(term => term !== "")
@@ -441,26 +781,49 @@ export default {
     sortingPriorityRemoved(field){
       const newPriority = this.sortingPriority.filter((priority) => priority.field !== field )
       this.sortingPriority = [...newPriority]
-      console.log(newPriority, this.sortingPriority)
+      if (this.sortingPriority.length > 0) {
+          console.log(newPriority, this.sortingPriority);
+      } else {
+          // default sorting on ascending creation date
+          this.sortingPriority = [{ field: "creation", order: "asc" }];
+          console.log("Default sorting new Priority", newPriority, this.sortingPriority);
+      }
       this.performSearch()
       this.loadAsyncData()
     },
 
     sortPressed(field, order, event) {
-      if((this.customKey && event[this.customKey]) || !this.customKey) {
-        let existingPriority = this.sortingPriority.filter(i => i.field === field)[0]
-        if(existingPriority) {
-          existingPriority.order = existingPriority.order === 'desc' ? 'asc' : 'desc'
+        if((this.customKey && event[this.customKey]) || !this.customKey) {
+          let existingPriority = this.sortingPriority.filter(i => i.field === field)[0]
+          if(existingPriority) {
+            console.log("existingPriority", existingPriority)
+            // UPDATE SORTING
+            //console.log("existingPriority", existingPriority);
+            if (existingPriority.order === "asc") {
+              // SORTING WAS 'asc' UPDATED TO 'desc'
+              existingPriority.order = "desc";
+            } else if (existingPriority.order === "desc" && event !== 'escape') {
+              // SORTING WAS 'desc' UPDATED TO unset
+              console.log('sortingPriorityRemoved')
+              this.sortingPriorityRemoved(field);
+            } else {
+              existingPriority.order = "asc"; // unused scenario
+            }
+            // existingPriority.order = existingPriority.order === "asc" ? "desc" : existingPriority.order === "desc" ? this.sortingPriorityRemoved(field) : "asc" ;
+          } else {
+            // NO SORTING : request sorted data (note Document List is backend sorted from Store Sorts property (updated via setSorts)
+            // default sorting here, need to be equivalent to default sortingPriority :
+            // here default is 'asc', hence a new priority needs to be asc so that clicks follows asc -> desc -> unset -> etc
+            this.sortingPriority.push({field, order: "asc"})
+            console.log("sortingPriority", this.sortingPriority)
+          }
+          this.setSorts(this.sortingPriority)
         } else {
-          // request sorted data from backend
-          this.sortingPriority.push({field, order})
+          // request regular sorted data from backend
+          console.log('tada')
+          this.sortingPriority = [] // [{field, order}]
+          this.setSorts([])
         }
-        this.setSorts(this.sortingPriority)
-      } else {
-        // request regular sorted data from backend
-        this.sortingPriority = [] // [{field, order}]
-        this.setSorts([])
-      }
       
       this.performSearch()
       this.loadAsyncData()
@@ -475,8 +838,15 @@ export default {
           id: d.id,
           title:  d.title,
           creation:  d.creation,
-          senders: d.sender.map(sender => (this.$store.state.persons.persons_roles[0].persons.find(p => p.person_id === sender.id) || {}).label).filter(Boolean).join(", "),
-          recipients: d.recipients.map(recipient => (this.$store.state.persons.persons_roles[1].persons.find(p => p.person_id === recipient.id) || {}).label).filter(Boolean).join(", ")
+          senders: this.included.length > 0 ? d.sender.map(sender => (this.included.find(item => item.id === sender.id & item.type === 'person')).attributes.label).filter(Boolean).join(", ") : '',
+          recipients: this.included.length > 0 ? d.recipients.map(recipient => (this.included.find(item => item.id === recipient.id & item.type === 'person')).attributes.label).filter(Boolean).join(", ") : '',
+          origins: this.included.length > 0 ? d.origin.map(origin => (this.included.find(item => item.id === origin.id & item.type === 'placename')).attributes.label).filter(Boolean).join(", ") : '',
+          destinations: this.included.length > 0 ? d.destinations.map(destination => (this.included.find(item => item.id === destination.id & item.type === 'placename')).attributes.label).filter(Boolean).join(", ") : '',
+          /* previous logic fails on collection page if this.$store.state.persons.persons_roles/placenames.places have not been loaded
+          previous senders: d.sender.map(sender => (this.$store.state.persons.persons_roles[1].persons.find(p => p.person_id === sender.id) || {}).label).filter(Boolean).join(", "),
+          recipients: d.recipients.map(recipient => (this.$store.state.persons.persons_roles[1].persons.find(p => p.person_id === recipient.id) || {}).label).filter(Boolean).join(", "),
+          origins: d.origin.map(origin => (this.$store.state.placenames.places[0].places.find(p => p.placename_id === origin.id) || {}).label).filter(Boolean).join(", "),
+          destinations: d.destinations.map(destinations => (this.$store.state.placenames.places[1].places.find(p => p.placename_id === destinations.id) || {}).label).filter(Boolean).join(", ")*/
         }
         }));
       }
@@ -486,6 +856,11 @@ export default {
         this.isActive = false;
       } else {
         this.isActive = true;
+      }
+      if (this.sorts[0].field !== 'creation' || this.sorts[0].order !== 'asc') {
+        this.setSorts([{field: 'creation', order: 'asc'}]);
+        this.performSearch();
+        this.loadAsyncData();
       }
     },
     columnTdAttrs(row, column) {
@@ -514,6 +889,7 @@ export default {
 
 <style scoped lang="scss">
 @import "@/assets/sass/main.scss";
+@import "@/assets/sass/elements/_select.scss";
 @import "@/assets/sass/components/_search_results_table.scss";
 @import "@/assets/sass/components/_search_results_pagination.scss";
 
@@ -523,6 +899,52 @@ export default {
 }
 progress {
   margin-top: 30px;
+}
+.collection-documents {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+
+  flex-grow: 1;
+  margin: 5px 0;
+  padding-left: 2px;
+  padding-right: 2px;
+
+  font-size: 14px;
+  color: #FF0052;
+  font-weight: 500;
+  text-transform: uppercase;
+  white-space: nowrap;
+
+  &::after {
+    content: '';
+    display: inline-block;
+    border-bottom: 1px solid #FF0052;
+    width: 100%;
+    transform: translateY(-2px);
+  }
+
+  span.documents-count {
+    font-weight: 700;
+  }
+}
+.search-collection-parent {
+  border-bottom: 1px solid #D5D5D5;
+  padding-bottom: 15px;
+}
+
+.search-collection {
+  margin: 32px 5px 5px;
+  padding: 10px;
+  background-color: transparent;
+  border: #C00055 solid 1px;
+  border-radius: 5px;
+
+  font-family: $family-primary;
+  font-size: 14px;
+  font-weight: 400;
+  color: #C00055;
+  text-transform: uppercase;
 }
 .switch-button {
   background-color: lightgrey;
@@ -687,6 +1109,34 @@ progress {
     text-align: center;
     font-weight: 600;
     text-transform: uppercase;
+  }
+}
+.toggle-list-and-pagination {
+  .icon.button {
+    width: 25px;
+    height: 25px;
+    border-radius: 4px;
+    margin: 0 4px 10px 0 !important;
+    padding: 0 !important;
+
+    &.arrow-down::after,
+    &.arrow-up::after {
+      content: '';
+      display: inline-block;
+      width: 100%;
+      height: 100%;
+      background-size: cover;
+      background-repeat: no-repeat;
+      transform-origin: 50% 50%;
+      background-image: url(#{$image-path}/icons/tri-fleche.svg);
+    }
+
+    &.arrow-down::after {
+      transform: rotate(180deg);
+    }
+    i {
+      display: none;
+    }
   }
 }
 /* Chrome, Safari, Edge, Opera */

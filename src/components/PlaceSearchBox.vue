@@ -18,7 +18,7 @@
             :data="filteredTags"
             autocomplete
             field="label"
-            placeholder="Paris"
+            :placeholder="allPlaces.some(cat => cat.places.length > 0) ? 'Paris' : 'Elargir les critères'"
             icon="fas fa-search"
             clearable
             group-field="role_id"
@@ -109,12 +109,12 @@ export default {
   },
   computed: {
     ...mapState("placenames", {allPlaces: "places"}),
-    ...mapState("search", ["selectedPlaceFrom","selectedPlaceTo","selectedPlaceCited"]),
+    ...mapState("search", ["selectedPlaceFrom","selectedPlaceTo","selectedPlaceCited", "selectedPersonFrom","selectedPersonTo","selectedPersonCited"]),
   },
   watch: {
-    tags() {
+    async tags(newValue, oldValue) {
       //console.log('this.tags : ', this.tags)
-      if (this.tags) {
+      if (this.tags.length > 0) {
         if (this.tags.filter(pl => (pl.role_id === 1))) {
           this.setSelectedPlaceFrom(this.tags.filter(pl => (pl.role_id === 1)));
         }
@@ -125,16 +125,24 @@ export default {
         if (this.tags.filter(pl => (pl.role_id === 3))) {
           this.setSelectedPlaceCited(this.tags.filter(pl => (pl.role_id === 3)));
         }
+        console.log("Places Watch Tags length>0 this.performSearch")
         this.performSearch();
 
       } else {
-        this.performSearch();
+        if (this.init && !newValue && !oldValue) {
+          console.log("Places Watch Tags length=0 but no Selections in Persons & Places : no action")
+          this.init = false;
+        } else {
+          console.log("Places Watch Tags length=0 this.performSearch")
+          this.performSearch();
+        }
       }
     },
   },
   async created() {
-    await this.fetchAll();
-    this.tags = this.selectedPlaceFrom && this.selectedPlaceTo && this.selectedPlaceCited;
+    //await this.fetchAll();
+    this.init = true;
+    this.tags = [...this.selectedPlaceFrom, ...this.selectedPlaceTo, ...this.selectedPlaceCited];
   },
   methods: {
     value,

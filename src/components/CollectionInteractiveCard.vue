@@ -1,5 +1,5 @@
 <template>
-  <div v-if="collection">
+  <div v-if="!isLoading && collection">
     <div class="collection-interactive-card">
       <div class="collection-card-header row is-flex">
         <div class="parent-collection-title">
@@ -459,6 +459,7 @@ export default {
   },
   data() {
     return {
+      isLoading: true,
       saving: "normal",
       deleting: "normal",
       collection: null,
@@ -468,7 +469,7 @@ export default {
     };
   },
   computed: {
-    ...mapState("collections", ["collectionsById"]),
+    ...mapState("collections", ["collectionsById", "selectedCollection"]),
     ...mapState("user", ["current_user", "users"]),
     ...mapGetters("collections", ["findRoot"]),
 
@@ -490,14 +491,24 @@ export default {
     },
   },
   async created() {
-    await this.load();
+    this.isLoading = true;
     if (this.current_user) {
       this.fetchUsers()
     }
-    this.curatorId = this.collection.admin.id
+    await this.load();
+    this.curatorId = this.collection.admin.id;
+    this.isLoading = false;
+    /*if (this.$props.collectionId && this.$store.state.collections.collectionsById.length > 0) {
+      await this.load();
+      this.curatorId = this.collection.admin.id;
+    } else {
+        await this.fetchAll();
+        await this.load();
+        this.curatorId = this.collection.admin.id;
+    }*/
   },
   methods: {
-    ...mapActions("collections", ["saveCollection", "fetchOne", "deleteCollection"]),
+    ...mapActions("collections", ["saveCollection", "fetchAll", "fetchOne", "deleteCollection"]),
     ...mapActions("user", ["fetchUsers"]),
 
     descriptionFormats() {
@@ -505,7 +516,7 @@ export default {
     },
 
     async load() {
-      this.collection = this.$store.state.collections.collectionsById[this.$props.collectionId]
+      this.collection = this.$store.state.collections.collectionsById[this.$props.collectionId];
     },
     async save() {
       if (this.collection.title.length < 1) {

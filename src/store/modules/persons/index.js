@@ -68,11 +68,11 @@ const actions = {
             //building list of persons and respective roles :
             const personsRoles = included.map(({
                 type, // unused
-                id,
+                id, // unused
                 attributes: {field, person_id, document_id, role_id, document_title, document_creation_label}, // also has function (unnecessary) field causing error
             }) => ({
                 //type,
-                id,
+                //id,
                 //unused attributes : function, field, document_id, document_title, document_creation_label
                 person_id,
                 // fetching persons label from response data by person_id:
@@ -119,7 +119,7 @@ const actions = {
             ]
             //console.log('persons_roles : ', persons_roles)
             commit('SET_PERSONS_ROLES', persons_roles)
-            commit('SET_LOADING', false)
+            //commit('SET_LOADING', false)
 
         } catch(e) {
           console.error('issue with persons_roles loading', e);
@@ -329,7 +329,7 @@ const actions = {
   },
 
   performSearch: debounce(async ({commit, state, rootState}) => {
-      commit('SET_LOADING_STATUS', true);
+      //commit('SET_LOADING_STATUS', true);
 
       /* =========== filters =========== */
       let query =  state.searchTerm  || '***' //`collections.id:${state.selectedCollectionId}`
@@ -418,10 +418,10 @@ const actions = {
         // (ex: remplacer state.document par state.items)
 
         commit('UPDATE_ALL', {documents: data, totalCount: meta['total-count'] , links, included: included || []});
-        commit('SET_LOADING_STATUS', false);
+        //commit('SET_LOADING_STATUS', false);
       } catch (reason) {
         console.warn('cant search:', reason);
-        commit('SET_LOADING_STATUS', false);
+        //commit('SET_LOADING_STATUS', false);
       }
     
     }, 500),

@@ -61,6 +61,7 @@
                       "
                       @select="
                         (option) => {
+                          creationDateTo.year = option;
                           creationDateTo.selection.year = option;
                           creationDateTo = cloneDeep(creationDateTo);
                         }
@@ -77,12 +78,12 @@
                     v-model="DateRange"
                     :min="minDateRange"
                     :max="maxDateRange"
-                    :marks="[1300, 1400, 1500, 1600, 1699]"
+
                     :lazy="true"
                     :enable-cross="false"
                     @dragging="(value, index) => updateDateRange(value, index)"
                   />
-                </div>
+                </div><!-- :marks="[1300, 1400, 1500, 1600, 1699]" -->
               </div>
             </div>
           </div>
@@ -390,24 +391,23 @@ export default {
       },
       set: function (value) {
         this.setWithStatus(value);
-        this.performSearch();
       },
     },
 
     DateRange: {
       get: function() {
-        if (this.creationDateFrom.year.length >= 4 && this.creationDateTo.year.length >= 4) {
-          console.log('test1')
+        if (this.creationDateFrom.year && this.creationDateTo.year && this.creationDateFrom.year.length >= 4 && this.creationDateTo.year.length >= 4) {
+          console.log('DateRange GET with a valid Range', this.creationDateFrom.year.length >= 4 && this.creationDateTo.year.length >= 4, this.creationDateTo.year)
           return [parseInt(this.creationDateFrom.year), parseInt(this.creationDateTo.year)]
-        } else if (this.creationDateFrom.year.length >= 4) {
-          console.log('test2')
+        } else if (this.creationDateFrom.year && this.creationDateFrom.year.length >= 4) {
+          console.log('DateRange GET with a year From only')
           this.setWithDateRange(false);
           return [parseInt(this.creationDateFrom.year), 1699];
-        } else if (this.creationDateTo.year.length >= 4) {
-          console.log('test3')
+        } else if (this.creationDateTo.year && this.creationDateTo.year.length >= 4) {
+          console.log('DateRange GET with a year To only')
           return [1300, parseInt(this.creationDateTo.year)];
         } else {
-          console.log('test4')
+          console.log('DateRange GET no dates (default range)')
         return [1300,1699]
         }
       },
@@ -421,10 +421,12 @@ export default {
         return this._creationDateFrom;
       },
       set: function (value) {
-        console.log('set creationDateFrom', value)
-        if (!value.year || value.year.length < 4 ) {
+        console.log('set creationDateFrom', value.selection.year)
+        if (!value.selection.year || value.selection.year.length < 4 ) {
+          console.log('creationDateFrom < 4', value.selection.year)
           this.setWithDateRange(false);
           this.setCreationDateFrom(value);
+          console.log("AdvanceSearch Set creationDateFrom if loop this.performSearch")
           this.performSearch();
           if (this.creationDateTo.year.length === 4) {
             this.DateRange=[1300, this.creationDateTo.year];
@@ -435,12 +437,14 @@ export default {
             this.setWithDateRange(true);
             this.DateRange = [parseInt(value.year) || 1300, Math.max(parseInt(value.year), parseInt(this.creationDateTo.year))];
             this.setCreationDateFrom(value);
+            console.log("AdvanceSearch Set creationDateFrom elseif loop this.performSearch")
             this.performSearch();
           } else {
             console.log('creationDateTo missing')
             this.setWithDateRange(false);
             this.DateRange = [parseInt(value.year) || 1300, Math.max(parseInt(value.year), 1699)];
             this.setCreationDateFrom(value);
+            console.log("AdvanceSearch Set creationDateFrom else loop this.performSearch")
             this.performSearch();
         }
       },
@@ -451,22 +455,27 @@ export default {
         return this._creationDateTo;
       },
       set: function (value) {
-        if (!value.year || value.year.length < 4 ) {
-          console.log('creationDateTo < 4', value.year)
+        console.log('set creationDateTo', value.selection.year);
+        if (!value.selection.year || value.selection.year.length < 4 ) {
+          console.log('creationDateTo < 4', value.selection.year)
           this.setWithDateRange(false);
+          console.log("value", value)
+          console.log("value.selection", value.selection)
           this.setCreationDateTo(value);
+          console.log("AdvanceSearch Set creationDateTo if loop this.performSearch")
           this.performSearch();
-          console.log('updating range with missing value To', value.year)
+          console.log('updating range with missing value To', value.selection.year)
           if (this.creationDateFrom.year.length === 4) {
             this.DateRange=[this.creationDateFrom.year, 1699];
           } else {
               this.DateRange = [1300, 1699];
           }
         } else {
-          console.log('creationDateTo = 4', value.year)
+          console.log('creationDateTo = 4', value.selection.year)
           this.setWithDateRange(true);
-          this.DateRange = [Math.max(parseInt(this.creationDateFrom.year),1300), parseInt(value.year)];
+          this.DateRange = [Math.max(parseInt(this.creationDateFrom.year),1300), parseInt(value.selection.year)];
           this.setCreationDateTo(value);
+          console.log("AdvanceSearch Set creationDateTo else loop this.performSearch")
           this.performSearch();
         }
       },
@@ -486,11 +495,9 @@ export default {
     },*/
     filteredCreationDateToYear() {
       if (this.creationDateFrom.year) {
-        let test = function() {return this.filteredDataArray(this.availableYears, this.creationDateTo.year).filter(dt => parseInt(dt) >= parseInt(this.creationDateFrom.year))};
-        console.log('test : ', test)
-        return this.filteredDataArray(this.availableYears, this.creationDateTo.year).filter(dt => parseInt(dt) >= parseInt(this.creationDateFrom.year));
+        return this.filteredDataArray(this.availableYears, this.creationDateTo.year ? this.creationDateTo.year : '').filter(dt => parseInt(dt) >= parseInt(this.creationDateFrom.year));
       } else {
-        return this.filteredDataArray(this.availableYears, this.creationDateTo.year);
+        return this.filteredDataArray(this.availableYears, this.creationDateTo.year ? this.creationDateTo.year : '');
       }
     },
     /*filteredCreationDateToMonth() {
@@ -502,13 +509,46 @@ export default {
   },
   watch: {
     creationDateFrom() {
+      console.log("AdvanceSearch watch creationDateFrom this.performSearch")
       this.performSearch();
     },
     creationDateTo() {
+      console.log("AdvanceSearch watch creationDateTo this.performSearch")
       this.performSearch();
     },
+    /*persons_roles(newValue, oldValue) {
+      console.log(`Updating persons from to`, oldValue, newValue);
+      if (JSON.stringify(oldValue) !== JSON.stringify(newValue)) {
+        console.log("JSON.stringify(oldValue) !== JSON.stringify(newValue)", JSON.stringify(oldValue) !== JSON.stringify(newValue))
+        if ((this.selectedPersonFrom.length === 0 && this.selectedPersonTo.length === 0 && this.selectedPersonCited.length === 0) &&
+            (this.selectedPlaceFrom.length === 0 && this.selectedPlaceTo.length === 0 && this.selectedPlaceCited.length === 0)) {
+          console.log("AdvanceSearch watch Places this.fetchAllPersons")
+          this.fetchAllPersons()
+          this.fetchAllPlaces()
+        }
+      }
+    },
+    places(newValue, oldValue) {
+      console.log(`Updating places from to`, oldValue, newValue);
+      console.log("check", this.selectedPersonFrom.length === 0 && this.selectedPersonTo.length === 0 && this.selectedPersonCited.length === 0)
+      if (JSON.stringify(oldValue) !== JSON.stringify(newValue)) {
+        console.log("JSON.stringify(oldValue) !== JSON.stringify(newValue)", JSON.stringify(oldValue) !== JSON.stringify(newValue))
+        if ((this.selectedPersonFrom.length === 0 && this.selectedPersonTo.length === 0 && this.selectedPersonCited.length === 0) &&
+            (this.selectedPlaceFrom.length === 0 && this.selectedPlaceTo.length === 0 && this.selectedPlaceCited.length === 0)) {
+          console.log("AdvanceSearch watch Places this.fetchAllPersons")
+          this.fetchAllPersons()
+          this.fetchAllPlaces()
+        }
+      }
+    }*/
   },
+  /*async created() {
+     await this.fetchAllPersons();
+     await this.fetchAllPlaces();
+  },*/
   methods: {
+    //...mapActions("persons", {fetchAllPersons: "fetchAll"}),
+    //...mapActions("placenames", {fetchAllPlaces: "fetchAll"}),
     cloneDeep,
     ...mapActions("search", [
       "performSearch",

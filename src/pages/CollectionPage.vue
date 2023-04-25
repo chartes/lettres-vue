@@ -1,431 +1,100 @@
 <template>
   <div
+    v-if="!isLoading"
     class="large-container"
     :class="toggleCssClass"
   >
-    <div class="collection-card-parent">
+    <div
+      v-if="$props.collectionId"
+      class="collection-card-parent"
+    >
       <collection-interactive-card
-        :collection-id="collectionId"
+        :collection-id="$props.collectionId"
         :editable="true"
       />
     </div>
 
-    <section class="collection-section mb-5">
-      <div class="heading is-uppercase">
-        <span class="heading-content">Historique (TEST)</span>
-        <span
-            aria-controls="section"
-            class="icon"
-        >
-          <i class="fas fa-angle-down"></i>
-        </span>
-      </div>
-      <div class="collection-section-content">
-        <p>Catherine de Médicis (1519-1589) est la fille du duc d’Urbino Laurent de Médicis et sde Madeleine de La Tour d’Auvergne. Épouse du duc d’orléans, second fils de François Ier, elle devient reine de France lorsque celui accède au trône de France en 1547. Trois de ses fils se succèdent ensuite comme rois de France, François II (1559-1560), Charles IX (1560-1574) et Henri III (1574-1589). Elle assure la régence du royaume à deux reprises (décembre 1560-août 1563 et février-septembre 1574), mais son influence sur le gouvernement de la France durant plus de trois décennies est très importante, ainsi qu’en témoigne sa correspondance.</p>
-        <p>Ses lettres autographes reflètent la double culture de cette femme à la double culture, italienne et française. Son intense activité d’épistolière est  toutefois avant tout documentée par les très nombreuses lettres écrites pour elle par ses secrétaires à des destinataires très variés, souverains étrangers, membres de sa famille ou de la cour, mais aussi agents royaux en France et en poste en Europe.</p>
-        <p>Gouverner par correspondance fut un moteur et un instrument essentiels de l’action de cette reine, puis reine-mère qui oscilla entre une politique de conciliation entre catholiques et protestants, puis une défense ferme de la monarchie contre tous ceux (réformés ou catholiques radicaux) qui menaçaient l’unité du royaume autour du souverain incarné par ses fils.</p>
-      </div>
-    </section>
-
-    <section class="mb-5">
-      <div class="is-flex">
-        <span class="collection-documents">
-          <span class="documents-count">{{ totalCount }}</span> DOCUMENTS
-        </span>
-      </div>
-      <div class="search-collection-parent is-flex is-justify-content-flex-end">
-        <router-link
-          :to="{ name: 'search'}"
-        >
-          <b-button
-            class="search-collection"
-            label="Rechercher dans la collection"
-            @click="searchCollection"
-          />
-        </router-link>
-      </div>
-    </section>
-    <section class="mb-5">
-      <!-- Table toogle + pagination -->
+    <section
+      v-if="selectedCollection && !selectedCollection.parent && $props.collectionId"
+      class="collection-section mb-5"
+    >
+      <!-- Historique -->
       <div
-        v-if="totalCount"
-        class="is-flex toggle-list-and-pagination is-justify-content-space-between"
+        class="heading is-uppercase"
+        :class="isHistoryOpen ? 'is-closed' : ''"
       >
-        <div class="is-inline-block">
-          <div
-            v-if="totalPages"
-            class="has-text-centered"
-          >
-            <div class="pagination-controls">
-              <a
-                :class="currentPage <= 1 ? 'button first-page disabled' : 'button first-page'"
-                @click="currentPage <= 1 ? null : currentPage = 1 "
-              />
-              <a
-                :class="currentPage <= 1 ? 'button previous-page disabled' : 'button previous-page'"
-                @click="currentPage <= 1 ? null : --currentPage"
-              />
-              <input
-                v-model="currentPage"
-                name="page"
-                type="number"
-                min="1"
-                :max="totalPages"
-                placeholder="Page..."
-                class="current-page"
-                @change.prevent="currentPage = parseInt(p)"
-              >
-              <span class="label-sur-page">sur</span>
-              <span class="total-pages">{{ totalPages }}</span>
-              <a
-                :class="currentPage < totalPages ? 'button next-page' : 'button next-page disabled'"
-                @click="currentPage < totalPages ? ++currentPage : null"
-              />
-              <a
-                :class="currentPage < totalPages ? 'button last-page' : 'button last-page disabled'"
-                @click="currentPage < totalPages ? currentPage = totalPages : null"
-              />
-            </div>
-          </div>
-        </div>
-        <div
-          v-if="!isActive"
-          class="field is-inline-block mb-0 px-1"
+        <span class="heading-content">Historique</span>
+        <span
+          class="icon"
+          :aria-expanded="isHistoryOpen"
+          aria-controls="historySection"
+          @click="isHistoryOpen = !isHistoryOpen"
         >
-          <!--v-if="!isActive && isFulltextSearch"-->
-          <div class="control block is-flex is-align-items-center mb-0 sort-options">
-            <span>Tris</span>
-            <div class="is-inline-block select-parent">
-              <select
-                id="tri-select"
-                v-model="sortingPriority"
-                name="tri"
-              >
-                <option value="">
-                  Lettre
-                </option>
-                <option
-                  :value="sortingPriority.includes('-')
-                    ? '-metadata.author_name.keyword'
-                    : 'metadata.author_name.keyword'
-                  "
-                >
-                  Expéditeur
-                </option>
-                <option
-                  :value="
-                    1
-                  "
-                >
-                  Date de rédaction
-                </option>
-                <option
-                  :value="
-                    2
-                  "
-                >
-                  Période du sujet (borne inf.)
-                </option>
-                <option
-                  :value="
-                    3
-                  "
-                >
-                  Période du sujet (borne sup.)
-                </option>
-              </select>
-            </div>
-            <span
-              v-if="sortingPriority"
-              class="icon button arrow-up"
-              @click="sortingPriority = sortingPriority.replace('-', '')"
-            >
-              <i class="fas fa-arrow-up" />
-            </span>
-            <span
-              v-else
-              v-show="sortingPriority.length > 0"
-              class="icon button arrow-down"
-              @click="sortingPriority = `-${sortingPriority}`"
-            >
-              <i class="fas fa-arrow-down" />
-            </span>
-          </div>
-        </div>
-        <div class="is-inline-block px-1">
-          <div class="control">
-            <div class="switch-button-div">
-              <div
-                class="switch-button"
-                :class="toggleCssClass"
-                @click="toggle"
-              >
-                <input
-                  class="switch-button-checkbox"
-                  type="checkbox"
-                >
-                <label
-                  class="switch-button-label"
-                  for=""
-                >
-                  <span class="switch-button-label-span">TABLEAU</span>
-                </label>
-              </div>
-            </div>
-          </div><!-- v-model="isResultTableMode"-->
-        </div>
+        </span>
       </div>
+      <b-collapse
+        :class="isHistoryOpen? '' : 'hiddendiv'"
+        aria-id="historySection"
+      >
+        <div class="collection-section-content">
+          <p>Catherine de Médicis (1519-1589) est la fille du duc d’Urbino Laurent de Médicis et sde Madeleine de La Tour d’Auvergne. Épouse du duc d’orléans, second fils de François Ier, elle devient reine de France lorsque celui accède au trône de France en 1547. Trois de ses fils se succèdent ensuite comme rois de France, François II (1559-1560), Charles IX (1560-1574) et Henri III (1574-1589). Elle assure la régence du royaume à deux reprises (décembre 1560-août 1563 et février-septembre 1574), mais son influence sur le gouvernement de la France durant plus de trois décennies est très importante, ainsi qu’en témoigne sa correspondance.</p>
+          <p>Ses lettres autographes reflètent la double culture de cette femme à la double culture, italienne et française. Son intense activité d’épistolière est  toutefois avant tout documentée par les très nombreuses lettres écrites pour elle par ses secrétaires à des destinataires très variés, souverains étrangers, membres de sa famille ou de la cour, mais aussi agents royaux en France et en poste en Europe.</p>
+          <p>Gouverner par correspondance fut un moteur et un instrument essentiels de l’action de cette reine, puis reine-mère qui oscilla entre une politique de conciliation entre catholiques et protestants, puis une défense ferme de la monarchie contre tous ceux (réformés ou catholiques radicaux) qui menaçaient l’unité du royaume autour du souverain incarné par ses fils.</p>
+        </div>
+      </b-collapse>
+      <!-- Contributeurs & partenariats -->
+      <div
+        class="heading is-uppercase"
+        :class="isCreditsOpen ? 'is-closed' : ''"
+      >
+        <span class="heading-content">Contributeurs & partenariats</span>
+        <span
+          class="icon"
+          :aria-expanded="isCreditsOpen"
+          aria-controls="creditsSection"
+          @click="isCreditsOpen = !isCreditsOpen"
+        >
+        </span>
+      </div>
+      <b-collapse
+        :class="isCreditsOpen? '' : 'hiddendiv'"
+        aria-id="creditsSection"
+      >
+        <div class="collection-section-content">
+          <p>L’édition publiée au XIXe siècle par le Comité des travaux historiques et scientifiques a été partiellement, revue, associée à des métadonnées et complétée par l’édition de de nouvelles lettres par Aurélie Massie, Olivier Poncet et Julien Wilmart.</p>
+        </div>
+      </b-collapse>
+      <!-- Bibliographie -->
+      <div
+        class="heading is-uppercase"
+        :class="isBiblioOpen ? 'is-closed' : ''"
+      >
+        <span class="heading-content">Bibliographie sélective</span>
+        <span
+          class="icon"
+          :aria-expanded="isBiblioOpen"
+          aria-controls="biblioSection"
+          @click="isBiblioOpen = !isBiblioOpen"
+        >
+        </span>
+      </div>
+      <b-collapse
+        :class="isBiblioOpen? '' : 'hiddendiv'"
+        aria-id="biblioSection"
+      >
+        <div class="collection-section-content">
+          <ul class="mt-2 mb-2">
+            <li><em>Lettres de Catherine de Médicis</em>, éd. Hector de La Ferrière-Percy et Gustave Baguenault de Puchesse, 11 volumes, Paris, Imprimerie nationale, 1880-1943 (Documents inédits sur l’histoire de France)</li>
+            <li>Matthieu Gellard, <em>Commentaire critique de l’édition des « Lettres de Catherine de Médicis »</em>, Paris, Cour de France.fr, 2013 (<a target="_blank" href="https://cour-de-france.fr/article2788.html">https://cour-de-france.fr/article2788.html</a>)</li>
+            <li>Matthieu Gellard, <em>Une reine épistolaire. Lettres et pouvoir au temps de Catherine de Médicis</em>, Paris, Classiques Garnier, 2014 (Bibliothèque d’histoire de la Renaissance, 8).</li>
+          </ul>
+        </div>
+      </b-collapse>
     </section>
-    <section>
-      <div :class="toggleCssClass">
-        <b-table
-          ref="multiSortTable"
-          :data="tableData"
-          backend-pagination
-          :loading="isLoading"
-          :total="totalCount"
-          :per-page="pageSize"
-          :current-page.sync="currentPage"
-          detailed
-          :backend-sorting="true"
-          :sort-multiple="true"
-          :sort-multiple-data="sortingPriority"
-          detail-key="id"
-          show-detail-icon
-          :narrowed="true"
-          :mobile-cards="true"
-          @sort="sortPressed"
-          @sorting-priority-removed="sortingPriorityRemoved"
-        >
-          <b-table-column
-            field="id"
-            label="Lettre"
-            :td-attrs="columnTdAttrs"
-            sortable
-          >
-            <template #header="{ column }">
-              <div v-if="column.sortable">
-                <div v-if="sortingPriority.filter(obj => obj.field === column.field).length === 0">
-                  <span
-                    class="icon button arrows-alt-v"
-                  >
-                    <i class="fas fa-arrows-alt-v" />
-                  </span>
-                </div>
-                <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'asc'">
-                  <span class="icon button arrow-up">
-                    <i class="fas fa-arrow-up"></i>
-                  </span>
-                  <span class="icon button sort-index">
-                    {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
-                    <button
-                      class="delete is-small multi-sort-cancel-icon"
-                      type="button"
-                      @click.stop="sortingPriorityRemoved(column.field)"
-                    />
-                  </span>
-                </div>
-                <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'desc'">
-                  <span class="icon button arrow-down">
-                    <i class="fas fa-arrow-down"></i>
-                  </span>
-                  <span class="icon button sort-index">
-                    {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
-                    <button
-                      class="delete is-small multi-sort-cancel-icon"
-                      type="button"
-                      @click.stop="sortingPriorityRemoved(column.field)"
-                    />
-                  </span>
-                </div>
-                <span>
-                  {{ column.label }}
-                </span>
-              </div>
-              <div v-else>
-                {{ column.label }}
-              </div>
-            </template>
-            <template #default="props">
-              <document-tag-bar
-                :doc-id="props.row.id"
-                :with-status="withStatus"
-                :preview="true"
-              />
-            </template>
-          </b-table-column>
-
-          <b-table-column
-            field="creation"
-            label="Date de rédaction"
-            :td-attrs="columnTdAttrs"
-            sortable
-          >
-            <template #header="{ column }">
-              <div v-if="column.sortable">
-                <div v-if="sortingPriority.filter(obj => obj.field === column.field).length === 0">
-                  <span
-                    class="icon button arrows-alt-v"
-                  >
-                    <i class="fas fa-arrows-alt-v" />
-                  </span>
-                </div>
-                <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'asc'">
-                  <span class="icon button arrow-up">
-                    <i class="fas fa-arrow-up"></i>
-                  </span>
-                  <span class="icon button sort-index">
-                    {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
-                    <button
-                      class="delete is-small multi-sort-cancel-icon"
-                      type="button"
-                      @click.stop="sortingPriorityRemoved(column.field)"
-                    />
-                  </span>
-                </div>
-                <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'desc'">
-                  <span class="icon button arrow-down">
-                    <i class="fas fa-arrow-down"></i>
-                  </span>
-                  <span class="icon button sort-index">
-                    {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
-                    <button
-                      class="delete is-small multi-sort-cancel-icon"
-                      type="button"
-                      @click.stop="sortingPriorityRemoved(column.field)"
-                    />
-                  </span>
-                </div>
-                <span>
-                  {{ column.label }}
-                </span>
-              </div>
-              <div v-else>
-                {{ column.label }}
-              </div>
-            </template>
-            <template #default="props">
-              {{ props.row.creation }}
-            </template>
-          </b-table-column>
-
-          <b-table-column
-            field="title"
-            label="Titre"
-            :td-attrs="columnTdAttrs"
-          >
-            <template #header="{ column }">
-              <div v-if="column.sortable">
-                <div v-if="sortingPriority.filter(obj => obj.field === column.field).length === 0">
-                  <span
-                    class="icon button arrows-alt-v"
-                  >
-                    <i class="fas fa-arrows-alt-v" />
-                  </span>
-                </div>
-                <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'asc'">
-                  <span class="icon button arrow-up">
-                    <i class="fas fa-arrow-up"></i>
-                  </span>
-                  <span class="icon button sort-index">
-                    {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
-                    <button
-                      class="delete is-small multi-sort-cancel-icon"
-                      type="button"
-                      @click.stop="sortingPriorityRemoved(column.field)"
-                    />
-                  </span>
-                </div>
-                <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'desc'">
-                  <span class="icon button arrow-down">
-                    <i class="fas fa-arrow-down"></i>
-                  </span>
-                  <span class="icon button sort-index">
-                    {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
-                    <button
-                      class="delete is-small multi-sort-cancel-icon"
-                      type="button"
-                      @click.stop="sortingPriorityRemoved(column.field)"
-                    />
-                  </span>
-                </div>
-                <span>
-                  {{ column.label }}
-                </span>
-              </div>
-              <div v-else>
-                {{ column.label }}
-              </div>
-            </template>
-            <template #default="props">
-              <router-link :to="{ name: 'document', params: { docId: props.row.id } }">
-                <h2
-                  class="document-preview-card__title"
-                  v-html="props.row.title"
-                />
-              </router-link>
-            </template>
-          </b-table-column>
-
-          <b-table-column
-            field="expéditeur"
-            label="Expéditeur"
-            :td-attrs="columnTdAttrs"
-            sortable
-          >
-            <template v-slot="props">
-              <p>(personne) {{ props.row.sender }}</p>
-            </template>
-          </b-table-column>
-
-          <b-table-column
-            field="destinataire"
-            label="Destinataire"
-            :td-attrs="columnTdAttrs"
-            sortable
-          >
-            <template v-slot="props">
-              <p>(personnes) {{ props.row.recipient }}</p>
-            </template>
-          </b-table-column>
-
-          <b-table-column
-            field="lieu-expedition"
-            label="Lieu d'expédition"
-            :td-attrs="columnTdAttrs"
-            sortable
-          >
-            <template v-slot="props">
-              <p>(lieu) {{ props.row.origin }}</p>
-            </template>
-          </b-table-column>
-
-          <b-table-column
-              field="lieu-destination"
-              label="Lieu de destination"
-              :td-attrs="columnTdAttrs"
-              sortable
-          >
-            <template v-slot="props">
-              <p>(lieu) {{ props.row.destination }}</p>
-            </template>
-          </b-table-column>
-
-          <template #empty>
-            <div class="has-text-centered">
-              Aucun résultat
-            </div>
-          </template>
-
-          <template #detail="props">
-            <document
-              class="document-page"
-              :doc-id="props.row.id"
-              :preview="true"
-            />
-          </template>
-        </b-table>
-      </div>
+    <section v-if="selectedCollection">
+      <document-list
+        :collection-id="selectedCollection.id"
+      />
     </section>
   </div>
 </template>
@@ -433,14 +102,13 @@
 <script>
 import CollectionInteractiveCard from "@/components/CollectionInteractiveCard.vue";
 import { mapActions, mapState } from "vuex";
-import CollectionHierarchy from "@/components/CollectionHierarchy.vue";
+import DocumentList from "@/components/sections/DocumentList.vue";
 
 export default {
   name: "CollectionPage",
   components: {
+    DocumentList,
     CollectionInteractiveCard,
-    DocumentTagBar: () => import("@/components/document/DocumentTagBar"),
-    Document: () => import("@/components/sections/Document")
   },
   props: {
     "collectionId": {
@@ -450,69 +118,38 @@ export default {
   },
   data() {
     return {
-      fetchedData: [],
-      tableData: [],
-      sortingPriority: [{ field: "creation", order: "desc" }],
-      numPage: 1,
-      p: 1,
-      pageSize: 30,
-      totalCount: 0,
-      totalPages: 0,
+      isHistoryOpen: true,
+      isCreditsOpen: true,
+      isBiblioOpen: true,
+      selectedCollection: {},
       isLoading: false,
       showHierarchy: false,
       isActive: true
     };
   },
   computed: {
-  ...mapState("search", ["withStatus", "searchTerm"]),
-    currentPage: {
-      get: function () {
-        return this.numPage;
-      },
-      set: async function (newValue, oldValue) {
-        newValue = parseInt(newValue);
-        if (newValue && newValue !== oldValue && newValue >=1 && newValue <= this.totalPages ) {
-          this.p = newValue;
-          this.numPage = newValue;
-          console.log("set 1")
-          await this.fetchData();
-          console.log("set 2")
-        }
-      },
-    },
     toggleCssClass: function() {
       return this.isActive ? 'is-active' : 'is-inactive';
     },
-    ...mapState("user", ["current_user"]),
   },
   watch: {
     collectionId: async function () {
-      console.log("Watch");
-      await this.fetchData();
-      this.totalPages = this.fetchedData.totalCount === 0 ? 1 : parseInt(Math.ceil(this.fetchedData.totalCount / this.pageSize));
-      console.log("this.totalPages : ", this.totalPages);
+      console.log("Watch, $props.collectionId / collectionId = ", this.$props.collectionId, this.collectionId);
+      await this.setCollection();
     },
   },
   async created() {
-    console.log("Created")
-    await this.fetchData();
-    this.totalPages = this.fetchedData.totalCount === 0 ? 1 : parseInt(Math.ceil(this.fetchedData.totalCount / this.pageSize));
-    console.log("this.totalPages : ", this.totalPages);
+    this.isLoading = true;
+    await this.fetchAll();
+    await this.setCollection();
+    this.isLoading = false;
   },
   methods: {
-    ...mapActions("collections", ["fetchOne", "fetchAll"]),
-    columnTdAttrs(row, column) {
-      if (row.label === 'Lettre') {
-        return {
-          class: 'lettre',
-          /*style: {
-            'background-color': 'red',
-          }*/
-        }
-      }
-    },
+    ...mapActions("collections", ["fetchOne", "fetchAll", "setSelectedCollection"]),
+    // added document List
+    ...mapActions("search", ["setSelectedCollections", "performSearch"]),
     searchCollection() {
-      this.$store.state.search.selectedCollections = [this.$store.state.collections.collectionsById[this.collectionId]];
+      this.$store.state.search.selectedCollections = [this.selectedCollection];
       this.$store.state.layout.showLeftSideBar = true
     },
     toggle() {
@@ -523,101 +160,19 @@ export default {
         this.isActive = true;
       }
     },
-    /*async goToPage(num) {
-      if (!parseInt(num)) {
-        num = 1;
-      }
-
-      if (num > this.totalPages) {
-        num = this.totalPages;
-      } else if (num < 1) {
-        num = 1;
-      }
-      this.currentPage = num;
-
-      if (this.numPage !== num) {
-        //await this.fetchData();
-      }
-    },*/
-    async fetchData() {
-      this.isLoading = true;
-      console.log("this.fetchAll()")
-      await this.fetchAll();
-      console.log("this.fetchOne")
-      this.fetchedData = await this.fetchOne({
-        id: this.collectionId,
-        numPage: this.numPage,
-        pageSize: this.pageSize,
-        sortingPriority: this.sortingPriority,
-      });
-      this.loadAsyncData();
-      this.isLoading = false;
-    },
-    /*async resetPriority() {
-      console.log("reset");
-      this.$refs.multiSortTable.resetMultiSorting();
-      // reset local backend sorting
-      if (this.backendSortingEnabled) {
-        this.sortingPriority = [];
-        await this.fetchData();
-      }
-    },*/
-
-    // Backend sorting
-    async sortingPriorityRemoved(field) {
-      console.log("sorting removed", field)
-      const newPriority = this.sortingPriority.filter(
-        (priority) => priority.field !== field
-      );
-      this.sortingPriority = [...newPriority];
-      if (this.sortingPriority.length > 0) {
-          console.log(newPriority, this.sortingPriority);
+    async setCollection() {
+      console.log("this.setCollection()")
+      if (this.$props.collectionId) {
+        this.setSelectedCollection(this.$store.state.collections.collectionsById[this.$props.collectionId]);
+        this.selectedCollection = this.$store.state.collections.selectedCollection;
       } else {
-          // default sorting on descending creation date
-          this.sortingPriority = [{ field: "creation", order: "desc" }];
-          console.log("Default sorting new Priority", newPriority, this.sortingPriority);
+        this.selectedCollection = this.$store.state.collections.selectedCollection;
       }
-      await this.fetchData();
+      // Setting selected collection in search Store to retrieve documents
+      this.searchCollection();
+      // Retrieve related documents without persons / places full metadata
+      this.performSearch('simple');
     },
-
-    async sortPressed(field, order, event) {
-      console.log("sorting added", field, order, event)
-      console.log("this.customKey / event[this.customKey]", this.customKey, event[this.customKey])
-      if ((this.customKey && event[this.customKey]) || !this.customKey) {
-        let existingPriority = this.sortingPriority.filter((i) => i.field === field)[0];
-        if (existingPriority) {
-          existingPriority.order = existingPriority.order === "desc" ? "asc" : "desc";
-        } else {
-          // request sorted data from backend
-          this.sortingPriority.push({ field, order });
-        }
-      } else {
-        // request regular sorted data from backend
-        this.sortingPriority = []; // [{field, order}]
-      }
-      // will reload the data
-      this.currentPage = 1;
-    },
-
-    loadAsyncData() {
-      if (this.fetchedData) {
-        this.totalCount = this.fetchedData.totalCount;
-        this.tableData = this.fetchedData.documents.map((d) => {
-          return {
-            id: d.id,
-            title: d.attributes.title,
-            creation: d.attributes.creation,
-          };
-        });
-      }
-    },
-    /*
-     * Handle page-change event
-
-    onPageChange(page) {
-      console.log("page change")
-      this.currentPage = page;
-    },*/
   },
 };
 </script>
@@ -701,7 +256,7 @@ progress {
     }
   }
 
-  & > .collection-section-content {
+  & .collection-section-content {
     padding: 30px 140px 30px 90px;
     font-size: 20px;
     line-height: 26px;
@@ -982,6 +537,10 @@ progress {
     text-transform: uppercase;
   }
 }
+.hiddendiv {
+  display: none;
+}
+
   /* Chrome, Safari, Edge, Opera */
   input::-webkit-outer-spin-button,
   input::-webkit-inner-spin-button {

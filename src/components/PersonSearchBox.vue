@@ -18,7 +18,7 @@
             :data="filteredTags"
             autocomplete
             field="label"
-            placeholder="Catherine"
+            :placeholder="allPersons.some(cat => cat.persons.length > 0) ? 'Catherine' : 'Elargir les critères'"
             icon="fas fa-search"
             clearable
             group-field="role_id"
@@ -97,9 +97,9 @@ import {value} from "lodash/seq";
 export default {
   data() {
     return {
-      selectOutside: false,
+      //selectOutside: false,
       filteredTags: [],
-      isSelectOnly: false,
+      //isSelectOnly: false,
       tags: [],
       selected: null,
       init: false,
@@ -107,12 +107,12 @@ export default {
   },
   computed: {
     ...mapState("persons", {allPersons: "persons_roles"}),
-    ...mapState("search", ["selectedPersonFrom","selectedPersonTo","selectedPersonCited"]),
+    ...mapState("search", ["selectedPersonFrom","selectedPersonTo","selectedPersonCited", "selectedPlaceFrom", "selectedPlaceTo","selectedPlaceCited"]),
   },
   watch: {
-    tags() {
-      //console.log('this.tags : ', this.tags)
-      if (this.tags) {
+    async tags(newValue, oldValue) {
+      console.log('this.tags : ', newValue, oldValue)
+      if (this.tags.length > 0) {
         if (this.tags.filter(pers => (pers.role_id === 1))) {
           this.setSelectedPersonFrom(this.tags.filter(pers => (pers.role_id === 1)));
         }
@@ -123,16 +123,24 @@ export default {
         if (this.tags.filter(pers => (pers.role_id === 3))) {
           this.setSelectedPersonCited(this.tags.filter(pers => (pers.role_id === 3)));
         }
+        console.log("Persons Watch Tags length>0 this.performSearch")
         this.performSearch();
 
       } else {
-        this.performSearch();
+        if (this.init && !newValue && !oldValue) {
+          console.log("Persons Watch Tags length=0 but no Selections in Persons & Places : no action")
+          this.init = false;
+        } else {
+          console.log("Persons Watch Tags length=0 this.performSearch")
+          this.performSearch();
+        }
       }
     },
   },
-  async created() {
-    await this.fetchAll();
-    this.tags = this.selectedPersonFrom && this.selectedPersonTo && this.selectedPersonCited;
+  created() {
+    //await this.fetchAll();
+    this.init = true;
+    this.tags = [...this.selectedPersonFrom, ...this.selectedPersonTo, ...this.selectedPersonCited];
   },
   methods: {
     value,
