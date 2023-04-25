@@ -583,7 +583,6 @@ const actions = {
         let uniqueSearchScopePersonsFrom = searchScopePersonsFrom.data.data.map(({
                                                                                    id,
                                                                                    type,
-                                                                                   label,
                                                                                    attributes,
                                                                                    meta,
                                                                                    links,
@@ -592,7 +591,7 @@ const actions = {
             ({
               role_id: 1,
               person_id: id,
-              label: label
+              label: attributes.label
             })
         )
         console.log('uniqueSearchScopePersonsFrom', uniqueSearchScopePersonsFrom)
@@ -600,7 +599,6 @@ const actions = {
         let uniqueSearchScopePersonsTo = searchScopePersonsTo.data.data.map(({
                                                                                id,
                                                                                type,
-                                                                               label,
                                                                                attributes,
                                                                                meta,
                                                                                links,
@@ -609,7 +607,7 @@ const actions = {
             ({
               role_id: 2,
               person_id: id,
-              label: label
+              label: attributes.label
             })
         )
         console.log('uniqueSearchScopePersonsTo', uniqueSearchScopePersonsTo)
@@ -617,7 +615,6 @@ const actions = {
         let uniqueSearchScopePersonsCit = searchScopePersonsCit.data.data.map(({
                                                                                  id,
                                                                                  type,
-                                                                                 label,
                                                                                  attributes,
                                                                                  meta,
                                                                                  links,
@@ -626,7 +623,7 @@ const actions = {
             ({
               role_id: 3,
               person_id: id,
-              label: label
+              label: attributes.label
             })
         )
         console.log('uniqueSearchScopePersonsCit', uniqueSearchScopePersonsCit)
