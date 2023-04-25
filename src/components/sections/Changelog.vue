@@ -49,7 +49,6 @@
         :loading="isLoading"
         striped
 
-        backend-pagination
         :total="totalCount"
         :per-page="pageSize"
         :current-page.sync="currentPage"
@@ -57,7 +56,6 @@
         :sort-multiple="true"
         :sort-multiple-data="sortingPriority"
         @sort="sortPressed"
-        @sorting-priority-removed="sortingPriorityRemoved"
       >
         <template #empty>
           <section class="section">
@@ -73,39 +71,21 @@
           sortable
           width="100"
         >
-          <template #header="{ column }">
+          <template v-slot:header="{ column }">
             <div v-if="column.sortable">
               <div v-if="sortingPriority.filter(obj => obj.field === column.field).length === 0">
-                <span
-                  class="icon button arrows-alt-v"
-                >
-                  <i class="fas fa-arrows-alt-v" />
-                </span>
+                <span class="icon button arrows-alt-v" />
               </div>
               <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'asc'">
-                <span class="icon button arrow-up">
-                  <i class="fas fa-arrow-up" />
-                </span>
-                <span class="icon button">
+                <span class="icon button arrow-up" />
+                <span class="icon button sort-index">
                   {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
-                  <button
-                    class="delete is-small multi-sort-cancel-icon"
-                    type="button"
-                    @click.stop="sortingPriorityRemoved(column.field)"
-                  />
                 </span>
               </div>
               <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'desc'">
-                <span class="icon button arrow-down">
-                  <i class="fas fa-arrow-down" />
-                </span>
-                <span class="icon button">
+                <span class="icon button arrow-down" />
+                <span class="icon button sort-index">
                   {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
-                  <button
-                    class="delete is-small multi-sort-cancel-icon"
-                    type="button"
-                    @click.stop="sortingPriorityRemoved(column.field)"
-                  />
                 </span>
               </div>
               <span>
@@ -131,39 +111,21 @@
           width="200"
           sortable
         >
-          <template #header="{ column }">
+          <template v-slot:header="{ column }">
             <div v-if="column.sortable">
               <div v-if="sortingPriority.filter(obj => obj.field === column.field).length === 0">
-                <span
-                  class="icon button arrows-alt-v"
-                >
-                  <i class="fas fa-arrows-alt-v" />
-                </span>
+                <span class="icon button arrows-alt-v" />
               </div>
               <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'asc'">
-                <span class="icon button arrow-up">
-                  <i class="fas fa-arrow-up" />
-                </span>
-                <span class="icon button">
+                <span class="icon button arrow-up" />
+                <span class="icon button sort-index">
                   {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
-                  <button
-                    class="delete is-small multi-sort-cancel-icon"
-                    type="button"
-                    @click.stop="sortingPriorityRemoved(column.field)"
-                  />
                 </span>
               </div>
               <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'desc'">
-                <span class="icon button arrow-down">
-                  <i class="fas fa-arrow-down" />
-                </span>
-                <span class="icon button">
+                <span class="icon button arrow-down" />
+                <span class="icon button sort-index">
                   {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
-                  <button
-                    class="delete is-small multi-sort-cancel-icon"
-                    type="button"
-                    @click.stop="sortingPriorityRemoved(column.field)"
-                  />
                 </span>
               </div>
               <span>
@@ -184,39 +146,21 @@
           width="200"
           sortable
         >
-          <template #header="{ column }">
+          <template v-slot:header="{ column }">
             <div v-if="column.sortable">
               <div v-if="sortingPriority.filter(obj => obj.field === column.field).length === 0">
-                <span
-                  class="icon button arrows-alt-v"
-                >
-                  <i class="fas fa-arrows-alt-v" />
-                </span>
+                <span class="icon button arrows-alt-v" />
               </div>
               <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'asc'">
-                <span class="icon button arrow-up">
-                  <i class="fas fa-arrow-up" />
-                </span>
-                <span class="icon button">
+                <span class="icon button arrow-up" />
+                <span class="icon button sort-index">
                   {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
-                  <button
-                    class="delete is-small multi-sort-cancel-icon"
-                    type="button"
-                    @click.stop="sortingPriorityRemoved(column.field)"
-                  />
                 </span>
               </div>
               <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'desc'">
-                <span class="icon button arrow-down">
-                  <i class="fas fa-arrow-down" />
-                </span>
-                <span class="icon button">
+                <span class="icon button arrow-down" />
+                <span class="icon button sort-index">
                   {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
-                  <button
-                    class="delete is-small multi-sort-cancel-icon"
-                    type="button"
-                    @click.stop="sortingPriorityRemoved(column.field)"
-                  />
                 </span>
               </div>
               <span>
@@ -237,39 +181,21 @@
           label="Description"
           sortable
         >
-          <template #header="{ column }">
+          <template v-slot:header="{ column }">
             <div v-if="column.sortable">
               <div v-if="sortingPriority.filter(obj => obj.field === column.field).length === 0">
-                <span
-                  class="icon button arrows-alt-v"
-                >
-                  <i class="fas fa-arrows-alt-v" />
-                </span>
+                <span class="icon button arrows-alt-v" />
               </div>
               <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'asc'">
-                <span class="icon button arrow-up">
-                  <i class="fas fa-arrow-up" />
-                </span>
-                <span class="icon button">
+                <span class="icon button arrow-up" />
+                <span class="icon button sort-index">
                   {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
-                  <button
-                    class="delete is-small multi-sort-cancel-icon"
-                    type="button"
-                    @click.stop="sortingPriorityRemoved(column.field)"
-                  />
                 </span>
               </div>
               <div v-else-if="sortingPriority.filter(obj => obj.field === column.field)[0].order === 'desc'">
-                <span class="icon button arrow-down">
-                  <i class="fas fa-arrow-down" />
-                </span>
-                <span class="icon button">
+                <span class="icon button arrow-down" />
+                <span class="icon button sort-index">
                   {{ sortingPriority.findIndex(obj => obj.field === column.field) + 1 }}
-                  <button
-                    class="delete is-small multi-sort-cancel-icon"
-                    type="button"
-                    @click.stop="sortingPriorityRemoved(column.field)"
-                  />
                 </span>
               </div>
               <span>
@@ -340,6 +266,9 @@ export default {
     },
   },
   mounted() {
+    if (this.$refs.multiSortTable.backendSorting === true) {
+      console.log("la table est backendSorting")
+    }
     this.loadAsyncData();
   },
   methods: {
@@ -352,7 +281,7 @@ export default {
       );
       this.sortingPriority = [...newPriority];
       if (this.sortingPriority.length > 0) {
-          console.log(newPriority, this.sortingPriority);
+          console.log("newPriority/sortingPriority", newPriority, this.sortingPriority);
       } else {
           // default sorting on descending event-date
           this.sortingPriority = [{ field: "event-date", order: "desc" }];
@@ -363,14 +292,27 @@ export default {
 
     async sortPressed(field, order, event) {
       console.log("sorting added", field, order, event)
-      console.log("this.customKey / event[this.customKey]", this.customKey, event[this.customKey])
+      //console.log("this.customKey / event[this.customKey]", this.customKey, event[this.customKey])
       if ((this.customKey && event[this.customKey]) || !this.customKey) {
         let existingPriority = this.sortingPriority.filter((i) => i.field === field)[0];
         if (existingPriority) {
-          existingPriority.order = existingPriority.order === "desc" ? "asc" : "desc";
+          // UPDATE SORTING
+          // console.log("existingPriority", existingPriority)
+          if (existingPriority.order === "desc") {
+            // SORTING WAS 'desc' UPDATED TO 'asc'
+            existingPriority.order = "asc";
+          } else if (existingPriority.order === "asc") {
+            // SORTING WAS 'asc' UPDATED TO unset
+            this.sortingPriorityRemoved(field);
+          } else {
+            existingPriority.order = "desc"; // unused scenario
+          }
+          //existingPriority.order = existingPriority.order === "desc" ? "asc" : existingPriority.order === "asc" ? this.sortingPriorityRemoved(field) : "desc" ;
         } else {
-          // request sorted data from backend
-          this.sortingPriority.push({ field, order });
+          // NO SORTING : request sorted data (note History is sorted from backend)
+          // default sorting here, need to be equivalent to default sortingPriority :
+          // here default is 'desc', hence a new priority needs to be 'desc' so that clicks follows desc -> asc -> unset -> etc
+          this.sortingPriority.push({ field, order: "desc"});
           console.log("this.sortingPriority", this.sortingPriority)
         }
       } else {
@@ -390,7 +332,8 @@ export default {
       }
       if (this.current_user.isAdmin || filters.length > 0) {
         // user is admin, can only full history (HistoryPage) or when history is related to a document (DocumentVue) then shows all users
-        this.fetchFullChangelog({
+        console.log("this.sortingPriority in query", this.sortingPriority)
+          this.fetchFullChangelog({
           numPage: this.numPage,
           pageSize: this.pageSize,
           sortingPriority: this.sortingPriority,
