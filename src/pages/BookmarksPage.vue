@@ -44,6 +44,7 @@
     </div>
     <div>
       <b-table
+        ref="multiSortTable"
         :data="data"
         :loading="isLoading"
         striped
@@ -330,18 +331,31 @@ export default {
 
     async sortPressed(field, order, event) {
       console.log("sorting added", field, order, event)
-      console.log("this.customKey / event[this.customKey]", this.customKey, event[this.customKey])
+      //console.log("this.customKey / event[this.customKey]", this.customKey, event[this.customKey])
       if ((this.customKey && event[this.customKey]) || !this.customKey) {
         let existingPriority = this.sortingPriority.filter((i) => i.field === field)[0];
         if (existingPriority) {
-          existingPriority.order = existingPriority.order === "asc" ? "desc" : existingPriority.order === "desc" ? this.sortingPriorityRemoved(field) : "asc" ;
+          // UPDATE SORTING
+          //console.log("existingPriority", existingPriority);
+          if (existingPriority.order === "asc") {
+            // SORTING WAS 'asc' UPDATED TO 'desc'
+            existingPriority.order = "desc";
+          } else if (existingPriority.order === "desc") {
+            // SORTING WAS 'desc' UPDATED TO unset
+            this.sortingPriorityRemoved(field);
+          } else {
+            existingPriority.order = "asc"; // unused scenario
+          }
+          //existingPriority.order = existingPriority.order === "asc" ? "desc" : existingPriority.order === "desc" ? this.sortingPriorityRemoved(field) : "asc" ;
         } else {
-          // request sorted data from backend
-          this.sortingPriority.push({ field, order : "asc"});
+          // NO SORTING : request sorted data (note Bookmarks are sorted in JS, not backend (combined data)
+          // // default sorting here, need to be equivalent to default sortingPriority :
+          // here default is 'asc', hence a new priority needs to be asc so that clicks follows asc -> desc -> unset -> etc
+          this.sortingPriority.push({ field, order: "asc"});
           console.log("this.sortingPriority", this.sortingPriority)
         }
       } else {
-        // request regular sorted data from backend
+        // request regular sorted data
         this.sortingPriority = []; // [{field, order}]
       }
       // will reload the data
