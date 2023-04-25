@@ -10,9 +10,10 @@
     >
       <nav class="mb-3 previous-next-navigation">
         <a
+          v-if="firstDocId && previousDocId && docIdList"
           role="button"
-          :href="`/documents/${ docId-1 }`"
-          :disabled="docId === 1"
+          :href="current_user ? `/documents/${ docId-1 }`: `/documents/${ previousDocId }`"
+          :disabled="current_user ? docId === 1 : docId === firstDocId"
           aria-label="Previous page"
           class="pagination-link pagination-previous"
         >
@@ -24,8 +25,9 @@
           </span>
         </a>
         <a
+          v-if="nextDocId && lastDocId"
           role="button"
-          :href="`/documents/${ docId+1 }`"
+          :href="current_user ? `/documents/${ docId + 1 }`: `/documents/${ nextDocId }`"
           aria-label="Next page"
           :disabled="docId === lastDocId"
           class="pagination-link pagination-next"
@@ -558,15 +560,21 @@ export default {
   data() {
     return {
       isTitleOpen: true,
-      isPersonsOpen: false,
-      isDatesOpen: false,
-      isPlacesOpen: false,
-      isAnalyseOpen: false,
-      isTranscriptionOpen: false,
-      isWitnessOpen: false,
-      isCollectionsOpen: false,
+      isPersonsOpen: true,
+      isDatesOpen: true,
+      isPlacesOpen: true,
+      isAnalyseOpen: true,
+      isTranscriptionOpen: true,
+      isWitnessOpen: true,
+      isCollectionsOpen: true,
 
+      firstDocId: 0,
       lastDocId: 0,
+      previousDocId: 0,
+      nextDocId: 0,
+      currentIndex: 0,
+      docIdList: [],
+
       isLoading: true,
 
       openWitnessModal: false,
@@ -666,6 +674,29 @@ export default {
         return resp.lastDocId
       });
       console.log('lastDocId : ', this.lastDocId);
+      this.firstDocId = await this.getDocumentsTotal().then(resp => {
+        return resp.docIdList[resp.docIdList.length - 1].id
+      });
+      console.log('firstDocId : ', this.firstDocId);
+      await this.getDocumentsTotal().then(resp => {
+        this.docIdList = resp.docIdList;
+        this.currentIndex = resp.docIdList.findIndex(doc => doc.id === this.docId);
+        console.log("currentIndex", this.currentIndex);
+        if (this.currentIndex < this.docIdList.length - 1 ) {
+          this.previousDocId = this.docIdList[this.currentIndex + 1].id
+        } else {
+          this.previousDocId = this.firstDocId;
+        }
+        if (this.currentIndex > 0) {
+          this.nextDocId = this.docIdList[this.currentIndex - 1].id;
+        } else {
+          this.nextDocId = this.lastDocId;
+        }
+        console.log("previousDocId", this.previousDocId); // give you the previous doc id
+        console.log("nextDocId", this.nextDocId); // give you the next doc id
+        return this.docIdList, this.previousDocId, this.nextDocId
+      });
+      console.log('docIdList : ', this.docIdList);
 
       await this.$store.dispatch("document/fetch", this.docId);
       this.setLastSeen(this.docId);
