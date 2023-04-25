@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="26px" height="29px" viewBox="0 0 26 29" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>form_sautPage Copy</title>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Pour-intégration" transform="translate(-194.000000, -1294.000000)">
+            <g id="Group-10" transform="translate(195.000000, 1295.000000)">
+                <polygon id="Stroke-2" stroke="#9B9B9B" stroke-width="2" points="0 21.1198 14.674 21.1198 14.674 -0.0002 0 -0.0002"></polygon>
+                <polygon id="Fill-4" fill="#FEFEFE" points="9.326 26.7428 24 26.7428 24 5.6228 9.326 5.6228"></polygon>
+                <polygon id="Stroke-5" stroke="#9B9B9B" stroke-width="2" fill="#FFFFFF" points="9.326 26.7428 24 26.7428 24 5.6228 9.326 5.6228"></polygon>
+                <polyline id="Stroke-7" stroke="#9B9B9B" stroke-width="2" stroke-linecap="round" points="4.3062 8.9921 4.3062 15.4051 16.9922 15.4051"></polyline>
+                <line x1="16.9919" y1="15.4052" x2="13.2659" y2="11.6792" id="Stroke-8" stroke="#9B9B9B" stroke-width="2" stroke-linecap="round"></line>
+                <line x1="13.3512" y1="19.1772" x2="17.0572" y2="15.4712" id="Stroke-9" stroke="#9B9B9B" stroke-width="2" stroke-linecap="round"></line>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -283,12 +283,12 @@
            -->
           <section class="document-section">
             <div class="heading is-uppercase is-flex is-justify-content-space-between">
-              <div class="is-flex is-align-items-center is-justify-content-center">
-                <span class="heading-content"> Témoins </span>
+              <div class="has-add-btn is-flex is-align-items-center is-justify-content-center">
+                <span class="heading-content">Témoins</span>
                 <b-button
                   v-if="canEdit"
                   value="+"
-                  class="open-modal-button has-add-btn"
+                  class="open-modal-button "
                   @click="openWitnessModal = true"
                 >
                   <icon-add />
@@ -486,7 +486,7 @@
         <!-- témoins -->
         <section class="document-section">
           <div class="heading is-uppercase">
-            <span class="heading-content "> Témoins </span>
+            <span class="heading-content ">Témoins</span>
           </div>
           <div class="document-section-content">
             <witness-list
@@ -1156,7 +1156,11 @@ nav.previous-next-navigation {
   background-color: #baaf92;
 }
 
-.button.open-modal-button.has-add-btn {
+.has-add-btn.is-flex {
+  gap: 5px;
+}
+
+.button.open-modal-button {
   display: flex !important;
   align-items: center;
   line-height: 20px;

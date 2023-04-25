@@ -5,7 +5,7 @@
   >
     <div class="columns">
       <div class="document-placenames__senders column is-one-third">
-        <h3 class="document-placenames__subtitle heading has-add-btn">
+        <h3 class="document-placenames__subtitle heading has-add-btn is-flex is-align-items-center">
           Dates de lieu d'expédition
           <a
             v-if="editable && locationDateFrom.length === 0"
@@ -49,7 +49,7 @@
       </div>
 
       <div class="document-placenames__recipients column is-one-third">
-        <h3 class="document-placenames__subtitle heading has-add-btn">
+        <h3 class="document-placenames__subtitle heading has-add-btn is-flex is-align-items-center">
           Dates de lieu de destination
           <a
             v-if="editable && locationDateTo.length === 0"
@@ -127,4 +127,12 @@ export default {
 };
 </script>
 
-<style></style>
+
+<style scoped  lang="scss">
+
+.has-add-btn.is-flex {
+  gap: 5px;
+}
+
+</style>
+

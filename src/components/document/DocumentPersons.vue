@@ -5,7 +5,7 @@
         class="panel-block"
         style="display: inline-block; width: 100%"
       >
-        <div class="heading mb-2 has-add-btn">
+        <div class="heading mb-2 has-add-btn is-flex is-align-items-center">
           Expéditeur{{ documentSender.length > 1 ? "s" : "" }}
           <a
             v-if="editable"
@@ -51,7 +51,7 @@
         class="panel-block"
         style="display: inline-block; width: 100%"
       >
-        <div class="heading mb-2 has-add-btn">
+        <div class="heading mb-2 has-add-btn is-flex is-align-items-center">
           Destinataire{{ documentRecipients.length > 1 ? "s" : "" }}
           <a
             v-if="editable"
@@ -128,4 +128,10 @@ export default {
 };
 </script>
 
-<style></style>
+<style scoped  lang="scss">
+
+.has-add-btn.is-flex {
+  gap: 5px;
+}
+
+</style>

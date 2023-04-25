@@ -1,5 +1,6 @@
 <template>
-  <svg
+  <span>
+    <svg
     class="icon icon__add"
     viewBox="0 0 20 20"
   >
@@ -30,6 +31,7 @@
       />
     </g>
   </svg>
+  </span>
 </template>
 
 <script>
@@ -37,4 +39,20 @@
     name: 'IconAdd',
   }
 </script>
+
+<style scoped  lang="scss">
+
+span {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  background: url(../../../assets/images/icons/bouton_rond_gris_ajouter.svg) center / 18px auto no-repeat;
+
+  svg {
+    display: none;
+  }
+}
+
+</style>
+
 

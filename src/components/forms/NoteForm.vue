@@ -1,7 +1,7 @@
 <template>
   <div class="modal-card note-form">
     <header class="is-uppercase is-size-2 mb-5">
-      {{ $attrs.title }}
+      <h1>{{ $attrs.title }}</h1>
     </header>
     <div class="editor">
       <rich-text-editor
@@ -96,25 +96,45 @@ export default {
 @import "@/assets/sass/main.scss";
 
 .note-form {
-  border-radius: 3px;
-  background-color: white;
-  
-  header {
-    font-family: $bitter-family;
-    background-color: $light !important;
+  overflow: visible;
+  padding-bottom: 20px;
 
-    padding: 2px 20px 2px;
-    border-bottom: 1px solid $coffee;
+  header {
+    background-color: #CB2158;
+    border: none;
+    border-radius: 5px;
+    padding: 3px 20px;
+    margin-bottom: 10px !important;
+
+    h1 {
+      padding: 0;
+      font-family: $family-apptitle;
+      font-size: 30px;
+      color: #FFFFFF;
+      font-weight: 200;
+      letter-spacing: 0;
+      text-transform: none;
+    }
   }
 
   .editor {
-    padding: 20px;  
+    background-color: #FFFFFF;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    padding: 20px;
   }
 
   .buttons {
     display: flex;
     justify-content: end;
-    margin: 20px 20px 10px 20px;
+    background-color: #FFFFFF;
+    padding: 20px;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+
+    .button {
+      background-color: #CB2158;
+    }
   }
 }
 </style>

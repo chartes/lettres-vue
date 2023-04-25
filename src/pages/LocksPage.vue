@@ -45,6 +45,7 @@
     <div>
       <b-table
         ref="multiSortTable"
+        class="locks-table"
         :data="data"
         detailed
         detail-key="object-id"
@@ -626,6 +627,7 @@ export default {
 @import "@/assets/sass/main.scss";
 @import "@/assets/sass/components/_search_results_table.scss";
 @import "@/assets/sass/components/_search_results_pagination.scss";
+
   .pagination-controls {
     display: flex;
     align-items: center;
