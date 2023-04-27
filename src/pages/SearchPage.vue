@@ -56,8 +56,13 @@ export default {
     this.thistest()
 
   },*/
+  beforeDestroy() {
+    console.log("clear state on leave")
+    this.resetSearchState();
+    this.$store.state.layout.showLeftSideBar = false;
+  },
   methods: {
-    ...mapActions("search", ["performSearch"]),
+    ...mapActions("search", ["performSearch", "resetSearchState"]),
     ...mapActions("layout", ["toggleLeftSideBar"]),
     ...mapActions("persons", {fetchAllPersons: "fetchAll"}),
     ...mapActions("placenames", {fetchAllPlaces: "fetchAll"}),

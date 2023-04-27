@@ -327,10 +327,16 @@
         </b-field>
       </section>-->
 
-      <div class="divider is-left">
+      <div
+        v-if="current_user"
+        class="divider is-left"
+      >
         Options d'affichage
       </div>
-      <section class="display-section">
+      <section
+        v-if="current_user"
+        class="display-section"
+      >
         <div class="with-status">
           <b-field>
             <b-checkbox v-model="showStatuses">
@@ -377,6 +383,7 @@ export default {
     };
   },
   computed: {
+    ...mapState("user", ["current_user"]),
     ...mapState("layout", ["showLeftSideBar"]),
     ...mapState("search", {
       withStatus: "withStatus",

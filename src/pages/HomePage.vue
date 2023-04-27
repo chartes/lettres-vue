@@ -119,7 +119,7 @@
                   :to="{ name: 'persons' }"
                   class="navbar-start-item"
                 >
-                  <span class="metadata">{{ personsCount }}</span>
+                  <span class="metadata">{{ personsTotal }}</span>
                 </router-link>
               </div>
             </div>
@@ -134,7 +134,7 @@
                   :to="{ name: 'places' }"
                   class="navbar-start-item"
                 >
-                  <span class="metadata">{{ placesCount }}</span>
+                  <span class="metadata">{{ placesTotal }}</span>
                 </router-link>
               </div>
             </div>
@@ -204,8 +204,17 @@
                     <h5 class="card-title">
                       collection {{ featured.id }}
                     </h5>
-                    <p class="card-text">
+                    <p
+                      v-if="current_user"
+                      class="card-text"
+                    >
                       {{ featured.documentCount }} documents
+                    </p>
+                    <p
+                      v-else
+                      class="card-text"
+                    >
+                      {{ featured.publishedCount }} documents
                     </p>
                   </div>
                   <div class="card-footer is-flex">
@@ -323,6 +332,8 @@ export default {
   data: function () {
       return {
           documentsTotal: 0,
+          personsCount: 0,
+          placesCount: 0
       };
   },
   computed: {
@@ -332,6 +343,7 @@ export default {
       allCollectionsWithParents: "allCollectionsWithParents",
       allCollections: "collectionsById",
     }),
+    ...mapState("user", ["current_user"]),
     /*...mapState("persons", {
       persons: "documents",
       allPersons : "totalCount"
@@ -346,23 +358,39 @@ export default {
     }),*/
 
     collectionsCount: function () {
-      console.log('allCollections # keys : ', Object.keys(this.allCollections).length);
-      return Object.keys(this.allCollections).length - 1;
+      if (this.current_user) {
+        console.log('allCollections # keys : ', Object.keys(this.allCollections).length);
+        return Object.keys(this.allCollections).length - 1;
+      } else {
+        console.log('allCollections # keys (published only): ', Object.values(this.allCollections).filter((item) => item.publishedCount > 0).length - 1);
+        return Object.values(this.allCollections).filter((item) => item.publishedCount > 0).length - 1;
+      }
+
     },
     /*previous 17/04/23 lettersCount: function () {
       return Object.values(this.allCollections).reduce((sum, collection) => sum + collection.documentCount, 0);
     },*/
     lettersCount: function () {
-      this.documentsCount();
+      this.documentsCountWithStatus();
       return this.documentsTotal
       },
-    personsCount: function () {
+    /* All persons regardless of published status or link with documents
+      personsCount: function () {
       console.log('All persons : ', this.$store.state.persons.persons);
       return this.$store.state.persons.persons.length;
+    },*/
+    personsTotal: function () {
+      this.personsCountWithStatus();
+      return this.personsCount
     },
-    placesCount: function () {
+    /* All places regardless of published status or link with documents
+      placesCount: function () {
       console.log('All places : ', this.$store.state.placenames.placenames);
       return this.$store.state.placenames.placenames.length;
+    },*/
+    placesTotal: function () {
+      this.placesCountWithStatus();
+      return this.placesCount
     },
     featured_collections: function () {
       let featured_collectionIds=[1, 2, 78];
@@ -375,20 +403,32 @@ export default {
   },
   async created() {
     await this.fetchCollections();
-    await this.fetchPersons();
-    await this.fetchPlaces();
+    //await this.fetchPersons();
+    //await this.fetchPlaces();
   },
   methods: {
     ...mapActions("search", ["performSearch"]),
     ...mapActions("collections", { fetchCollections: "fetchAll" }),
     //...mapState("collections", ["collectionsById"]),
-    ...mapActions("persons", { fetchPersons: "fetchAllPersons" }),
-    ...mapActions("placenames", { fetchPlaces: "fetchAllPlacenames"}),
+    //...mapActions("persons", { fetchPersons: "fetchAllPersons", totalSearchPersons: "getPersonsTotal" }),
+    ...mapActions("persons", ["getPersonsTotal"]),
+    //...mapActions("placenames", { fetchPlaces: "fetchAllPlacenames"}),
+    ...mapActions("placenames", ["getPlacesTotal"]),
     ...mapActions("search", ["getDocumentsTotal"]),
-    documentsCount: async function () {
+    documentsCountWithStatus: async function () {
         let response = await this.getDocumentsTotal();
         this.documentsTotal = response.documentsTotal
         console.log("response", response)
+    },
+    personsCountWithStatus: async function () {
+        let response = await this.getPersonsTotal();
+        this.personsCount = response
+        console.log("personsCount", response)
+    },
+    placesCountWithStatus: async function () {
+        let response = await this.getPlacesTotal();
+        this.placesCount = response
+        console.log("placesCount", response)
     },
     getImgUrl: function (img) {
       try {

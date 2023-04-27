@@ -517,6 +517,7 @@ export default {
 
     async load() {
       this.collection = this.$store.state.collections.collectionsById[this.$props.collectionId];
+      //console.log("interactiveCard async load / ", this.collection)
     },
     async save() {
       if (this.collection.title.length < 1) {

@@ -26,9 +26,17 @@
           <span>{{ collection.dateMin || "..." }}</span>
           <span>{{ collection.dateMax || "..." }}</span>
         </div>
-        <div>
-          <span class="documents-count">{{ collection.documentCount }}</span>
-          <span class="documents-count-label"> documents</span>
+        <div v-if="current_user">
+          <span class="documents-count">
+            {{ collection.documentCount }}
+          </span>
+          <span class="documents-count-label"> document{{ collection.documentCount > 1 ? "s" : "" }}</span>
+        </div>
+        <div v-else>
+          <span class="documents-count">
+            {{ collection.publishedCount }}
+          </span>
+          <span class="documents-count-label"> document{{ collection.publishedCount > 1 ? "s" : "" }}</span>
         </div>
       </div>
     </div>
@@ -71,8 +79,17 @@
             class="expand-collection"
             @click="toggleExpanded(childCollection.id)"
           />
-          <router-link :to="{name: 'collection', params: {collectionId: childCollection.id}}">
+          <router-link
+            v-if="current_user"
+            :to="{name: 'collection', params: {collectionId: childCollection.id}}"
+          >
             {{ childCollection.title }}&nbsp;-&nbsp; {{ childCollection.documentCount }} document{{ childCollection.documentCount > 1 ? "s" : "" }}
+          </router-link>
+          <router-link
+            v-else
+            :to="{name: 'collection', params: {collectionId: childCollection.id}}"
+          >
+            {{ childCollection.title }}&nbsp;-&nbsp; {{ childCollection.publishedCount }} document{{ childCollection.publishedCount > 1 ? "s" : "" }}
           </router-link>
         </div>
       </div>
@@ -93,12 +110,20 @@ export default {
     }
   },
   data() {
-    const collectionsTree =  this.$store.getters["collections/flattenedCollectionsTree"]([this.collectionId])
-    return {
-      expandedById: Object.fromEntries(collectionsTree.map(col => [col.id, false])),
+    const collectionsTree =  this.$store.getters["collections/flattenedCollectionsTree"]([this.collectionId]);
+    if (this.current_user) {
+      const is_published_collectionsTree = collectionsTree.filter((item) => item.publishedCount > 0);
+      return {
+            expandedById: Object.fromEntries(is_published_collectionsTree.map(col => [col.id, false])),
+        }
+    } else {
+        return {
+            expandedById: Object.fromEntries(collectionsTree.map(col => [col.id, false])),
+        }
     }
   },
   computed: {
+    ...mapState("user", ["current_user"]),
     ...mapState("collections", ["collectionsById"]),
     ...mapGetters("collections", ["flattenedCollectionsTree"]),
     collection() {

@@ -29,6 +29,7 @@
           <li class="navbar-start-item">
             <router-link
               :to="{ name: 'search' }"
+              @click.native="clearState()"
             >
               Recherche
             </router-link>
@@ -196,7 +197,7 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from "vuex";
+import {mapState, mapGetters, mapActions} from "vuex";
 //import SearchBox from "@/components/SearchBox";
 
 export default {
@@ -210,6 +211,12 @@ export default {
     ...mapGetters("user", ["isAuthenticated"]),
   },
   methods: {
+    ...mapActions("search", ["resetSearchState"]),
+    clearState() {
+      this.$store.state.collections.selectedCollection = {};
+      this.resetSearchState();
+      //this.$store.state.layout.showLeftSideBar = false;
+    },
     logout() {
       this.$store.dispatch("user/logout")
       .then(() => {

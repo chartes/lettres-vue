@@ -163,8 +163,13 @@ export default {
       return this.indexStart + this.pageSize;
     },
     paginated() {
-      console.log("this.activeRootCollections.slice(this.indexStart, this.indexEnd)", this.activeRootCollections.slice(this.indexStart, this.indexEnd))
-      return this.activeRootCollections.slice(this.indexStart, this.indexEnd);
+      if (this.current_user) {
+        console.log("this.activeRootCollections.slice(this.indexStart, this.indexEnd)", this.activeRootCollections.slice(this.indexStart, this.indexEnd));
+        return this.activeRootCollections.slice(this.indexStart, this.indexEnd);
+      } else {
+        return this.activeRootCollections.filter((item) => item.publishedCount > 0).slice(this.indexStart, this.indexEnd);
+      }
+
     },
     currentPage: {
       get: function () {
@@ -183,25 +188,36 @@ export default {
       return this.$store.getters['collections/search'](this.searchTerm)
     },
     activeRootCollections(){
-      return this.rootCollections.filter(function(coll){
-        if (coll.title !== "Non triées") {
-          return coll
-        }
-      })
+      if (this.current_user) {
+          return this.rootCollections.filter(function(coll){
+            if (coll.title !== "Non triées") {
+              return coll
+            }
+          })
+      } else {
+        return this.rootCollections.filter((coll) => coll.title !== "Non triées" && coll.publishedCount > 0);
+      }
     },
     activesearchResults(){
-      return this.searchResults.filter(function(coll){
-        if (coll.title !== "Non triées") {
-          return coll
-        }
-      })
+      if (this.current_user) {
+        return this.searchResults.filter((coll) => coll.title !== "Non triées");
+      } else {
+        return this.searchResults.filter((coll) => coll.title !== "Non triées" && coll.publishedCount > 0);
+      }
     }
   },
   async created() {
-    await this.fetchCollections();
-    let amountRootCollections = this.$store.state.collections.rootCollectionsIds.length-1;
-    this.totalPages = amountRootCollections === 0 ? 1 : parseInt(Math.ceil(amountRootCollections / this.pageSize));
-    console.log("this.totalPages : ", this.totalPages);
+    if (this.current_user) {
+      await this.fetchCollections();
+      let amountRootCollections = this.$store.state.collections.rootCollectionsIds.length-1;
+      this.totalPages = amountRootCollections === 0 ? 1 : parseInt(Math.ceil(amountRootCollections / this.pageSize));
+      console.log("this.totalPages : ", this.totalPages);
+    } else {
+      await this.fetchCollections();
+      let amountRootCollections = this.rootCollections.filter((coll) => coll.publishedCount > 0).length-1;
+      this.totalPages = amountRootCollections === 0 ? 1 : parseInt(Math.ceil(amountRootCollections / this.pageSize));
+      console.log("this.totalPages : ", this.totalPages);
+    }
   },
   methods: {
     ...mapActions("collections", { fetchCollections: "fetchAll" }),

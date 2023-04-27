@@ -1,7 +1,6 @@
 import {debounce} from 'lodash';
 import {http_with_auth} from "@/modules/http-common";
 import {cloneDeep} from 'lodash';
-import personsModule from "@/store/modules/persons";
 import store from "@/store";
 
 
@@ -66,14 +65,26 @@ function formatDate(year, month, day) {
   console.log('formatted', formatted)
   return formatted
 }
-function transformKeys(obj) {
-  return Object.keys(obj).reduce(function(o, prop) {
-    let value = obj[prop];
-    let newProp = prop.replace('-', '_');
-    o[newProp] = value;
-    return o;
-  }, {});
-}
+const replaceAllObjKeys = (obj, getNewKey) => {
+
+  if (Array.isArray(obj)) {
+    for (let i = 0; i < obj.length; i++) {
+      replaceAllObjKeys(obj[i], getNewKey);
+    }
+  }
+  else if (typeof obj === "object") {
+    for (const key in obj) {
+      const newKey = getNewKey(key);
+      obj[newKey] = obj[key];
+      if (key !== newKey) {
+        delete obj[key];
+      }
+      replaceAllObjKeys(obj[newKey], getNewKey);
+    }
+  }
+
+  return obj;
+};
 function sortMethodAsc(a, b) {
     return a == b ? 0 : a > b ? 1 : -1;
 }
@@ -117,6 +128,7 @@ function sortMethodWithDirectionMultiColumn(sortArray) {
 }
 
 
+/* Replaced by function replaceAllObjKeys
 const toCamel = (str) => {
   return str.replace(/([-_][a-z])/ig, ($1) => {
     return $1.replace('-', '_')
@@ -144,7 +156,7 @@ const keysToCamel = function (obj) {
   }
 
   return obj;
-};
+};*/
 const state = {
 
   searchTerm: null,
@@ -184,8 +196,51 @@ const state = {
 
 };
 
+const initial_State = {
+
+  searchTerm: null,
+
+  sorts: [{field: 'creation', order: 'asc'}],
+
+  creationDateFrom: {
+    ...cloneDeep(creationDateTemplate),
+    //year:'1577',
+    //selection: {
+    //  ...creationDateTemplate.selection,
+      //year: '1577'
+    //}
+  },
+  creationDateTo: cloneDeep(creationDateTemplate),
+
+  withStatus: false,
+  withDateRange: false,
+
+  selectedCollections: [],
+  selectedPlaceFrom: [],
+  selectedPlaceTo: [],
+  selectedPlaceCited: [],
+  selectedPersonFrom: [],
+  selectedPersonTo: [],
+  selectedPersonCited: [],
+  currentFilters: '',
+  currentQuery: '',
+  numPage: 1,
+  pageSize: 30,
+
+  loadingStatus: false,
+  documents: [],
+  included: [],
+  totalCount: 0,
+  links: [],
+
+};
 
 const mutations = {
+  RESET_SEARCH_STATE(state, initial_State) {
+    Object.assign(state, initial_State);
+    console.log('RESET_SEARCH_STATE', initial_State)
+  },
+
   SET_SEARCH_TERM(state, term) {
     state.searchTerm = term;
   },
@@ -252,6 +307,9 @@ const mutations = {
 };
 
 const actions = {
+  resetSearchState({commit}) {
+    commit('RESET_SEARCH_STATE', initial_State);
+  },
   setSearchTerm({commit}, term) {
     commit('SET_SEARCH_TERM', term);
   },
@@ -338,11 +396,25 @@ const actions = {
     /* =========== filters =========== */
     let query ='';
     if (state.selectedCollections && state.selectedCollections.length > 1) {
-      query = '' + '(' + state.selectedCollections.map(c => `(collections.id:${c.id})`).join(' OR ') + ')';
+      let selectedCollectionsIds = state.selectedCollections.map((coll) => coll.id);
+      console.log("selectedCollectionsIds", selectedCollectionsIds)
+      let selectedCollectionsWithChildren = store.getters["collections/flattenedCollectionsTree"](selectedCollectionsIds);
+      console.log("selectedCollectionsWithChildren", selectedCollectionsWithChildren)
+
+      query = '' + '(' + selectedCollectionsWithChildren.map(c => `(collections.id:${c.id})`).join(' OR ') + ')';
     } else {
-      query = '' + state.selectedCollections.map(c => `(collections.id:${c.id})`).join(' OR ');
+      let selectedCollectionsIds = state.selectedCollections.map((coll) => coll.id);
+      console.log("selectedCollectionsIds", selectedCollectionsIds);
+      let selectedCollectionsWithChildren = store.getters["collections/flattenedCollectionsTree"](selectedCollectionsIds);
+      console.log("selectedCollectionsWithChildren", selectedCollectionsWithChildren)
+
+      if (selectedCollectionsWithChildren && selectedCollectionsWithChildren.length > 1) {
+        query = '' + '(' + selectedCollectionsWithChildren.map(c => `(collections.id:${c.id})`).join(' OR ') + ')'
+      } else {
+        query = '' + selectedCollectionsWithChildren.map(c => `(collections.id:${c.id})`).join(' OR ');
+      }
     }
-    console.log('selectedCollections', state.selectedCollections);
+    console.log('collection query', query);
     if (state.searchTerm && state.searchTerm.length > 0) {
       if (query.length === 0) {
         query = `(${state.searchTerm})`
@@ -538,10 +610,11 @@ const actions = {
       const response = await http.get(`/search?query=${query}${filters}${includes}&sort=${sorts}&page[size]=${state.pageSize}&page[number]=${state.numPage}`);
       //const response = await http.get(`/search?query=${query}${filters}${includes}&sort=${sorts}&page[size]=${state.pageSize}&page[number]=${state.numPage}`);
       const {data, links, meta, included} = response.data
-      console.log('keysToCamel(data) : ', keysToCamel(data))
+      const hyphensToUnderscore = (key) => key.replace("-", "_");
+      console.log('hyphensToUnderscore : ', replaceAllObjKeys(cloneDeep(data), hyphensToUnderscore))
       const phr = [];
 
-      const datawithPersons = keysToCamel(data).map(({
+      const datawithPersons = replaceAllObjKeys(cloneDeep(data), hyphensToUnderscore).map(({
         id,
         attributes: {title, argument, creation, creation_not_after, creation_label, is_published},
         relationships: {person_roles, persons, placename_roles, placenames}
@@ -574,6 +647,24 @@ const actions = {
 
       if (type !== 'simple' && (query !== state.currentQuery || filters !== state.currentFilters))
       {
+        // fetch collections associated with search criteriae :
+
+        const searchScopeCollections = await http.get(`/search?query=${query}${filters}&groupby[doc-type]=collection&groupby[field]=collections.id`);
+        let searchScopeCollectionsIds = searchScopeCollections.data.data.reduce((c, v) => c.concat(v), []).map(o => o.id);
+        console.log("searchScopeCollectionsIds", searchScopeCollectionsIds);
+
+        // fetch upward tree Ids for collections :
+        const uniqueSearchScopeCollectionsParentsId = searchScopeCollections.data.data.flatMap(({relationships}) => relationships.parents.data.map(({id}) => id));
+        console.log('uniqueSearchScopeCollectionsParentsId', uniqueSearchScopeCollectionsParentsId);
+        let uniqueSearchScopeCollectionsIds = [...new Set([...searchScopeCollectionsIds ,...uniqueSearchScopeCollectionsParentsId])];
+        console.log('uniqueSearchScopeCollectionsIds', uniqueSearchScopeCollectionsIds);
+
+        // fetch actual collections :
+        let collectionsTags = Object.values(store.state.collections.collectionsById).filter(({id}) => uniqueSearchScopeCollectionsIds.includes(id));
+        console.log('collectionsTags', collectionsTags);
+
+        // update state collections
+        commit('collections/SET_COLLECTIONS_TAGS', collectionsTags, {root: true})
 
         // fetch persons associated with search criteriae :
         const searchScopePersonsFrom = await http.get(`/search?query=${query}${filters}&groupby[doc-type]=person&groupby[field]=senders.id&without-relationships`);

@@ -5,6 +5,7 @@ const state = {
   collectionsById: {},
   rootCollectionsIds: [],
   selectedCollection: {},
+  collectionsTags: {},
 
   isLoading: true
 };
@@ -36,6 +37,7 @@ const mutations = {
     state.collectionsById = {};
     state.rootCollectionsIds = [];
     state.selectedCollection = {};
+    state.collectionsTags = {};
 
     state.isLoading = false;
   },
@@ -65,6 +67,9 @@ const mutations = {
   SET_SELECTED_COLLECTION(state, coll) {
     state.selectedCollection = coll;
   },
+  SET_COLLECTIONS_TAGS(state, collections) {
+    state.collectionsTags = collections;
+  },
 
   UPDATE_ONE(state, {id, title, description, admin}) {
     const collection = state.collectionsById[id]
@@ -84,6 +89,10 @@ const actions = {
     commit('SET_SELECTED_COLLECTION', coll)
   },
 
+  setCollectionsTags({commit}, colls) {
+    commit('SET_COLLECTIONS_TAGS', colls)
+  },
+
   async fetchAll({rootState, commit}) {
     commit('SET_LOADING', true)
     const http = http_with_auth(rootState.user.jwt);
@@ -94,12 +103,13 @@ const actions = {
       // Convert JSON to collections
       const collections = collectionsJSON.map(({
         id,
-        attributes: {title, description, nb_docs, date_min, date_max},
+        attributes: {title, description, nb_docs, nb_pub_docs,date_min, date_max},
         relationships: {children, parents, admin}
       }) => ({
         id,
         title,
         documentCount: nb_docs,
+        publishedCount: nb_pub_docs,
         dateMin: date_min,
         dateMax: date_max,
         description,
@@ -135,6 +145,7 @@ const actions = {
 
       description: c.attributes.description,
       documentCount: c.attributes.nb_docs,
+      publishedCount: c.attributes.nb_pub_docs,
       dateMin: c.attributes.date_min,
       dateMax: c.attributes.date_max,
       //documents: getIncludedRelation(c, included, "documents"),

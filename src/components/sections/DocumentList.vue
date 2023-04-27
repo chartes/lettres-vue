@@ -756,7 +756,7 @@ export default {
   methods: {
     ...mapActions("search", ["setNumPage", "performSearch", "setSorts", "setSelectedCollections"]),
     searchCollection() {
-      this.$store.state.search.selectedCollections = [this.collection];
+      //console.log("searchCollection / this.$store.state.search.selectedCollections", this.$store.state.search.selectedCollections);
       this.$store.state.layout.showLeftSideBar = true
     },
     highlight(text) {

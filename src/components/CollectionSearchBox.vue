@@ -80,7 +80,7 @@ export default {
     };
   },
   computed: {
-    ...mapState("collections", {allCollections: "collectionsById"}),
+    ...mapState("collections", {allCollections: "collectionsById", collectionsTags: "collectionsTags"}),
     ...mapState("search", ["selectedCollections"]),
   },
   watch: {
@@ -104,20 +104,29 @@ export default {
     ...mapActions("collections", ["fetchAll"]),
     ...mapActions("search", ["setSelectedCollections", "performSearch"]),
     getFilteredTags(text) {
-      this.filteredTags = Object.values(this.allCollections).filter((option) => {
-        return (
-          option.title.toString().toLowerCase().indexOf(text.toLowerCase()) >=
-          0
-        );
-      });
+      if (this.$route.name === "search") {
+        this.filteredTags = this.collectionsTags.filter((option) => {
+          return (
+              option.title.toString().toLowerCase().indexOf(text.toLowerCase()) >=
+              0
+          );
+        });
+      } else {
+                this.filteredTags = Object.values(this.allCollections).filter((option) => {
+          return (
+              option.title.toString().toLowerCase().indexOf(text.toLowerCase()) >=
+              0
+          );
+        });
+      }
     },
     removeTag(tag) {
       if (tag) {
         //console.log('Removing array_from : ', tag)
         this.setSelectedCollections(this.tags.filter(coll => (coll.id !== tag.id)));
         this.tags = this.tags.filter(coll => (coll.id !== tag.id));
-        }
       }
+    }
   },
 };
 </script>

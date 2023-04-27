@@ -42,7 +42,7 @@
         </div>
         <div class="row search_row is-align-items-center">
           <div class="col is-2">
-            <span class="search_span">Votre recherche</span>
+            <span class="search_span">Recherche libre</span>
           </div>
           <div class="column pt-3">
             <search-box />
@@ -58,7 +58,7 @@
         >
           <div class="row search_page_search_row">
             <div class="col is-2 search_page_search_span">
-              <span>Votre recherche</span>
+              <span>Recherche libre</span>
             </div>
             <div class="column">
               <search-box />

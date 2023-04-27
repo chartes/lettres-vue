@@ -59,6 +59,35 @@ const mutations = {
 
 const actions = {
 
+    async getPlacesTotal({rootState}) {
+        const http = http_with_auth(rootState.user.jwt);
+        let query ='';
+        if (!query || query.length === 0) {
+          query = '*'
+        }
+        if (!rootState.user.current_user) {
+            query = `${query} AND (is-published:true)`;
+        }
+        // fetch persons associated with search criteriae :
+        const searchScopePlaces = await http.get(`/search?query=${query}&groupby[doc-type]=placename&groupby[field]=placenames.id&without-relationships`);
+        let uniqueSearchScopePlaces = searchScopePlaces.data.data.map(({
+                                                                             id,
+                                                                             type,
+                                                                             attributes,
+                                                                             meta,
+                                                                             links,
+                                                                             relationships
+                                                                         }) =>
+            ({
+                placename_id: id,
+                label: attributes.label
+            })
+        )
+        console.log('uniqueSearchScopePlaces', uniqueSearchScopePlaces);
+        let totalSearchPlaces = uniqueSearchScopePlaces.length;
+        return totalSearchPlaces;
+    },
+
     async fetchAll2({commit, rootState}) {
         commit('SET_LOADING', true)
         const http = http_with_auth(rootState.user.jwt);

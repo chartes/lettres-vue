@@ -59,6 +59,36 @@ const mutations = {
 
 const actions = {
 
+  async getPersonsTotal({rootState}) {
+    const http = http_with_auth(rootState.user.jwt);
+    let query ='';
+    if (!query || query.length === 0) {
+      query = '*'
+    }
+    if (!rootState.user.current_user) {
+        query = `${query} AND (is-published:true)`;
+    }
+    // fetch persons associated with search criteriae :
+    const searchScopePersons = await http.get(`/search?query=${query}&groupby[doc-type]=person&groupby[field]=persons.id&without-relationships`);
+    let uniqueSearchScopePersons = searchScopePersons.data.data.map(({
+                                                                         id,
+                                                                         type,
+                                                                         attributes,
+                                                                         meta,
+                                                                         links,
+                                                                         relationships
+                                                                     }) =>
+        ({
+            person_id: id,
+            label: attributes.label
+        })
+    )
+    console.log('uniqueSearchScopePersons', uniqueSearchScopePersons);
+    let totalSearchPersons = uniqueSearchScopePersons.length;
+    return totalSearchPersons;
+  },
+
+
   async fetchAll({commit, rootState}) {
         const http = http_with_auth(rootState.user.jwt);
         try {
