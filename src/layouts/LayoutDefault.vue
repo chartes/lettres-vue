@@ -293,6 +293,10 @@ footer {
   padding: 90px 0 !important;
   z-index: 100;
 
+  @include on-mobile {
+    padding: 40px 0 30px !important;
+  }
+
   nav {
     width: $container-max-width;
     margin: 0 auto;
@@ -310,13 +314,31 @@ footer {
       padding: 0 $container-mobile-margin;
     }
 
-    .enc-logo {
-      height: 70px;
+    ul {
+
+      @include on-mobile {
+        flex-direction: column;
+        align-items: center;
+        gap: 30px;
+      }
+
+      .enc-logo {
+        height: 70px;
+
+        @include on-mobile {
+          height: 50px;
+        }
+      }
+
+      .cths-logo {
+        height: 100px;
+
+        @include on-mobile {
+          height: 60px;
+        }
+      }
     }
 
-    .cths-logo {
-      height: 100px;
-    }
   }
 }
 #intro_home {
@@ -444,6 +466,10 @@ a.portail_button {
   font-weight: 400;
   color: #FFFFFF;
   text-transform: uppercase;
+
+  @include on-mobile {
+    font-size: 14px;
+  }
 }
 a.portail_button:hover {
   color: #FFFFFF;
@@ -540,6 +566,11 @@ a.portail_button:hover {
   font-size: 20px;
   color: white;
   text-align: center;
+
+  @include on-mobile {
+    font-size: 15px;
+  }
+
 }
 .search-container {
   margin: 0 0 0 20px !important;

@@ -8,11 +8,40 @@
     padding-left: 25px;
     font-family: $family-primary;
 
+    @include on-mobile {
+      display: grid !important;
+      grid-template-columns: 110px auto;
+      grid-template-rows: auto auto;
+      grid-template-areas:
+          "card-thumbnail card-title"
+          "card-thumbnail card-infos";
+      padding: 0 20px;
+    }
+
     &.expanded {
       background-color: #CB2158;
     }
 
+    .collection-thumbnail {
+      grid-area: card-thumbnail;
+      width: 110px;
+      height: 110px;
+      background-color: rgba(255, 255, 255, 0.1);
+      padding: 0;
+      overflow: hidden;
+
+      img {
+        width: 100%;
+        height: 100%;
+        max-height: unset;
+        object-fit: cover;
+        object-position: center;
+        border-radius: 0;
+      }
+    }
+
     .collection-title-wrapper {
+      grid-area: card-title;
       flex: 2;
       padding: 0 25px;
 
@@ -51,6 +80,7 @@
     }
 
     .collection-infos {
+      grid-area: card-infos;
       gap: 10px;
       padding: 0 25px;
       font-size: 20px;
@@ -66,8 +96,10 @@
       }
 
       @include on-mobile {
+        gap: 2px;
         font-size: $font-size-text-mobile;
         line-height: 1.25;
+        text-align: left;
       }
 
       & > .collection-dates span:first-child::after {
@@ -97,22 +129,6 @@
       font-weight: 400;
     }
 
-    .collection-thumbnail {
-      width: 110px;
-      height: 110px;
-      background-color: rgba(255, 255, 255, 0.1);
-      padding: 0;
-      overflow: hidden;
-
-      img {
-        width: 100%;
-        height: 100%;
-        max-height: unset;
-        object-fit: cover;
-        object-position: center;
-        border-radius: 0;
-      }
-    }
   }
 
   .card-header,
@@ -127,7 +143,12 @@
     border: none;
     border-radius: 5px;
     padding: 25px;
-  }
+
+    @include on-mobile {
+      padding: 20px;
+    }
+
+    }
 
   button,
   .card-body,

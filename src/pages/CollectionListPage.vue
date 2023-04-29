@@ -232,6 +232,16 @@ export default {
 
 .collection-list-header {
   margin-bottom: 15px;
+  gap: 20px;
+
+  @include on-mobile {
+    flex-direction: column;
+    align-items: flex-end !important;
+
+    .search-container {
+      width: 100%;
+    }
+  }
 }
 
 .collection-list-item {

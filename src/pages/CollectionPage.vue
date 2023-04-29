@@ -268,6 +268,7 @@ progress {
     }
 
     @include on-mobile {
+      padding: 0;
       font-size: $font-size-text-mobile;
       line-height: 1.25;
     }

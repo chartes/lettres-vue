@@ -96,6 +96,10 @@ export default {
     font-weight: 400;
     color: #343434;
 
+    @include on-mobile {
+      font-size: 15px;
+    }
+
     &:hover,
     &:focus {
       border-color: transparent !important;
@@ -122,12 +126,24 @@ span.icon {
   border-bottom-left-radius: 0px !important;
   border-top-left-radius: 0px !important;
 
+  &.pl-5 {
+    @include on-mobile {
+      padding-left: 1rem !important;
+      padding-right: 1rem !important;
+    }
+  }
+
   i.fa-search {
     text-indent: -9999px;
     display: inline-block;
     width: 25px;
     height: 25px;
     background: url(../assets/images/icons/loupe_header.svg) center / contain no-repeat;
+
+    @include on-mobile {
+      width: 20px;
+      height: 20px;
+    }
   }
 
  }

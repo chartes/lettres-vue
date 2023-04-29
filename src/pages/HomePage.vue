@@ -472,7 +472,12 @@ article > section > .narrow-container {
     margin-bottom: 50px;
   }
 }
-
+article > section > .narrow-container > .numbers {
+  @include on-mobile {
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+  }
+}
 article > section .homepage-intro {
   gap: 95px;
 
@@ -528,6 +533,10 @@ article > section .content p {
   color: #6D7278;
   text-align: center;
   text-transform: uppercase;
+
+  @include on-mobile {
+    font-size: 13px;
+  }
 }
 .metadata {
   font-family: $family-primary;
@@ -550,6 +559,16 @@ article > section .content p {
   padding: 0;
   border-right: solid 8px;
   border-right-color: rgba(180, 0, 80);
+
+  @include on-mobile {
+    flex: 50% 0 0 !important;
+    margin-bottom: 20px;
+    border: none !important;
+
+    &:nth-child(2) {
+      border-right: none;
+    }
+  }
 }
 .col_meta:first-child,
 .col_meta:last-child {
@@ -560,6 +579,11 @@ article > section .content p {
 }
 .col_meta > div {
   padding: 10px 0 15px;
+
+  @include on-mobile {
+    float: none !important;
+  }
+
 }
 .col_meta:first-child > div {
   float: left;
@@ -602,7 +626,6 @@ article > section .content p {
     flex: 100% 0 0;
     width: 100% !important;
   }
-
 }
 .card {
   height: 100%;
@@ -617,6 +640,10 @@ article > section .content p {
     font-size: 18px;
     font-weight: 400;
     color: #4A4A4A;
+
+    @include on-mobile {
+      font-size: 16px;
+    }
 
     &:hover {
       .card-body {
@@ -654,6 +681,10 @@ article > section .content p {
       font-size: 20px;
       font-weight: 500;
       color: #C00055;
+
+      @include on-mobile {
+        font-size: 18px;
+      }
     }
   }
 

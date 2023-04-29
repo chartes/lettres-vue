@@ -241,7 +241,7 @@ export default {
   }
 
   .title {
-    padding: 5px;
+    padding: 2px 5px 5px 0;
     font-family: $family-apptitle;
     font-size: 60px;
     font-weight: 300;
@@ -349,6 +349,11 @@ export default {
     height: 38px;
     background: url('../assets/images/icons/compte_off.svg') center / cover no-repeat;
 
+    @include on-mobile {
+      width: 32px;
+      height: 32px;
+    }
+
     &.active {
       background: url(../assets/images/icons/compte_on.svg)
     }
@@ -429,7 +434,12 @@ export default {
 
   .navbar-start-item {
     padding-left: 0.75rem;
+
+    @include on-mobile {
+      padding-left: 0.4rem;
+    }
   }
+
   .navbar-start-item:not(:last-child)::after {
     content: "|";
     display: inline-block;
@@ -441,7 +451,12 @@ export default {
     @include on-small-tablet {
       transform: scale(1, 1.1) translateY(-3px);
     }
+
+    @include on-mobile {
+      padding-left: 0.4rem;
+    }
   }
+
   .navbar-start-item a {
     padding-bottom: 3px;
     font-family: $family-secondary;

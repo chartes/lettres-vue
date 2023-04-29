@@ -607,6 +607,10 @@ export default {
         flex: $collection-thumbnail-tablet-size 0 0;
       }
 
+      @include on-tablet {
+        flex: 100% 0 0;
+      }
+
       & > a {
         color: #C00055;
       }
@@ -634,7 +638,21 @@ export default {
     gap: 55px;
 
     @include on-tablet {
+      display: grid !important;
+      grid-template-columns: 180px auto;
+      grid-template-rows: auto auto;
+      grid-template-areas:
+          "collection-card-thumbnail collection-card-metadata"
+          "collection-card-thumbnail collection-card-toc";
       gap: 30px;
+    }
+
+    @include on-mobile {
+      grid-template-columns: 110px auto;
+      grid-template-areas:
+          "collection-card-thumbnail collection-card-metadata"
+          "collection-card-toc collection-card-toc";
+      gap: 15px;
     }
 
     .column {
@@ -642,6 +660,7 @@ export default {
     }
 
     .thumbnail-column {
+      grid-area: collection-card-thumbnail;
       flex: $collection-thumbnail-size 0 0;
       margin-top: 7px;
 
@@ -655,9 +674,15 @@ export default {
     }
 
     .metadata-column {
+      grid-area: collection-card-metadata;
       width: calc( 100% - $collection-thumbnail-size - 290px - 2 * 55px );
       border-top: #C00055 solid 7px;
       padding-top: 15px;
+
+      @include on-tablet {
+        width: 100%;
+        padding-bottom: 15px;
+      }
 
       .field.has-addons {
         display: flex;
@@ -669,6 +694,7 @@ export default {
     }
 
     .toc-column {
+      grid-area: collection-card-toc;
       flex: 290px 0 0;
       border-top: #C00055 solid 7px;
     }
@@ -679,7 +705,18 @@ export default {
     font-family: $family-primary;
     font-size: 35px;
     font-weight: 500;
+    line-height: 1.1;
     color: #000000;
+    margin-bottom: 20px;
+
+    @include on-tablet {
+      font-size: $font-size-title-tablet;
+    }
+
+    @include on-mobile {
+      font-size: $font-size-title-mobile;
+    }
+
   }
 
   .collection-thumbnail {
@@ -698,6 +735,11 @@ export default {
     @include on-tablet {
       width: $collection-thumbnail-tablet-size;
       height: $collection-thumbnail-tablet-size;
+    }
+
+    @include on-mobile {
+      width: $collection-thumbnail-mobile-size;
+      height: $collection-thumbnail-mobile-size;
     }
 
     img {
@@ -739,7 +781,15 @@ export default {
     font-size: 18px;
     color: #000000;
     font-weight: 400;
-    line-height: 24px;
+    line-height: 1.2;
+
+    @include on-tablet {
+      font-size: $font-size-text-tablet;
+    }
+
+    @include on-mobile {
+      font-size: $font-size-text-mobile;
+    }
   }
 
   .select-parent {
@@ -749,6 +799,10 @@ export default {
   .collection-user-roles {
     margin-bottom: 30px;
 
+    @include on-tablet {
+      margin-bottom: 0;
+    }
+
     /* label */
     & > p {
       font-family: $family-primary;
@@ -756,6 +810,10 @@ export default {
       font-weight: 500;
       color: #000000;
       text-transform: uppercase;
+
+      @include on-mobile {
+        font-size: 13px;
+      }
     }
 
     /* value : read mode */
@@ -764,6 +822,10 @@ export default {
       font-size: 18px;
       font-weight: 400;
       color: #4A4A4A;
+
+      @include on-mobile {
+        font-size: 15px;
+      }
     }
   }
 
@@ -784,6 +846,15 @@ export default {
     font-weight: 500;
     color: #6D7278;
     text-align: left;
+
+    @include on-tablet {
+      margin-bottom: 30px;
+    }
+
+    @include on-mobile {
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
 
     :focus {
       border: none;
