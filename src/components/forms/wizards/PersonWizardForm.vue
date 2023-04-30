@@ -2,7 +2,6 @@
   <div
     class="root-container"
     :class="popupMode ? 'box modal-card' : ''"
-    style="width: 1024px !important"
   >
     <div
       class="root-grid-container"
@@ -385,6 +384,13 @@ export default {
   padding: 0 !important;
   background: transparent !important;
 
+  &.modal-card {
+    @include on-tablet {
+      width: 100% !important;
+      min-width: 100% !important;
+    }
+  }
+
   .label {
     color: inherit !important;
   }
@@ -423,6 +429,16 @@ export default {
       "leftbar-header leftbar-header"
       "center-content leftbar-content"
       "leftbar-footer nav-footer";
+
+    @include on-tablet {
+      grid-template-columns: auto;
+      grid-template-rows: 62px auto auto 80px;
+      grid-template-areas:
+      "leftbar-header"
+      "center-content"
+      "leftbar-content"
+      "nav-footer";
+    }
   }
 
   .leftbar-header-area {
@@ -446,6 +462,14 @@ export default {
       color: #FFFFFF;
       font-weight: 200;
       letter-spacing: 0;
+
+      @include on-tablet {
+        font-size: $font-size-title-tablet;
+      }
+
+      @include on-mobile {
+        font-size: $font-size-title-mobile;
+      }
     }
 
     h2 {
@@ -460,12 +484,20 @@ export default {
   .nav-footer-area {
     background-color: #7F0038 !important;
     margin-left: 10px;
+
+    @include on-tablet {
+      margin-left: 0;
+    }
   }
 
   .leftbar-content-area {
     grid-area: leftbar-content;
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
+
+    @include on-tablet {
+      margin-top: 10px;
+    }
   }
 
   .leftbar-footer-area {

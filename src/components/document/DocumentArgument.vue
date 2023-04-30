@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="document.argument && document.argument.length || editable > 0"
-    class="panel mt-5"
+    class="panel"
   ><!-- (document.argument && document.argument.length) || editable > 0 -->
     <div class="panel-block">
       <rich-text-editor

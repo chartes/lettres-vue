@@ -767,6 +767,10 @@ export default {
     .document-section {
       margin-bottom: 60px;
 
+      @include on-mobile {
+        margin-bottom: 20px;
+      }
+
       .heading span.icon {
         display: none !important;
       }
@@ -782,6 +786,15 @@ export default {
           ::v-deep {
             .collapse-content {
               padding: 0;
+
+              .column {
+                padding: 10px 20px;
+
+                @include on-tablet {
+                  padding: 10px 0;
+                }
+              }
+
             }
           }
         }
@@ -835,24 +848,22 @@ export default {
       margin-top: 20px;
     }
 
+    & > .columns {
+      display: flex !important;
+    }
+
     .document-section {
       border: 1px solid #FF0052;
       border-radius: 5px;
       padding: 30px;
       margin-bottom: 30px;
 
-      &.columns {
-        margin: 30px 0 40px !important;
+      @include on-mobile {
+        padding: 15px;
       }
 
-      /* TODO Denis : supprimer le ::before pour la section Titre (ajouté au HTML comme pour les autres sections, columns supprimées)*/
-      // Section du titre
-      &.columns::before {
-        content: "TITRE";
-        display: inline-block;
-        margin-bottom: 20px;
-        font-weight: 500;
-        color: #FF0052;
+      &.columns {
+        margin: 30px 0 40px !important;
       }
 
       & > .heading {
@@ -873,9 +884,17 @@ export default {
           }
         }
 
-
         span {
           font-size: 20px;
+
+          @include on-tablet {
+            font-size: $font-size-text-tablet;
+          }
+
+          @include on-mobile {
+            font-size: $font-size-text-mobile;
+          }
+
         }
 
         &::after {
@@ -925,6 +944,10 @@ nav.previous-next-navigation {
   display: flex;
   gap: 12px;
 
+  @include on-mobile {
+    gap: 6px;
+  }
+
   a.pagination-link {
     border: none;
     padding: 0 !important;
@@ -932,12 +955,19 @@ nav.previous-next-navigation {
     min-width: unset !important;
     height: 30px;
 
+    @include on-mobile {
+      transform: scale(0.9,0.9);
+    }
+
     &::after {
       content: "";
       display: inline-block;
       width: 30px;
       height: 30px;
       background: url(../../assets/images/icons/lettre_nav_precedent.svg) center / 30px auto no-repeat !important;
+
+      @include on-mobile {
+      }
     }
 
     &.pagination-next,
@@ -960,6 +990,10 @@ nav.previous-next-navigation {
   display: flex !important;
   gap: 50px;
 
+  @include on-mobile {
+    gap: 20px;
+  }
+
 }
 
 .document-section {
@@ -969,6 +1003,14 @@ nav.previous-next-navigation {
   font-family: $family-primary;
   font-size: 20px;
   line-height: 1.2;
+
+  @include on-tablet {
+    font-size: $font-size-text-tablet;
+  }
+
+  @include on-mobile {
+    font-size: $font-size-text-mobile;
+  }
 
   // Section : Titre du document et langues
   &.columns {
@@ -1013,6 +1055,10 @@ nav.previous-next-navigation {
     letter-spacing: 0;
     text-transform: uppercase;
 
+    @include on-mobile {
+      font-size: 13px;
+    }
+
     .heading-content {
       display: inline-block;
     }
@@ -1029,6 +1075,17 @@ nav.previous-next-navigation {
   & .document-section-content {
     margin-left: 60px;
     margin-bottom: 40px;
+
+    @include on-tablet {
+      margin-left: 20px;
+      margin-bottom: 20px;
+    }
+
+    @include on-mobile {
+      margin-left: 0;
+      margin-bottom: 0;
+    }
+
 
     ::v-deep {
 
@@ -1052,16 +1109,25 @@ nav.previous-next-navigation {
         font-weight: 600;
         text-transform: uppercase;
         letter-spacing: 0;
+
+        @include on-mobile {
+          font-size: 13px;
+        }
       }
 
-      .label {
-        font-size: 13px;
+      .control {
+        font-size: 18px;
+
+        @include on-mobile {
+          font-size: $font-size-text-mobile;
+        }
       }
 
       .panel {
         -webkit-box-shadow: none;
         box-shadow: none;
 
+        font-size: 16px;
         font-family: $family-primary;
 
         .panel-block {
@@ -1069,11 +1135,20 @@ nav.previous-next-navigation {
           padding: 0;
           margin-bottom: 20px;
 
+          & > .argument__content,
           & > :nth-child(2) {
             font-size: 20px;
             color: #585858;
             font-weight: 400;
             letter-spacing: 0;
+
+            @include on-tablet {
+              font-size: $font-size-text-tablet;
+            }
+
+            @include on-mobile {
+              font-size: $font-size-text-mobile;
+            }
           }
         }
       }
@@ -1086,6 +1161,14 @@ nav.previous-next-navigation {
         .breadcrumb.is-small {
           font-size: 20px;
           font-weight: 400;
+
+          @include on-tablet {
+            font-size: $font-size-text-tablet;
+          }
+
+          @include on-mobile {
+            font-size: $font-size-text-mobile;
+          }
 
           a {
             color: #000000;

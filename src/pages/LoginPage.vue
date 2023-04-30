@@ -135,6 +135,15 @@ export default {
       color: #FFFFFF;
       font-weight: 200;
       letter-spacing: 0;
+
+      @include on-tablet {
+        font-size: $font-size-title-tablet;
+      }
+
+      @include on-mobile {
+        font-size: $font-size-title-mobile;
+      }
+
     }
   }
 

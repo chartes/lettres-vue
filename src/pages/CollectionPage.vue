@@ -199,6 +199,11 @@ export default {
 
 .collection-card-parent {
   padding-bottom: 20px;
+
+  @include on-mobile {
+    padding-bottom: 50px;
+  }
+
 }
 
 ::v-deep .card-footer {

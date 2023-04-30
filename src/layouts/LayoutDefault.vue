@@ -394,7 +394,11 @@ footer {
   display:flex;
   flex-direction: column;
   justify-content: center;
-  margin-bottom: 0px !important;
+  margin-bottom: 0 !important;
+
+  @include on-mobile {
+    height:150px;
+  }
 }
 #card_image {
   max-height: 250px;

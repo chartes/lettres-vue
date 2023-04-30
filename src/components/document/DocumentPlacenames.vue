@@ -130,6 +130,10 @@ export default {
 
 <style scoped  lang="scss">
 
+.document-placenames__subtitle {
+  margin-bottom: 0.5em;
+}
+
 .has-add-btn.is-flex {
   gap: 5px;
 }

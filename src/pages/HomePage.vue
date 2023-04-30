@@ -609,7 +609,6 @@ article > section .content p {
   @include on-small-tablet {
     gap: 20px
   }
-
 }
 
 .cards .column {
@@ -622,11 +621,12 @@ article > section .content p {
     width: calc( 50% - 10px) !important;
   }
 
-  @include on-mobile {
+  @include on-small-mobile {
     flex: 100% 0 0;
     width: 100% !important;
   }
 }
+
 .card {
   height: 100%;
   overflow: hidden;

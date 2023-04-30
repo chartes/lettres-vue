@@ -167,6 +167,16 @@ export default {
   font-size: 30px !important;
   font-weight: 500 !important;
   color: #C00055;
+  line-height: 1.2;
+
+  @include on-tablet {
+    font-size: $font-size-title-tablet !important;
+  }
+
+  @include on-small-mobile {
+    font-size: $font-size-title-mobile !important;
+  }
+
 }
 
 </style>

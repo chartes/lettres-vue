@@ -355,7 +355,7 @@ export default {
     }
 
     &.active {
-      background: url(../assets/images/icons/compte_on.svg)
+      background-image: url(../assets/images/icons/compte_on.svg)
     }
   }
 

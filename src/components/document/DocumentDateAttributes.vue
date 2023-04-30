@@ -174,8 +174,16 @@ export default {
 </script>
 
 <style scoped lang="scss">
+@import "@/assets/sass/main.scss";
+
 .creation-date {
   display: inline-flex;
+
+  @include on-tablet {
+    flex-direction: column;
+    margin-left: 10px;
+    margin-top: 10px;
+  }
 
   .creation-date-input {
     margin-right: 30px;

@@ -264,7 +264,8 @@ export default {
 @import "@/assets/sass/main.scss";
 
 .witness-list {
-  display: inline;
+  display: inline-block;
+  margin-bottom: 20px;
 }
 
 .flip-list-move {
@@ -288,10 +289,27 @@ export default {
 }
 
 .list-group-item {
-  padding-top: 12px;
-  padding-bottom: 17px;
+  padding-top: 5px;
+  padding-bottom: 5px;
   border-bottom: 1px solid #FDB3CC;
   margin-bottom: 20px;
+
+  @include on-tablet {
+    padding-top: 0;
+    padding-bottom: 5px;
+    margin-bottom: 15px;
+  }
+
+  .columns {
+    margin: 0 !important;
+  }
+
+  .column {
+    padding: 0 5px 5px;
+
+    @include on-tablet {
+    }
+  }
 }
 
 .list-group-item i {
@@ -310,6 +328,12 @@ export default {
         .field.is-grouped {
           justify-content: space-between;
           width: 100%;
+
+          @include on-mobile {
+            flex-direction: column;
+            gap: 20px;
+            margin-bottom: 0;
+          }
 
           .controls {
             display: flex;
@@ -332,6 +356,10 @@ export default {
                   font-size: 16px;
                   color: #71757B;
 
+                  @include on-mobile {
+                    font-size: 13px;
+                  }
+
                   &:after {
                     content: ":";
                     margin: 0 3px;
@@ -341,6 +369,10 @@ export default {
                   background: none;
                   font-size: 16px;
                   color: #363636;
+
+                  @include on-mobile {
+                    font-size: 13px;
+                  }
                 }
               }
             }
@@ -355,6 +387,11 @@ export default {
               .control {
                 width: 29px;
                 margin-left: 20px;
+
+                @include on-mobile {
+                  margin-left: 0;
+                  margin-right: 20px;
+                }
               }
 
               .button {

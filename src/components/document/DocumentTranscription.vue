@@ -6,7 +6,7 @@
         class="panel-block"
         style="display: inline-block; width: 100%"
       >
-        <h3 class="heading mt-3">
+        <h3 class="heading">
           Adresse
         </h3>
 

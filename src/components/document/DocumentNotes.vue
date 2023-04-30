@@ -193,7 +193,7 @@ export default {
 <style scoped>
 
 .note-list-parent {
-  border-top: solid 1px #ccc;
+  /* border-top: solid 1px #ccc; */
 }
 
 </style>
