@@ -3,7 +3,7 @@
     <div
       v-if="editable && editMode"
       ref="hover"
-      class="field field-title__field"
+      class="edit-mode-field field field-title__field"
     >
       <div class="control">
         <rich-text-editor
@@ -32,7 +32,7 @@
     <div
       v-else-if="editable && !editMode"
       ref="hover"
-      class="field"
+      class="editable-field field"
       :tabindex="tabulationIndex"
       @click="enterEditMode"
       @mouseover="overField"
@@ -44,10 +44,12 @@
           :class="userClass"
           v-html="value || notSet"
         />
-        <component
-          :is="editButtonIcon"
-          class="field-title__icon"
-        />
+        <span class="edit-btn">
+          <component
+              :is="editButtonIcon"
+              class="field-title__icon"
+          />
+        </span>
       </div>
     </div>
 
@@ -176,7 +178,34 @@ export default {
   @include on-small-mobile {
     font-size: $font-size-title-mobile !important;
   }
+}
+
+.editable-field {
+  .control {
+    display: flex;
+    flex-direction: row-reverse;
+
+    .edit-btn {
+      position: unset;
+      flex: 55px 0 0;
+
+      display: inline-block;
+      width: 25px;
+      height: 25px;
+      background: url(../../../assets/images/icons/bouton_edit.svg) center / 25px auto no-repeat !important;
+      cursor: pointer;
+
+      .icon.icon__pen-edit {
+        display: none;
+      }
+
+    }
+  }
+}
+
+.edit-mode-field {
 
 }
+
 
 </style>
