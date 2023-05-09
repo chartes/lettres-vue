@@ -4,289 +4,317 @@
     border-top: #CB2158 8px solid;
     padding-top: 15px;
 
-    th {
-      font-family: $family-secondary;
-      font-size: 14px;
-      font-weight: 500;
-      color: #4A4A4A;
-      text-transform: uppercase;
-      border-bottom: 1px solid #fdb3cc;
-      padding: 0 10px 10px 0 !important;
+    table {
+      border: none !important;
 
-      /* En-tete "Lettre" (seconde colonne) calée tout à gauche, sur la première colonne du chevron */
-      &:nth-child(2) {
-        .th-wrap {
-          transform: translateX(-40px);
+      thead {
+        tr {
 
-          &.is-numeric {
-            flex-direction: revert;
-            text-align: left;
-          }
-        }
-      }
-
-      /* Lieux */
-      &:nth-child(7),
-      &:nth-child(8) {
-        display: none;
-      }
-
-      .icon.button {
-        width: 25px;
-        height: 25px;
-        border-radius: 4px;
-        margin: 0 4px 10px 0 !important;
-        padding: 0 !important;
-
-        &.sort-index {
-          background-color: #4A4A4A;
-          font-family: $family-primary;
-          font-size: 18px;
-          color: #FFFFFF;
-          text-align: center;
-          font-weight: 700;
-        }
-
-        &.arrow-down::after,
-        &.arrow-up::after {
-          content: '';
-          display: inline-block;
-          width: 100%;
-          height: 100%;
-          background-size: cover;
-          background-repeat: no-repeat;
-          transform-origin: 50% 50%;
-          background-image: url(#{$image-path}/icons/tri-fleche.svg);
-        }
-
-        &.arrow-down::after {
-          transform: rotate(180deg);
-        }
-
-        &.arrows-alt-v::after {
-          content: '';
-          display: inline-block;
-          width: 100%;
-          height: 100%;
-          background-size: cover;
-          background-repeat: no-repeat;
-          background-image: url(#{$image-path}/icons/tri-double-fleche.svg);
-        }
-
-        i {
-          display: none;
-        }
-
-      }
-    }
-
-
-    tbody {
-
-      td {
-        vertical-align: middle;
-        border-color: #fdb3cc;
-        padding: 15px 15px 15px 0;
-
-        /* Chevron */
-        &:nth-child(1) {
-          padding-left: 0;
-          padding-right: 0;
-
-          a {
-            display: flex;
-            align-items: center;
-
-            span.icon {
-              &::after {
-                content: "";
-                display: inline-block;
-                width: 24px;
-                height: 24px;
-                background: url(#{$image-path}/icons/open_text.svg) center right / 18px auto no-repeat;
-                transform-origin: 50% 50%;
-                transform: rotate(-90deg);
-              }
-
-              &.opened::after {
-                transform: rotate(0deg);
-              }
-            }
-          }
-
-          i {
-            display: none;
-          }
-        }
-
-        /* ID Lettre */
-        &:nth-child(2) {
-          padding-left: 0;
-          padding-right: 0;
-
-          .tag {
-            background: none;
-            font-family: $family-primary;
-            font-size: 16px;
-            font-weight: 400;
-            color: #515151;
-          }
-
-        }
-
-        /* Date lettre */
-        &:nth-child(3) {
-          color: #4A4A4A;
-          font-weight: 500;
-        }
-
-        /* Titre */
-        &:nth-child(4) {
-          a {
+          th {
+            display: table-cell !important;
             font-family: $family-secondary;
-            font-size: 16px;
-            color: #000000;
-            font-weight: 600;
-            line-height: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #4A4A4A;
+            text-transform: uppercase;
+            border-bottom: 1px solid #fdb3cc;
+            padding: 0 10px 10px 0 !important;
 
-            &:hover {
-              text-decoration: underline;
-              text-decoration-style: dotted;
-              text-underline-offset: 4px;
+            /* En-tete "Lettre" (seconde colonne) calée tout à gauche, sur la première colonne du chevron */
+            &:nth-child(2) {
+              .th-wrap {
+                transform: translateX(-40px);
+
+                &.is-numeric {
+                  flex-direction: revert;
+                  text-align: left;
+                }
+              }
+            }
+
+            /* Lieux */
+            &:nth-child(7),
+            &:nth-child(8) {
+              grid-area: document-location-destination;
+              /* display: none !important; */
+            }
+
+            .icon.button {
+              width: 25px;
+              height: 25px;
+              border-radius: 4px;
+              margin: 0 4px 10px 0 !important;
+              padding: 0 !important;
+
+              &.sort-index {
+                background-color: #4A4A4A;
+                font-family: $family-primary;
+                font-size: 18px;
+                color: #FFFFFF;
+                text-align: center;
+                font-weight: 700;
+              }
+
+              &.arrow-down::after,
+              &.arrow-up::after {
+                content: '';
+                display: inline-block;
+                width: 100%;
+                height: 100%;
+                background-size: cover;
+                background-repeat: no-repeat;
+                transform-origin: 50% 50%;
+                background-image: url(#{$image-path}/icons/tri-fleche.svg);
+              }
+
+              &.arrow-down::after {
+                transform: rotate(180deg);
+              }
+
+              &.arrows-alt-v::after {
+                content: '';
+                display: inline-block;
+                width: 100%;
+                height: 100%;
+                background-size: cover;
+                background-repeat: no-repeat;
+                background-image: url(#{$image-path}/icons/tri-double-fleche.svg);
+              }
+
+              i {
+                display: none;
+              }
+
             }
           }
         }
-
-        /* Expéditeur */
-        &:nth-child(5) {
-        }
-
-        /* Destinataire(s) */
-        &:nth-child(6) {
-        }
-
-        /* Lieu d'expédition */
-        &:nth-child(7) {
-          display: none;
-        }
-
-        /* Lieu de destination */
-        &:nth-child(8) {
-          display: none;
-        }
       }
 
-      tr.detail {
-        background-color: #F8F8F8;
+      tbody {
+        border: none !important;
 
-        .detail-container {
-          padding: 20px 0;
-          overflow: hidden;
+        tr {
 
-          .document-page {
+          &.detail {
+            background-color: #F8F8F8;
 
-            .heading {
-              display: flex;
-              align-items: flex-end;
-              gap: 4px;
+            .detail-container {
+              padding: 20px 0;
+              overflow: hidden;
 
-              background: none;
-              border: none;
-              padding: 0;
+              .document-page {
 
-              &::after {
-                content: "";
-                display: inline-block;
-                border-bottom: 1px solid #D2D2D2;
-                width: 100%;
-                transform: translateY(-2px);
-              }
-            }
+                .heading {
+                  display: flex;
+                  align-items: flex-end;
+                  gap: 4px;
 
-            .heading-content {
-              font-family: $family-primary;
-              font-size: 16px;
-              line-height: 16px;
-              color: #CB2158;
-              font-weight: 600;
-              letter-spacing: 0;
-              text-transform: uppercase;
-            }
+                  background: none;
+                  border: none;
+                  padding: 0;
 
-            .document-section {
-              font-family: $family-primary;
-              font-size: 18px;
-              line-height: 23px;
-              color: #373737;
-              padding-left: 40px;
-              margin-bottom: 40px;
+                  &::after {
+                    content: "";
+                    display: inline-block;
+                    border-bottom: 1px solid #D2D2D2;
+                    width: 100%;
+                    transform: translateY(-2px);
+                  }
+                }
 
-              &:first-child {
-                border-bottom: solid 5px #FFFFFF;
-              }
+                .heading-content {
+                  font-family: $family-primary;
+                  font-size: 16px;
+                  line-height: 16px;
+                  color: #CB2158;
+                  font-weight: 600;
+                  letter-spacing: 0;
+                  text-transform: uppercase;
+                }
 
-              &:last-child {
-                margin-bottom: 0;
-              }
+                .document-section {
+                  font-family: $family-primary;
+                  font-size: 18px;
+                  line-height: 23px;
+                  color: #373737;
+                  padding-left: 40px;
+                  margin-bottom: 40px;
 
-              .document-section-content {
-                margin-bottom: 20px;
-              }
+                  &:first-child {
+                    border-bottom: solid 5px #FFFFFF;
+                  }
 
-              /* Liste des témoins version preview (oeil seulement, colonnes inversées) */
-              .witness-list {
-                ul.list-group {
-                  list-style-position: inside;
+                  &:last-child {
+                    margin-bottom: 0;
+                  }
 
-                  li.list-group-item {
-                    padding: 0 !important;
-                    border: none !important;
-                    margin: 0 0 10px !important;
+                  .document-section-content {
+                    margin-bottom: 20px;
+                  }
 
-                    &:last-child {
-                      margin-bottom: 0 !important;
-                    }
+                  /* Liste des témoins version preview (oeil seulement, colonnes inversées) */
+                  .witness-list {
+                    ul.list-group {
+                      list-style-position: inside;
 
-                    .columns {
-                      flex-direction: row-reverse !important;
-                      gap: 10px;
-                      margin: 0;
-
-                      .column:first-child {
-                        flex: calc( 100% - 40px ) 0 0 !important;
-                        width: calc( 100% - 40px );
-                      }
-
-                      .column:last-child {
-                        flex: 30px 0 0 !important;
-                        width: 30px;
-                      }
-
-                      .column {
+                      li.list-group-item {
                         padding: 0 !important;
+                        border: none !important;
+                        margin: 0 0 10px !important;
 
-                        & > div > * {
-                          display: inline-block;
-                          margin-right: 5px;
+                        &:last-child {
+                          margin-bottom: 0 !important;
                         }
 
-                        .witness-actions {
-                          .controls {
-                            display: none !important;
+                        .columns {
+                          flex-direction: row-reverse !important;
+                          gap: 10px;
+                          margin: 0;
+
+                          .column:first-child {
+                            flex: calc( 100% - 40px ) 0 0 !important;
+                            width: calc( 100% - 40px );
                           }
-                          .control {
-                            margin: 0 !important;
+
+                          .column:last-child {
+                            flex: 30px 0 0 !important;
+                            width: 30px;
+                          }
+
+                          .column {
+                            padding: 0 !important;
+
+                            & > div > * {
+                              display: inline-block;
+                              margin-right: 5px;
+                            }
+
+                            .witness-actions {
+                              .controls {
+                                display: none !important;
+                              }
+                              .control {
+                                margin: 0 !important;
+                              }
+                            }
                           }
                         }
                       }
                     }
                   }
+
+                }
+              }
+            }
+          }
+
+          td {
+            display: table-cell !important;
+            vertical-align: middle;
+            border-color: #fdb3cc;
+            padding: 15px 15px 15px 0;
+            text-align: left !important;
+
+            &::before {
+              display: none;
+            }
+
+            /* Chevron */
+            &:nth-child(1) {
+              grid-area: document-detail-toggle;
+
+              padding-left: 0;
+              padding-right: 0;
+
+              a {
+                display: flex;
+                align-items: center;
+
+                span.icon {
+                  &::after {
+                    content: "";
+                    display: inline-block;
+                    width: 24px;
+                    height: 24px;
+                    background: url(#{$image-path}/icons/open_text.svg) center right / 18px auto no-repeat;
+                    transform-origin: 50% 50%;
+                    transform: rotate(-90deg);
+                  }
+
+                  &.opened::after {
+                    transform: rotate(0deg);
+                  }
                 }
               }
 
+              i {
+                display: none;
+              }
+            }
+
+            /* ID Lettre */
+            &:nth-child(2) {
+              grid-area: document-id;
+
+              padding-left: 0;
+              padding-right: 0;
+
+              .tag {
+                background: none;
+                font-family: $family-primary;
+                font-size: 16px;
+                font-weight: 400;
+                color: #515151;
+              }
+
+            }
+
+            /* Date lettre */
+            &:nth-child(3) {
+              grid-area: document-date;
+              color: #4A4A4A;
+              font-weight: 500;
+            }
+
+            /* Titre */
+            &:nth-child(4) {
+              grid-area: document-title;
+
+              a {
+                font-family: $family-secondary;
+                font-size: 16px;
+                color: #000000;
+                font-weight: 600;
+                line-height: 20px;
+
+                &:hover {
+                  text-decoration: underline;
+                  text-decoration-style: dotted;
+                  text-underline-offset: 4px;
+                }
+              }
+            }
+
+            /* Expéditeur */
+            &:nth-child(5) {
+              grid-area: document-sender;
+            }
+
+            /* Destinataire(s) */
+            &:nth-child(6) {
+              grid-area: document-recipients;
+            }
+
+            /* Lieu d'expédition */
+            &:nth-child(7) {
+              grid-area: document-location-origin;
+            }
+
+            /* Lieu de destination */
+            &:nth-child(8) {
             }
           }
-        }
+       }
       }
     }
   }
@@ -344,6 +372,83 @@
     }
   }
 
+  /* Version tableau */
+  .is-active .table-wrapper {
+
+    @include on-small-tablet {
+
+      thead {
+        tr {
+          display: flex !important;
+          justify-content: space-between;
+          border-bottom: 1px solid #fdb3cc;
+
+          th {
+            border-bottom: none;
+          }
+        }
+      }
+
+      tbody {
+
+        tr:not(.detail) {
+          display: grid !important;
+          grid-template-columns: 30px 50px 100px auto;
+          grid-template-rows: auto auto auto auto auto auto;
+          grid-template-areas:
+          "document-detail-toggle document-id document-date document-title"
+          "document-detail-toggle document-id document-date document-sender"
+          "document-detail-toggle document-id document-date document-recipients"
+          "document-detail-toggle document-id document-date document-location-origin"
+          "document-detail-toggle document-id document-date document-location-destination ";
+
+          width: calc( 100vw - 30px );
+          border-bottom: 1px solid #fdb3cc;
+          box-shadow: none !important;
+          padding: 10px 0;
+          margin: 0 !important;
+
+          &:last-child {
+            border: none;
+          }
+
+          td {
+            padding: 0 !important;
+            border: none !important;
+
+            /* Titre */
+            &:nth-child(4) {
+              margin-bottom: 10px;
+
+              & > a,
+              & > a > h2 {
+                font-weight: 500 !important;
+                color: #000000;
+              }
+            }
+
+            &:nth-child(5):not(:empty)::before,
+            &:nth-child(6):not(:empty)::before,
+            &:nth-child(7):not(:empty)::before,
+            &:nth-child(8):not(:empty)::before {
+              content: attr(data-label);
+              font-size: 14px;
+              font-weight: normal !important;
+              text-align: left !important;
+              display: inline;
+            }
+
+            & > * {
+              display: inline !important;
+            }
+          }
+
+        }
+      }
+    }
+  }
+
+  /* Version déplié */
   .is-inactive .table-wrapper {
 
     table, tbody {
@@ -367,15 +472,26 @@
 
         padding-top: 15px;
         border-bottom: #CB2158 2px solid;
+        border-top: none !important;
+        box-shadow: none !important;
+
+        @include on-small-tablet {
+          padding-top: 0;
+        }
+
+        @include on-mobile {
+          grid-template-columns: 70px auto auto 20px;
+        }
 
         &:first-of-type {
           padding-top: 0;
         }
 
         td {
+          display: block !important;
           width: 100%;
           min-width: 0;
-          border: none;
+          border: none !important;
           padding: 0;
           text-align: left;
 
@@ -396,6 +512,10 @@
             font-size: 16px;
             font-weight: 500;
             color: #000000;
+
+            @include on-mobile {
+              font-size: 14px;
+            }
           }
 
           &:nth-child(1),
@@ -404,6 +524,10 @@
           &:nth-child(7) {
             margin-top: 20px;
             border-top: 1px solid #dbdbdb;
+
+            @include on-small-tablet {
+              margin-top: 0;
+            }
           }
 
           &:nth-child(6),
@@ -419,20 +543,23 @@
           &:nth-child(8)::before {
             font-family: $family-secondary;
             font-size: 14px;
-            font-weight: 400;
+            font-weight: 400 !important;
             line-height: 20px;
-            color: #6B6B6B;
+            color: #6B6B6B !important;;
             text-transform: uppercase;
           }
 
           /* Chevron */
           &:nth-child(1) {
-            grid-area: document-detail-toggle;
-
-            display: flex;
+            display: flex !important;
             justify-content: flex-end;
             align-items: center;
             padding-right: 30px;
+
+            @include on-mobile {
+              padding: 0 !important;
+              justify-content: center;
+            }
 
             a {
               display: inline;
@@ -441,8 +568,6 @@
 
           /* ID Lettre */
           &:nth-child(2) {
-            grid-area: document-id;
-
             &::before {
               content: "Lettre";
               display: block;
@@ -451,20 +576,40 @@
 
           /* Date lettre */
           &:nth-child(3) {
-            grid-area: document-date;
-
             font-family: $family-primary;
             font-size: 22px;
             font-weight: 500;
             color: #6E6E6E;
+            line-height: 1.2;
+            text-align: left !important;
+
+            @include on-small-tablet {
+              padding-top: 2px;
+              font-size: 18px;
+            }
+
+            @include on-mobile {
+              font-size: 14px;
+            }
+
+            &::before {
+              display: none;
+            }
           }
 
           /* Titre */
           &:nth-child(4) {
-            grid-area: document-title;
             border-left: solid 6px #000000;
             max-width: 100% !important;
             padding-left: 20px;
+
+            @include on-small-tablet {
+              padding-left: 10px;
+            }
+
+            &::before {
+              display: none;
+            }
 
             a {
               h2 {
@@ -472,14 +617,20 @@
                 font-weight: 500;
                 line-height: 1.2;
                 color: #000000;
+
+                @include on-small-tablet {
+                  font-size: 20px;
+                }
+
+                @include on-mobile {
+                  font-size: 18px;
+                }
               }
             }
           }
 
           /* Expéditeur */
           &:nth-child(5) {
-            grid-area: document-sender;
-
             &::before {
               content: "Expéditeur";
               display: block;
@@ -488,8 +639,6 @@
 
           /* Destinataire(s) */
           &:nth-child(6) {
-            grid-area: document-recipients;
-
             &::before {
               content: "Destinataire";
               display: block;
@@ -499,7 +648,6 @@
           /* Lieu d'expédition */
           &:nth-child(7) {
             display: block;
-            grid-area: document-location-origin;
 
             &::before {
               content: "Lieu d'expédition";
@@ -510,7 +658,6 @@
           /* Lieu de destination */
           &:nth-child(8) {
             display: block;
-            grid-area: document-location-destination;
 
             &::before {
               content: "Lieu de destination";

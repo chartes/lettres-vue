@@ -319,7 +319,7 @@
                 </span>
               </div>
             </div>
-            <div class="is-inline-block px-1">
+            <div class="is-inline-block px-1 switch-button-parent">
               <div class="control">
                 <div class="switch-button-div">
                   <div
@@ -1112,6 +1112,17 @@ progress {
   }
 }
 .toggle-list-and-pagination {
+
+  @include on-small-tablet {
+    flex-wrap: wrap;
+
+    .switch-button-parent {
+      flex: 100% 0 0 !important;
+      padding: 0;
+      margin: 10px 0;
+    }
+  }
+
   .icon.button {
     width: 25px;
     height: 25px;
