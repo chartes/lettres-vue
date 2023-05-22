@@ -154,8 +154,8 @@ const actions = {
 
     }
 
-    // documents
-    let documents = []
+    // documents no longer needed 16/05/2024 : using search to retrieve docs from a collection
+    /*let documents = []
     if (numPage !== null) {
       let sorts = sortingPriority ? sortingPriority.map(s => `${s.order === 'desc' ? '-' : ''}${s.field}`) : []
       sorts = `&sort=${sorts.length ? sorts.join(',') : 'creation'}`
@@ -168,10 +168,10 @@ const actions = {
       }
       response = await http.get(`/search?query=${query}&page[number]=${numPage}&page[size]=${pageSize||50}${sorts}&without-relationships`);
       documents = response.data.data;
-    }
-    console.log('COLLECTION DATA FETCHED', documents, collection, response.data.meta)
+    }*/
+    console.log('COLLECTION DATA FETCHED', /*documents,*/ collection, response.data.meta)
 
-    return {documents, collection, totalCount: response.data.meta['total-count']}
+    return {/*documents,*/ collection/*, totalCount: response.data.meta['total-count']*/}
   },
 
   saveCollection: async function({ rootState, commit }, collection) {
