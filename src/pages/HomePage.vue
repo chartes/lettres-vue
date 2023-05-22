@@ -138,7 +138,7 @@
                   :to="{ name: 'places' }"
                   class="navbar-start-item"
                 >
-                  <span class="metadata">{{ placesCount}}</span>
+                  <span class="metadata">{{ placesCount }}</span>
                 </router-link>
               </div>
             </div>
@@ -361,36 +361,43 @@ export default {
       personsHavingRoles: "getIncluded",
       functionsByPerson: "getFunctionsByPerson",
     }),*/
+    /* moved to created
     collectionsTotal: function () {
       this.collectionsCountWithStatus();
       return this.collectionsCount
     },
-
+    */
     /*previous 17/04/23 lettersCount: function () {
       return Object.values(this.allCollections).reduce((sum, collection) => sum + collection.documentCount, 0);
     },*/
+    /* moved to created
     lettersCount: function () {
       this.documentsCountWithStatus();
       return this.documentsTotal
-      },
+    },
+    */
     /* All persons regardless of published status or link with documents
       personsCount: function () {
       console.log('All persons : ', this.$store.state.persons.persons);
       return this.$store.state.persons.persons.length;
     },*/
+    /* moved to created
     personsTotal: function () {
       this.personsCountWithStatus();
       return this.personsCount
     },
+    */
     /* All places regardless of published status or link with documents
       placesCount: function () {
       console.log('All places : ', this.$store.state.placenames.placenames);
       return this.$store.state.placenames.placenames.length;
     },*/
+    /* moved to created
     placesTotal: function () {
       this.placesCountWithStatus();
       return this.placesCount
     },
+    */
     featured_collections: function () {
       let featured_collectionIds=[1, 2, 78];
       let featured = Object.values(this.allCollections).filter(item=> {
@@ -402,10 +409,10 @@ export default {
   },
   async created() {
     await this.fetchCollections();
-    await this.collectionsTotal;
-    await this.personsTotal;
-    await this.placesTotal;
-    await this.lettersCount;
+    await this.collectionsCountWithStatus();
+    await this.personsCountWithStatus();
+    await this.placesCountWithStatus();
+    await this.documentsCountWithStatus();
     //await this.fetchPersons();
     //await this.fetchPlaces();
   },
@@ -445,7 +452,6 @@ export default {
         let response = await this.allPublishedCollections();
         this.collectionsCount = response.length;
         console.log("collectionsCount", this.collectionsCount);
-
         //return Object.values(this.allCollections).filter((item) => item.publishedCount > 0).length - 1;
       }
 
