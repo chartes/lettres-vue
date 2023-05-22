@@ -130,6 +130,13 @@ const actions = {
     }
   },
 
+  async fetchAllPublished({rootState}) {
+    const http = http_with_auth(rootState.user.jwt);
+    const response = await http.get(`published-collections`);
+    const published_collections = response.data.data;
+    return published_collections
+  },
+
   fetchOne: async function({rootState, commit}, {id, numPage, pageSize, sortingPriority}) {
     const http = http_with_auth(rootState.user.jwt);
 
