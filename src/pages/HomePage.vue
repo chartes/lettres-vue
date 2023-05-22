@@ -363,6 +363,7 @@ export default {
         return Object.keys(this.allCollections).length - 1;
       } else {
         console.log('allCollections # keys (published only): ', Object.values(this.allCollections).filter((item) => item.publishedCount > 0).length - 1);
+        console.log('allCollections (published only): ', Object.values(this.allCollections).filter((item) => item.publishedCount > 0))
         return Object.values(this.allCollections).filter((item) => item.publishedCount > 0).length - 1;
       }
 
