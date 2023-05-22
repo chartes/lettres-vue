@@ -401,11 +401,11 @@ export default {
     }
   },
   async created() {
+    await this.fetchCollections();
     await this.collectionsTotal;
     await this.personsTotal;
     await this.placesTotal;
     await this.lettersCount;
-    await this.fetchCollections();
     //await this.fetchPersons();
     //await this.fetchPlaces();
   },
