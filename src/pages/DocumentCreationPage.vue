@@ -30,6 +30,7 @@ export default {
     return {
       title: "Ceci est le titre du nouveau document",
       loading: false,
+      defaultTitle: `${process.env.VUE_APP_UNSORTED_DOCUMENTS_COLLECTION_TITLE}`
     };
   },
   computed: {
@@ -49,7 +50,8 @@ export default {
             data: [
               {
                 type: "collection",
-                id: Object.values(this.collectionsById).filter((col) => col.title === process.env.VUE_APP_UNSORTED_DOCUMENTS_COLLECTION_TITLE)[0].id,
+                //from envir variables id: Object.values(this.collectionsById).filter((col) => col.title === process.env.VUE_APP_UNSORTED_DOCUMENTS_COLLECTION_TITLE)[0].id,
+                id: Object.values(this.collectionsById).filter((col) => col.title === "Non triées")[0].id,
               },
             ],
           },

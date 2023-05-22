@@ -89,7 +89,7 @@
                   :to="{ name: 'search' }"
                   class="navbar-start-item"
                 >
-                  <span class="metadata">{{ lettersCount }}</span>
+                  <span class="metadata">{{ documentsTotal }}</span>
                 </router-link>
               </div>
             </div>
@@ -104,7 +104,11 @@
                   :to="{ name: 'collections' }"
                   class="navbar-start-item"
                 >
-                  <span class="metadata">{{ collectionsCount }}</span>
+                  <span
+                    class="metadata"
+                  >
+                    {{ collectionsCount }}
+                  </span>
                 </router-link>
               </div>
             </div>
@@ -119,7 +123,7 @@
                   :to="{ name: 'persons' }"
                   class="navbar-start-item"
                 >
-                  <span class="metadata">{{ personsTotal }}</span>
+                  <span class="metadata">{{ personsCount }}</span>
                 </router-link>
               </div>
             </div>
@@ -134,7 +138,7 @@
                   :to="{ name: 'places' }"
                   class="navbar-start-item"
                 >
-                  <span class="metadata">{{ placesTotal }}</span>
+                  <span class="metadata">{{ placesCount }}</span>
                 </router-link>
               </div>
             </div>
@@ -331,6 +335,7 @@ export default {
   },
   data: function () {
       return {
+          collectionsCount: 0,
           documentsTotal: 0,
           personsCount: 0,
           placesCount: 0
@@ -356,42 +361,43 @@ export default {
       personsHavingRoles: "getIncluded",
       functionsByPerson: "getFunctionsByPerson",
     }),*/
-
-    collectionsCount: function () {
-      if (this.current_user) {
-        console.log('allCollections # keys : ', Object.keys(this.allCollections).length);
-        return Object.keys(this.allCollections).length - 1;
-      } else {
-        console.log('allCollections # keys (published only): ', Object.values(this.allCollections).filter((item) => item.publishedCount > 0).length - 1);
-        return Object.values(this.allCollections).filter((item) => item.publishedCount > 0).length - 1;
-      }
-
+    /* moved to created
+    collectionsTotal: function () {
+      this.collectionsCountWithStatus();
+      return this.collectionsCount
     },
+    */
     /*previous 17/04/23 lettersCount: function () {
       return Object.values(this.allCollections).reduce((sum, collection) => sum + collection.documentCount, 0);
     },*/
+    /* moved to created
     lettersCount: function () {
       this.documentsCountWithStatus();
       return this.documentsTotal
-      },
+    },
+    */
     /* All persons regardless of published status or link with documents
       personsCount: function () {
       console.log('All persons : ', this.$store.state.persons.persons);
       return this.$store.state.persons.persons.length;
     },*/
+    /* moved to created
     personsTotal: function () {
       this.personsCountWithStatus();
       return this.personsCount
     },
+    */
     /* All places regardless of published status or link with documents
       placesCount: function () {
       console.log('All places : ', this.$store.state.placenames.placenames);
       return this.$store.state.placenames.placenames.length;
     },*/
+    /* moved to created
     placesTotal: function () {
       this.placesCountWithStatus();
       return this.placesCount
     },
+    */
     featured_collections: function () {
       let featured_collectionIds=[1, 2, 78];
       let featured = Object.values(this.allCollections).filter(item=> {
@@ -403,12 +409,16 @@ export default {
   },
   async created() {
     await this.fetchCollections();
+    await this.collectionsCountWithStatus();
+    await this.personsCountWithStatus();
+    await this.placesCountWithStatus();
+    await this.documentsCountWithStatus();
     //await this.fetchPersons();
     //await this.fetchPlaces();
   },
   methods: {
     ...mapActions("search", ["performSearch"]),
-    ...mapActions("collections", { fetchCollections: "fetchAll" }),
+    ...mapActions("collections", { fetchCollections: "fetchAll", allPublishedCollections: "fetchAllPublished" }),
     //...mapState("collections", ["collectionsById"]),
     //...mapActions("persons", { fetchPersons: "fetchAllPersons", totalSearchPersons: "getPersonsTotal" }),
     ...mapActions("persons", ["getPersonsTotal"]),
@@ -429,6 +439,22 @@ export default {
         let response = await this.getPlacesTotal();
         this.placesCount = response
         console.log("placesCount", response)
+    },
+    collectionsCountWithStatus: async function() {
+      if (this.current_user) {
+        //console.log('allCollections # keys : ', Object.keys(this.allCollections).length);
+        this.collectionsCount = Object.keys(this.allCollections).length - 1;
+        console.log("collectionsCount", this.collectionsCount);
+        //return Object.keys(this.allCollections).length - 1;
+      } else {
+        //console.log('allCollections # keys (published only): ', Object.values(this.allCollections).filter((item) => item.publishedCount > 0).length - 1);
+        //console.log('allCollections (published only): ', Object.values(this.allCollections).filter((item) => item.publishedCount > 0))
+        let response = await this.allPublishedCollections();
+        this.collectionsCount = response.length;
+        console.log("collectionsCount", this.collectionsCount);
+        //return Object.values(this.allCollections).filter((item) => item.publishedCount > 0).length - 1;
+      }
+
     },
     getImgUrl: function (img) {
       try {
