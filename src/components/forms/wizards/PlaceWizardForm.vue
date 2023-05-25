@@ -413,6 +413,17 @@ export default {
     margin-left: 12px;
     margin-right: 12px;
     min-width: 300px;
+
+    ::v-deep {
+      .table tr.is-selected,
+      .expanded-select dt.expanded-selection {
+        background-color: #CB2158;
+      }
+
+      .table tr.is-selected > * {
+        color: #FFF;
+      }
+    }
   }
 
   .previous-button {
@@ -493,6 +504,26 @@ export default {
     grid-area: leftbar-content;
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
+
+    .b-tabs {
+      ::v-deep {
+
+        .tab-content {
+          background-color: #CB2158;
+          color: #FFF;
+
+          .labels {
+            padding: 0;
+            border: none;
+
+            .is-size-5 {
+              font-size: 16px !important;
+            }
+          }
+
+        }
+      }
+    }
   }
 
   .leftbar-footer-area {
@@ -545,14 +576,25 @@ export default {
     grid-area: nav-footer;
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
+    position: relative;
 
     .buttons {
+      position: absolute;
+      bottom: 40px;
+
       display: flex;
       justify-content: center;
       align-items: center;
+      gap: 10px;
 
       button {
+        width: 140px;
+        margin: 0 !important;
         background-color: #CB2158;
+      }
+
+      span:empty {
+        display: none;
       }
     }
   }

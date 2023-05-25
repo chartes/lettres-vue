@@ -870,6 +870,7 @@ export default {
 
         span.icon {
           display: inline-block;
+          cursor: pointer;
           width: 24px;
           height: 24px;
           background: url(../../assets/images/icons/open_text.svg) center / 24px auto no-repeat;
@@ -1156,7 +1157,7 @@ nav.previous-next-navigation {
       .tag {
         background: none;
         padding: 0;
-        margin: 0;
+        margin:0;
 
         .breadcrumb.is-small {
           font-size: 20px;
@@ -1181,6 +1182,10 @@ nav.previous-next-navigation {
         }
       }
 
+      span.tag {
+        margin: 5px 10px 10px 0;
+        white-space: break-spaces;
+      }
     }
   }
 

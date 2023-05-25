@@ -238,6 +238,7 @@ progress {
 
     span.icon {
       display: inline-block;
+      cursor: pointer;
       width: 24px;
       height: 24px;
       background: url(../assets/images/icons/open_text.svg) center / 24px auto no-repeat;
