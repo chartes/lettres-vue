@@ -188,6 +188,12 @@ export default {
   .creation-date-input {
     margin-right: 30px;
     width: 200px;
+
+    ::v-deep {
+      input[type="text"] {
+        padding: 22px 30px 5px 14px !important;
+      }
+    }
   }
 
   .label {

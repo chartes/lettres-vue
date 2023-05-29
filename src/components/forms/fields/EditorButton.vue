@@ -41,8 +41,8 @@ export default {
 
   button {
     display: inline-block;
-    width: 47px;
-    height: 47px;
+    width: 40px;
+    height: 40px;
     background-color: #F2F2F2;
     background-position: center;
     background-repeat: no-repeat;
@@ -59,7 +59,7 @@ export default {
 
     &.italic-btn {
       background-image: url(../../../assets/images/icons/editor_ital.svg);
-      background-size: 10px auto;
+      background-size: 8px auto;
     }
 
     /* Manquent les icônes */
@@ -84,37 +84,37 @@ export default {
 
     &.superscript-btn {
       background-image: url(../../../assets/images/icons/editor_exposant.svg);
-      background-size: 20px auto;
+      background-size: 18px auto;
     }
 
     &.page-btn {
       background-image: url(../../../assets/images/icons/editor_saut_page.svg);
-      background-size: 22px auto;
+      background-size: 20px auto;
     }
 
     &.person-btn {
       background-image: url(../../../assets/images/icons/editor_perso.svg);
-      background-size: 20px auto;
+      background-size: 18px auto;
     }
 
     &.location-btn {
       background-image: url(../../../assets/images/icons/editor_lieu.svg);
-      background-size: 20px auto;
+      background-size: 18px auto;
     }
 
     &.note-btn {
       background-image: url(../../../assets/images/icons/editor_ajout_note.svg);
-      background-size: 28px auto;
+      background-size: 25px auto;
     }
 
     &.link-btn {
       background-image: url(../../../assets/images/icons/editor_lien.svg);
-      background-size: 25px auto;
+      background-size: 23px auto;
     }
 
     &.list-btn {
       background-image: url(../../../assets/images/icons/editor_liste.svg);
-      background-size: 25px auto;
+      background-size: 23px auto;
     }
 
     & > * {

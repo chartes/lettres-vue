@@ -328,7 +328,7 @@
           </section>
 
           <!-- collections -->
-          <section class="document-section">
+          <section class="document-section collections-document-section">
             <div class="heading is-uppercase is-flex is-justify-content-space-between">
               <span class="heading-content">Collections</span>
               <span
@@ -495,7 +495,7 @@
           </div>
         </section>
         <!-- collections -->
-        <section class="document-section">
+        <section class="document-section collections-document-section">
           <div class="heading is-uppercase">
             <span class="heading-content">Collections</span>
           </div>
@@ -1087,7 +1087,6 @@ nav.previous-next-navigation {
       margin-bottom: 0;
     }
 
-
     ::v-deep {
 
       a {
@@ -1186,9 +1185,37 @@ nav.previous-next-navigation {
         margin: 5px 10px 10px 0;
         white-space: break-spaces;
       }
+
     }
+
   }
 
+  &.collections-document-section {
+
+    ::v-deep {
+
+      .document-section-content {
+
+        .tags.has-addons {
+
+          span.tag {
+            display: inline-flex;
+            max-width: 80%;
+
+            nav > ul {
+              line-height: 1.25;
+            }
+          }
+
+          tag.is-delete {
+            display: inline-flex;
+          }
+        }
+
+      }
+    }
+
+  }
 }
 
 .delete-button {

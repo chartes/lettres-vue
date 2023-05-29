@@ -443,7 +443,7 @@ export default {
 
     @include on-tablet {
       grid-template-columns: auto;
-      grid-template-rows: 62px auto auto 80px;
+      grid-template-rows: 62px auto min(100px) 80px;
       grid-template-areas:
       "leftbar-header"
       "center-content"
@@ -528,6 +528,7 @@ export default {
 
     @include on-tablet {
       margin-top: 10px;
+      margin-bottom: 10px;
     }
   }
 
@@ -590,11 +591,14 @@ export default {
       display: flex;
       justify-content: center;
       align-items: center;
-      gap: 10px;
+
+      @include on-tablet {
+        bottom: 15px;
+      }
 
       button {
         width: 140px;
-        margin: 0 !important;
+        margin: 10px !important;
         background-color: #CB2158;
       }
 

@@ -64,7 +64,7 @@ export default {
   padding-top: 25px;
   padding-left: 12px;
   padding-right: 20px;
-  margin-bottom: 60px;
+  margin-bottom: 20px;
 
   .label {
     color: inherit !important;

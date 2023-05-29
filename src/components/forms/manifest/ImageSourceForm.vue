@@ -223,15 +223,51 @@ export default {
 }
 .source-selection-table {
   margin-top: 20px;
+
+  ::v-deep {
+    .table {
+
+      tr {
+
+        &.is-selected {
+          background-color: #CB2158;
+        }
+
+        td {
+          padding-left: 10px !important;
+          padding-right: 10px !important;
+        }
+
+      }
+    }
+  }
 }
 
 .input-form {
   margin-top: 20px;
   padding-left: 16px;
   padding-right: 128px;
+
+  .button.is-primary {
+    background-color: #CB2158;
+  }
+
+  ::v-deep {
+    .is-success.input {
+      border-color: #CB2158;
+    }
+  }
 }
 
 .source-desc {
   margin-top: 35px;
+
+  .level-left {
+    width: 100%;
+
+    a.level-item {
+      width: 100%;
+    }
+  }
 }
 </style>

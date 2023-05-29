@@ -554,11 +554,10 @@ export default {
       display: flex;
       justify-content: center;
       align-items: center;
-      gap: 10px;
 
       button {
         width: 140px;
-        margin: 0 !important;
+        margin: 10px !important;
         background-color: #CB2158;
       }
     }
