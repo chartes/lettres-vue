@@ -174,7 +174,7 @@ export default {
     },
   },
   mounted() {
-    //console.log("this.$props.value", this.$props.value, this.buttons)
+    console.log("this.$props.value", this.$props.value, this.buttons)
     this.initEditor(this.$refs.editor, this.$props.value);
 
     let flattenFormats = [];
@@ -501,6 +501,7 @@ export default {
       const range = this.editor.getSelection();
       const selection = this.editor.getText(range.index, range.length);
       const formats = this.editor.getFormat();
+      console.log("displayPersonForm range, selection, formats", range, selection, formats)
 
       const _editor = this.editor;
 
@@ -525,6 +526,7 @@ export default {
     removePersonForm() {
       this.editor.format("person", false);
       let formats = this.editor.getFormat();
+      console.log("removePersonForm", formats)
       this.updateButtons(formats);
     },
 

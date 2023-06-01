@@ -724,6 +724,7 @@ export default {
     addPerson(evt) {
       this.personInputData = evt;
       this.isPersonWizardFormModalActive = true;
+      console.log("this.personInputData / this.isPersonWizardFormModalActive", this.personInputData, this.isPersonWizardFormModalActive)
     },
     unlinkPerson({ id, relationId, roleId }) {
       this.$store.dispatch("persons/unlinkFromDocument", {

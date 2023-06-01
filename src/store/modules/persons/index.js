@@ -75,8 +75,7 @@ const actions = {
                                                                          type,
                                                                          attributes,
                                                                          meta,
-                                                                         links,
-                                                                         relationships
+                                                                         links
                                                                      }) =>
         ({
             person_id: id,

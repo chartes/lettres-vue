@@ -1,5 +1,6 @@
 <template>
   <div
+    v-if="!initLoading"
     class="root-container"
     :class="popupMode ? 'box modal-card' : ''"
   >
@@ -158,6 +159,7 @@ export default {
       activeTab: 0,
       person: {},
       loading: false,
+      initLoading: true
     };
   },
   computed: {
@@ -168,50 +170,117 @@ export default {
       return "Correspondants";
     },
     currentStep() {
-      return this.stepItems[this.activeTab > -1 ? this.activeTab : 0];
+      if (!this.initLoading) {
+        return this.stepItems[this.activeTab > -1 ? this.activeTab : 0];
+      } else {
+        return ''
+      }
     },
     stepItems() {
-      return [
-        {
-          name: "select-or-create",
-          next: this.person && this.person.label ? "set-description" : null,
-          left: {
-            label: "left",
-            component: "PersonInfoCard",
-            attributes: { person: this.person },
+      if (this.person.id && !this.initLoading) {
+        console.log("with id")
+        return [
+          /*{
+            name: "delete-or-update",
+            next: this.person.id ? "select-or-create" : null,
+            left: {
+              label: "left",
+              component: "PersonInfoCard",
+              attributes: {person: this.person},
+            },
+            center: {
+              label: "center",
+              component: "SelectOrCreatePersonForm",
+              attributes: {person: this.person, popupMode: this.popupMode},
+            },
+            footer: {
+              buttons: [{label: "Supprimer", type: "is-primary", action: this.savePerson}],
+            },
+          },*/
+          {
+            name: "select-or-create",
+            next: this.person && this.person.label ? "set-description" : null,
+            left: {
+              label: "left",
+              component: "PersonInfoCard",
+              attributes: {person: this.person},
+            },
+            center: {
+              label: "center",
+              component: "SelectOrCreatePersonForm",
+              attributes: {person: this.person, popupMode: this.popupMode},
+            },
+            footer: {
+              buttons: [{label: "Supprimer", type: "is-primary", action: this.removePerson}],
+            },
           },
-          center: {
-            label: "center",
-            component: "SelectOrCreatePersonForm",
-            attributes: { person: this.person, popupMode: this.popupMode },
+          {
+            name: "set-description",
+            prev: "select-or-create",
+            left: {
+              label: "left",
+              component: "PersonInfoCard",
+              attributes: {person: this.person},
+            },
+            center: {
+              label: "center",
+              component: "FunctionPersonForm",
+              attributes: {person: this.person},
+            },
+            footer: {
+              buttons: [{label: "Terminer", type: "is-primary", action: this.savePerson}],
+            },
           },
-        },
-        {
-          name: "set-description",
-          prev: "select-or-create",
-          left: {
-            label: "left",
-            component: "PersonInfoCard",
-            attributes: { person: this.person },
+        ]
+      } else if (!this.initLoading) {
+        console.log("without id ?")
+        return [
+          {
+            name: "select-or-create",
+            next: this.person && this.person.label ? "set-description" : null,
+            left: {
+              label: "left",
+              component: "PersonInfoCard",
+              attributes: {person: this.person},
+            },
+            center: {
+              label: "center",
+              component: "SelectOrCreatePersonForm",
+              attributes: {person: this.person, popupMode: this.popupMode},
+            },
           },
-          center: {
-            label: "center",
-            component: "FunctionPersonForm",
-            attributes: { person: this.person },
+          {
+            name: "set-description",
+            prev: "select-or-create",
+            left: {
+              label: "left",
+              component: "PersonInfoCard",
+              attributes: {person: this.person},
+            },
+            center: {
+              label: "center",
+              component: "FunctionPersonForm",
+              attributes: {person: this.person},
+            },
+            footer: {
+              buttons: [{label: "Terminer", type: "is-primary", action: this.savePerson}],
+            },
           },
-          footer: {
-            buttons: [{ label: "Terminer", type: "is-primary", action: this.savePerson }],
-          },
-        },
-      ];
+        ]
+      } else {
+        return ''
+      }
+
     },
   },
   async created() {
+    this.initLoading = true;
     await this.$store.dispatch("persons/fetchAllPersons");
     await this.$store.dispatch("persons/fetchRoles");
     let person = {};
 
     if (this.$props.inputData) {
+      console.log('created this.$props.inputData', this.$props.inputData)
       const p = this.$props.inputData;
       const id = p.formats && p.formats.person ? p.formats.person : null;
 
@@ -244,9 +313,10 @@ export default {
         person.id = id;
 
         //load existing data
+        console.log("load existing data")
         const item = await this.$store.dispatch("persons/getInlinedPersonsWithRoleById", {
           docId: this.document.id,
-          personId: person.id,
+          personId: person.id
         });
         person = {
           ...person,
@@ -261,6 +331,7 @@ export default {
     }
 
     this.person = person;
+    this.initLoading = false;
   },
   mounted() {
     this.$store.dispatch("persons/setPageSize", 5);
@@ -338,7 +409,7 @@ export default {
 
         // when editing a document
         if (this.popupMode) {
-          console.log(this.person);
+          console.log("when editing a document : ", this.person);
           if (this.person.role && personToSave.id) {
             // link the person to the document
             const role = this.getRoleByLabel(this.person.role);
@@ -354,7 +425,8 @@ export default {
             // and then insert the tag in the content
             if (this.person.restoreRangeCallback) {
               this.person.restoreRangeCallback();
-              this.person.insertTagCallback(personToSave.id);
+              console.log('personToSave : ', personToSave)
+              this.person.insertTagCallback(personToSave);
             }
 
             // if not inlined, refresh the persons
@@ -366,6 +438,48 @@ export default {
       }
       this.closeWizard();
     },
+    async removePerson() {
+      this.loading = true;
+      if (this.person) {
+        let personToRemove = {
+          ref: this.person.ref,
+          label: this.person.label,
+          id: this.person.id
+        };
+
+        // when editing a document
+        if (this.popupMode) {
+          console.log("when editing a document : ", this.person);
+          if (this.person.role && personToRemove.id) {
+            // unlink the person to the document
+            const role = this.getRoleByLabel(this.person.role);
+            const roleId = role && role.id ? role.id : null;
+
+            await this.$store.dispatch("persons/unlinkFromDocument", {
+              relationId: this.person.phrId,
+              personId: this.person.id,
+              roleId: roleId
+            });
+
+            // and then remove the tag in the content
+            //if (this.person.restoreRangeCallback) {
+            //  this.person.restoreRangeCallback();
+            //  console.log('personToRemove : ', personToRemove)
+            //  this.person.removeTagCallback(personToRemove);
+            //}
+
+            this.person.removeTagCallback(personToRemove);
+            console.log('this.person : ', this.person);
+
+            // if not inlined, refresh the persons
+            //if (!this.person.role !== "inlined") {
+            //  await this.$store.dispatch("document/fetch", this.document.id);
+            //}
+          }
+        }
+      }
+      this.closeWizard();
+    }
   },
 };
 </script>
