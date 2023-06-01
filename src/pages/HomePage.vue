@@ -408,6 +408,9 @@ export default {
     }
   },
   async created() {
+    console.log("clear state on collection navigation")
+    await this.resetSearchState();
+    this.$store.state.layout.showLeftSideBar = false;
     await this.fetchCollections();
     await this.collectionsCountWithStatus();
     await this.personsCountWithStatus();
@@ -417,7 +420,7 @@ export default {
     //await this.fetchPlaces();
   },
   methods: {
-    ...mapActions("search", ["performSearch"]),
+    ...mapActions("search", ["performSearch", "resetSearchState"]),
     ...mapActions("collections", { fetchCollections: "fetchAll", allPublishedCollections: "fetchAllPublished" }),
     //...mapState("collections", ["collectionsById"]),
     //...mapActions("persons", { fetchPersons: "fetchAllPersons", totalSearchPersons: "getPersonsTotal" }),

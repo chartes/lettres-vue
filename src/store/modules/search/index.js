@@ -210,7 +210,7 @@ const initial_State = {
       //year: '1577'
     //}
   },
-  creationDateTo: cloneDeep(creationDateTemplate),
+  creationDateTo: {...cloneDeep(creationDateTemplate)},
 
   withStatus: false,
   withDateRange: false,
@@ -378,13 +378,14 @@ const actions = {
   async getDocumentsTotal ({commit, rootState}) {
     const http = http_with_auth(rootState.user.jwt);
     let query ='';
+    let highlights = false;
     if (!query || query.length === 0) {
       query = '*'
     }
     if (!rootState.user.current_user){
       query = `${query} AND (is-published:true)`
     }
-    const response = await http.get(`/search?query=${query}&without-relationships&sort=-id`);
+    const response = await http.get(`/search?query=${query}&without-relationships&sort=-id&highlight=${highlights}`);
     const documentsTotal = response.data.meta['total-count'];
     const lastDocId = response.data.data[0].id;
     const docIdList = response.data.data.map(id => id);
@@ -395,6 +396,7 @@ const actions = {
 
     /* =========== filters =========== */
     let query ='';
+    let highlights = false;
     if (state.selectedCollections && state.selectedCollections.length > 1) {
       let selectedCollectionsIds = state.selectedCollections.map((coll) => coll.id);
       console.log("selectedCollectionsIds", selectedCollectionsIds)
@@ -416,6 +418,7 @@ const actions = {
     }
     console.log('collection query', query);
     if (state.searchTerm && state.searchTerm.length > 0) {
+      highlights = true
       if (query.length === 0) {
         query = `(${state.searchTerm})`
       } else {
@@ -607,7 +610,7 @@ const actions = {
       const includes = toInclude.length ? `&include=${[toInclude].join(',')}` : '';
       
       const http = http_with_auth(rootState.user.jwt);
-      const response = await http.get(`/search?query=${query}${filters}${includes}&sort=${sorts}&page[size]=${state.pageSize}&page[number]=${state.numPage}`);
+      const response = await http.get(`/search?query=${query}${filters}${includes}&sort=${sorts}&highlight=${highlights}&page[size]=${state.pageSize}&page[number]=${state.numPage}`);
       //const response = await http.get(`/search?query=${query}${filters}${includes}&sort=${sorts}&page[size]=${state.pageSize}&page[number]=${state.numPage}`);
       const {data, links, meta, included} = response.data
       const hyphensToUnderscore = (key) => key.replace("-", "_");
@@ -616,7 +619,7 @@ const actions = {
 
       const datawithPersons = replaceAllObjKeys(cloneDeep(data), hyphensToUnderscore).map(({
         id,
-        attributes: {title, argument, creation, creation_not_after, creation_label, is_published},
+        attributes: {title, argument, creation, creation_not_after, creation_label, is_published, transcription},
         relationships: {person_roles, persons, placename_roles, placenames}
       }) => ({
         id,
@@ -626,6 +629,7 @@ const actions = {
         creation_not_after,
         creation_label,
         is_published,
+        transcription,
         sender: persons.data.map(function(item, index) {
           return {id: item.id, role: person_roles.data[index].id, label: included.find(p => p.id === item.id && p.type === "person").attributes.label}
         }).filter(s => s.role === 1),
@@ -649,15 +653,21 @@ const actions = {
       {
         // fetch collections associated with search criteriae :
 
-        const searchScopeCollections = await http.get(`/search?query=${query}${filters}&groupby[doc-type]=collection&groupby[field]=collections.id`);
+        const searchScopeCollections = await http.get(`/search?query=${query}&facade=hierarchy&${filters}&groupby[doc-type]=collection&groupby[field]=collections.id`);
         let searchScopeCollectionsIds = searchScopeCollections.data.data.reduce((c, v) => c.concat(v), []).map(o => o.id);
         console.log("searchScopeCollectionsIds", searchScopeCollectionsIds);
 
-        // fetch upward tree Ids for collections :
+        // fetch upward tree Ids for collections from relationships:
         const uniqueSearchScopeCollectionsParentsId = searchScopeCollections.data.data.flatMap(({relationships}) => relationships.parents.data.map(({id}) => id));
         console.log('uniqueSearchScopeCollectionsParentsId', uniqueSearchScopeCollectionsParentsId);
         let uniqueSearchScopeCollectionsIds = [...new Set([...searchScopeCollectionsIds ,...uniqueSearchScopeCollectionsParentsId])];
         console.log('uniqueSearchScopeCollectionsIds', uniqueSearchScopeCollectionsIds);
+
+        /* fetch upward tree Ids for collections from attributes if included in response (modified facade) :
+        const uniqueSearchScopeCollectionsParentsId = searchScopeCollections.data.data.flatMap(({attributes}) => attributes.parents.map((id) => id));
+        console.log('uniqueSearchScopeCollectionsParentsId', uniqueSearchScopeCollectionsParentsId);
+        let uniqueSearchScopeCollectionsIds = [...new Set([...searchScopeCollectionsIds ,...uniqueSearchScopeCollectionsParentsId])];
+        console.log('uniqueSearchScopeCollectionsIds', uniqueSearchScopeCollectionsIds);*/
 
         // fetch actual collections :
         let collectionsTags = Object.values(store.state.collections.collectionsById).filter(({id}) => uniqueSearchScopeCollectionsIds.includes(id));
@@ -676,8 +686,7 @@ const actions = {
                                                                                    type,
                                                                                    attributes,
                                                                                    meta,
-                                                                                   links,
-                                                                                   relationships
+                                                                                   links
                                                                                  }) =>
             ({
               role_id: 1,
@@ -692,8 +701,7 @@ const actions = {
                                                                                type,
                                                                                attributes,
                                                                                meta,
-                                                                               links,
-                                                                               relationships
+                                                                               links
                                                                              }) =>
             ({
               role_id: 2,
@@ -708,8 +716,7 @@ const actions = {
                                                                                  type,
                                                                                  attributes,
                                                                                  meta,
-                                                                                 links,
-                                                                                 relationships
+                                                                                 links
                                                                                }) =>
             ({
               role_id: 3,
@@ -739,8 +746,7 @@ const actions = {
                                                                                  label,
                                                                                  attributes,
                                                                                  meta,
-                                                                                 links,
-                                                                                 relationships
+                                                                                 links
                                                                                }) =>
             ({
               role_id: 1,
@@ -756,8 +762,7 @@ const actions = {
                                                                              label,
                                                                              attributes,
                                                                              meta,
-                                                                             links,
-                                                                             relationships
+                                                                             links
                                                                            }) =>
             ({
               role_id: 2,
@@ -773,8 +778,7 @@ const actions = {
                                                                                label,
                                                                                attributes,
                                                                                meta,
-                                                                               links,
-                                                                               relationships
+                                                                               links
                                                                              }) =>
             ({
               role_id: 3,

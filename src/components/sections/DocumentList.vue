@@ -763,7 +763,7 @@ export default {
       if (this.searchTerm.length > 0) {
         const terms = this.searchTerm.split(new RegExp("\\s+")).map(escapeRegExp).filter(term => term !== "")
         const re = new RegExp(`(${terms.join("|")})`)
-        return text.replace(new RegExp(re, 'gi'), (match => `<mark>${match}</mark>`))
+        return text.replace( /(<([^>]+)>)/ig, '').replace(new RegExp(re, 'gi'), (match => `<mark>${match}</mark>`))
       }
     },
     resetPriority(){

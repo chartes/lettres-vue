@@ -25,6 +25,11 @@
           />
         </rich-text-editor>
         <div
+          v-else-if="!preview && searchTerm"
+          class="document__transcription--content"
+          v-html="highlight(addressContent)"
+        />
+        <div
           v-else
           class="document__transcription--content"
           v-html="addressContent"
@@ -56,15 +61,30 @@
           />
         </rich-text-editor>
         <div
-          v-else-if="preview && searchTerm && highlight(transcriptionContent).includes('mark')"
-          class="document__transcription--content">
-          <div class="document__transcription--content">
-            <span v-for="(phrase, index) in highlight(transcriptionContent).replaceAll('</p>', '</p>###').split('###')" :key="index">
-              <span
-                v-html="phrase"
-              />
-            </span>
-          </div>
+          v-else-if="preview && searchTerm && Array.isArray(transcriptionContent)"
+          class="document__transcription--content"
+        >
+          <span
+            v-for="(phrase, index) in transcriptionContent"
+            :key="index"
+            v-html="phrase"
+            class="highlighted"
+          >
+            <!--<span
+              v-html="phrase"
+              class="highlighted"
+            />-->
+          </span>
+        </div>
+        <div
+          v-else-if="!preview && searchTerm"
+          class="document__transcription--content"
+        >
+          <span v-for="(phrase, index) in highlight(transcriptionContent).replaceAll('</p>', '</p>###').split('###')" :key="index">
+            <span
+              v-html="phrase"
+            />
+          </span>
         </div>
         <div
           v-else-if="preview"
@@ -120,10 +140,23 @@ export default {
 
   computed: {
     ...mapState("document", ["document"]),
-    ...mapState("search", ["searchTerm"])
+    ...mapState("search", ["searchTerm", "documents"])
   },
   mounted() {
-    this.transcriptionContent = this.document.transcription || "";
+    //console.log("this.documents.filter((doc) => doc.id == this.document.id)[0].transcription : ", this.documents.filter((doc) => doc.id == this.document.id)[0].transcription)
+    console.log("preview status : ", this.preview)
+    if (this.preview && this.documents.length > 0) {
+      if (this.documents.filter((doc) => doc.id == this.document.id)[0].transcription !== undefined) {
+        this.transcriptionContent = this.documents.filter((doc) => doc.id == this.document.id)[0].transcription.highlight/*.map(function (cc) {	return '<strong>' + cc + '</strong>';}).join('')*/ || "";
+        console.log('type(this.transcriptionContent) : ', typeof(this.transcriptionContent))
+        } else {
+          this.transcriptionContent = this.document.transcription;
+          console.log('default this.document.transcription')
+        }
+    } else {
+      this.transcriptionContent = this.document.transcription;
+      console.log('default this.document.transcription')
+    }
     this.addressContent = this.document.address || "";
   },
   methods: {
@@ -157,4 +190,11 @@ export default {
 <style scoped lang="scss">
 @import "@/assets/sass/main.scss";
 @import "@/assets/sass/components/_document.transcription.scss";
+::v-deep em {
+   background-color: yellow !important;
+}
+::v-deep .highlighted:after {
+  content: " [...] ";
+  font-weight: bold;
+}
 </style>

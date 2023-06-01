@@ -57,8 +57,8 @@ export default {
 
   },*/
   beforeDestroy() {
-    console.log("clear state on leave")
-    this.resetSearchState();
+    /*console.log("clear state on leave")
+    this.resetSearchState();*/
     this.$store.state.layout.showLeftSideBar = false;
   },
   methods: {

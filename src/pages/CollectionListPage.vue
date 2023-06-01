@@ -218,8 +218,12 @@ export default {
       this.totalPages = amountRootCollections === 0 ? 1 : parseInt(Math.ceil(amountRootCollections / this.pageSize));
       console.log("this.totalPages : ", this.totalPages);
     }
+    console.log("clear state on collection navigation")
+    await this.resetSearchState();
+    this.$store.state.layout.showLeftSideBar = false;
   },
   methods: {
+    ...mapActions("search", ["resetSearchState"]),
     ...mapActions("collections", { fetchCollections: "fetchAll" }),
   },
 };
