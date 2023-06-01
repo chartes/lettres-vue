@@ -13,8 +13,11 @@ let Inline = Quill.import('blots/inline');
 class LocationBlot extends Inline {
 
   static create(data) {
+    console.log('LocationBlot data : ', data) // data sourced from PlaceWizardForm.vue / async savePlace()
     let node = super.create();
-    node.setAttribute('id', data);
+    node.setAttribute('id', data.id);
+    node.setAttribute('target', '_blank')
+    node.setAttribute('href', data.ref);
     return node;
   }
 

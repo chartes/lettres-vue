@@ -12,7 +12,7 @@ let Inline = Quill.import('blots/inline');
 class PersonBlot extends Inline {
 
   static create(data) {
-    console.log('PersonBlot data : ', data)
+    console.log('PersonBlot data : ', data) // data sourced from PersonWizardForm.vue / async savePerson()
     let node = super.create();
     node.setAttribute('id', data.id);
     node.setAttribute('target', '_blank')

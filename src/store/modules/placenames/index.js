@@ -313,7 +313,7 @@ const actions = {
             }).catch(error => console.log(error))
         }
     },
-    unlinkFromDocument({commit, rootState}, {relationId}) {
+    unlinkFromDocument({commit, rootState}, {relationId, personId, roleId}) {
         const http = http_with_auth(rootState.user.jwt);
         return http.delete(`/placenames-having-roles/${relationId}`)
             .then(() => this.dispatch('document/removePlacename', relationId))

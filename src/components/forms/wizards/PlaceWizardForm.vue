@@ -1,5 +1,6 @@
 <template>
   <div
+    v-if="!initLoading"
     class="root-container"
     :class="popupMode ? 'box modal-card' : ''"
   >
@@ -158,6 +159,8 @@ export default {
       activeTab: 0,
       place: {},
       loading: false,
+      initLoading: true,
+      unlink: false
     };
   },
   computed: {
@@ -168,50 +171,99 @@ export default {
       return "Date de lieu";
     },
     currentStep() {
-      return this.stepItems[this.activeTab > -1 ? this.activeTab : 0];
+      if (!this.initLoading) {
+        return this.stepItems[this.activeTab > -1 ? this.activeTab : 0];
+      } else {
+        return ''
+      }
     },
     stepItems() {
-      return [
-        {
-          name: "select-or-create",
-          next: this.place && this.place.label ? "set-description" : null,
-          left: {
-            label: "left",
-            component: "PlaceInfoCard",
-            attributes: { place: this.place },
+      if (this.place.id && !this.initLoading) {
+        console.log("with id");
+        return [
+          {
+            name: "select-or-create",
+            next: this.place && this.place.label && !this.unlink ? "set-description" : null,
+            left: {
+              label: "left",
+              component: "PlaceInfoCard",
+              attributes: {place: this.place},
+            },
+            center: {
+              label: "center",
+              component: "SelectOrCreatePlaceForm",
+              attributes: {place: this.place, popupMode: this.popupMode},
+            },
+            footer: {
+              buttons: this.unlink ? [{label: "Supprimer", type: "is-primary", action: this.unlinkPlace}] : null,
+            }
           },
-          center: {
-            label: "center",
-            component: "SelectOrCreatePlaceForm",
-            attributes: { place: this.place, popupMode: this.popupMode },
+          {
+            name: "set-description",
+            prev: "select-or-create",
+            left: {
+              label: "left",
+              component: "PlaceInfoCard",
+              attributes: {place: this.place},
+            },
+            center: {
+              label: "center",
+              component: "FunctionPlaceForm",
+              attributes: {place: this.place},
+            },
+            footer: {
+              buttons: [{label: "Terminer", type: "is-primary", action: this.savePlace}],
+            },
           },
-        },
-        {
-          name: "set-description",
-          prev: "select-or-create",
-          left: {
-            label: "left",
-            component: "PlaceInfoCard",
-            attributes: { place: this.place },
+        ]
+      } else if (!this.initLoading) {
+        console.log("without id ?")
+        return [
+          {
+            name: "select-or-create",
+            next: this.place && this.place.label ? "set-description" : null,
+            left: {
+              label: "left",
+              component: "PlaceInfoCard",
+              attributes: {place: this.place},
+            },
+            center: {
+              label: "center",
+              component: "SelectOrCreatePlaceForm",
+              attributes: {place: this.place, popupMode: this.popupMode},
+            },
           },
-          center: {
-            label: "center",
-            component: "FunctionPlaceForm",
-            attributes: { place: this.place },
+          {
+            name: "set-description",
+            prev: "select-or-create",
+            left: {
+              label: "left",
+              component: "PlaceInfoCard",
+              attributes: {place: this.place},
+            },
+            center: {
+              label: "center",
+              component: "FunctionPlaceForm",
+              attributes: {place: this.place},
+            },
+            footer: {
+              buttons: [{label: "Terminer", type: "is-primary", action: this.savePlace}],
+            },
           },
-          footer: {
-            buttons: [{ label: "Terminer", type: "is-primary", action: this.savePlace }],
-          },
-        },
-      ];
+        ]
+      } else {
+        return ''
+      }
     },
   },
   async created() {
+    this.initLoading = true;
     await this.$store.dispatch("placenames/fetchAllPlacenames");
     await this.$store.dispatch("placenames/fetchRoles");
     let place = {};
 
     if (this.$props.inputData) {
+      console.log('created this.$props.inputData', this.$props.inputData)
       const p = this.$props.inputData;
       const id = p.formats && p.formats.location ? p.formats.location : null;
 
@@ -245,6 +297,7 @@ export default {
 
       if (id !== null) {
         place.id = id;
+        this.unlink = true;
 
         //load existing data
         const item = await this.$store.dispatch(
@@ -259,10 +312,12 @@ export default {
           description: item.phr.function,
           phrId: item.phrId,
         };
+        console.log("ITEM", place);
       }
     }
 
     this.place = place;
+    this.initLoading = false;
   },
   mounted() {
     this.$store.dispatch("placenames/setPageSize", 5);
@@ -318,7 +373,7 @@ export default {
       }
 
       this.loading = false;
-
+      this.unlink = false;
       if (this.$parent.close) {
         this.$parent.close();
       }
@@ -363,13 +418,69 @@ export default {
             // and then insert the tag in the content
             if (this.place.restoreRangeCallback) {
               this.place.restoreRangeCallback();
-              this.place.insertTagCallback(placeToSave.id);
+              console.log('placeToSave : ', placeToSave)
+              this.place.insertTagCallback(placeToSave); // LocationBlot data source (Location.js)
             }
 
             // if not inlined, refresh the places
             if (!this.place.role !== "inlined") {
               await this.$store.dispatch("document/fetch", this.document.id);
             }
+          }
+        }
+      }
+      this.closeWizard();
+    },
+    async unlinkPlace() {
+      this.loading = true;
+      if (this.place) {
+        let placeToUnlink = {
+          long: null,
+          lat: null,
+          ref: this.place.ref,
+          label: this.place.label,
+        };
+
+        if (this.place.coords) {
+          placeToUnlink.long = this.place.coords[0];
+          placeToUnlink.lat = this.place.coords[1];
+        }
+
+        if (this.place.id) {
+          placeToUnlink.id = this.place.id;
+        } else {
+          const response = await this.$store.dispatch("placenames/addPlace", placeToUnlink);
+          placeToUnlink.id = response.id;
+        }
+
+        // when editing a document
+        if (this.popupMode) {
+          console.log("when editing a document : ", this.place);
+          if (this.place.role && placeToUnlink.id) {
+            // link the place to the document
+            const role = this.getRoleByLabel(this.place.role);
+            const roleId = role && role.id ? role.id : null;
+
+            await this.$store.dispatch("placenames/unlinkFromDocument", {
+              relationId: this.place.phrId,
+              personId: this.place.id,
+              roleId: roleId
+            });
+
+            // and then remove the tag in the content
+            //  if (this.place.restoreRangeCallback) {
+            //    this.place.restoreRangeCallback();
+            //    console.log('placeToUnlink : ', placeToUnlink)
+            //    this.place.removeTagCallback(placeToUnlink.id);
+            //  }
+
+            this.place.removeTagCallback(placeToUnlink);
+            console.log('this.place : ', this.place);
+
+            // if not inlined, refresh the places
+            //if (!this.place.role !== "inlined") {
+            //  await this.$store.dispatch("document/fetch", this.document.id);
+            //}
           }
         }
       }

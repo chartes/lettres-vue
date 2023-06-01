@@ -15,7 +15,7 @@
                     v-model="inputTerm"
                     class="input"
                     type="text"
-                    placeholder="Catherine de Médics"
+                    placeholder="Catherine de Médicis"
                     @keyup.enter="search"
                   >
                 </div>

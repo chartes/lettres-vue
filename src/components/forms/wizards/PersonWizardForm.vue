@@ -159,7 +159,8 @@ export default {
       activeTab: 0,
       person: {},
       loading: false,
-      initLoading: true
+      initLoading: true,
+      unlink: false
     };
   },
   computed: {
@@ -199,7 +200,7 @@ export default {
           },*/
           {
             name: "select-or-create",
-            next: this.person && this.person.label ? "set-description" : null,
+            next: this.person && this.person.label && !this.unlink ? "set-description" : null,
             left: {
               label: "left",
               component: "PersonInfoCard",
@@ -211,7 +212,7 @@ export default {
               attributes: {person: this.person, popupMode: this.popupMode},
             },
             footer: {
-              buttons: [{label: "Supprimer", type: "is-primary", action: this.removePerson}],
+              buttons: this.unlink ? [{label: "Supprimer", type: "is-primary", action: this.unlinkPerson}] : null,
             },
           },
           {
@@ -311,6 +312,7 @@ export default {
 
       if (id !== null) {
         person.id = id;
+        this.unlink = true;
 
         //load existing data
         console.log("load existing data")
@@ -387,7 +389,7 @@ export default {
       }
 
       this.loading = false;
-
+      this.unlink = false;
       if (this.$parent.close) {
         this.$parent.close();
       }
@@ -426,7 +428,7 @@ export default {
             if (this.person.restoreRangeCallback) {
               this.person.restoreRangeCallback();
               console.log('personToSave : ', personToSave)
-              this.person.insertTagCallback(personToSave);
+              this.person.insertTagCallback(personToSave); // PersonBlot data source (Person.js)
             }
 
             // if not inlined, refresh the persons
@@ -438,10 +440,10 @@ export default {
       }
       this.closeWizard();
     },
-    async removePerson() {
+    async unlinkPerson() {
       this.loading = true;
       if (this.person) {
-        let personToRemove = {
+        let personToUnlink = {
           ref: this.person.ref,
           label: this.person.label,
           id: this.person.id
@@ -450,7 +452,7 @@ export default {
         // when editing a document
         if (this.popupMode) {
           console.log("when editing a document : ", this.person);
-          if (this.person.role && personToRemove.id) {
+          if (this.person.role && personToUnlink.id) {
             // unlink the person to the document
             const role = this.getRoleByLabel(this.person.role);
             const roleId = role && role.id ? role.id : null;
@@ -464,11 +466,11 @@ export default {
             // and then remove the tag in the content
             //if (this.person.restoreRangeCallback) {
             //  this.person.restoreRangeCallback();
-            //  console.log('personToRemove : ', personToRemove)
-            //  this.person.removeTagCallback(personToRemove);
+            //  console.log('personToUnlink : ', personToUnlink)
+            //  this.person.removeTagCallback(personToUnlink);
             //}
 
-            this.person.removeTagCallback(personToRemove);
+            this.person.removeTagCallback(personToUnlink);
             console.log('this.person : ', this.person);
 
             // if not inlined, refresh the persons
