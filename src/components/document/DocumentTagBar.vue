@@ -230,7 +230,7 @@ export default {
     a {
       display: inline-block;
       min-width: 40px;
-      height: 20px;
+      height: 100%;
     }
 
     i {
@@ -265,7 +265,7 @@ export default {
       background: url(../../assets/images/icons/verrou-ouvert.svg) center / 15px auto no-repeat !important;
     }
     &.is-locked a {
-      background-image: url(../../assets/images/icons/verrou-ferme.svg);
+      background-image: url(../../assets/images/icons/verrou-ferme.svg) !important;
     }
   }
 

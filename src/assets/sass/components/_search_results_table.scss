@@ -36,7 +36,6 @@
             &:nth-child(7),
             &:nth-child(8) {
               grid-area: document-location-destination;
-              /* display: none !important; */
             }
 
             .icon.button {
@@ -375,6 +374,34 @@
   /* Version tableau */
   .is-active .table-wrapper {
 
+    thead {
+      tr {
+        th {
+
+          /* Les colonnes des Lieux sont masquées en mode tableau */
+          &:nth-child(7),
+          &:nth-child(8) {
+            display: none !important;
+          }
+
+        }
+      }
+    }
+
+    tbody {
+      tr {
+        td {
+
+          /* Les colonnes des Lieux sont masquées en mode tableau */
+          &:nth-child(7),
+          &:nth-child(8) {
+            display: none !important;
+          }
+
+        }
+      }
+    }
+
     @include on-small-tablet {
 
       thead {
@@ -463,7 +490,7 @@
       tr:not(.detail) {
         display: grid;
 
-        grid-template-columns: 120px auto auto auto;
+        grid-template-columns: 120px calc(50% - 90px) calc(50% - 90px) 60px;
         grid-template-rows: auto auto auto;
         grid-template-areas:
           "document-date document-title document-title document-title"

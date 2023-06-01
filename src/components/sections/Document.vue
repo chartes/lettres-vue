@@ -328,7 +328,7 @@
           </section>
 
           <!-- collections -->
-          <section class="document-section">
+          <section class="document-section collections-document-section">
             <div class="heading is-uppercase is-flex is-justify-content-space-between">
               <span class="heading-content">Collections</span>
               <span
@@ -495,7 +495,7 @@
           </div>
         </section>
         <!-- collections -->
-        <section class="document-section">
+        <section class="document-section collections-document-section">
           <div class="heading is-uppercase">
             <span class="heading-content">Collections</span>
           </div>
@@ -871,6 +871,7 @@ export default {
 
         span.icon {
           display: inline-block;
+          cursor: pointer;
           width: 24px;
           height: 24px;
           background: url(../../assets/images/icons/open_text.svg) center / 24px auto no-repeat;
@@ -1087,7 +1088,6 @@ nav.previous-next-navigation {
       margin-bottom: 0;
     }
 
-
     ::v-deep {
 
       a {
@@ -1157,7 +1157,7 @@ nav.previous-next-navigation {
       .tag {
         background: none;
         padding: 0;
-        margin: 0;
+        margin:0;
 
         .breadcrumb.is-small {
           font-size: 20px;
@@ -1182,9 +1182,41 @@ nav.previous-next-navigation {
         }
       }
 
+      span.tag {
+        margin: 5px 10px 10px 0;
+        white-space: break-spaces;
+      }
+
     }
+
   }
 
+  &.collections-document-section {
+
+    ::v-deep {
+
+      .document-section-content {
+
+        .tags.has-addons {
+
+          span.tag {
+            display: inline-flex;
+            max-width: 80%;
+
+            nav > ul {
+              line-height: 1.25;
+            }
+          }
+
+          tag.is-delete {
+            display: inline-flex;
+          }
+        }
+
+      }
+    }
+
+  }
 }
 
 .delete-button {

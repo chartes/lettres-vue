@@ -829,6 +829,15 @@ export default {
   }
   .search-container {
     margin-bottom: 40px;
+
+    input[type="text"] {
+      height: 100%;
+    }
+
+    a.button {
+      padding-top: 0;
+      padding-bottom: 0;
+    }
   }
   .searchbox-container {
     display: flex;

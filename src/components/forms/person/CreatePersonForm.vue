@@ -240,14 +240,26 @@ export default {
       cursor: pointer;
     }
   }
+
   .description {
-    font-style: lighter;
+    font-weight: lighter;
     &:first-letter {
       text-transform: uppercase;
     }
   }
+
+  input[type="text"] {
+    height: 100%;
+  }
+
+  a.button {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+
 }
 .search-input .icon {
   top: -4px !important;
 }
+
 </style>

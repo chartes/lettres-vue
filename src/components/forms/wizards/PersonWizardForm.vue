@@ -518,6 +518,17 @@ export default {
     margin-left: 12px;
     margin-right: 12px;
     min-width: 300px;
+
+    ::v-deep {
+      .table tr.is-selected,
+      .expanded-select dt.expanded-selection {
+        background-color: #CB2158;
+      }
+
+      .table tr.is-selected > * {
+        color: #FFF;
+      }
+    }
   }
 
   .previous-button {
@@ -546,7 +557,7 @@ export default {
 
     @include on-tablet {
       grid-template-columns: auto;
-      grid-template-rows: 62px auto auto 80px;
+      grid-template-rows: 62px auto min(100px) 80px;
       grid-template-areas:
       "leftbar-header"
       "center-content"
@@ -609,8 +620,29 @@ export default {
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
 
+    .b-tabs {
+      ::v-deep {
+
+        .tab-content {
+          background-color: #CB2158;
+          color: #FFF;
+
+          .labels {
+            padding: 0;
+            border: none;
+
+            .is-size-5 {
+              font-size: 16px !important;
+            }
+          }
+
+        }
+      }
+    }
+
     @include on-tablet {
       margin-top: 10px;
+      margin-bottom: 10px;
     }
   }
 
@@ -664,13 +696,23 @@ export default {
     grid-area: nav-footer;
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
+    position: relative;
 
     .buttons {
+      position: absolute;
+      bottom: 40px;
+
       display: flex;
       justify-content: center;
       align-items: center;
 
+      @include on-tablet {
+        bottom: 15px;
+      }
+
       button {
+        width: 140px;
+        margin: 10px !important;
         background-color: #CB2158;
       }
 
