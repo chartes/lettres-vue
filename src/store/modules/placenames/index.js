@@ -333,9 +333,9 @@ const actions = {
             placenameId = parseInt(placenameId)
        
             let placenamesHavingRoles = await http.get(`/documents/${rootState.document.document.id}/placenames-having-roles`)
-            console.log('inlined:', [placenameId, placenameField])
+            console.log('placenames inlined:', [placenameId, placenameField])
             console.log('placenamesHavingRoles (db)', placenamesHavingRoles.data)
-            console.log('inlinedRole:', inlinedRole)
+            console.log('placenames inlinedRole:', inlinedRole)
 
             const found = placenamesHavingRoles.data.data.find(phr => {
                 console.log(phr, inlinedRole)

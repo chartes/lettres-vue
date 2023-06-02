@@ -181,26 +181,9 @@ export default {
       if (this.person.id && !this.initLoading) {
         console.log("with id")
         return [
-          /*{
-            name: "delete-or-update",
-            next: this.person.id ? "select-or-create" : null,
-            left: {
-              label: "left",
-              component: "PersonInfoCard",
-              attributes: {person: this.person},
-            },
-            center: {
-              label: "center",
-              component: "SelectOrCreatePersonForm",
-              attributes: {person: this.person, popupMode: this.popupMode},
-            },
-            footer: {
-              buttons: [{label: "Supprimer", type: "is-primary", action: this.savePerson}],
-            },
-          },*/
           {
             name: "select-or-create",
-            next: this.person && this.person.label && !this.unlink ? "set-description" : null,
+            next: this.person && this.person.label ? "set-description" : null,
             left: {
               label: "left",
               component: "PersonInfoCard",
@@ -283,7 +266,7 @@ export default {
     if (this.$props.inputData) {
       console.log('created this.$props.inputData', this.$props.inputData)
       const p = this.$props.inputData;
-      const id = p.formats && p.formats.person ? p.formats.person : null;
+      const id = p.formats && p.formats.person ? p.formats.person.id ? p.formats.person.id : p.formats.person : null;
 
       if (p.label !== null) {
         person.label = p.label;
@@ -457,11 +440,11 @@ export default {
             const role = this.getRoleByLabel(this.person.role);
             const roleId = role && role.id ? role.id : null;
 
-            await this.$store.dispatch("persons/unlinkFromDocument", {
+            /*await this.$store.dispatch("persons/unlinkFromDocument", {
               relationId: this.person.phrId,
               personId: this.person.id,
               roleId: roleId
-            });
+            });*/
 
             // and then remove the tag in the content
             //if (this.person.restoreRangeCallback) {

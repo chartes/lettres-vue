@@ -431,6 +431,7 @@ export default {
       const range = this.editor.getSelection();
       const selection = this.editor.getText(range.index, range.length);
       const formats = this.editor.getFormat();
+      console.log("displayLocationForm range, selection, formats", range, selection, formats);
 
       const _editor = this.editor;
 
@@ -455,6 +456,7 @@ export default {
     removeLocationForm() {
       this.editor.format("location", false);
       let formats = this.editor.getFormat();
+      console.log("removeLocationForm", formats);
       this.updateButtons(formats);
     },
 

@@ -13,24 +13,36 @@ let Inline = Quill.import('blots/inline');
 class LocationBlot extends Inline {
 
   static create(data) {
-    console.log('LocationBlot data : ', data) // data sourced from PlaceWizardForm.vue / async savePlace()
+    console.log('LocationBlot data : ', data)
+    // new Place annotation : data sourced from PlaceWizardForm.vue / async savePlace()
+    // existing Place annotation : data sourced from formats() below e.g. LocationBlot.formats(this.domNode) using static formats(domNode)
     let node = super.create();
+    if (data.ref) {
+      node.setAttribute('target', '_blank');
+      node.setAttribute('href', data.ref);
+    }
     node.setAttribute('id', data.id);
-    node.setAttribute('target', '_blank')
-    node.setAttribute('href', data.ref);
     return node;
   }
 
   static formats(domNode) {
-    let ref = domNode.getAttribute('id');
+    // get both id and href to be able to render the node when editing an existing Place annotation
+    let ref = {};
+    if (domNode.hasAttribute('href')) {
+      ref = {id: domNode.getAttribute('id'), ref: domNode.getAttribute('href')};
+    } else {
+      ref = {id: domNode.getAttribute('id')};
+    }
     return ref || true;
   }
 
-
-
   format(name, data) {
     if (name === 'location' && data) {
-      this.domNode.setAttribute('id', data);
+      if (data.ref) {
+        this.domNode.setAttribute('target', '_blank');
+        this.domNode.setAttribute('href', data.ref);
+      }
+      this.domNode.setAttribute('id', data.id);
     } else {
       super.format(name, data);
     }

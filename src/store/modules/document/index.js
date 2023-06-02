@@ -20,8 +20,8 @@ const TRANSLATION_MAPPING = {
   'address': 'Adresse'
 };
 
-const placenameRegexp = /(?:class="placeName" id=")(\d+)/gmi;
-const personRegexp = /(?:class="persName" id=")(\d+)/gmi;
+const placenameRegexp = /(?:class="placeName" (?:target="_blank" href="[^>]*".)?id=")(\d+)/gmi;
+const personRegexp = /(?:class="persName" (?:target="_blank" href="[^>]*".)?id=")(\d+)/gmi;
 
 const state = {
 
@@ -273,7 +273,12 @@ const actions = {
     IdsInAddress = attrs.address ? [...attrs.address.matchAll(personRegexp)].map(m => parseInt(m[1])) : []
     IdsInArgument = attrs.argument ? [...attrs.argument.matchAll(personRegexp)].map(m => parseInt(m[1])) : []
     IdsInTranscription = attrs.transcription ? [...attrs.transcription.matchAll(personRegexp)].map(m => parseInt(m[1])) : []
-    
+    console.log("IdsInAddress match : ", [...attrs.address.matchAll(personRegexp)])
+    console.log("IdsInAddress map : ", [...attrs.address.matchAll(personRegexp)].map(m => parseInt(m[1])))
+
+    console.log("IdsInTranscription match : ", [...attrs.transcription.matchAll(personRegexp)])
+    console.log("IdsInTranscription map : ", [...attrs.transcription.matchAll(personRegexp)].map(m => parseInt(m[1])))
+
     IdsInNotes = []
     noteContents.forEach(n => {
       IdsInNotes = IdsInNotes.concat([...n.matchAll(personRegexp)].map(m => parseInt(m[1])))

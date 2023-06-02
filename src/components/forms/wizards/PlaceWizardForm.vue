@@ -183,7 +183,7 @@ export default {
         return [
           {
             name: "select-or-create",
-            next: this.place && this.place.label && !this.unlink ? "set-description" : null,
+            next: this.place && this.place.label ? "set-description" : null,
             left: {
               label: "left",
               component: "PlaceInfoCard",
@@ -265,7 +265,9 @@ export default {
     if (this.$props.inputData) {
       console.log('created this.$props.inputData', this.$props.inputData)
       const p = this.$props.inputData;
-      const id = p.formats && p.formats.location ? p.formats.location : null;
+      // if existing Place annotation, (inputData) p.formats.location is a dict, checking location.id which has to be used
+      // if new Place annotation, use (inputData) p.formats.location directly
+      const id = p.formats && p.formats.location ? p.formats.location.id ? p.formats.location.id : p.formats.location : null;
 
       if (p.label !== null) {
         place.label = p.label;
@@ -439,6 +441,7 @@ export default {
           lat: null,
           ref: this.place.ref,
           label: this.place.label,
+          id: this.place.id
         };
 
         if (this.place.coords) {
@@ -446,26 +449,19 @@ export default {
           placeToUnlink.lat = this.place.coords[1];
         }
 
-        if (this.place.id) {
-          placeToUnlink.id = this.place.id;
-        } else {
-          const response = await this.$store.dispatch("placenames/addPlace", placeToUnlink);
-          placeToUnlink.id = response.id;
-        }
-
         // when editing a document
         if (this.popupMode) {
           console.log("when editing a document : ", this.place);
           if (this.place.role && placeToUnlink.id) {
-            // link the place to the document
+            // unlink the place to the document
             const role = this.getRoleByLabel(this.place.role);
             const roleId = role && role.id ? role.id : null;
 
-            await this.$store.dispatch("placenames/unlinkFromDocument", {
+            /*await this.$store.dispatch("placenames/unlinkFromDocument", {
               relationId: this.place.phrId,
               personId: this.place.id,
               roleId: roleId
-            });
+            });*/
 
             // and then remove the tag in the content
             //  if (this.place.restoreRangeCallback) {
