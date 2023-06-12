@@ -125,7 +125,7 @@ export default {
   computed: {
     formatCallbacks() {
       return {
-        note: { cb: this.displayNoteForm, active: this.isNoteButtonActive },
+        note: { cb: this.displayNoteForm, active: this.editorHasFocus }, //note: { cb: this.displayNoteForm, active: this.isNoteButtonActive },
         page: { cb: this.displayPageBreakForm, active: this.editorHasFocus },
         link: { cb: this.displayLinkForm, active: this.editorHasFocus },
         bold: { cb: this.simpleFormat, active: this.editorHasFocus },
@@ -190,13 +190,14 @@ export default {
   },
   methods: {
     initEditor(editorElement, initialContent) {
-      console.log("initEditor", initialContent.length);
+      // console.log("initEditor1", editorElement, initialContent);
       editorElement.innerHTML = this.sanitize(initialContent);
-
+      // console.log("initEditor2", editorElement, editorElement.innerHTML);
       this.editor = getNewQuill(editorElement, this.$props.options);
 
       this.editorElement = editorElement;
       this.editorContentElement = editorElement.children[0];
+      // console.log("init editor3", this.editorContentElement)
       this.activateEvents();
       this.editor.updateContents(getNewDelta().retain(this.editor.getLength(), "silent"));
       this.editorInited = true;
@@ -258,6 +259,7 @@ export default {
       newValue = newValue === "" ? "<br>" : newValue;
       const test = wrapPattern.test(newValue);
       newValue = test ? newValue : `<p>${newValue}</p>`;
+      // console.log("RTE sanitize : ", val, newValue)
       return newValue;
     },
 
@@ -300,7 +302,11 @@ export default {
       if (range) {
         this.setRangeBound(range);
         let formats = this.editor.getFormat(range.index, range.length);
+        // console.log("onSelection / formats", formats);
         this.updateButtons(formats);
+        /* if (formats.note) {
+          console.log("onSelection / formats.note", formats.note)
+        }*/
       }
     },
     onSingleKeyup(evt) {
@@ -335,10 +341,11 @@ export default {
       format[formatName] = value;
       let range = this.editor.getSelection(true);
       this.editor.insertEmbed(range.index, formatName, value, Quill.sources.API);
-      this.editor.setSelection(range.index + 1, Quill.sources.SILENT);
+      this.editor.setSelection(range.index + 2, Quill.sources.SILENT);
     },
 
     updateButtons(formats) {
+      // console.log('update buttons')
       if (_isEmpty(formats)) formats = { paragraph: true };
       for (let key in this.buttons) {
         this.buttons[key] = !!formats[key];
@@ -361,6 +368,7 @@ export default {
       const range = this.editor.getSelection();
       const selection = this.editor.getText(range.index, range.length);
       const formats = this.editor.getFormat();
+      // console.log("displayNoteForm range, selection, formats", range, selection, formats)
 
       const _editor = this.editor;
 
@@ -378,12 +386,14 @@ export default {
       });
     },
     submitNoteForm(noteId) {
+      // console.log("RTE / submitNoteForm : noteID ", noteId)
       this.insertEmbed("note", noteId);
       let formats = this.editor.getFormat();
+      // console.log("RTE / submitNoteForm : formats", formats)
       this.updateButtons(formats);
     },
     removeNoteForm() {
-      this.editor.format("location", false);
+      this.editor.format("note", false);
       let formats = this.editor.getFormat();
       this.updateButtons(formats);
     },
@@ -431,7 +441,7 @@ export default {
       const range = this.editor.getSelection();
       const selection = this.editor.getText(range.index, range.length);
       const formats = this.editor.getFormat();
-      console.log("displayLocationForm range, selection, formats", range, selection, formats);
+      // console.log("displayLocationForm range, selection, formats", range, selection, formats);
 
       const _editor = this.editor;
 
@@ -503,7 +513,7 @@ export default {
       const range = this.editor.getSelection();
       const selection = this.editor.getText(range.index, range.length);
       const formats = this.editor.getFormat();
-      console.log("displayPersonForm range, selection, formats", range, selection, formats)
+      // console.log("displayPersonForm range, selection, formats", range, selection, formats)
 
       const _editor = this.editor;
 

@@ -77,6 +77,7 @@ export default {
   },
   methods: {
     confirmNoteDelete(noteId) {
+      console.log("confirmNoteDelete(noteId)", noteId)
       this.$store.dispatch("document/removeNote", noteId).then((noteId) => {
         this.removeNoteFromDocument(noteId);
         this.removeNoteFromWitnesses(noteId);
@@ -92,17 +93,21 @@ export default {
 
     removeNoteFromDocument(noteId) {
       const pattern = new RegExp(
-        '<a class="note" href="#' + noteId + '">\\[note\\]<\\/a>',
+        '<a class="note" href="#' + noteId + '">\\[\\d+]<\\/a>',
         "mgi"
       );
       const attributes = {};
       let changed = false;
+      console.log("changed this.transcriptionContent", this.transcriptionContent, this.document.transcription)
       if (this.transcriptionContent) {
         const docTranscription = removeContentEditableAttributesFromString(
           this.transcriptionContent
         );
+        console.log("changed docTranscription", docTranscription)
         const inTranscription = pattern.test(docTranscription);
+        console.log("inTranscription", inTranscription)
         if (inTranscription) {
+          console.log("inTranscription", inTranscription)
           attributes.transcription = docTranscription.replace(pattern, "");
           changed = true;
         }
@@ -137,8 +142,10 @@ export default {
         const docArgument = removeContentEditableAttributesFromString(
           this.document.argument
         );
+        console.log("changed docArgument", docArgument)
         const inArgument = pattern.test(docArgument);
         if (inArgument) {
+          console.log("docArgument pattern found")
           attributes.argument = docArgument.replace(pattern, "");
           changed = true;
         }
@@ -148,9 +155,13 @@ export default {
         this.$store
           .dispatch("document/save", data)
           .then((response) => {
-            if (attributes.transcription)
+            if (attributes.transcription) {
               this.transcriptionContent = attributes.transcription;
-            if (attributes.address) this.addressContent = attributes.address;
+            }
+            if (attributes.address) {
+              this.addressContent = attributes.address;
+              console.log("attributes.address changed")
+            }
           })
           .catch((err) => {
             console.error(err);
@@ -159,9 +170,9 @@ export default {
     },
     removeNoteFromWitnesses(noteId) {
       const pattern = new RegExp(
-        '<a class="note" href="#' + noteId + '">\\[note\\]<\\/a>',
+        '<a class="note" href="#' + noteId + '">\\[\\d+]<\\/a>',
         "gi"
-      );
+      );//<a class="note" href="#' + noteId + '">\\[note\\]<\\/a>'
       this.witnesses.forEach((wit, index) => {
         const w = { ...wit };
         removeContentEditableAttributesFromObject(w);

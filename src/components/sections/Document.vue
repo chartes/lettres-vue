@@ -734,6 +734,7 @@ export default {
       });
     },
     addNote(evt) {
+      console.log("Document.vue / addNote : ", evt)
       this.noteInputData = evt;
       this.isNoteFormModalActive = true;
     },

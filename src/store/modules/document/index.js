@@ -608,7 +608,7 @@ const actions = {
   },
 
   addNote ({commit, state, rootState}, note) {
-    console.log('store updateNote', note)
+    console.log('store addNote', note)
     const data = {
       type: 'note',
       attributes: { content: note.content },

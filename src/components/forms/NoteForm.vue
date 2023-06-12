@@ -34,7 +34,7 @@
 </template>
 
 <script>
-
+import { mapState } from "vuex";
 export default {
   name: "NoteForm",
   components: {
@@ -57,6 +57,7 @@ export default {
   },
   computed: {
     isValid() {
+      console.log("isValid", !!this.form && !!this.form.content && this.form.content.length > 1)
       return !!this.form && !!this.form.content && this.form.content.length > 1;
     },
   },
@@ -64,17 +65,37 @@ export default {
     this.$options.components.RichTextEditor = require("./fields/RichTextEditor").default;
   },
   mounted() {
-    if (this.inputData.note) {
-      this.form = {...this.inputData.note}
+    // check if triggered from notes list (this.inputData.note) or existing note in editor (this.inputData.formats.note) :
+    if (this.inputData.note || this.inputData.formats.note) {
+      if (this.inputData.note) {
+        console.log("NoteForm mounted inputData : ", this.inputData)
+        this.form = {...this.inputData.note}
+      } else {
+        console.log("NoteForm mounted inputData (existing note) : ", this.inputData)
+        // retrieve note if from inputData
+        this.form.id = parseInt(this.inputData.formats.note.id);
+        // retrieve note content from store
+        let existingNote = this.$store.state.document.notes.filter((note) => parseInt(note.id) === parseInt(this.form.id))[0];
+        console.log("existingNote : ", existingNote);
+        this.form.content = existingNote.content;
+      }
     }
   },
   methods: {
+    ...mapState("document", ["document"]),
     submitAction() {
       this.loading = true;
       const action = this.form && this.form.id ? "document/updateNote" : "document/addNote";
-      this.$store.dispatch(action, this.form).then((note) => {
+      console.log("submitAction : action / this.form", action, this.form)
+      this.$store.dispatch(action, this.form).then((storeNote) => {
         if (action === "document/addNote") {
-          this.inputData.insertTagCallback(note.id);
+          console.log("NoteForm / submitAction / addNote", storeNote);
+          let noteIndex = this.$store.state.document.notes.findIndex(n => n.id === storeNote.id) + 1;
+          this.inputData.insertTagCallback({id: storeNote.id, index: noteIndex});
+        } else if (action === "document/updateNote") {
+            console.log("NoteForm / submitAction / Update Note", storeNote);
+          let existingNote = storeNote.content;
+          this.form.content = existingNote;
         }
         this.$emit("close");
       });
