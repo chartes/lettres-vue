@@ -1,12 +1,23 @@
 <template>
-  <div class="component">
+  <div class="component is-flex is-justify-items-space-between">
+    <span
+      v-if="editable"
+      class="edit-btn"
+      @click="enterEditMode"
+    >
+      <component
+        v-if="editable"
+        :is="editButtonIcon"
+        class="field-title__icon"
+      />
+    </span>
     <b-field label="Langues">
       <b-taginput
-        v-if="editable"
+        v-if="editable && editMode"
         v-model="tags"
         placeholder="Français"
         :data="filteredTags"
-        :readonly="!editable"
+        :readonly="editable"
         autocomplete
         field="label"
         open-on-focus
@@ -29,10 +40,12 @@
 
 <script>
 import { mapState } from "vuex";
+import IconPenEdit from "../ui/icons/IconPenEdit";
+import IconSuccess from "../ui/icons/IconSuccess";
 
 export default {
   name: "DocumentLanguages",
-  components: {},
+  components: {IconPenEdit, IconSuccess},
   props: {
     editable: {
       type: Boolean,
@@ -44,6 +57,7 @@ export default {
       filteredTags: [],
       tags: [],
       init: false,
+      editMode: false
     };
   },
   computed: {
@@ -51,6 +65,12 @@ export default {
     ...mapState({
       allLanguages: (state) => state.languages.languages,
     }),
+    editButtonIcon () {
+      if (this.status === 'success') {
+        return IconSuccess;
+      }
+      return IconPenEdit;
+    }
   },
   watch: {
     tags() {
@@ -86,6 +106,10 @@ export default {
         return option.label.toString().toLowerCase().indexOf(text.toLowerCase()) >= 0;
       });
     },
+    enterEditMode() {
+      console.log("this.editMode", this.editMode)
+      this.editMode = !this.editMode
+    }
   },
 };
 </script>
@@ -110,6 +134,20 @@ export default {
       font-size: 13px;
     }
 
+  }
+}
+.edit-btn {
+  position: unset;
+  flex: 55px 0 0;
+
+  display: inline-block;
+  width: 25px;
+  height: 25px;
+  background: url(../../assets/images/icons/bouton_edit.svg) center / 25px auto no-repeat !important;
+  cursor: pointer;
+
+  .icon.icon__pen-edit {
+    display: none;
   }
 }
 </style>

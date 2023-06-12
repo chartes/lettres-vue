@@ -9,9 +9,13 @@
         <h3 class="heading">
           Adresse
         </h3>
-
-        <rich-text-editor
+        <span
           v-if="editable"
+          class="edit-btn"
+          @click="enterEditModeAddress"
+        />
+        <rich-text-editor
+          v-if="editable && editModeAddress"
           v-model="addressContent"
           :formats="[['italic', 'superscript'], ['person', 'location'], ['note']]"
           @add-place="addPlace($event, 'address')"
@@ -46,8 +50,13 @@
         >
           Lettre
         </h3>
-        <rich-text-editor
+        <span
           v-if="editable"
+          class="edit-btn"
+          @click="enterEditModeTranscription"
+        />
+        <rich-text-editor
+          v-if="editable && editModeTranscription"
           v-model="transcriptionContent"
           :formats="[['italic', 'superscript', 'page'], ['person', 'location'], ['note']]"
           @add-place="addPlace($event, 'transcription')"
@@ -66,9 +75,9 @@
         >
           <span
             v-for="(phrase, index) in transcriptionContent"
+            class="highlighted"
             :key="index"
             v-html="phrase"
-            class="highlighted"
           >
             <!--<span
               v-html="phrase"
@@ -135,6 +144,8 @@ export default {
     return {
       transcriptionContent: "",
       addressContent: "",
+      editModeAddress: false,
+      editModeTranscription: false
     };
   },
 
@@ -155,8 +166,9 @@ export default {
         }
     } else {
       this.transcriptionContent = this.document.transcription;
-      console.log('default this.document.transcription')
+      console.log('default this.document.transcription', this.document.transcription)
     }
+    console.log('default this.document.address', this.document.address)
     this.addressContent = this.document.address || "";
   },
   methods: {
@@ -167,6 +179,7 @@ export default {
       this.$emit("add-person", {...evt, source});
     },
     addNote(evt) {
+      console.log("transcription addNote(evt)", evt, {...evt})
       this.$emit("add-note", {...evt});
     },
     truncate(str, n, useWordBoundary) {
@@ -182,6 +195,14 @@ export default {
       const terms = this.searchTerm.split(new RegExp("\\s+")).map(escapeRegExp).filter(term => term !== "")
       const re = new RegExp(`(${terms.join("|")})`)
       return text.replace(new RegExp(re, 'gi'), (match => `<mark>${match}</mark>`))
+    },
+    enterEditModeAddress() {
+      console.log("this.editModeAddress", this.editModeAddress)
+      this.editModeAddress = !this.editModeAddress
+    },
+    enterEditModeTranscription() {
+      console.log("this.editModeTranscription", this.editModeTranscription)
+      this.editModeTranscription = !this.editModeTranscription
     }
   }
 };
@@ -196,5 +217,19 @@ export default {
 ::v-deep .highlighted:after {
   content: " [...] ";
   font-weight: bold;
+}
+.edit-btn {
+  position: unset;
+  flex: 55px 0 0;
+
+  display: inline-block;
+  width: 25px;
+  height: 25px;
+  background: url(../../assets/images/icons/bouton_edit.svg) center / 25px auto no-repeat !important;
+  cursor: pointer;
+
+  .icon.icon__pen-edit {
+    display: none;
+  }
 }
 </style>

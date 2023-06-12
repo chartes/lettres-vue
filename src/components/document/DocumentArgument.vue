@@ -4,10 +4,14 @@
     class="panel"
   ><!-- (document.argument && document.argument.length) || editable > 0 -->
     <div class="panel-block">
-      <rich-text-editor
+      <span
         v-if="editable"
+        class="edit-btn"
+        @click="enterEditMode"
+      />
+      <rich-text-editor
+        v-if="editable && editMode"
         v-model="form"
-        :enabled="editorEnabled"
         :formats="[
           ['italic', 'superscript'],
           ['person', 'location'],
@@ -42,6 +46,8 @@ import { mapState } from "vuex";
 import RichTextEditor from "../forms/fields/RichTextEditor";
 import EditorSaveButton from "../forms/fields/EditorSaveButton";
 import escapeRegExp from "lodash/escapeRegExp";
+import IconSuccess from "@/components/ui/icons/IconSuccess.vue";
+import IconPenEdit from "@/components/ui/icons/IconPenEdit.vue";
 
 export default {
   name: "DocumentArgument",
@@ -59,7 +65,8 @@ export default {
   emits: ["add-place", "add-person", "add-note"],
   data() {
     return {
-      editorEnabled: true,
+      //editorEnabled: true,
+      editMode: false,
       form: "",
     };
   },
@@ -74,6 +81,10 @@ export default {
     console.log("this.searchTerm : ", this.searchTerm)
   },
   methods: {
+    enterEditMode() {
+      console.log("this.editMode", this.editMode)
+      this.editMode = !this.editMode
+    },
     addPlace(evt, source) {
       this.$emit("add-place", { ...evt, source });
     },
@@ -103,5 +114,19 @@ export default {
 .section {
   padding-top: 24px;
   padding-bottom: 24px;
+}
+.edit-btn {
+  position: unset;
+  flex: 55px 0 0;
+
+  display: inline-block;
+  width: 25px;
+  height: 25px;
+  background: url(../../assets/images/icons/bouton_edit.svg) center / 25px auto no-repeat !important;
+  cursor: pointer;
+
+  .icon.icon__pen-edit {
+    display: none;
+  }
 }
 </style>
