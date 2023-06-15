@@ -8,7 +8,70 @@
       v-if="!preview"
       class="is-justify-content-left"
     >
-      <nav class="mb-3 previous-next-navigation">
+      <nav
+        v-if="current_user && lastDocId"
+        class="mb-3 previous-next-navigation"
+      >
+        <!-- User connected, navigation is docId +/- 1 and range bounds are 1 to last doc in database -->
+        <a
+          :href="$router.resolve({ name: 'document', params: {docId: docId - 1 } } ).href"
+          aria-label="Previous page"
+          class="pagination-link pagination-previous"
+          :disabled="docId === 1"
+        >
+          <span
+            class="icon"
+            aria-hidden="true"
+          >
+            <i class="fas fa-angle-left" />
+          </span>
+        </a>
+        <a
+          :href="$router.resolve({ name: 'document', params: {docId: docId + 1 } } ).href"
+          aria-label="Next page"
+          class="pagination-link pagination-next"
+          :disabled="docId === lastDocId"
+        >
+          <span
+            class="icon"
+            aria-hidden="true"
+          >
+            <i class="fas fa-angle-left" />
+          </span>
+        </a>
+      </nav>
+      <nav
+        v-if="!current_user && firstDocId && previousDocId && nextDocId && lastDocId && docIdList"
+        class="mb-3 previous-next-navigation"
+      >
+        <a
+          :href="$router.resolve({ name: 'document', params: {docId: previousDocId } } ).href"
+          aria-label="Previous page"
+          class="pagination-link pagination-previous"
+          :disabled="docId === firstDocId"
+        >
+          <span
+            class="icon"
+            aria-hidden="true"
+          >
+            <i class="fas fa-angle-left" />
+          </span>
+        </a>
+        <a
+          :href="$router.resolve({ name: 'document', params: {docId: nextDocId } } ).href"
+          aria-label="Next page"
+          class="pagination-link pagination-next"
+          :disabled="docId === lastDocId"
+        >
+          <span
+            class="icon"
+            aria-hidden="true"
+          >
+            <i class="fas fa-angle-left" />
+          </span>
+        </a>
+      </nav>
+      <!--<nav class="mb-3 previous-next-navigation">
         <a
           v-if="firstDocId && previousDocId && docIdList"
           role="button"
@@ -39,7 +102,7 @@
             <i class="fas fa-angle-right" />
           </span>
         </a>
-      </nav>
+      </nav>-->
       <div
         class="document"
         :class="documentCssClass"
@@ -952,6 +1015,42 @@ nav.previous-next-navigation {
   }
 
   a.pagination-link {
+    border: none;
+    padding: 0 !important;
+    margin: 0;
+    min-width: unset !important;
+    height: 30px;
+
+    @include on-mobile {
+      transform: scale(0.9,0.9);
+    }
+
+    &::after {
+      content: "";
+      display: inline-block;
+      width: 30px;
+      height: 30px;
+      background: url(../../assets/images/icons/lettre_nav_precedent.svg) center / 30px auto no-repeat !important;
+
+      @include on-mobile {
+      }
+    }
+
+    &.pagination-next,
+    &.pagination-previous {
+      flex-grow: 0;
+    }
+
+    &.pagination-next::after {
+      transform: rotate(180deg);
+      transform-origin:50% 50%;
+    }
+
+    .icon {
+      display: none;
+    }
+  }
+  router-link.pagination-link {
     border: none;
     padding: 0 !important;
     margin: 0;
