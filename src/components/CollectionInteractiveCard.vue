@@ -247,7 +247,11 @@
               />
             </p>
           </div>
-
+          <!-- Responsables scientifiques de la collection (collection racine seulement) -->
+          <collection-responsables
+            v-if="collection.title !== 'Non triées' && !collection.parent"
+            :collection-id="collection.id"
+          />
           <!-- Curateur de la collection -->
           <div
             v-if="!editMode || collection.title === 'Non triées'"
@@ -449,10 +453,11 @@ import CollectionHierarchy from "@/components/CollectionHierarchy.vue";
 import TitleFieldInPlace from "@/components/forms/fields/TitleFieldInPlace";
 import SaveButtonIcon from "@/components/ui/SaveButtonIcon";
 import CollectionDeletion from "@/components/CollectionDeletion.vue";
+import CollectionResponsables from "@/pages/CollectionResponsables.vue";
 
 export default {
   name: "CollectionInteractiveCard",
-  components: { TitleFieldInPlace, SaveButtonIcon, CollectionHierarchy, CollectionDeletion },
+  components: {CollectionResponsables, TitleFieldInPlace, SaveButtonIcon, CollectionHierarchy, CollectionDeletion },
   props: {
     collectionId: { type: Number, required: true },
     editable: { type: Boolean, default: false },
