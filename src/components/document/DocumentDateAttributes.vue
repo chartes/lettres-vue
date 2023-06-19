@@ -3,10 +3,22 @@
     class="document-date__attributes"
     style="width: 100%"
   >
-    <header class="document-date__attributes--title mb-3">
-      <span class="heading">Dates de temps</span>
-    </header>
-
+    <div class="is-flex is-justify-items-space-between">
+      <span
+        v-if="editable"
+        class="edit-btn"
+        @click="enterEditMode"
+      >
+        <component
+          :is="editButtonIcon"
+          v-if="editable"
+          class="field-title__icon"
+        />
+      </span>
+      <header class="document-date__attributes--title mb-3">
+        <span class="heading">Dates de temps</span>
+      </header>
+    </div>
     <div
       v-if="editable"
       class="creation-date"
@@ -23,6 +35,7 @@
           name="creation"
           placeholder="1574-12-09"
           expanded
+          :disabled="!editMode"
         />
       </b-field>
       <b-field
@@ -35,6 +48,7 @@
           name="creationLabel"
           placeholder="1574, 9 Décembre"
           expanded
+          :disabled="!editMode"
         />
       </b-field>
       <b-field
@@ -47,6 +61,7 @@
           name="creationNotAfter"
           placeholder="1575, 1er Janvier"
           expanded
+          :disabled="!editMode"
         />
       </b-field>
     </div>
@@ -78,6 +93,8 @@
 <script>
 import { mapState } from "vuex";
 import { debounce } from "lodash";
+import IconSuccess from "@/components/ui/icons/IconSuccess.vue";
+import IconPenEdit from "@/components/ui/icons/IconPenEdit.vue";
 
 export default {
   name: "DocumentAttributes",
@@ -100,10 +117,17 @@ export default {
       creationNotAfterTmp: null,
 
       creationTmpIsValid: true,
+      editMode: false
     };
   },
   computed: {
     ...mapState("document", ["document"]),
+    editButtonIcon () {
+      if (this.status === 'success') {
+        return IconSuccess;
+      }
+      return IconPenEdit;
+    },
 
     creation: {
       get() {
@@ -169,6 +193,10 @@ export default {
       this.creationTmpIsValid = isValidDate;
       console.log("mask check", this.creationTmp, isValidDate);
     },
+    enterEditMode() {
+      console.log("this.editMode", this.editMode)
+      this.editMode = !this.editMode
+    }
   },
 };
 </script>
@@ -198,6 +226,20 @@ export default {
 
   .label {
     font-size: 12px !important;
+  }
+}
+.edit-btn {
+  position: unset;
+  flex: 55px 0 0;
+
+  display: inline-block;
+  width: 25px;
+  height: 25px;
+  background: url(../../assets/images/icons/bouton_edit.svg) center / 25px auto no-repeat !important;
+  cursor: pointer;
+
+  .icon.icon__pen-edit {
+    display: none;
   }
 }
 </style>
