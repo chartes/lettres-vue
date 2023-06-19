@@ -871,6 +871,10 @@ export default {
             display: block !important;
             padding: 0 20px;
 
+            @include on-mobile {
+              padding: 0;
+            }
+
             .panel-block {
               padding-left: 0;
               padding-right: 0;

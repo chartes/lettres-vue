@@ -331,7 +331,7 @@ export default {
 
           @include on-mobile {
             flex-direction: column;
-            gap: 20px;
+            gap: 12px;
             margin-bottom: 0;
           }
 

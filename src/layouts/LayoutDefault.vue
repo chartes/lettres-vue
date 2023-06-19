@@ -518,6 +518,15 @@ a.portail_button:hover {
 
 .search_page_search_row {
   background-color: transparent;
+
+  @include on-mobile {
+    flex-direction: column;
+    align-items: center;
+
+    & > .column {
+      width: 100%;
+    }
+  }
 }
 
 .advanced-search_row {
@@ -572,12 +581,17 @@ a.portail_button:hover {
   text-align: center;
 
   @include on-mobile {
+    display: none;
     font-size: 15px;
   }
 
 }
 .search-container {
   margin: 0 0 0 20px !important;
+
+  @include on-mobile {
+    margin: 0 !important;
+  }
 
   ::v-deep .icon {
     height: 40px !important;
@@ -593,7 +607,13 @@ a.portail_button:hover {
   text-align: center;
   padding: 10px 12px;
   border-radius: 5px;
+
+  @include on-mobile {
+    font-size: 16px;
+  }
+
 }
+
 /*a.button {
   border: none !important;
   outline: none !important;
