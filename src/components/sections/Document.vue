@@ -348,14 +348,6 @@
             <div class="heading is-uppercase is-flex is-justify-content-space-between">
               <div class="has-add-btn is-flex is-align-items-center is-justify-content-center">
                 <span class="heading-content">Témoins</span>
-                <b-button
-                  v-if="canEdit"
-                  value="+"
-                  class="open-modal-button "
-                  @click="openWitnessModal = true"
-                >
-                  <icon-add />
-                </b-button>
               </div>
               <span
                 v-if="canEdit"
@@ -385,6 +377,14 @@
                     @add-note="addNote"
                     @close-witness-modal="openWitnessModal = false"
                   />
+                  <b-button
+                    v-if="canEdit"
+                    value="+"
+                    class="open-modal-button "
+                    @click="openWitnessModal = true"
+                  >
+                    <icon-add />
+                  </b-button>
                 </div>
               </template>
             </b-collapse>
