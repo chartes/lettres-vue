@@ -68,7 +68,7 @@
               if (this.status === 'error' || this.status === 'success') return;
               this.status = 'loading';
               const attributes = {}
-              attributes[this.name] = this.value;
+              attributes[this.name] = this.value && this.value.length > 0 ? this.value : null;
               const data = { id: this.docId, attributes };
               console.log('saves document ', data )
               this.$store.dispatch('document/save', data)
