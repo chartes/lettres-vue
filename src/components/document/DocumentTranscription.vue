@@ -29,7 +29,7 @@
           />
         </rich-text-editor>
         <div
-          v-else-if="!preview && searchTerm"
+          v-else-if="!preview && searchTerm && highlight(addressContent).includes('mark')"
           class="document__transcription--content"
           v-html="highlight(addressContent)"
         />
@@ -165,7 +165,7 @@ export default {
           console.log('default this.document.transcription')
         }
     } else {
-      this.transcriptionContent = this.document.transcription;
+      this.transcriptionContent = this.document.transcription || "";
       console.log('default this.document.transcription', this.document.transcription)
     }
     console.log('default this.document.address', this.document.address)
@@ -183,13 +183,17 @@ export default {
       this.$emit("add-note", {...evt});
     },
     truncate(str, n, useWordBoundary) {
-      if (str.length <= n) {
-        return str;
+      if (str && str.length > 0) {
+        if (str.length <= n) {
+          return str;
+        }
+        const subString = str.slice(0, n - 1);
+        return (useWordBoundary
+            ? subString.slice(0, subString.lastIndexOf(" "))
+            : subString) + " (...)";
+      } else {
+        return "La transcription est indisponible"
       }
-      const subString = str.slice(0, n - 1);
-      return (useWordBoundary
-          ? subString.slice(0, subString.lastIndexOf(" "))
-          : subString) + " (...)";
     },
     highlight(text) {
       const terms = this.searchTerm.split(new RegExp("\\s+")).map(escapeRegExp).filter(term => term !== "")
