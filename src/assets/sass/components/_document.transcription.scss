@@ -31,6 +31,10 @@
       background-size: 30px 24px;
     }
 
+    p > * {
+      display: inline !important;
+    }
+
   }
 }
 

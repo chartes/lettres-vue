@@ -218,6 +218,9 @@ export default {
   content: " [...] ";
   font-weight: bold;
 }
+.document__transcription--content {
+  font-size: 18px;
+}
 .edit-btn {
   position: unset;
   flex: 55px 0 0;
@@ -225,7 +228,7 @@ export default {
   display: inline-block;
   width: 25px;
   height: 25px;
-  background: url(../../assets/images/icons/bouton_edit.svg) center / 25px auto no-repeat !important;
+  background: url(../../assets/images/icons/bouton_edit.svg) center / 20px auto no-repeat !important;
   cursor: pointer;
 
   .icon.icon__pen-edit {

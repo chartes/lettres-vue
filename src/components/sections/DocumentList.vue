@@ -1150,6 +1150,11 @@ progress {
     }
   }
 }
+
+.select-parent {
+  margin: 0 5px;
+}
+
 /* Chrome, Safari, Edge, Opera */
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
