@@ -321,7 +321,7 @@ export default {
       @include on-small-tablet {
         position: absolute;
         width: 100vw;
-        left: -12px;
+        left: -8px;
         top: 67px;
       }
     }

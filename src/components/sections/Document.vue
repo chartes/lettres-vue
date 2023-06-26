@@ -1162,6 +1162,7 @@ nav.previous-next-navigation {
     text-transform: uppercase;
 
     @include on-mobile {
+      margin-bottom: 10px;
       font-size: 13px;
     }
 

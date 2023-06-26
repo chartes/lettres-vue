@@ -1,13 +1,25 @@
 ::v-deep {
 
+  .table-mobile-sort {
+    display: none !important;
+  }
+
   .table-wrapper {
     border-top: #CB2158 8px solid;
     padding-top: 15px;
 
     table {
+      width: 100% !important;
       border: none !important;
 
       thead {
+
+        @include on-small-tablet {
+          display: inline-block;
+          width: calc( 100% - 40px ) !important;
+          border-bottom: 1px solid #fdb3cc;
+        }
+
         tr {
 
           th {
@@ -19,6 +31,14 @@
             text-transform: uppercase;
             border-bottom: 1px solid #fdb3cc;
             padding: 0 10px 10px 0 !important;
+
+            @include on-mobile {
+              padding-right: 5px;
+            }
+
+            /* Flèche */
+            &:nth-child(1) {
+            }
 
             /* En-tete "Lettre" (seconde colonne) calée tout à gauche, sur la première colonne du chevron */
             &:nth-child(2) {
@@ -95,11 +115,16 @@
         tr {
 
           &.detail {
-            background-color: #F8F8F8;
+            background-color: #F8F8F8 !important;
+            margin-top: 0 !important;
 
             .detail-container {
               padding: 20px 0;
               overflow: hidden;
+
+              @include on-mobile {
+                padding-top: 0;
+              }
 
               .document-page {
 
@@ -133,12 +158,20 @@
 
                 .document-section {
                   font-family: $family-primary;
-                  font-size: 18px;
+                  font-size: $font-size-text-tablet;
                   line-height: 23px;
                   color: #373737;
                   padding-left: 40px;
                   padding-right: 40px;
                   margin-bottom: 40px;
+
+                  @include on-mobile {
+                    padding-left: 20px;
+                    padding-right: 20px;
+                    margin-bottom: 30px;
+                    font-size: $font-size-text-mobile;
+                    line-height: 1.28;
+                  }
 
                   &:first-child {
                     border-bottom: solid 5px #FFFFFF;
@@ -265,6 +298,10 @@
                 font-size: 16px;
                 font-weight: 400;
                 color: #515151;
+
+                @include on-mobile {
+                  font-size: 14px;
+                }
               }
 
             }
@@ -273,7 +310,14 @@
             &:nth-child(3) {
               grid-area: document-date;
               color: #4A4A4A;
+              font-size: 16px;
               font-weight: 500;
+              line-height: 20px;
+
+              @include on-mobile {
+                font-size: 14px;
+                line-height: 25px;
+              }
             }
 
             /* Titre */
@@ -407,12 +451,14 @@
 
       thead {
         tr {
-          display: flex !important;
-          justify-content: space-between;
           border-bottom: 1px solid #fdb3cc;
 
           th {
             border-bottom: none;
+
+            &:nth-child(4) {
+              padding-right: 50px;
+            }
           }
         }
       }
@@ -474,6 +520,21 @@
         }
       }
     }
+
+    @include on-mobile {
+      thead {
+        tr {
+          th {
+            font-size: 12px;
+
+            &:nth-child(4) {
+              display: none !important;
+            }
+          }
+        }
+      }
+    }
+
   }
 
   /* Version déplié */
@@ -504,7 +565,7 @@
         box-shadow: none !important;
 
         @include on-small-tablet {
-          padding-top: 0;
+          padding-top: 5px;
         }
 
         @include on-mobile {
@@ -582,7 +643,7 @@
             display: flex !important;
             justify-content: flex-end;
             align-items: center;
-            padding-right: 30px;
+            padding-right: 15px;
 
             @include on-mobile {
               padding: 0 !important;
@@ -651,7 +712,7 @@
                 }
 
                 @include on-mobile {
-                  font-size: 18px;
+                  font-size: 16px;
                 }
               }
             }

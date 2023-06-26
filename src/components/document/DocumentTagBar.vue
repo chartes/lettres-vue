@@ -218,6 +218,10 @@ export default {
       font-weight: 500;
       color: #000000;
       text-transform: uppercase;
+
+      @include on-mobile {
+        font-size: 14px;
+      }
     }
   }
 

@@ -764,6 +764,11 @@ export default {
     color: #000000;
     font-weight: 400;
     line-height: 21px;
+
+    @include on-mobile {
+      margin-bottom: 15px;
+      font-size: 14px;
+    }
   }
 
   .collection-dates {
@@ -805,6 +810,7 @@ export default {
     margin-bottom: 30px;
 
     @include on-tablet {
+      margin-top: 10px;
       margin-bottom: 0;
     }
 

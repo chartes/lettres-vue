@@ -205,6 +205,32 @@ export default {
     margin-left: 0 !important;
     padding-left: 0 !important;
   }
+
+  a {
+    color: #C00055;
+
+    &:hover {
+      text-decoration: underline;
+      text-decoration-style: dotted;
+      text-underline-offset: 2px;
+    }
+  }
+
+  .button.is-primary {
+    width: auto;
+    height: auto;
+    background-color: #C00055;
+    border-radius: 5px;
+    padding: 6px 10px;
+    margin: 10px 0 !important;
+    font-family: "Barlow", Helvetica, Arial, sans-serif;
+    font-size: 18px;
+    line-height: 1;
+    font-weight: 500;
+    color: #FFFFFF;
+    letter-spacing: 0;
+    text-transform: uppercase;
+  }
 }
 ::v-deep li a {
   justify-content: right !important;

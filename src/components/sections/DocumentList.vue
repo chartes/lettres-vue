@@ -1115,6 +1115,7 @@ progress {
 
   @include on-small-tablet {
     flex-wrap: wrap;
+    gap: 10px;
 
     .switch-button-parent {
       flex: 100% 0 0 !important;

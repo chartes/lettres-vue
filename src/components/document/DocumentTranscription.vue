@@ -219,7 +219,11 @@ export default {
   font-weight: bold;
 }
 .document__transcription--content {
-  font-size: 18px;
+  font-size: $font-size-text-tablet;
+
+  @include on-mobile {
+    font-size: $font-size-text-mobile;
+  }
 }
 .edit-btn {
   position: unset;
