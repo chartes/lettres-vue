@@ -535,10 +535,30 @@ a.portail_button:hover {
   gap: 40px;
   overflow: hidden;
 
+  @include on-small-tablet {
+    display: block !important;
+    position: relative;
+  }
+
   & > .filters-column {
     flex: 350px 0 0;
     padding-top: 70px;
     position: relative;
+
+    @include on-small-tablet {
+      position: absolute;
+      z-index: 100;
+
+      ::v-deep {
+        .advanced-search-form {
+          background-color: rgba(255, 255, 255, 0.9);
+          padding-right: 10px;
+          padding-bottom: 50px;
+          border-radius: 10px;
+          transform: translateX(-100%);
+        }
+      }
+    }
 
     .hide-left-bar {
       position: absolute;
@@ -551,6 +571,7 @@ a.portail_button:hover {
       margin-top: 20px;
       cursor: pointer;
     }
+
   }
 
   & > .main-column {
@@ -566,9 +587,21 @@ a.portail_button:hover {
     }
   }
 
-  &.with-side-bar  > .main-column {
+  &.with-side-bar > .filters-column {
+    ::v-deep {
+      .advanced-search-form {
+        transform: translateX(0);
+      }
+    }
+  }
+
+  &.with-side-bar > .main-column {
     flex: calc( 100% - 350px - 40px ) 0 0;
     width: calc( 100% - 350px - 40px );
+
+    @include on-small-tablet {
+      width: 100%;
+    }
   }
 }
 

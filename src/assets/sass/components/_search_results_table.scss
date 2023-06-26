@@ -20,6 +20,10 @@
           border-bottom: 1px solid #fdb3cc;
         }
 
+        @include on-mobile {
+          width: 100% !important;
+        }
+
         tr {
 
           th {
@@ -154,6 +158,10 @@
                   font-weight: 600;
                   letter-spacing: 0;
                   text-transform: uppercase;
+
+                  @include on-mobile {
+                    font-size: 14px;
+                  }
                 }
 
                 .document-section {
@@ -476,7 +484,7 @@
           "document-detail-toggle document-id document-date document-location-origin"
           "document-detail-toggle document-id document-date document-location-destination ";
 
-          width: calc( 100vw - 30px );
+          width: calc( 100vw - 20px );
           border-bottom: 1px solid #fdb3cc;
           box-shadow: none !important;
           padding: 10px 0;
@@ -517,6 +525,12 @@
             }
           }
 
+        }
+
+        tr.detail {
+          width: 100%;
+          box-shadow: none !important;
+          border-bottom: 1px solid #fdb3cc;
         }
       }
     }
@@ -574,6 +588,8 @@
 
         &:first-of-type {
           padding-top: 0;
+          margin-top: 0 !important;
+          margin-bottom: 0 !important;
         }
 
         td {
@@ -759,6 +775,8 @@
 
       tr.detail {
         width: 100%;
+        box-shadow: none !important;
+        border-bottom: 1px solid #fdb3cc;
       }
     }
   }
