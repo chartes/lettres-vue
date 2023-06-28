@@ -52,6 +52,10 @@
       width: 100%;
       padding-right: 44px;
       outline: none;
+
+      @include on-mobile {
+        padding-right: 10px;
+      }
     }
   }
 
