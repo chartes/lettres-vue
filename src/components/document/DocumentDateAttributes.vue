@@ -238,6 +238,10 @@ export default {
   background: url(../../assets/images/icons/bouton_edit.svg) center / 20px auto no-repeat !important;
   cursor: pointer;
 
+  @include on-mobile {
+    flex: 45px 0 0;
+  }
+
   .icon.icon__pen-edit {
     display: none;
   }

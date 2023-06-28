@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="is-flex is-justify-content-space-between is-align-items-center">
+    <div class="results-count-and-pagination is-flex is-justify-content-space-between is-align-items-center">
       <div class="popup-list-header is-inline-block">
         <div class="results-count">
           <span class="total-count">{{ totalCount }}</span> résultat(s)
@@ -702,10 +702,22 @@ export default {
       text-transform: uppercase;
     }
   }
+  .results-count-and-pagination {
+    @include on-mobile {
+      flex-direction: column;
+      justify-content: flex-start !important;
+      align-items: flex-start !important;
+      margin-bottom: 20px;
+    }
+  }
   .popup-list-header {
     /*border-top: solid 1px #FDB3CC;
     border-bottom: solid 1px #C7C7C7;*/
     margin-bottom: 25px;
+
+    @include on-mobile {
+      margin-bottom: 10px;
+    }
 
     .results-count {
       display: flex;
@@ -723,6 +735,10 @@ export default {
         color: #FF0052;
         text-align: center;
         font-weight: 700;
+
+        @include on-mobile {
+          font-size: 30px;
+        }
       }
     }
   }

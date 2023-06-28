@@ -215,6 +215,7 @@ export default {
 <style scoped lang="scss">
 @import "@/assets/sass/main.scss";
 @import "@/assets/sass/components/_document.transcription.scss";
+
 ::v-deep em {
    background-color: yellow !important;
 }
@@ -238,6 +239,10 @@ export default {
   height: 25px;
   background: url(../../assets/images/icons/bouton_edit.svg) center / 20px auto no-repeat !important;
   cursor: pointer;
+
+  @include on-mobile {
+    flex: 45px 0 0;
+  }
 
   .icon.icon__pen-edit {
     display: none;

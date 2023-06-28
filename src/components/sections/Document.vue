@@ -935,6 +935,13 @@ export default {
         margin: 30px 0 40px !important;
       }
 
+      .column {
+        @include on-mobile {
+          padding-left: 0 !important;
+          padding-right: 0 !important;
+        }
+      }
+
       & > .heading {
 
         span.icon {
