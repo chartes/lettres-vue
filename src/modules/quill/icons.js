@@ -11,4 +11,5 @@ module.exports = {
   'person'      : require('../../assets/icons/person.svg'),
   'superscript' : require('../../assets/icons/superscript.svg'),
   'underline'   : require('../../assets/icons/underline.svg'),
+  'close'   : require('../../assets/images/icons/close_text.svg'),
 };
