@@ -946,6 +946,7 @@ progress {
   color: #C00055;
   text-transform: uppercase;
 }
+
 .switch-button {
   background-color: lightgrey;
   border-radius: 30px;
@@ -961,6 +962,10 @@ progress {
 
   color: white;
   transition: all ease-in-out 300ms;
+
+  @include on-mobile {
+    width: 160px;
+  }
 
   &.is-active {
     color: grey;
@@ -989,6 +994,10 @@ progress {
     justify-content: center;
     z-index: 3;
     pointer-events: none;
+
+    @include on-mobile {
+      width: 80px;
+    }
   }
 
   &-checkbox {
@@ -1005,6 +1014,10 @@ progress {
     &:checked + .switch-button-label:before {
       transform: translateX(120px);
       transition: transform 300ms linear;
+
+      @include on-mobile {
+        transform: translateX(80px);
+      }
     }
 
     & + .switch-button-label {
@@ -1015,6 +1028,10 @@ progress {
       user-select: none;
       pointer-events: none;
       height: 100%;
+
+      @include on-mobile {
+        width: 90px;
+      }
 
       &:before {
         content: "";
@@ -1035,6 +1052,7 @@ progress {
     }
   }
 }
+
 .pagination-controls {
   display: flex;
   align-items: center;
