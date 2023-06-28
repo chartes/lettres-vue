@@ -49,6 +49,10 @@ function lineBreakMatcher() {
   newDelta.insert({'linebreak': ''});
   return newDelta;
 }
+function escape() {
+  if (!this.open) return true;
+        this.close();
+}
 
 const options = {
   modules: {
@@ -70,9 +74,16 @@ const options = {
             this.quill.insertEmbed(range.index, 'linebreak', true, 'user');
             this.quill.setSelection(range.index + 1, Quill.sources.SILENT);
           }
+        },
+        escape: {
+          key: 27, // escape
+          handler: function (evt) {
+            console.log("evt", evt)
+            this.quill.cancelInput(evt);
+          }
         }
       }
-    }
+    },
   },
   placeholder: null,
 };
