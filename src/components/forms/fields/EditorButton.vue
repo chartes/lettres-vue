@@ -117,6 +117,11 @@ export default {
       background-size: 23px auto;
     }
 
+    &.close-btn {
+      background-image: url(../../../assets/images/icons/close_text.svg);
+      background-size: 23px auto;
+    }
+
     & > * {
       display: none !important;
     }
