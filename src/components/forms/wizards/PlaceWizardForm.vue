@@ -493,7 +493,7 @@ export default {
 
 .root-container {
   overflow: hidden;
-  width: 1024px !important;
+  width: 100% !important;
   min-height: 720px;
   height: inherit;
   padding: 0 !important;
@@ -559,7 +559,7 @@ export default {
 
     @include on-tablet {
       grid-template-columns: auto;
-      grid-template-rows: 62px auto auto 80px;
+      grid-template-rows: 62px auto min(100px) 80px;
       grid-template-areas:
       "leftbar-header"
       "center-content"
@@ -639,6 +639,10 @@ export default {
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
 
+    @include on-tablet {
+      display: none;
+    }
+
     .buttons {
       margin-right: 20px;
 
@@ -666,15 +670,15 @@ export default {
           font-weight: 500;
           text-transform: uppercase;
         }
-      }
 
-      .tab-content {
-        padding: 0;
-      }
+        .tab-content {
+          padding: 0;
+        }
 
-      .tab-content,
-      .tab-item {
-        height: 100%;
+        .tab-content,
+        .tab-item {
+          height: 100%;
+        }
       }
     }
   }

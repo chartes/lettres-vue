@@ -476,8 +476,8 @@ export default {
 
 .root-container {
   overflow: hidden;
+  width: 100% !important;
   min-height: 720px;
-  min-width: 960px;
   width: 100%;
   height: inherit;
   padding: 0 !important;
@@ -637,6 +637,10 @@ export default {
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
 
+    @include on-tablet {
+      display: none;
+    }
+
     .buttons {
       margin-right: 20px;
 
@@ -664,15 +668,15 @@ export default {
           font-weight: 500;
           text-transform: uppercase;
         }
-      }
 
-      .tab-content {
-        padding: 0;
-      }
+        .tab-content {
+          padding: 0;
+        }
 
-      .tab-content,
-      .tab-item {
-        height: 100%;
+        .tab-content,
+        .tab-item {
+          height: 100%;
+        }
       }
     }
   }

@@ -1388,6 +1388,17 @@ nav.previous-next-navigation {
   gap: 5px;
 }
 
+::v-deep {
+  .modal.is-active {
+    .animation-content {
+      @include on-small-tablet {
+        max-width: 90%;
+        margin: 0 auto;
+      }
+    }
+  }
+}
+
 .button.open-modal-button {
   display: flex !important;
   align-items: center;
