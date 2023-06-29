@@ -98,7 +98,6 @@
         <b-table-column
           field="object-id"
           label="Lettre"
-          width="20%"
           sortable
           numeric
           searchable
@@ -140,7 +139,6 @@
         <b-table-column
           field="collections"
           label="Collection"
-          width="20%"
           sortable
           searchable
         >
@@ -181,7 +179,6 @@
         <b-table-column
           field="username"
           label="User name"
-          width="10%"
           :sortable="current_user.isAdmin"
           :searchable="current_user.isAdmin"
         >
@@ -217,7 +214,6 @@
         <b-table-column
           field="description"
           label="Description"
-          width="40%"
           sortable
           searchable
         >
@@ -253,7 +249,6 @@
         <b-table-column
           field="event-date"
           label="Date"
-          width="15%"
           sortable
           searchable
         >
@@ -292,7 +287,6 @@
         <b-table-column
           field="expiration-date"
           label="Expire"
-          width="15%"
           sortable
           searchable
         >

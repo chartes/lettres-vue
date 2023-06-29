@@ -448,8 +448,8 @@
     }
 
     th {
-      &.th-search-results:nth-child(2),
-      &.th-collection-results:nth-child(2) {
+      &:nth-child(2),
+      &:nth-child(2) {
         .th-wrap {
           transform: translateX(-20px);
         }
@@ -463,9 +463,22 @@
       }
     }
 
-    td:nth-child(2) {
-      width: 50px;
+    // Chevron
+    th:nth-child(1),
+    td:nth-child(1) {
+      width: 20px !important;
       padding-right: 0;
+    }
+
+    // Lettre
+    th:nth-child(2),
+    td:nth-child(2) {
+      width: 160px !important;
+      padding-right: 0;
+
+      @include on-tablet {
+        width: 80px !important;
+      }
 
       .tags {
         display: flex;
@@ -492,6 +505,38 @@
         }
       }
 
+    }
+
+    // Collection
+    th:nth-child(3),
+    td:nth-child(3) {
+    }
+
+    // Username
+    th:nth-child(4),
+    td:nth-child(4) {
+    }
+
+    // Description
+    th:nth-child(5),
+    td:nth-child(5) {
+    }
+
+    // Date
+    th:nth-child(6),
+    td:nth-child(6) {
+    }
+
+    // Expire
+    th:nth-child(7),
+    td:nth-child(7) {
+    }
+
+    // Checkbox
+    th:nth-child(8),
+    td:nth-child(8) {
+      width: 24px !important;
+      text-align: right !important;
     }
 
     .checkbox-cell {
