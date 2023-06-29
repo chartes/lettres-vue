@@ -26,6 +26,7 @@
     </section>
     <section v-if="selectedCollection">
       <document-list
+        content-type="collection-results"
         :collection-id="selectedCollection.id"
       />
     </section>

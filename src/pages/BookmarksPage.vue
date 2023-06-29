@@ -69,6 +69,8 @@
           label="Lettre"
           sortable
           width="10%"
+          :th-attrs="firstColumnThAttrs"
+          :td-attrs="firstColumnTdAttrs"
         >
           <template #header="{ column }">
             <div v-if="column.sortable">
@@ -373,6 +375,17 @@ export default {
         filters: "",
       });
     },
+    firstColumnThAttrs(row, column) {
+      return {
+        class: 'th-bookmarks'
+      }
+    },
+    firstColumnTdAttrs(row, column) {
+      return {
+        class: 'td-bookmarks'
+      }
+    },
+
   },
 };
 </script>

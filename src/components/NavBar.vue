@@ -337,7 +337,7 @@ export default {
 
       .navbar-item {
         display: flex;
-        padding: 20px 0.75rem;
+        padding: 9px 0.75rem;
       }
     }
 
@@ -370,7 +370,7 @@ export default {
     padding: 15px 0 18px 20px;
     right: 0 !important;
     left: auto !important;
-    top:78px;
+    top:60px;
 
     font-family: $family-secondary;
     font-size: 18px;

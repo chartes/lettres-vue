@@ -68,8 +68,7 @@
         <b-table-column
           field="object-id"
           label="Lettre"
-          sortable
-          width="100"
+          sortablef
         >
           <template v-slot:header="{ column }">
             <div v-if="column.sortable">
@@ -108,7 +107,6 @@
         <b-table-column
           field="event-date"
           label="Date"
-          width="200"
           sortable
         >
           <template v-slot:header="{ column }">
@@ -143,7 +141,6 @@
         <b-table-column
           field="user_id"
           label="Utilisateur"
-          width="200"
           sortable
         >
           <template v-slot:header="{ column }">
