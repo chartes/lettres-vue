@@ -491,6 +491,10 @@ export default {
           background-color: #CB2158;
           color: #FFF;
 
+          .heading {
+            text-transform: none !important;
+          }
+
           .labels {
             padding: 0;
             border: none;
@@ -541,10 +545,15 @@ export default {
           color: #7F0038;
           font-weight: 500;
           text-transform: uppercase;
+
+          @include on-mobile {
+            padding: 5px 8px 5px 5px;
+            font-size: 13px;
+          }
         }
 
         .tab-content {
-          padding: 0;
+          padding: 10px 0;
         }
 
         .tab-content,
@@ -569,10 +578,52 @@ export default {
       justify-content: center;
       align-items: center;
 
+      @include on-tablet {
+        bottom: 15px;
+      }
+
+      @include on-mobile {
+        bottom: 20px;
+        width: 100%;
+        padding: 0 10px;
+        justify-content: flex-end;
+      }
+
       button {
         width: 140px;
         margin: 10px !important;
         background-color: #CB2158;
+
+        @include on-mobile {
+
+          font-size: 14px;
+
+          &.button {
+            width: auto;
+            margin: 10px 3px !important;
+          }
+
+          &.previous-button,
+          &.next-button {
+            text-indent: -9999px;
+            width: 50px;
+            padding: 0 5px;
+          }
+
+          &.previous-button:after,
+          &.next-button:after {
+            content: "";
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            background: url(#{$image-path}/icons/suivant.svg) center right / 16px auto no-repeat;
+            transform-origin: 50% 50%;
+          }
+
+          &.previous-button:after {
+            transform: rotate(-180deg);
+          }
+        }
       }
     }
   }

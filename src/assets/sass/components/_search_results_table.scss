@@ -142,6 +142,20 @@
 
         tr {
 
+          &.is-selected {
+            background-color: #CB2158;
+
+            td:nth-child(1) {
+              padding-left: 10px;
+            }
+
+            a,
+            .tag {
+              color: #FFF !important;
+              padding: 0;
+            }
+          }
+
           &:not(.detail) {
             border-bottom: 1px solid #fdb3cc !important;
             box-shadow: none !important;

@@ -1391,9 +1391,22 @@ nav.previous-next-navigation {
 ::v-deep {
   .modal.is-active {
     .animation-content {
-      @include on-small-tablet {
-        max-width: 90%;
-        margin: 0 auto;
+
+      @include on-tablet {
+        width: calc(100% - 80px) !important;
+        max-width: 100% !important;
+        margin: 0 auto !important;
+      }
+
+      @include on-mobile {
+        width: calc(100% - 60px) !important;
+      }
+
+      .modal-close {
+        @include on-mobile {
+          right: 0 !important;
+          top: 10px !important;
+        }
       }
     }
   }
