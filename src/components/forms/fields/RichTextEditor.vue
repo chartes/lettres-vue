@@ -99,7 +99,7 @@ export default {
     options: { type: Object, default: () => {} },
   },
   //mixins: [EditorNotesMixins],
-  emits: ["add-place", "add-person", "add-note"],
+  emits: ["add-place", "add-person", "add-note", "on-keyup-escape"],
   data() {
     return {
       debug: false,
@@ -136,6 +136,7 @@ export default {
         person: { cb: this.displayPersonForm, active: this.editorHasFocus },
         location: { cb: this.displayLocationForm, active: this.editorHasFocus },
         cite: { cb: this.simpleFormat, active: this.editorHasFocus },
+        close: { cb: this.onClose, active: true }
       };
     },
     actionsPosition() {
@@ -204,9 +205,10 @@ export default {
     },
 
     activateEvents() {
-      if (!this.multiline) {
+      /*if (!this.multiline) {
         this.editorElement.addEventListener("keydown", this.onSingleKeyup, true);
-      }
+      }*/
+      this.editorElement.addEventListener("keydown", this.onSingleKeyup, true);
       this.editor.on("selection-change", this.onSelection);
       this.editor.on("selection-change", this.onFocus);
       this.editor.on("text-change", this.onTextChange);
@@ -311,7 +313,8 @@ export default {
     },
     onSingleKeyup(evt) {
       if (evt.code === "Escape") {
-        this.$emit("on-keyup-escape");
+        console.log("RTE on-keyup-escape", evt)
+        this.$emit("on-keyup-escape", evt);
       } else if (evt.code === "Enter") {
         evt.preventDefault();
         evt.stopImmediatePropagation();
@@ -321,6 +324,9 @@ export default {
     },
     onFocus() {
       this.editorHasFocus = this.editor.hasFocus();
+    },
+    onClose() {
+      this.$emit("on-keyup-escape");
     },
 
     simpleFormat(formatName) {
