@@ -464,11 +464,18 @@
     }
 
     td:nth-child(2) {
+      width: 50px;
+      padding-right: 0;
+
       .tags {
         display: flex;
         justify-content: flex-end;
         position: relative;
         margin: 0;
+
+        @include on-tablet {
+          flex-direction: column;
+        }
 
         & > .tag:first-child {
           position: absolute;
@@ -476,6 +483,12 @@
           min-width: 50px;
           text-align: left;
           margin-left: 10px;
+
+          @include on-tablet {
+            top: 50%;
+            transform: translateY(-40%);
+            margin-left: 0;
+          }
         }
       }
 
