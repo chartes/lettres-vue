@@ -1391,20 +1391,24 @@ nav.previous-next-navigation {
 ::v-deep {
   .modal.is-active {
     .animation-content {
+      width: 100% !important;
+
+      max-width: 80% !important;
+      margin: 20px auto !important;
 
       @include on-tablet {
-        width: calc(100% - 80px) !important;
         max-width: 100% !important;
-        margin: 0 auto !important;
-      }
-
-      @include on-mobile {
-        width: calc(100% - 60px) !important;
+        margin: 0 !important;
       }
 
       .modal-close {
+        @include on-tablet {
+          right: 10px !important;
+          top: 10px !important;
+        }
+
         @include on-mobile {
-          right: 0 !important;
+          right: 10px !important;
           top: 10px !important;
         }
       }

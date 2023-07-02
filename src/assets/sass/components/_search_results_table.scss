@@ -48,6 +48,14 @@
             border-bottom: 1px solid #fdb3cc;
             padding: 0 10px 10px 0 !important;
 
+            &:last-child {
+              padding-right: 0 !important;
+            }
+
+            .th-wrap span {
+              white-space: break-spaces;
+            }
+
             @include on-mobile {
               padding-right: 5px;
             }
@@ -353,12 +361,24 @@
             }
 
             &:nth-child(2) {
-              .tag {
-                background: none;
-                font-family: $family-primary;
-                font-size: 16px;
-                font-weight: 400;
-                color: #515151;
+              .tags {
+                margin-bottom: 0 !important;
+
+                .tag {
+                  height: auto !important;
+                  background: none;
+
+                  font-family: $family-primary;
+                  font-size: 16px;
+                  font-weight: 400;
+                  line-height: 1.2;
+                  color: #515151;
+                  white-space: break-spaces;
+
+                  &:not(:last-child) {
+                    margin-bottom: 20px;
+                  }
+                }
               }
             }
 

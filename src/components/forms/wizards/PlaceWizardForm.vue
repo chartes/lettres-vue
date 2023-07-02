@@ -28,6 +28,7 @@
           {{ currentStep.label }}
         </h2>
       </div>
+
       <div class="center-content-area">
         <b-tabs v-model="activeTab">
           <b-tab-item
@@ -494,15 +495,21 @@ export default {
 .root-container {
   overflow: hidden;
   width: 100% !important;
+  padding: 30px 60px !important;
   min-height: 720px;
   height: inherit;
-  padding: 0 !important;
   background: transparent !important;
 
   &.modal-card {
+    padding: 30px 40px !important;
+    min-height: 100vh !important;
+
     @include on-tablet {
       width: 100% !important;
-      min-width: 100% !important;
+      padding: 20px 10px !important;
+      min-height: auto;
+      overflow-x: hidden !important;
+      overflow-y: auto !important;
     }
   }
 
@@ -591,10 +598,6 @@ export default {
       letter-spacing: 0;
 
       @include on-tablet {
-        font-size: $font-size-title-tablet;
-      }
-
-      @include on-mobile {
         font-size: $font-size-title-mobile;
       }
     }
@@ -604,12 +607,21 @@ export default {
   .nav-footer-area {
     background-color: #7F0038 !important;
     margin-left: 10px;
+
+    @include on-tablet {
+      margin-left: 0;
+    }
   }
 
   .leftbar-content-area {
     grid-area: leftbar-content;
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
+
+    @include on-tablet {
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }
 
     .b-tabs {
       ::v-deep {
@@ -673,7 +685,7 @@ export default {
           font-weight: 500;
           text-transform: uppercase;
 
-          @include on-mobile {
+          @include on-tablet {
             padding: 5px 8px 5px 5px;
             font-size: 13px;
           }
@@ -699,20 +711,16 @@ export default {
 
     .buttons {
       position: absolute;
-      bottom: 40px;
+      bottom: 60px;
 
       display: flex;
       justify-content: center;
       align-items: center;
 
       @include on-tablet {
-        bottom: 15px;
-      }
-
-      @include on-mobile {
         bottom: 20px;
         width: 100%;
-        padding: 0 10px;
+        padding: 0 20px;
         justify-content: flex-end;
       }
 
@@ -721,7 +729,7 @@ export default {
         margin: 10px !important;
         background-color: #CB2158;
 
-        @include on-mobile {
+        @include on-tablet {
 
           font-size: 14px;
 
@@ -758,7 +766,6 @@ export default {
       }
     }
   }
-
 }
 
 .root-container::v-deep .b-tabs .tabs:first-of-type {

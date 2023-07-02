@@ -478,14 +478,19 @@ export default {
 .root-container {
   overflow: hidden;
   width: 100% !important;
+  padding: 30px 60px !important;
+  margin-bottom: 0 !important;
   min-height: 720px;
   height: inherit;
-  padding: 0 !important;
   background: transparent !important;
 
   &.modal-card {
+    padding: 30px 40px !important;
+    min-height: 100vh !important;
+
     @include on-tablet {
       width: 100% !important;
+      padding: 10px 10px !important;
       min-height: auto;
       overflow-x: hidden !important;
       overflow-y: auto !important;
@@ -576,10 +581,6 @@ export default {
       letter-spacing: 0;
 
       @include on-tablet {
-        font-size: $font-size-title-tablet;
-      }
-
-      @include on-mobile {
         font-size: $font-size-title-mobile;
       }
     }
@@ -607,6 +608,11 @@ export default {
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
 
+    @include on-tablet {
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }
+
     .b-tabs {
       ::v-deep {
 
@@ -631,10 +637,6 @@ export default {
       }
     }
 
-    @include on-tablet {
-      margin-top: 10px;
-      margin-bottom: 10px;
-    }
   }
 
   .leftbar-footer-area {
@@ -667,7 +669,6 @@ export default {
       height: 100%;
 
       ::v-deep {
-
         .tabs li > a {
           font-family: $family-primary;
           font-size: 18px;
@@ -675,7 +676,7 @@ export default {
           font-weight: 500;
           text-transform: uppercase;
 
-          @include on-mobile {
+          @include on-tablet {
             padding: 5px 8px 5px 5px;
             font-size: 13px;
           }
@@ -701,20 +702,16 @@ export default {
 
     .buttons {
       position: absolute;
-      bottom: 40px;
+      bottom: 60px;
 
       display: flex;
       justify-content: center;
       align-items: center;
 
       @include on-tablet {
-        bottom: 15px;
-      }
-
-      @include on-mobile {
         bottom: 20px;
         width: 100%;
-        padding: 0 10px;
+        padding: 0 20px;
         justify-content: flex-end;
       }
 
@@ -723,7 +720,7 @@ export default {
         margin: 10px !important;
         background-color: #CB2158;
 
-        @include on-mobile {
+        @include on-tablet {
 
           font-size: 14px;
 
@@ -755,6 +752,9 @@ export default {
         }
       }
 
+      span:empty {
+        display: none;
+      }
     }
   }
 }

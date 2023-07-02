@@ -66,11 +66,7 @@ export default {
   padding-top: 25px;
   padding-left: 12px;
   padding-right: 20px;
-  margin-bottom: 60px;
-
-  @include on-mobile {
-    padding: 0;
-  }
+  margin-bottom: 20px;
 
   .label {
     color: inherit !important;

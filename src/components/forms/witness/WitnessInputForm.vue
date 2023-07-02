@@ -144,6 +144,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import "@/assets/sass/main.scss";
+
 .editor {
   margin-bottom: 40px;
 }
@@ -151,6 +153,11 @@ export default {
   padding-top: 75px;
   padding-left: 12px;
   width: 80%;
+
+  @include on-tablet {
+    padding-top: 20px;
+    padding-bottom: 20px;
+  }
 }
 .institution-input {
   max-width: 420px;
