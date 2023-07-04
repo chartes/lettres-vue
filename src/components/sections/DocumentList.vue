@@ -348,6 +348,7 @@
     <div :class="toggleCssClass">
       <b-table
         ref="multiSortTable"
+        :class="contentType"
         :data="tableData"
 
         :loading="loadingStatus"
@@ -377,6 +378,7 @@
         <b-table-column
           field="id"
           label="Lettre"
+          :th-attrs="columnThAttrs"
           :td-attrs="columnTdAttrs"
           sortable
         >
@@ -417,6 +419,7 @@
         <b-table-column
           field="creation"
           label="Date de rédaction"
+          :th-attrs="columnThAttrs"
           :td-attrs="columnTdAttrs"
           sortable
         >
@@ -453,6 +456,7 @@
         <b-table-column
           field="title"
           label="Titre"
+          :th-attrs="columnThAttrs"
           :td-attrs="columnTdAttrs"
         >
           <template v-slot:header="{ column }">
@@ -498,6 +502,7 @@
         <b-table-column
           field="senders.label.keyword"
           label="Expéditeur(s)"
+          :th-attrs="columnThAttrs"
           :td-attrs="columnTdAttrs"
           sortable
         >
@@ -534,6 +539,7 @@
         <b-table-column
           field="recipients.label.keyword"
           label="Destinataire(s)"
+          :th-attrs="columnThAttrs"
           :td-attrs="columnTdAttrs"
           sortable
         >
@@ -570,6 +576,7 @@
         <b-table-column
           field="location-date-from.label.keyword"
           label="Lieu d'expédition"
+          :th-attrs="columnThAttrs"
           :td-attrs="columnTdAttrs"
           sortable
         >
@@ -606,6 +613,7 @@
         <b-table-column
           field="location-date-to.label.keyword"
           label="Lieu de destination"
+          :th-attrs="columnThAttrs"
           :td-attrs="columnTdAttrs"
           sortable
         >
@@ -673,7 +681,12 @@ export default {
           type: Number,
           default: undefined,
           required: false,
-      }
+      },
+    "contentType": {
+      type: String,
+      default: undefined,
+      required: false,
+    }
   },
   data() {
     return {
@@ -863,10 +876,17 @@ export default {
         this.loadAsyncData();
       }
     },
+    columnThAttrs(row, column) {
+      if (this.contentType) {
+        return {
+          class: 'th-' + this.contentType
+        }
+      }
+    },
     columnTdAttrs(row, column) {
       if (column.label === 'Titre') {
         return {
-          class: '',
+          class: this.contentType ? 'td-' + this.contentType : '',
           style: {
             'max-width': '550px'
           }
@@ -874,13 +894,15 @@ export default {
       }
       else if (column.label === 'Date de rédaction') {
         return {
-          class: '',
+          class: this.contentType ? 'td-' + this.contentType : '',
           style: {
             'max-width': '300px'
           }
         }
       } else {
-        return null
+        return {
+          class: this.contentType ? 'td-' + this.contentType : ''
+        }
       }
     }
   }
@@ -946,6 +968,7 @@ progress {
   color: #C00055;
   text-transform: uppercase;
 }
+
 .switch-button {
   background-color: lightgrey;
   border-radius: 30px;
@@ -961,6 +984,10 @@ progress {
 
   color: white;
   transition: all ease-in-out 300ms;
+
+  @include on-mobile {
+    width: 160px;
+  }
 
   &.is-active {
     color: grey;
@@ -989,6 +1016,10 @@ progress {
     justify-content: center;
     z-index: 3;
     pointer-events: none;
+
+    @include on-mobile {
+      width: 80px;
+    }
   }
 
   &-checkbox {
@@ -1005,6 +1036,10 @@ progress {
     &:checked + .switch-button-label:before {
       transform: translateX(120px);
       transition: transform 300ms linear;
+
+      @include on-mobile {
+        transform: translateX(80px);
+      }
     }
 
     & + .switch-button-label {
@@ -1015,6 +1050,10 @@ progress {
       user-select: none;
       pointer-events: none;
       height: 100%;
+
+      @include on-mobile {
+        width: 90px;
+      }
 
       &:before {
         content: "";
@@ -1035,6 +1074,7 @@ progress {
     }
   }
 }
+
 .pagination-controls {
   display: flex;
   align-items: center;
@@ -1115,6 +1155,7 @@ progress {
 
   @include on-small-tablet {
     flex-wrap: wrap;
+    gap: 10px;
 
     .switch-button-parent {
       flex: 100% 0 0 !important;
@@ -1150,6 +1191,11 @@ progress {
     }
   }
 }
+
+.select-parent {
+  margin: 0 5px;
+}
+
 /* Chrome, Safari, Edge, Opera */
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {

@@ -112,6 +112,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
+@import "@/assets/sass/main.scss";
 .notes {
   margin-top: 40px;
   margin-bottom: 40px;
@@ -123,13 +124,39 @@ export default {
   padding-top: 24px;
   padding-bottom: 24px;
 }
-span.edit-btn {
+/*span.edit-btn {
+  position: unset;
+  flex: 55px 0 0;
+
   display: inline-block;
   cursor: pointer;
-  width: 24px;
-  height: 24px;
-  background: url(../../assets/images/icons/bouton_edit.svg) center / 24px auto no-repeat;
+  width: 25px;
+  height: 25px;
+  background: url(../../assets/images/icons/bouton_edit.svg) center / 20px auto no-repeat !important;
+  cursor: pointer;
+
   i {
+    display: none;
+  }
+  .icon.icon__pen-edit {
+    display: none;
+  }
+}*/
+.edit-btn {
+  position: unset;
+  flex: 55px 0 0;
+
+  display: inline-block;
+  width: 25px;
+  height: 25px;
+  background: url(../../assets/images/icons/bouton_edit.svg) center / 20px auto no-repeat !important;
+  cursor: pointer;
+
+  @include on-mobile {
+    flex: 45px 0 0;
+  }
+
+  .icon.icon__pen-edit {
     display: none;
   }
 }

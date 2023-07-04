@@ -1,7 +1,16 @@
 <template>
-  <div class="root-container box modal-card">
-    <div class="root-grid-container">
-      <div class="leftbar-header-area">
+  <div
+      class="root-container"
+      :class="popupMode ? 'box modal-card' : ''"
+  >
+    <div
+        class="root-grid-container"
+        :class="popupMode ? 'popup-mode' : ''"
+    >
+      <div
+          v-if="popupMode"
+          class="leftbar-header-area"
+      >
         <h1 class="step-label">
           {{ wizardLabel }}
         </h1>
@@ -33,7 +42,10 @@
           </b-tab-item>
         </b-tabs>
       </div>
-      <div class="leftbar-content-area">
+      <div
+          v-if="popupMode"
+          class="leftbar-content-area"
+      >
         <b-tabs
           v-model="activeTab"
           :animated="false"
@@ -56,8 +68,14 @@
         </b-tabs>
       </div>
 
-      <div class="leftbar-footer-area" />
-      <div class="nav-footer-area">
+      <div
+          v-if="popupMode"
+          class="leftbar-footer-area"
+      />
+      <div
+          v-if="popupMode"
+          class="nav-footer-area"
+      >
         <div class="buttons">
           <b-button
             type="is-primary"
@@ -125,6 +143,7 @@ export default {
     ManifestCreationForm,
   },
   props: {
+    popupMode: { type: Boolean, default: true },
     witnessInput: {
       type: Object,
       default: () => {
@@ -375,12 +394,24 @@ export default {
 
 .root-container {
   overflow: hidden;
+  width: 100% !important;
+  padding: 30px 60px !important;
   min-height: 720px;
-  min-width: 960px;
-  width: 100%;
   height: inherit;
-  padding: 0 !important;
   background: transparent !important;
+
+  &.modal-card {
+    padding: 30px 40px !important;
+    min-height: 100vh !important;
+
+    @include on-tablet {
+      width: 100% !important;
+      padding: 20px 10px !important;
+      min-height: auto;
+      overflow-x: hidden !important;
+      overflow-y: auto !important;
+    }
+  }
 
   .label {
     color: inherit !important;
@@ -395,6 +426,12 @@ export default {
     margin-left: 12px;
     margin-right: 12px;
     min-width: 300px;
+
+    @include on-tablet {
+      width: 100%;
+      margin: 0;
+      padding: 10px 20px;
+    }
 
     ::v-deep {
       .table tr.is-selected,
@@ -419,12 +456,28 @@ export default {
     height: 100%;
     background: none;
 
-    grid-template-columns: minmax(800px, auto) minmax(280px, 28%);
+    grid-template-columns: auto;
+    grid-template-rows: auto;
+    grid-template-areas: "center-content";
+  }
+
+  .popup-mode {
+    grid-template-columns: auto 320px;
     grid-template-rows: 62px auto 80px;
     grid-template-areas:
       "leftbar-header leftbar-header"
       "center-content leftbar-content"
       "leftbar-footer nav-footer";
+
+    @include on-tablet {
+      grid-template-columns: 100%;
+      grid-template-rows: 62px auto auto 80px;
+      grid-template-areas:
+      "leftbar-header"
+      "center-content"
+      "leftbar-content"
+      "nav-footer";
+    }
   }
 
   .leftbar-header-area {
@@ -434,7 +487,6 @@ export default {
   .leftbar-header-area {
     display: flex;
     align-items: center;
-    gap: 0;
 
     background-color: #CB2158;
     border: none;
@@ -447,10 +499,14 @@ export default {
       padding: 0;
       margin: 0 !important;
       font-family: $family-apptitle;
-      font-size: 30px !important;
+      font-size: 30px;
       color: #FFFFFF;
       font-weight: 200;
       letter-spacing: 0;
+
+      @include on-tablet {
+        font-size: $font-size-title-mobile;
+      }
     }
 
     h2 {
@@ -467,6 +523,10 @@ export default {
   .nav-footer-area {
     background-color: #7F0038 !important;
     margin-left: 10px;
+
+    @include on-tablet {
+      margin-left: 0;
+    }
   }
 
   .leftbar-content-area {
@@ -474,12 +534,21 @@ export default {
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
 
+    @include on-tablet {
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }
+
     .b-tabs {
       ::v-deep {
 
         .tab-content {
           background-color: #CB2158;
           color: #FFF;
+
+          .heading {
+            text-transform: none !important;
+          }
 
           .labels {
             padding: 0;
@@ -500,6 +569,10 @@ export default {
     background-color: #FFFFFF;
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
+
+    @include on-tablet {
+      display: none;
+    }
 
     .buttons {
       margin-right: 20px;
@@ -527,16 +600,21 @@ export default {
           color: #7F0038;
           font-weight: 500;
           text-transform: uppercase;
+
+          @include on-mobile {
+            padding: 5px 8px 5px 5px;
+            font-size: 13px;
+          }
         }
-      }
 
-      .tab-content {
-        padding: 0;
-      }
+        .tab-content {
+          padding: 10px 0;
+        }
 
-      .tab-content,
-      .tab-item {
-        height: 100%;
+        .tab-content,
+        .tab-item {
+          height: 100%;
+        }
       }
     }
   }
@@ -549,16 +627,58 @@ export default {
 
     .buttons {
       position: absolute;
-      bottom: 40px;
+      bottom: 60px;
 
       display: flex;
       justify-content: center;
       align-items: center;
 
+      @include on-tablet {
+        bottom: 20px;
+        width: 100%;
+        padding: 0 20px;
+        justify-content: flex-end;
+      }
+
       button {
         width: 140px;
         margin: 10px !important;
         background-color: #CB2158;
+
+        @include on-tablet {
+
+          font-size: 14px;
+
+          &.button {
+            width: auto;
+            margin: 10px 3px !important;
+          }
+
+          &.previous-button,
+          &.next-button {
+            text-indent: -9999px;
+            width: 50px;
+            padding: 0 5px;
+          }
+
+          &.previous-button:after,
+          &.next-button:after {
+            content: "";
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            background: url(#{$image-path}/icons/suivant.svg) center right / 16px auto no-repeat;
+            transform-origin: 50% 50%;
+          }
+
+          &.previous-button:after {
+            transform: rotate(-180deg);
+          }
+        }
+      }
+
+      span:empty {
+        display: none;
       }
     }
   }

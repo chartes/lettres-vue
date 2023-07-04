@@ -192,8 +192,12 @@ export default {
       display: inline-block;
       width: 25px;
       height: 25px;
-      background: url(../../../assets/images/icons/bouton_edit.svg) center / 25px auto no-repeat !important;
+      background: url(../../../assets/images/icons/bouton_edit.svg) center / 20px auto no-repeat !important;
       cursor: pointer;
+
+      @include on-mobile {
+        flex: 45px 0 0;
+      }
 
       .icon.icon__pen-edit {
         display: none;

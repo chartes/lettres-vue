@@ -60,11 +60,13 @@ export default {
 </script>
 
 <style lang="scss">
+@import "@/assets/sass/main.scss";
+
 .place-wizard-center-form {
   padding-top: 25px;
   padding-left: 12px;
   padding-right: 20px;
-  margin-bottom: 60px;
+  margin-bottom: 20px;
 
   .label {
     color: inherit !important;

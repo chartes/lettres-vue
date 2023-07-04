@@ -11,7 +11,9 @@
             <i class='fas fa-bars'/>
           </div>
         </div>
-        <div class="container fluid tab-tabs-parent">
+        <div class="container fluid tab-tabs-parent"
+             :class="isMenuOpened?'opened':''"
+        >
           <b-tabs
             type="is-toggle"
             size="is-medium"
@@ -121,18 +123,133 @@ export default {
     margin-bottom: 20px;
   }
 }
+
 ::v-deep nav.tabs {
   position: fixed;
   max-width: 20vw !important;
   min-width: min-content;
+  width: 240px !important;
+
+  @include on-small-tablet {
+    ul {
+      margin-left: 0;
+    }
+  }
+
+  @include on-mobile {
+    height: 100%;
+    left: 0;
+    top: 0;
+    padding-top: 110px;
+    transition: .3s cubic-bezier(.25,.8,.5,1);
+    transform: translateX(-110%);
+    border-right: 1px solid #ccc;
+    background-color: #fff;
+    z-index: 1;
+  }
 }
+
+.tab-tabs-parent.opened {
+  ::v-deep nav.tabs {
+    transform: translateX(0);
+  }
+}
+
+.head--section {
+  position: relative;
+}
+
+.toggle-menu-btn {
+  display: none !important;
+
+  @include on-mobile {
+    display: flex !important;
+    position: absolute;
+    right: 0;
+    top: 0;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+
+    &:before {
+      background-color: currentColor;
+      border-radius: inherit;
+      bottom: 0;
+      color: inherit;
+      content: "";
+      left: 0;
+      opacity: 0;
+      pointer-events: none;
+      position: absolute;
+      right: 0;
+      top: 0;
+      transition: opacity .2s cubic-bezier(.4,0,.6,1);
+    }
+
+    &:hover {
+      &:before {
+        opacity: .08;
+      }
+    }
+  }
+}
+
 ::v-deep section.tab-content {
   margin-left: 25vw !important;
-  padding: 25px;
+  padding: 25px 0 25px 40px;
+
+  @include on-mobile {
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+  }
+
+  a {
+    color: #C00055;
+
+    &:hover {
+      text-decoration: underline;
+      text-decoration-style: dotted;
+      text-underline-offset: 2px;
+    }
+  }
+
+  .button.is-primary {
+    width: auto;
+    height: auto;
+    background-color: #C00055;
+    border-radius: 5px;
+    padding: 6px 10px;
+    margin: 10px 0 !important;
+    font-family: "Barlow", Helvetica, Arial, sans-serif;
+    font-size: 18px;
+    line-height: 1;
+    font-weight: 500;
+    color: #FFFFFF;
+    letter-spacing: 0;
+    text-transform: uppercase;
+  }
+}
+::v-deep li a {
+  justify-content: right !important;
+  background: transparent !important;
+  border: none !important;
+  border-left: solid 2px transparent !important;
+  border-radius: 0;
+  min-height: 48px;
+  font-size: .875rem;
+  font-weight: 600;
+  text-align: right;
+  text-transform: uppercase;
 }
 ::v-deep li.is-active a {
-  background-color: rgb(127, 0, 56) !important;
-  border-color: rgb(127, 0, 56) !important;
+  // background-color: rgb(127, 0, 56) !important;
+  // border-color: rgb(127, 0, 56) !important;
+  border-radius: 0 !important;
+  border-left: solid 2px rgb(127, 0, 56) !important;
+  color: rgb(127, 0, 56) !important;
 }
 ::v-deep h2.subtitle {
   color: #C00055 !important;

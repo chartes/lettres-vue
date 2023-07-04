@@ -245,6 +245,10 @@ export default {
     .search-container {
       width: 100%;
     }
+
+    .column {
+      padding: 5px 0;
+    }
   }
 }
 

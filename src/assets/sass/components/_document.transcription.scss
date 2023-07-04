@@ -20,15 +20,20 @@
     padding-left: 75px;
     background: url(#{$image-path}/icons/guillemet.svg) no-repeat;
 
-    font-size: 18px;
-    color: #333333;
+    font-size: $font-size-text-tablet;
     font-weight: 400;
     line-height: 28px;
+    color: #333333;
 
     @include on-mobile {
       padding-top: 0;
       padding-left: 50px;
       background-size: 30px 24px;
+      font-size: $font-size-text-mobile;
+    }
+
+    p > * {
+      display: inline !important;
     }
 
   }

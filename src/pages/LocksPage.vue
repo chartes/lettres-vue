@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="is-flex is-justify-content-space-between is-align-items-center">
+    <div class="results-count-and-pagination is-flex is-justify-content-space-between is-align-items-center">
       <div class="popup-list-header is-inline-block">
         <div class="results-count">
           <span class="total-count">{{ totalCount }}</span> résultat(s)
@@ -98,7 +98,6 @@
         <b-table-column
           field="object-id"
           label="Lettre"
-          width="20%"
           sortable
           numeric
           searchable
@@ -140,7 +139,6 @@
         <b-table-column
           field="collections"
           label="Collection"
-          width="20%"
           sortable
           searchable
         >
@@ -181,7 +179,6 @@
         <b-table-column
           field="username"
           label="User name"
-          width="10%"
           :sortable="current_user.isAdmin"
           :searchable="current_user.isAdmin"
         >
@@ -217,7 +214,6 @@
         <b-table-column
           field="description"
           label="Description"
-          width="40%"
           sortable
           searchable
         >
@@ -253,7 +249,6 @@
         <b-table-column
           field="event-date"
           label="Date"
-          width="15%"
           sortable
           searchable
         >
@@ -292,7 +287,6 @@
         <b-table-column
           field="expiration-date"
           label="Expire"
-          width="15%"
           sortable
           searchable
         >
@@ -702,10 +696,22 @@ export default {
       text-transform: uppercase;
     }
   }
+  .results-count-and-pagination {
+    @include on-mobile {
+      flex-direction: column;
+      justify-content: flex-start !important;
+      align-items: flex-start !important;
+      margin-bottom: 20px;
+    }
+  }
   .popup-list-header {
     /*border-top: solid 1px #FDB3CC;
     border-bottom: solid 1px #C7C7C7;*/
     margin-bottom: 25px;
+
+    @include on-mobile {
+      margin-bottom: 10px;
+    }
 
     .results-count {
       display: flex;
@@ -723,6 +729,10 @@ export default {
         color: #FF0052;
         text-align: center;
         font-weight: 700;
+
+        @include on-mobile {
+          font-size: 30px;
+        }
       }
     }
   }

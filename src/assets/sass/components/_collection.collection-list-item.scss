@@ -15,7 +15,7 @@
       grid-template-areas:
           "card-thumbnail card-title"
           "card-thumbnail card-infos";
-      padding: 0 20px;
+      padding: 0 15px;
     }
 
     &.expanded {
@@ -44,6 +44,10 @@
       grid-area: card-title;
       flex: 2;
       padding: 0 25px;
+
+      @include on-mobile {
+        padding: 0 10px;
+      }
 
       .collection-parent-title.breadcrumb {
         margin-bottom: 10px;
@@ -100,6 +104,7 @@
         font-size: $font-size-text-mobile;
         line-height: 1.25;
         text-align: left;
+        padding: 0 10px;
       }
 
       & > .collection-dates span:first-child::after {
@@ -145,7 +150,7 @@
     padding: 25px;
 
     @include on-mobile {
-      padding: 20px;
+      padding: 15px;
     }
 
     }

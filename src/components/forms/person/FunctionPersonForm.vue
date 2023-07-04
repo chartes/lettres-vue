@@ -114,7 +114,7 @@ export default {
 .wizard-center-form {
   padding-top: 25px;
   padding-left: 12px;
-  padding-right: 32px;
+  padding-right: 12px;
   margin-bottom: 60px;
 }
 </style>

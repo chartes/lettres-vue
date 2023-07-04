@@ -147,13 +147,31 @@ export default {
 .document-title__component {
   margin-bottom: 15px;
 }
-span.edit-btn {
+/*span.edit-btn {
   display: inline-block;
   cursor: pointer;
   width: 24px;
   height: 24px;
   background: url(../../assets/images/icons/bouton_edit.svg) center / 24px auto no-repeat;
   i {
+    display: none;
+  }
+}*/
+.edit-btn {
+  position: unset;
+  flex: 55px 0 0;
+
+  display: inline-block;
+  width: 25px;
+  height: 25px;
+  background: url(../../assets/images/icons/bouton_edit.svg) center / 20px auto no-repeat !important;
+  cursor: pointer;
+
+  @include on-mobile {
+    flex: 45px 0 0;
+  }
+
+  .icon.icon__pen-edit {
     display: none;
   }
 }

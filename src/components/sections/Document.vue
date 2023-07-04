@@ -871,6 +871,10 @@ export default {
             display: block !important;
             padding: 0 20px;
 
+            @include on-mobile {
+              padding: 0;
+            }
+
             .panel-block {
               padding-left: 0;
               padding-right: 0;
@@ -929,6 +933,13 @@ export default {
 
       &.columns {
         margin: 30px 0 40px !important;
+      }
+
+      .column {
+        @include on-mobile {
+          padding-left: 0 !important;
+          padding-right: 0 !important;
+        }
       }
 
       & > .heading {
@@ -1158,6 +1169,7 @@ nav.previous-next-navigation {
     text-transform: uppercase;
 
     @include on-mobile {
+      margin-bottom: 10px;
       font-size: 13px;
     }
 
@@ -1374,6 +1386,34 @@ nav.previous-next-navigation {
 
 .has-add-btn.is-flex {
   gap: 5px;
+}
+
+::v-deep {
+  .modal.is-active {
+    .animation-content {
+      width: 100% !important;
+
+      max-width: 80% !important;
+      margin: 20px auto !important;
+
+      @include on-tablet {
+        max-width: 100% !important;
+        margin: 0 !important;
+      }
+
+      .modal-close {
+        @include on-tablet {
+          right: 10px !important;
+          top: 10px !important;
+        }
+
+        @include on-mobile {
+          right: 10px !important;
+          top: 10px !important;
+        }
+      }
+    }
+  }
 }
 
 .button.open-modal-button {

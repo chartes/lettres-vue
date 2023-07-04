@@ -126,6 +126,8 @@ export default {
     background-color: #CB2158;
     border: none;
     border-radius: 5px;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
     padding: 12px 20px;
     margin-bottom: 10px;
 
@@ -153,6 +155,14 @@ export default {
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
 
+    @include on-mobile {
+      padding-top: 10px;
+    }
+
+    & > * {
+      margin-bottom: 20px;
+    }
+
     input[type="text"] {
       padding-left: 40px !important;
     }
@@ -162,6 +172,11 @@ export default {
   .message-footer {
     padding-left: 30px;
     padding-right: 30px;
+
+    @include on-mobile {
+      padding-left: 10px;
+      padding-right: 10px;
+    }
   }
 
   .message-footer {
@@ -198,7 +213,7 @@ export default {
     content: "";
     display: block;
     width: 100%;
-    margin-top: 80px;
+    margin-top: 60px;
     height: 1px;
     border-top: 1px solid #CB2158;
   }

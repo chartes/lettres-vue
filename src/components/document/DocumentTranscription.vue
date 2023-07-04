@@ -229,6 +229,7 @@ export default {
 <style scoped lang="scss">
 @import "@/assets/sass/main.scss";
 @import "@/assets/sass/components/_document.transcription.scss";
+
 ::v-deep em {
    background-color: yellow !important;
 }
@@ -236,15 +237,38 @@ export default {
   content: " [...] ";
   font-weight: bold;
 }
-span.edit-btn {
+/*span.edit-btn {
   display: inline-block;
   cursor: pointer;
   width: 24px;
   height: 24px;
   background: url(../../assets/images/icons/bouton_edit.svg) center / 24px auto no-repeat;
-  i {
-    display: none;
+  i {display: none;
+  }
+}*/
+.document__transcription--content {
+  font-size: $font-size-text-tablet;
+
+  @include on-mobile {
+    font-size: $font-size-text-mobile;
+  }
+}
+.edit-btn {
+  position: unset;
+  flex: 55px 0 0;
+
+  display: inline-block;
+  width: 25px;
+  height: 25px;
+  background: url(../../assets/images/icons/bouton_edit.svg) center / 20px auto no-repeat !important;
+  cursor: pointer;
+
+  @include on-mobile {
+    flex: 45px 0 0;
   }
 
+  .icon.icon__pen-edit {
+    display: none;
+  }
 }
 </style>

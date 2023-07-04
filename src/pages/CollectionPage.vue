@@ -26,6 +26,7 @@
     </section>
     <section v-if="selectedCollection">
       <document-list
+        content-type="collection-results"
         :collection-id="selectedCollection.id"
       />
     </section>
@@ -165,6 +166,11 @@ progress {
     letter-spacing: 0;
     text-transform: uppercase;
 
+    @include on-mobile {
+      margin-bottom: 10px;
+      font-size: 13px;
+    }
+
     .heading-content {
       order: 1;
       display: inline-block;
@@ -205,17 +211,31 @@ progress {
     @include on-tablet {
       padding: 10px 20px;
       font-size: $font-size-text-tablet;
-      line-height: 1.2;
+      line-height: 1.25;
     }
 
     @include on-mobile {
       padding: 0;
       font-size: $font-size-text-mobile;
-      line-height: 1.25;
+      line-height: 1.28;
     }
 
     p {
       margin-bottom: 20px;
+    }
+
+    ul li {
+      margin-bottom: 8px !important;
+    }
+
+    a{
+      color: #C00055;
+
+      &:hover {
+        text-decoration: underline;
+        text-decoration-style: dotted;
+        text-underline-offset: 2px;
+      }
     }
   }
 }
@@ -327,6 +347,10 @@ progress {
   color: white;
   transition: all ease-in-out 300ms;
 
+  @include on-mobile {
+    width: 160px;
+  }
+
   &.is-active {
     color: grey;
     .switch-button-label-span {
@@ -354,6 +378,10 @@ progress {
     justify-content: center;
     z-index: 3;
     pointer-events: none;
+
+    @include on-mobile {
+      width: 80px;
+    }
   }
 
   &-checkbox {
@@ -370,6 +398,10 @@ progress {
     &:checked + .switch-button-label:before {
       transform: translateX(120px);
       transition: transform 300ms linear;
+
+      @include on-mobile {
+        transform: translateX(80px);
+      }
     }
 
     & + .switch-button-label {
@@ -380,6 +412,10 @@ progress {
       user-select: none;
       pointer-events: none;
       height: 100%;
+
+      @include on-mobile {
+        width: 90px;
+      }
 
       &:before {
         content: "";
@@ -400,6 +436,7 @@ progress {
     }
   }
 }
+
 .pagination-controls {
   display: flex;
   align-items: center;

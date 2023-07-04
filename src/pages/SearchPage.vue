@@ -10,7 +10,7 @@
           >
             Afficher les filtres
           </button>
-          <document-list />
+          <document-list content-type="search-results" />
         </div>
       </div>
     </div>
@@ -83,7 +83,8 @@ export default {
   height: 100%;
 }
 .column {
-  padding-top: 0px;
+  width: 100%;
+  padding-top: 0;
 }
 .advanced-search-btn {
   position: absolute;

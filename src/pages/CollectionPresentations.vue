@@ -233,17 +233,31 @@ export default {
     @include on-tablet {
       padding: 10px 20px;
       font-size: $font-size-text-tablet;
-      line-height: 1.2;
+      line-height: 1.25;
     }
 
     @include on-mobile {
       padding: 0;
       font-size: $font-size-text-mobile;
-      line-height: 1.25;
+      line-height: 1.28;
     }
 
     p {
       margin-bottom: 20px;
+    }
+
+    ul li {
+      margin-bottom: 8px !important;
+    }
+
+    a {
+      color: #C00055;
+
+      &:hover {
+        text-decoration: underline;
+        text-decoration-style: dotted;
+        text-underline-offset: 2px;
+      }
     }
   }
 }
