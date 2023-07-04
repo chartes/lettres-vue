@@ -600,4 +600,24 @@ export default {
     border-bottom-right-radius: 5px;
   }
 }
+/* RTE close button on right
+.editor-controls {
+  display: flex !important;
+  flex-direction: row;
+  .is-additional {
+    flex: 1 !important;
+    .close__button {
+      display: inline-block;
+      cursor: pointer;
+      float: right;
+      margin-left: 0;
+      width: 40px;
+      height: 40px;
+      background: url(../../../assets/images/icons/close_text.svg) center / 18px auto no-repeat;
+     i {
+      display: none;
+     }
+    }
+  }
+} */
 </style>

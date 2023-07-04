@@ -10,22 +10,27 @@
           Adresse
         </h3>
         <span
-          v-if="editable"
+          v-if="!preview && editable && !editModeAddress"
           class="edit-btn"
           @click="enterEditModeAddress"
         />
         <rich-text-editor
           v-if="editable && editModeAddress"
           v-model="addressContent"
-          :formats="[['italic', 'superscript'], ['person', 'location'], ['note']]"
+          :formats="[['close'], ['italic', 'superscript'], ['person', 'location'], ['note']]"
           @add-place="addPlace($event, 'address')"
           @add-person="addPerson($event, 'address')"
           @add-note="addNote($event)"
+          @on-keyup-escape="cancelAddressInput($event)"
         >
           <editor-save-button
             :doc-id="document.id"
             name="address"
             :value="addressContent"
+          />
+          <div
+            class="close__button"
+            @click="cancelAddressInput"
           />
         </rich-text-editor>
         <div
@@ -36,7 +41,7 @@
         <div
           v-else
           class="document__transcription--content"
-          v-html="addressContent"
+          v-html="addressContent && addressContent.length > 0 ? addressContent : 'Non renseignée'"
         />
       </div>
 
@@ -51,17 +56,18 @@
           Lettre
         </h3>
         <span
-          v-if="editable"
+          v-if="!preview && editable && !editModeTranscription"
           class="edit-btn"
           @click="enterEditModeTranscription"
         />
         <rich-text-editor
           v-if="editable && editModeTranscription"
           v-model="transcriptionContent"
-          :formats="[['italic', 'superscript', 'page'], ['person', 'location'], ['note']]"
+          :formats="[['close'], ['italic', 'superscript', 'page'], ['person', 'location'], ['note']]"
           @add-place="addPlace($event, 'transcription')"
           @add-person="addPerson($event, 'transcription')"
           @add-note="addNote($event)"
+          @on-keyup-escape="cancelTranscriptionInput($event)"
         >
           <editor-save-button
             :doc-id="document.id"
@@ -86,7 +92,7 @@
           </span>
         </div>
         <div
-          v-else-if="!preview && searchTerm"
+          v-else-if="!preview && searchTerm && highlight(transcriptionContent).includes('mark')"
           class="document__transcription--content"
         >
           <span v-for="(phrase, index) in highlight(transcriptionContent).replaceAll('</p>', '</p>###').split('###')" :key="index">
@@ -104,7 +110,7 @@
         <div
           v-else
           class="document__transcription--content"
-          v-html="transcriptionContent"
+          v-html="transcriptionContent && transcriptionContent.length > 0 ? transcriptionContent : 'Non renseignée'"
         />
       </div>
     </div>
@@ -192,7 +198,7 @@ export default {
             ? subString.slice(0, subString.lastIndexOf(" "))
             : subString) + " (...)";
       } else {
-        return "La transcription est indisponible"
+        return "Non renseignée"
       }
     },
     highlight(text) {
@@ -200,13 +206,21 @@ export default {
       const re = new RegExp(`(${terms.join("|")})`)
       return text.replace(new RegExp(re, 'gi'), (match => `<mark>${match}</mark>`))
     },
+    cancelAddressInput(evt) {
+      console.log("address escape event ", { ...evt });
+      this.enterEditModeAddress()
+    },
     enterEditModeAddress() {
-      console.log("this.editModeAddress", this.editModeAddress)
-      this.editModeAddress = !this.editModeAddress
+      this.editModeAddress = !this.editModeAddress;
+      console.log("this.editModeAddress updated", this.editModeAddress);
+    },
+    cancelTranscriptionInput(evt) {
+      this.enterEditModeTranscription();
     },
     enterEditModeTranscription() {
-      console.log("this.editModeTranscription", this.editModeTranscription)
-      this.editModeTranscription = !this.editModeTranscription
+      this.editModeTranscription = !this.editModeTranscription;
+      console.log("this.editModeTranscription updated", this.editModeTranscription)
+
     }
   }
 };
@@ -222,18 +236,15 @@ export default {
   content: " [...] ";
   font-weight: bold;
 }
-.edit-btn {
-  position: unset;
-  flex: 55px 0 0;
-
+span.edit-btn {
   display: inline-block;
-  width: 25px;
-  height: 25px;
-  background: url(../../assets/images/icons/bouton_edit.svg) center / 25px auto no-repeat !important;
   cursor: pointer;
-
-  .icon.icon__pen-edit {
+  width: 24px;
+  height: 24px;
+  background: url(../../assets/images/icons/bouton_edit.svg) center / 24px auto no-repeat;
+  i {
     display: none;
   }
+
 }
 </style>

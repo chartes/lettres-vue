@@ -46,8 +46,8 @@
         />
         <span class="edit-btn">
           <component
-              :is="editButtonIcon"
-              class="field-title__icon"
+            :is="editButtonIcon"
+            class="field-title__icon"
           />
         </span>
       </div>
@@ -96,7 +96,7 @@ export default {
       type: String,
     },
     formats: {
-      default: () => [["italic", "superscript", "note"]],
+      default: () => [['close'], ["italic", "superscript", "note"]],
       type: Function,
     },
   },
@@ -198,7 +198,6 @@ export default {
       .icon.icon__pen-edit {
         display: none;
       }
-
     }
   }
 }

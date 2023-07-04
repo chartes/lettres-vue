@@ -3,9 +3,12 @@
     v-if="document.argument && document.argument.length || editable > 0"
     class="panel"
   ><!-- (document.argument && document.argument.length) || editable > 0 -->
-    <div class="panel-block">
+    <div
+      class="panel-block"
+      style="display: inline-block; width: 100%"
+    >
       <span
-        v-if="editable"
+        v-if="!editMode"
         class="edit-btn"
         @click="enterEditMode"
       />
@@ -13,13 +16,15 @@
         v-if="editable && editMode"
         v-model="form"
         :formats="[
+          ['close'],
           ['italic', 'superscript'],
           ['person', 'location'],
-          ['note', 'link'],
+          ['note', 'link']
         ]"
         @add-place="addPlace($event, 'argument')"
         @add-person="addPerson($event, 'argument')"
         @add-note="addNote($event)"
+        @on-keyup-escape="cancelInput($event)"
       >
         <editor-save-button
           :doc-id="document.id"
@@ -28,14 +33,14 @@
         />
       </rich-text-editor>
       <div
-        v-else-if="preview && searchTerm && highlight(form).includes('mark')"
+        v-else-if="!preview && searchTerm && highlight(form).includes('mark')"
         class="argument__content"
         v-html="highlight(form)">
       </div>
       <div
         v-else
         class="argument__content"
-        v-html="form">
+        v-html="form && form.length > 0 ? form : 'Non renseignée'">
       </div>
     </div>
   </div>
@@ -46,8 +51,6 @@ import { mapState } from "vuex";
 import RichTextEditor from "../forms/fields/RichTextEditor";
 import EditorSaveButton from "../forms/fields/EditorSaveButton";
 import escapeRegExp from "lodash/escapeRegExp";
-import IconSuccess from "@/components/ui/icons/IconSuccess.vue";
-import IconPenEdit from "@/components/ui/icons/IconPenEdit.vue";
 
 export default {
   name: "DocumentArgument",
@@ -78,12 +81,17 @@ export default {
     this.form = this.document.argument || "";
   },
   created() {
-    console.log("this.searchTerm : ", this.searchTerm)
+    console.log("argument created searchTerm : ", this.searchTerm)
+    console.log("argument created editMode : ", this.editMode)
   },
   methods: {
+    cancelInput(evt) {
+      console.log("argument event ", { ...evt });
+      this.enterEditMode()
+    },
     enterEditMode() {
-      console.log("this.editMode", this.editMode)
       this.editMode = !this.editMode
+      console.log("argument editMode updated", this.editMode)
     },
     addPlace(evt, source) {
       this.$emit("add-place", { ...evt, source });
@@ -115,17 +123,13 @@ export default {
   padding-top: 24px;
   padding-bottom: 24px;
 }
-.edit-btn {
-  position: unset;
-  flex: 55px 0 0;
-
+span.edit-btn {
   display: inline-block;
-  width: 25px;
-  height: 25px;
-  background: url(../../assets/images/icons/bouton_edit.svg) center / 25px auto no-repeat !important;
   cursor: pointer;
-
-  .icon.icon__pen-edit {
+  width: 24px;
+  height: 24px;
+  background: url(../../assets/images/icons/bouton_edit.svg) center / 24px auto no-repeat;
+  i {
     display: none;
   }
 }
