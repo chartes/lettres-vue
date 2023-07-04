@@ -159,6 +159,37 @@
               @click="navigate"
             />
           </router-link>
+          <!-- RTE-type save button
+          <button
+            v-if="editModeEnabled"
+            class="argument__save button is-small"
+            :class="saveButtonClass"
+            :disabled="status === 'disabled'"
+            @click="save"
+          >
+            <component :is="saveButtonIcon" />
+          </button>-->
+          <div
+            v-if="editModeEnabled"
+            class="control"
+          >
+            <a
+              type="submit"
+              :disabled="!collection.title"
+              class="button is-primary"
+              :class="saving === 'loading' ? 'is-loading' : ''"
+              @click.stop="save"
+            >
+              <save-button-icon
+                :status="status"
+              />
+            </a>
+          </div>
+          <div
+            v-if="current_user && current_user.isAdmin"
+            :class="editModeEnabled ? 'edit-btn-closed' : 'edit-btn'"
+            @click="enterEditMode"
+          />
           <!-- Supprimer la collection -->
           <collection-deletion
             v-if="current_user && current_user.isAdmin"
@@ -200,15 +231,35 @@
             </router-link>
           </span>
           <div v-else>
-            <div class="field has-addons">
+            <!-- Button left to title
+            <span
+              :class="editModeEnabled ? 'edit-btn-closed' : 'edit-btn'"
+              @click="enterEditMode"
+            />-->
+            <div
+              v-if="!editModeEnabled"
+            >
+              <router-link
+                :to="{ name: 'collection', params: { collectionId: collection.id } }"
+                class="collection-title"
+              >
+                {{ collection.title }}
+              </router-link>
+            </div>
+            <div
+              v-else
+              class="field has-addons"
+            >
               <input
                 v-model="collection.title"
+                required
                 class="input collection-card__title-input"
                 :class="{'input--error':!collection.title}"
                 type="text"
                 :initial-value="collection.title"
-                required
+                v-on:keyup.esc="enterEditMode"
               >
+              <!-- original save button next to title
               <div class="control">
                 <a
                   type="submit"
@@ -219,7 +270,7 @@
                 >
                   <save-button-icon />
                 </a>
-              </div>
+              </div>-->
             </div>
           </div>
 
@@ -231,10 +282,32 @@
 
           <!-- Description de la collection -->
           <div class="collection-description">
-            <p v-if="!editMode || collection.title === 'Non triées'">
+            <!--<span
+              :class="editModeEnabled ? 'edit-btn-closed' : 'edit-btn'"
+              @click="enterEditMode"
+            />-->
+            <p v-if="!editMode || !editModeEnabled || collection.title === 'Non triées' ">
               <span v-html="collection.description" />
             </p>
             <p v-else>
+              <rich-text-editor
+                v-if="editMode && editModeEnabled"
+                v-model="form"
+                :editable="editMode && editModeEnabled"
+                :formats="[['close'],['superscript']]"
+                @changed="saveDescription"
+                @on-keyup-escape="cancelInput($event)"
+              >
+                <!--<button
+                  class="button is-small"
+                  :class="saveButtonClass"
+                  :disabled="status === 'disabled'"
+                  @click="saveDescription"
+                >
+                  <component :is="saveButtonIcon" />
+                </button>-->
+              </rich-text-editor>
+              <!-- original TitleFieldInPlace for description
               <title-field-in-place
                 :tabulation-index="0"
                 label="Titre"
@@ -244,7 +317,7 @@
                 :editable="true"
                 :formats="descriptionFormats"
                 @changed="saveDescription"
-              />
+              />-->
             </p>
           </div>
           <!-- Responsables scientifiques de la collection (collection racine seulement) -->
@@ -254,7 +327,7 @@
           />
           <!-- Curateur de la collection -->
           <div
-            v-if="!editMode || collection.title === 'Non triées'"
+            v-if="!editModeEnabled || !editMode || collection.title === 'Non triées'"
             class="collection-user-roles"
           >
             <p>
@@ -454,10 +527,16 @@ import TitleFieldInPlace from "@/components/forms/fields/TitleFieldInPlace";
 import SaveButtonIcon from "@/components/ui/SaveButtonIcon";
 import CollectionDeletion from "@/components/CollectionDeletion.vue";
 import CollectionResponsables from "@/pages/CollectionResponsables.vue";
+import EditorSaveButton from "@/components/forms/fields/EditorSaveButton.vue";
+import RichTextEditor from "@/components/forms/fields/RichTextEditor.vue";
+import IconSave from '@/components/ui/icons/IconSave';
+import IconError from '@/components/ui/icons/IconError';
+import IconSuccess from '@/components/ui/icons/IconSuccess';
+
 
 export default {
   name: "CollectionInteractiveCard",
-  components: {CollectionResponsables, TitleFieldInPlace, SaveButtonIcon, CollectionHierarchy, CollectionDeletion },
+  components: { CollectionResponsables, SaveButtonIcon, CollectionHierarchy, CollectionDeletion, RichTextEditor }, // original component for description TitleFieldInPlace
   props: {
     collectionId: { type: Number, required: true },
     editable: { type: Boolean, default: false },
@@ -465,11 +544,14 @@ export default {
   data() {
     return {
       isLoading: true,
+      form: "",
+      editModeEnabled: false,
       saving: "normal",
       deleting: "normal",
       collection: null,
       showHierarchy: false,
       curatorId: null,
+      status: 'normal',
       error: {},
     };
   },
@@ -477,10 +559,39 @@ export default {
     ...mapState("collections", ["collectionsById", "selectedCollection"]),
     ...mapState("user", ["current_user", "users"]),
     ...mapGetters("collections", ["findRoot"]),
-
+    saveButtonClass () {
+              switch (this.status) {
+                  case 'normal':
+                  case 'disabled':
+                      return 'is-success'
+                  case 'success':
+                      return 'is-success'
+                  case 'error':
+                      return 'is-danger'
+                  case 'loading':
+                      return 'is-loading'
+                  default:
+                      return 'is-danger'
+              }
+          },
+          saveButtonIcon () {
+              switch (this.status) {
+                  case 'normal':
+                  case 'loading':
+                  case 'disabled':
+                      return IconSave;
+                  case 'success':
+                      return IconSuccess;
+                  case 'error':
+                      return IconError;
+                  default:
+                      return IconError;
+              }
+          },
     editMode() {
       return (
         this.editable &&
+        //this.editModeEnabled &&
         this.collection &&
         this.current_user &&
         this.current_user.isAdmin
@@ -494,6 +605,11 @@ export default {
     collectionId: async function () {
       await this.load();
     },
+  },
+  async mounted() {
+    await this.load();
+    console.log('Mounted this.collection.description', this.collection.description);
+    this.form = this.collection.description || "";
   },
   async created() {
     this.isLoading = true;
@@ -515,9 +631,16 @@ export default {
   methods: {
     ...mapActions("collections", ["saveCollection", "fetchAll", "fetchOne", "deleteCollection"]),
     ...mapActions("user", ["fetchUsers"]),
-
+    cancelInput(evt) {
+      console.log("Title event ", { ...evt });
+      this.enterEditMode()
+    },
+    enterEditMode() {
+      console.log("this.editModeEnabled", this.editModeEnabled)
+      this.editModeEnabled = !this.editModeEnabled
+    },
     descriptionFormats() {
-      return [["superscript"]];
+      return [["close"],["superscript"]];
     },
 
     async load() {
@@ -528,6 +651,7 @@ export default {
       if (this.collection.title.length < 1) {
         this.error = {"title": "titre obligatoire"};
         this.loading = false;
+        this.status = 'error';
         console.log('error title')
         return;
       }
@@ -535,11 +659,17 @@ export default {
       await this.saveCollection({
         id: this.collection.id,
         title: this.collection.title,
-        description: this.collection.description,
+        description: this.form,
         curatorId: this.curatorId,
-      });
+      }).then(response => {
+        this.status = 'success'}
+      ).catch(() => {
+        this.status = 'error'
+      })
+      ;
       await this.load();
-      this.saving = "normal";
+      this.saving = "success";
+      this.status = 'normal';
     },
     async deleteCollectionUI() {
       this.deleting = "loading";
@@ -599,6 +729,19 @@ export default {
 
     .parent-collection-title {
       flex: $collection-thumbnail-size 0 0;
+      .edit-btn {
+        position: unset;
+        flex: 55px 0 0;
+
+        display: inline-block;
+        width: 25px;
+        height: 25px;
+        background: url(../assets/images/icons/bouton_edit.svg) center / 25px auto no-repeat !important;
+        cursor: pointer;
+        .icon.icon__pen-edit {
+          display: none;
+        }
+      }
       font-family: $family-primary;
       font-size: 20px;
       font-weight: 500;
@@ -622,8 +765,33 @@ export default {
     }
 
     .collection-actions {
-      justify-content: space-between;
-      align-items: flex-start;
+      //justify-content: space-between;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      .edit-btn {
+        display: inline-block;
+        flex: 1;
+        margin-left: 0;
+        cursor: pointer;
+        width: 24px;
+        height: 24px;
+        background: url(../assets/images/icons/bouton_edit.svg) right / 24px auto no-repeat;
+        i {
+          display: none;
+        }
+      }
+      .edit-btn-closed {
+        display: inline-block;
+        cursor: pointer;
+        width: 24px;
+        height: 24px;
+        background: url(../assets/images/icons/close_text.svg) center / 18px auto no-repeat;
+        i {
+          display: none;
+        }
+      }
+
     }
   }
 
@@ -694,6 +862,27 @@ export default {
 
         .control {
           width: 48px;
+        }
+      }
+      span.edit-btn {
+        display: inline-block;
+        cursor: pointer;
+        width: 24px;
+        height: 24px;
+        background: url(../assets/images/icons/bouton_edit.svg) center / 24px auto no-repeat;
+        i {
+          display: none;
+        }
+
+      }
+      span.edit-btn-closed {
+        display: inline-block;
+        cursor: pointer;
+        width: 24px;
+        height: 24px;
+        background: url(../assets/images/icons/close_text.svg) center / 18px auto no-repeat;
+        i {
+          display: none;
         }
       }
     }
