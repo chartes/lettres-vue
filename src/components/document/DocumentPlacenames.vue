@@ -6,7 +6,7 @@
     <div class="columns">
       <div class="document-placenames__senders column is-one-third">
         <h3 class="document-placenames__subtitle heading has-add-btn is-flex is-align-items-center">
-          Dates de lieu d'expédition
+          Expédition
           <a
             v-if="editable && locationDateFrom.length === 0"
             class="tag"
@@ -43,14 +43,14 @@
         </div>
         <div v-if="locationDateFrom.length === 0">
           <p class="placename-item">
-            <em>Aucune date de lieu d'expédition renseignée</em>
+            <em>Lieu d'expédition non renseigné</em>
           </p>
         </div>
       </div>
 
       <div class="document-placenames__recipients column is-one-third">
         <h3 class="document-placenames__subtitle heading has-add-btn is-flex is-align-items-center">
-          Dates de lieu de destination
+          Destination
           <a
             v-if="editable && locationDateTo.length === 0"
             class="tag"
@@ -87,7 +87,7 @@
         </div>
         <div v-if="locationDateTo.length === 0">
           <p class="placename-item">
-            <em>Aucune date de lieu de destination renseignée</em>
+            <em>Lieu de destination non renseigné</em>
           </p>
         </div>
       </div>
