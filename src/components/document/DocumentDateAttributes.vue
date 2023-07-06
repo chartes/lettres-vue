@@ -3,22 +3,15 @@
     class="document-date__attributes"
     style="width: 100%"
   >
-    <div class="is-flex is-justify-items-space-between">
-      <span
-        v-if="editable"
-        class="edit-btn"
-        @click="enterEditMode"
-      >
-        <component
-          :is="editButtonIcon"
-          v-if="editable"
-          class="field-title__icon"
-        />
-      </span>
-      <header class="document-date__attributes--title mb-3">
-        <span class="heading">Dates de temps</span>
-      </header>
-    </div>
+    <span
+      v-if="editable"
+      :class="editMode ? buttonFormat : 'edit-btn'"
+      @click="enterEditMode"
+    >
+    </span>
+    <!--<header class="document-date__attributes--title mb-3">
+      <span class="heading">Dates de temps</span>
+    </header>-->
     <div
       v-if="editable"
       class="creation-date"
@@ -28,6 +21,7 @@
         label-position="inside"
         :type="!creationTmpIsValid ? 'is-danger' : null"
         :message="!creationTmpIsValid ? 'Format incorrect (AAAA-MM-JJ)' : null"
+        @dblclick.native="enterEditMode"
       >
         <b-input
           v-model="creation"
@@ -36,6 +30,7 @@
           placeholder="1574-12-09"
           expanded
           :disabled="!editMode"
+          @keyup.esc.native="cancelInput($event)"
         />
       </b-field>
       <b-field
@@ -49,6 +44,7 @@
           placeholder="1574, 9 Décembre"
           expanded
           :disabled="!editMode"
+          @keyup.esc.native="cancelInput($event)"
         />
       </b-field>
       <b-field
@@ -62,6 +58,7 @@
           placeholder="1575, 1er Janvier"
           expanded
           :disabled="!editMode"
+          @keyup.esc.native="cancelInput($event)"
         />
       </b-field>
     </div>
@@ -69,32 +66,30 @@
       v-else
       class="creation-date"
     >
-      <b-field
+      <!--<b-field
         label="Date de rédaction"
         class="creation-date-input"
       >
         <span class="control">{{ creation }}</span>
-      </b-field>
+      </b-field>-->
       <b-field
         label="Étiquette"
         class="creation-date-input"
       >
         <span class="control">{{ creationLabel }}</span>
       </b-field>
-      <b-field
+      <!--<b-field
         label="Rédigé avant le"
         class="creation-date-input"
       >
         <span class="control">{{ creationNotAfter }}</span>
-      </b-field>
+      </b-field>-->
     </div>
   </div>
 </template>
 <script>
 import { mapState } from "vuex";
 import { debounce } from "lodash";
-import IconSuccess from "@/components/ui/icons/IconSuccess.vue";
-import IconPenEdit from "@/components/ui/icons/IconPenEdit.vue";
 
 export default {
   name: "DocumentAttributes",
@@ -117,17 +112,12 @@ export default {
       creationNotAfterTmp: null,
 
       creationTmpIsValid: true,
-      editMode: false
+      editMode: false,
+      buttonFormat: 'close-btn'
     };
   },
   computed: {
     ...mapState("document", ["document"]),
-    editButtonIcon () {
-      if (this.status === 'success') {
-        return IconSuccess;
-      }
-      return IconPenEdit;
-    },
 
     creation: {
       get() {
@@ -137,7 +127,12 @@ export default {
         this.creationTmp = value;
         this.maskCheck();
         if (this.creationTmpIsValid) {
-          this.fieldChanged({ name: "creation", value });
+          //this.fieldChanged({ name: "creation", value });
+          if (this.creationTmp !== this.document["creation"] || this.creationLabelTmp !== this.document["creation-label"] || this.creationNotAfterTmp !== this.document["creation-not-after"]) {
+            this.buttonFormat = 'save-btn';
+          } else {
+            this.buttonFormat = 'close-btn';
+          }
         }
       },
     },
@@ -146,7 +141,13 @@ export default {
         return this.creationLabelTmp;
       },
       set(value) {
-        this.fieldChanged({ name: "creation-label", value });
+        this.creationLabelTmp = value;
+        //this.fieldChanged({ name: "creation-label", value });
+        if (this.creationTmp !== this.document["creation"] || this.creationLabelTmp !== this.document["creation-label"] || this.creationNotAfterTmp !== this.document["creation-not-after"]) {
+            this.buttonFormat = 'save-btn';
+          } else {
+            this.buttonFormat = 'close-btn';
+          }
       },
     },
     creationNotAfter: {
@@ -154,7 +155,13 @@ export default {
         return this.creationNotAfterTmp;
       },
       set(value) {
-        this.fieldChanged({ name: "creation-not-after", value });
+        this.creationNotAfterTmp = value;
+        //this.fieldChanged({ name: "creation-not-after", value });
+        if (this.creationTmp !== this.document["creation"] || this.creationLabelTmp !== this.document["creation-label"] || this.creationNotAfterTmp !== this.document["creation-not-after"]) {
+            this.buttonFormat = 'save-btn';
+          } else {
+            this.buttonFormat = 'close-btn';
+          }
       },
     },
 
@@ -181,11 +188,11 @@ export default {
     this.creationLabelTmp = this.document["creation-label"];
     this.creationNotAfterTmp = this.document["creation-not-after"];
 
-    this.fieldChanged = debounce(async (fieldProps) => {
+    /*this.fieldChanged = debounce(async (fieldProps) => {
       const data = { id: this.document.id, attributes: {} };
       data.attributes[fieldProps.name] = fieldProps.value;
-      await this.$store.dispatch("document/save", data);
-    }, 500);
+      //await this.$store.dispatch("document/save", data);
+    }, 500);*/
   },
   methods: {
     maskCheck: function () {
@@ -193,9 +200,24 @@ export default {
       this.creationTmpIsValid = isValidDate;
       console.log("mask check", this.creationTmp, isValidDate);
     },
-    enterEditMode() {
+    cancelInput(evt) {
+      console.log("Date event ", { ...evt });
+      this.enterEditMode()
+    },
+    async enterEditMode() {
       console.log("this.editMode", this.editMode)
       this.editMode = !this.editMode
+      if (this.buttonFormat === 'save-btn') {
+        let saveData = (
+            { id: this.document.id, attributes: {'creation': this.creationTmp, 'creation-label': this.creationLabelTmp, 'creation-not-after': this.creationNotAfterTmp}}
+        );
+        console.log("saveData : ", saveData);
+        let resp = await this.$store.dispatch("document/save", saveData);
+        console.log("resp", resp.status);
+        this.buttonFormat = 'edit-btn'
+      } else {
+        this.buttonFormat = 'close-btn'
+      }
     }
   },
 };
@@ -221,6 +243,7 @@ export default {
       input[type="text"] {
         padding: 22px 30px 5px 14px !important;
       }
+      input[disabled] {pointer-events:none}
     }
   }
 
@@ -236,6 +259,42 @@ export default {
   width: 25px;
   height: 25px;
   background: url(../../assets/images/icons/bouton_edit.svg) center / 20px auto no-repeat !important;
+  cursor: pointer;
+
+  @include on-mobile {
+    flex: 45px 0 0;
+  }
+
+  .icon.icon__pen-edit {
+    display: none;
+  }
+}
+.close-btn {
+  position: unset;
+  flex: 55px 0 0;
+
+  display: inline-block;
+  width: 25px;
+  height: 25px;
+  background: url(../../assets/images/icons/close_text.svg) center / 20px auto no-repeat !important;
+  cursor: pointer;
+
+  @include on-mobile {
+    flex: 45px 0 0;
+  }
+
+  .icon.icon__pen-edit {
+    display: none;
+  }
+}
+.save-btn {
+  position: unset;
+  flex: 55px 0 0;
+
+  display: inline-block;
+  width: 25px;
+  height: 25px;
+  background: url(../../assets/images/icons/bouton_bouge.svg) center / 20px auto no-repeat !important;
   cursor: pointer;
 
   @include on-mobile {
