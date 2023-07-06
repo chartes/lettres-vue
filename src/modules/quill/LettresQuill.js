@@ -81,6 +81,9 @@ const options = {
             console.log("evt", evt)
             this.quill.cancelInput(evt);
           }
+        },
+        'list autofill': { //resolving https://github.com/chartes/lettres-vue/issues/63
+          prefix: /^\s*()$/
         }
       }
     },
