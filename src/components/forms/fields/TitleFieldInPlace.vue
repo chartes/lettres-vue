@@ -13,10 +13,9 @@
           :formats="formats()"
           :tabindex="tabulationIndex"
           @change="inputChanged"
-          @on-keyup-enter="clickSave"
           @on-keyup-escape="cancelInput"
           @add-note="addNote($event)"
-        >
+        >// removing @on-keyup-enter="clickSave", since there is a save button, as it prevented key stroke on other editors
           <button
             class="button is-small"
             :class="saveButtonClass"

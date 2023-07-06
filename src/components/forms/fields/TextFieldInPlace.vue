@@ -18,9 +18,8 @@
           :formats="[['italic','superscript','note']]"
           :tabindex="tabulationIndex"
           @change="inputChanged"
-          @on-keyup-enter="clickSave"
           @on-keyup-escape="cancelInput"
-        >
+        > removing @on-keyup-enter="clickSave", since there is a save button, as it prevented key stroke on other editors
           <button
             class="button is-small"
             :class="saveButtonClass"
