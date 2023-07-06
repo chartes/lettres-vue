@@ -323,8 +323,8 @@ export default {
         evt.preventDefault();
         evt.stopImmediatePropagation();
         evt.stopPropagation();
-        this.$emit("on-keyup-enter");*/
-      }
+        this.$emit("on-keyup-enter");
+      }*/
     },
     onFocus() {
       this.editorHasFocus = this.editor.hasFocus();
