@@ -315,9 +315,11 @@ export default {
       if (evt.code === "Escape") {
         console.log("RTE on-keyup-escape", evt)
         this.$emit("on-keyup-escape", evt);
-      } else if (evt.code === "Enter") {
+      }
+      /* deactivating @on-keyup-enter="clickSave", since there is a save button, as it prevented key stroke on some editors
+      else if (evt.code === "Enter") {
         console.log("onSingleKeyup Enter", evt)
-        /* deactivating @on-keyup-enter="clickSave", since there is a save button, as it prevented key stroke on some editors
+
         evt.preventDefault();
         evt.stopImmediatePropagation();
         evt.stopPropagation();
