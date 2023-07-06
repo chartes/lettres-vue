@@ -210,6 +210,7 @@ const actions = {
 
     const response = await http.patch(`/documents/${data.id}`, { data })
     commit('UPDATE_DOCUMENT_DATA', response.data.data);
+    let returnedResponse = response.status
 
     console.log('@@saving inlined: seeking for tags in content')
     /* 
@@ -339,8 +340,7 @@ const actions = {
         msg: msg
       });
     } 
-
-    return 
+    return returnedResponse
   },
 
   add({commit, rootState, state}) {
