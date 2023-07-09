@@ -927,8 +927,34 @@ export default {
       padding: 30px;
       margin-bottom: 30px;
 
+      @include on-tablet {
+        padding: 20px;
+      }
+
       @include on-mobile {
         padding: 15px;
+      }
+
+      &.document-section-for-title {
+        ::v-deep {
+
+          .editable-field .control {
+            align-items:center;
+
+            @include on-mobile {
+              align-items:flex-start;
+            }
+          }
+
+          .edit-btn {
+            flex: 48px 0 0;
+
+            @include on-mobile {
+              flex: 30px 0 0;
+              background-position: left top 5px !important;
+            }
+          }
+        }
       }
 
       &.columns {
@@ -984,7 +1010,6 @@ export default {
         margin-bottom: 0;
 
         ::v-deep {
-
           .has-add-btn {
             display: flex !important;
             align-items: center;
@@ -1005,16 +1030,29 @@ export default {
             a.tag:hover .icon circle {
               fill: #C00055;
             }
+          }
+        }
+      }
 
+      ::v-deep {
+        .witness-list {
+          .tags.has-addons {
+            padding: 5px 10px;
+
+            @include on-mobile {
+              padding: 5px 7px;
+            }
           }
 
+          .list-group-item .column {
+            padding-left: 0;
+            padding-right: 0;
+          }
         }
       }
 
     }
-
   }
-
 }
 
 nav.previous-next-navigation {
@@ -1212,7 +1250,8 @@ nav.previous-next-navigation {
       }
 
       .document-date__attributes {
-        margin-bottom: 20px;
+        display: flex;
+        flex-direction: column;
       }
 
       .label,
@@ -1371,8 +1410,8 @@ nav.previous-next-navigation {
             right: 0;
 
             display: inline-block;
-            width: 40px;
-            height: 40px;
+            width: 40px !important;
+            height: 40px !important;
             background: url(../../assets/images/icons/loupe_collec.svg) center / 25px auto no-repeat;
 
             @include on-mobile {
