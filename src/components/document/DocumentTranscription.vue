@@ -51,7 +51,7 @@
       >
         <h3
           v-if="!preview"
-          class="heading mt-3"
+          class="heading"
         >
           Lettre
         </h3>

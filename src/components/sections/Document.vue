@@ -198,7 +198,7 @@
           </section>
 
           <!-- dates de temps -->
-          <section class="document-section">
+          <section class="document-section document-section-for-dates">
             <div class="heading is-uppercase is-flex is-justify-content-space-between">
               <span class="heading-content">Dates</span>
               <span
@@ -230,7 +230,7 @@
           </section>
 
           <!-- dates de lieux -->
-          <section class="document-section">
+          <section class="document-section dates-section">
             <div class="heading is-uppercase is-flex is-justify-content-space-between">
               <span class="heading-content">Lieux</span>
               <span
@@ -266,7 +266,7 @@
           </section>
 
           <!-- analyse -->
-          <section class="document-section">
+          <section class="document-section document-section-for-analyse">
             <div class="heading is-uppercase is-flex is-justify-content-space-between">
               <span class="heading-content">Analyse</span>
               <span
@@ -830,7 +830,7 @@ export default {
   &:not(.can-edit) {
 
     .document-section {
-      margin-bottom: 60px;
+      margin-bottom: 40px;
 
       @include on-mobile {
         margin-bottom: 20px;
@@ -853,7 +853,7 @@ export default {
               padding: 0;
 
               .column {
-                padding: 10px 20px;
+                padding: 10px 0;
 
                 @include on-tablet {
                   padding: 10px 0;
@@ -898,9 +898,53 @@ export default {
       }
     }
 
-    .document-section-content {
+    & .document-section-content {
       margin-top: 10px;
       margin-left: 0;
+
+      ::v-deep {
+
+        .breadcrumb.is-small,
+        .tags.are-medium .tag:not(.is-normal):not(.is-large),
+        .control {
+          font-size: 18px;
+          line-height: 1.2;
+
+          @include on-mobile {
+            font-size: $font-size-text-mobile;
+          }
+        }
+      }
+    }
+
+  }
+
+  &:not(.is-preview) {
+    ::v-deep {
+
+      .document__transcription {
+        h3 {
+          min-width: 80px;
+
+          @include on-mobile {
+            min-width: 60px;
+          }
+        }
+      }
+
+      .document__transcription--tr-content > .document__transcription--content {
+        padding-top: 0;
+        padding-left: 0;
+        background: none;
+      }
+
+      .witness-list {
+        .list-group-item .column {
+          padding-left: 0;
+          padding-right: 0;
+        }
+      }
+
     }
   }
 
@@ -935,9 +979,57 @@ export default {
         padding: 15px;
       }
 
+      &.columns {
+        margin: 30px 0 40px !important;
+      }
+
+      .column {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+      }
+
+      .document-section-content {
+        margin-bottom: 0;
+
+        @include on-tablet {
+          margin-left: 40px !important;
+        }
+
+        @include on-mobile {
+          margin-left: 0 !important;
+        }
+
+        ::v-deep {
+          .document-placenames .columns {
+            flex-direction: row;
+          }
+
+          .has-add-btn {
+            display: flex !important;
+            align-items: center;
+            gap: 8px;
+            line-height: 20px;
+
+            a.tag .icon {
+              width: 20px !important;
+              height: 20px !important;
+              margin: 0 !important;
+              padding: 0 !important;
+
+              .icon__line {
+                stroke: #FFFFFF;
+              }
+            }
+
+            a.tag:hover .icon circle {
+              fill: #C00055;
+            }
+          }
+        }
+      }
+
       &.document-section-for-title {
         ::v-deep {
-
           .editable-field .control {
             align-items:center;
 
@@ -945,26 +1037,57 @@ export default {
               align-items:flex-start;
             }
           }
-
-          .edit-btn {
-            flex: 48px 0 0;
-
-            @include on-mobile {
-              flex: 30px 0 0;
-              background-position: left top 5px !important;
-            }
-          }
         }
       }
 
-      &.columns {
-        margin: 30px 0 40px !important;
+      &.document-section-for-title,
+      &.document-section-for-analyse .document-section-content {
+        ::v-deep {
+
+          .edit-btn,
+          .close-btn {
+            flex: 40px 0 0;
+            @include on-mobile {
+              flex: 30px 0 0;
+            }
+          }
+
+          .edit-btn {
+            @include on-mobile {
+              background-position: left top 5px !important;
+            }
+          }
+
+        }
       }
 
-      .column {
-        @include on-mobile {
-          padding-left: 0 !important;
-          padding-right: 0 !important;
+      &.document-section-for-analyse .document-section-content,
+      &.document-section-for-dates .document-section-content {
+        margin-left: 0 !important;
+      }
+
+      &.collections-document-section .document-section-content {
+        ::v-deep {
+
+          & > div > ul {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap !important;
+            align-items: flex-start;
+
+            & > li {
+              line-height: 1;
+            }
+          }
+
+          span.tag {
+            margin: 5px 10px 10px 0;
+            white-space: break-spaces;
+          }
+
+          .tags.has-addons {
+            margin-bottom: 5px !important;
+          }
         }
       }
 
@@ -1005,36 +1128,9 @@ export default {
         }
       }
 
-      & > .document-section-content {
-        margin-left: 30px;
-        margin-bottom: 0;
-
-        ::v-deep {
-          .has-add-btn {
-            display: flex !important;
-            align-items: center;
-            gap: 8px;
-            line-height: 20px;
-
-            a.tag .icon {
-              width: 20px !important;
-              height: 20px !important;
-              margin: 0 !important;
-              padding: 0 !important;
-
-              .icon__line {
-                stroke: #FFFFFF;
-              }
-            }
-
-            a.tag:hover .icon circle {
-              fill: #C00055;
-            }
-          }
-        }
-      }
 
       ::v-deep {
+
         .witness-list {
           .tags.has-addons {
             padding: 5px 10px;
@@ -1043,12 +1139,80 @@ export default {
               padding: 5px 7px;
             }
           }
+        }
 
-          .list-group-item .column {
-            padding-left: 0;
-            padding-right: 0;
+        .document-date__attributes {
+          display: flex;
+          align-items: center;
+
+          @include on-tablet {
+            align-items: flex-start;
+          }
+
+          .field {
+            margin-bottom: 0;
+
+            @include on-tablet {
+              margin-bottom: 15px;
+            }
           }
         }
+
+        .panel-block {
+          display: flex !important;
+        }
+
+        .document__transcription .panel-block {
+          align-items: flex-start;
+        }
+
+        .document-correspondents .panel-block {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        /* Etiquettes */
+        .tags.has-addons {
+          position: relative;
+          margin: 0 0 5px !important;
+          padding: 5px 32px 7px 7px !important;
+          background-color: #F0F0F0 !important;
+          display: inline-block !important;
+          border-radius: 5px;
+          font-size: 16px !important;
+          line-height: 1 !important;
+
+          span.tag {
+            display: inline-flex;
+            height: auto !important;
+            margin: 0;
+            vertical-align: top;
+            line-height: 1;
+
+            a {
+              padding: 0 3px;
+              font-size: 16px;
+              color: #6D7278;
+            }
+          }
+
+          a.tag.is-delete {
+            position: absolute;
+            right: 7px;
+            top: 7px;
+            display: inline-flex;
+            width: 18px;
+            height: 18px;
+            background-color: #8C8C8C;
+            border-radius: 50%;
+
+            &::before,
+            &::after {
+              background-color: #F0F0F0;
+            }
+          }
+        }
+
       }
 
     }
@@ -1099,6 +1263,7 @@ nav.previous-next-navigation {
       display: none;
     }
   }
+
   router-link.pagination-link {
     border: none;
     padding: 0 !important;
@@ -1178,19 +1343,32 @@ nav.previous-next-navigation {
       &:first-child {
         width: 100%;
       }
-
-      ::v-deep {
-        .tag:not(body).is-light {
-          background: none;
-          font-family: $family-primary;
-          font-size: 16px;
-          color: #6D7278;
-          font-weight: 400;
-        }
-      }
-
     }
   }
+
+  .document-languages__component {
+    ::v-deep {
+
+      .field {
+        gap: 10px;
+      }
+
+      .tag:not(body).is-light {
+        background: none;
+        padding-left: 0;
+        font-family: $family-primary;
+        font-size: 16px;
+        line-height: 1.2;
+        color: #6D7278;
+        font-weight: 400;
+
+        @include on-mobile {
+          font-size: 14px;
+        }
+      }
+    }
+  }
+
 
   // Sections : Termes et contenus des metadonnées
 
@@ -1225,12 +1403,12 @@ nav.previous-next-navigation {
   }
 
   & .document-section-content {
-    margin-left: 60px;
-    margin-bottom: 40px;
+    margin-left: 40px;
+    margin-bottom: 20px;
 
     @include on-tablet {
       margin-left: 20px;
-      margin-bottom: 20px;
+      margin-bottom: 10px;
     }
 
     @include on-mobile {
@@ -1249,11 +1427,6 @@ nav.previous-next-navigation {
         }
       }
 
-      .document-date__attributes {
-        display: flex;
-        flex-direction: column;
-      }
-
       .label,
       .heading {
         font-size: 16px;
@@ -1267,8 +1440,11 @@ nav.previous-next-navigation {
         }
       }
 
+      .tags.are-medium .tag:not(.is-normal):not(.is-large),
       .control {
-        font-size: 18px;
+        font-size: 20px;
+        line-height: 1.2;
+        height: auto;
 
         @include on-mobile {
           font-size: $font-size-text-mobile;
@@ -1333,50 +1509,10 @@ nav.previous-next-navigation {
         }
       }
 
-      span.tag {
-        margin: 5px 10px 10px 0;
-        white-space: break-spaces;
+      .document-placenames .columns {
+        flex-direction: column;
       }
 
-      .tags.has-addons {
-        position: relative;
-        margin: 0 !important;
-        padding: 5px 32px 7px 7px;
-        background-color: #F0F0F0;
-        display: inline-block;
-        border-radius: 5px;
-        font-size: 16px !important;
-        line-height: 1;
-
-        span.tag {
-          display: inline-flex;
-          height: auto !important;
-          margin: 0;
-          vertical-align: top;
-          line-height: 1;
-
-          a {
-            padding: 0 3px;
-            font-size: 16px;
-            color: #6D7278;
-          }
-        }
-
-        a.tag.is-delete {
-          position: absolute;
-          right: 8px;
-          display: inline-flex;
-          width: 18px;
-          height: 18px;
-          background-color: #8C8C8C;
-          border-radius: 50%;
-
-          &::before,
-          &::after {
-            background-color: #F0F0F0;
-          }
-        }
-      }
 
     }
 
@@ -1390,7 +1526,11 @@ nav.previous-next-navigation {
 
         .control.autocomplete .control {
           position: relative;
-          max-width: 340px;
+          max-width: 75%;
+
+          @include on-mobile {
+            max-width: 100%;
+          }
 
           input {
             padding-right: 40px;
@@ -1421,22 +1561,6 @@ nav.previous-next-navigation {
           }
         }
 
-        & > div > ul {
-          display: flex;
-          gap: 12px;
-          flex-wrap: wrap !important;
-          align-items: flex-start;
-
-          & > li {
-            padding: 5px 10px 7px 7px;
-            background-color: #F0F0F0;
-            display: inline-block;
-            border-radius: 5px;
-            font-size: 16px;
-            line-height: 1;
-          }
-        }
-
         .tags.has-addons {
           position: relative;
           margin: 0 !important;
@@ -1460,22 +1584,6 @@ nav.previous-next-navigation {
 
             nav > ul {
               line-height: 1.25;
-            }
-          }
-
-          a.tag.is-delete {
-            position: absolute;
-            right: 0;
-            top: 1px;
-            display: inline-flex;
-            width: 18px;
-            height: 18px;
-            background-color: #8C8C8C;
-            border-radius: 50%;
-
-            &::before,
-            &::after {
-              background-color: #F0F0F0;
             }
           }
         }
