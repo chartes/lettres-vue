@@ -905,9 +905,10 @@ export default {
       ::v-deep {
 
         .breadcrumb.is-small,
+        .witness-list ul li span.columns,
         .tags.are-medium .tag:not(.is-normal):not(.is-large),
         .control {
-          font-size: 18px;
+          font-size: 18px !important;
           line-height: 1.2;
 
           @include on-mobile {
@@ -936,6 +937,16 @@ export default {
         padding-top: 0;
         padding-left: 0;
         background: none;
+
+        font-size: $font-size-text;
+
+        @include on-tablet {
+          font-size: $font-size-text-tablet;
+        }
+
+        @include on-mobile {
+          font-size: $font-size-text-mobile;
+        }
       }
 
       .witness-list {
@@ -1111,7 +1122,7 @@ export default {
         }
 
         span {
-          font-size: 20px;
+          font-size: $font-size-text;
 
           @include on-tablet {
             font-size: $font-size-text-tablet;
@@ -1317,7 +1328,7 @@ nav.previous-next-navigation {
   align-items: flex-start;
 
   font-family: $family-primary;
-  font-size: 20px;
+  font-size: $font-size-text;
   line-height: 1.2;
 
   @include on-tablet {
@@ -1442,9 +1453,13 @@ nav.previous-next-navigation {
 
       .tags.are-medium .tag:not(.is-normal):not(.is-large),
       .control {
-        font-size: 20px;
+        font-size: $font-size-text;
         line-height: 1.2;
         height: auto;
+
+        @include on-tablet {
+          font-size: $font-size-text-tablet;
+        }
 
         @include on-mobile {
           font-size: $font-size-text-mobile;
@@ -1455,8 +1470,16 @@ nav.previous-next-navigation {
         -webkit-box-shadow: none;
         box-shadow: none;
 
-        font-size: 16px;
+        font-size: $font-size-text;
         font-family: $family-primary;
+
+        @include on-tablet {
+          font-size: $font-size-text-tablet;
+        }
+
+        @include on-mobile {
+          font-size: $font-size-text-mobile;
+        }
 
         .panel-block {
           border: none;
@@ -1465,7 +1488,7 @@ nav.previous-next-navigation {
 
           & > .argument__content,
           & > :nth-child(2) {
-            font-size: 20px;
+            font-size: $font-size-text;
             color: #585858;
             font-weight: 400;
             letter-spacing: 0;
@@ -1487,7 +1510,7 @@ nav.previous-next-navigation {
         margin:0;
 
         .breadcrumb.is-small {
-          font-size: 20px;
+          font-size: $font-size-text;
           font-weight: 400;
 
           @include on-tablet {

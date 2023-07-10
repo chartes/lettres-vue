@@ -246,13 +246,6 @@ export default {
   i {display: none;
   }
 }*/
-.document__transcription--content {
-  font-size: $font-size-text-tablet;
-
-  @include on-mobile {
-    font-size: $font-size-text-mobile;
-  }
-}
 .edit-btn {
   position: unset;
   flex: 55px 0 0;
