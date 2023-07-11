@@ -904,20 +904,28 @@ export default {
 
       ::v-deep {
 
+        .edit-btn {
+          display: none !important;
+        }
+
+        .breadcrumb.is-small a {
+          font-family: $family-primary !important;
+        }
+
         .breadcrumb.is-small,
         .witness-list ul li span.columns,
         .tags.are-medium .tag:not(.is-normal):not(.is-large),
         .control {
-          font-size: $font-size-text;
+          font-size: $font-size-text !important;
           line-height: 1.2;
           font-weight: 400;
 
           @include on-tablet {
-            font-size: $font-size-text-tablet;
+            font-size: $font-size-text-tablet !important;
           }
 
           @include on-mobile {
-            font-size: $font-size-text-mobile;
+            font-size: $font-size-text-mobile !important;
           }
         }
       }
@@ -932,16 +940,6 @@ export default {
         padding-top: 0;
         padding-left: 0;
         background: none;
-
-        font-size: $font-size-text;
-
-        @include on-tablet {
-          font-size: $font-size-text-tablet;
-        }
-
-        @include on-mobile {
-          font-size: $font-size-text-mobile;
-        }
       }
 
       .witness-list {
@@ -1593,6 +1591,18 @@ nav.previous-next-navigation {
 
       .document-placenames .columns {
         flex-direction: column;
+      }
+
+      .document__transcription--tr-content .document__transcription--content {
+        font-size: $font-size-text;
+
+        @include on-tablet {
+          font-size: $font-size-text-tablet;
+        }
+
+        @include on-mobile {
+          font-size: $font-size-text-mobile;
+        }
       }
 
 
