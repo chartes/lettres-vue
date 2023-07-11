@@ -33,7 +33,7 @@
                     <div class="controls">
                       <div class="control">
                         <b-taglist attached>
-                          <b-tag>status</b-tag>
+                          <b-tag>statut</b-tag>
                           <b-tag type="is-success is-light">
                             {{ witness.status }}
                           </b-tag>

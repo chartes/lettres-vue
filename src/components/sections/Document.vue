@@ -149,7 +149,7 @@
                     v-if="!preview"
                     :editable="canEdit"
                     :preview="preview"
-                    class="column is-three-quarters"
+                    class="column"
                     @add-note="addNote"
                   />
                   <document-languages
@@ -304,7 +304,7 @@
           </section>
 
           <!-- transcription -->
-          <section class="document-section">
+          <section class="document-section document-section-for-transcription">
             <div class="heading is-uppercase is-flex is-justify-content-space-between">
               <span class="heading-content">Transcription</span>
               <span
@@ -908,8 +908,13 @@ export default {
         .witness-list ul li span.columns,
         .tags.are-medium .tag:not(.is-normal):not(.is-large),
         .control {
-          font-size: 18px !important;
+          font-size: $font-size-text;
           line-height: 1.2;
+          font-weight: 400;
+
+          @include on-tablet {
+            font-size: $font-size-text-tablet;
+          }
 
           @include on-mobile {
             font-size: $font-size-text-mobile;
@@ -923,17 +928,7 @@ export default {
   &:not(.is-preview) {
     ::v-deep {
 
-      .document__transcription {
-        h3 {
-          min-width: 80px;
-
-          @include on-mobile {
-            min-width: 60px;
-          }
-        }
-      }
-
-      .document__transcription--tr-content > .document__transcription--content {
+      .document__transcription--tr-content .document__transcription--content {
         padding-top: 0;
         padding-left: 0;
         background: none;
@@ -1011,9 +1006,6 @@ export default {
         }
 
         ::v-deep {
-          .document-placenames .columns {
-            flex-direction: row;
-          }
 
           .has-add-btn {
             display: flex !important;
@@ -1052,6 +1044,8 @@ export default {
       }
 
       &.document-section-for-title,
+      &.document-section-for-dates .document-section-content,
+      &.document-section-for-transcription .document-section-content,
       &.document-section-for-analyse .document-section-content {
         ::v-deep {
 
@@ -1072,9 +1066,55 @@ export default {
         }
       }
 
+      &.document-section-for-analyse .document-section-content {
+        ::v-deep {
+          .panel-block {
+            align-items: flex-start;
+          }
+        }
+      }
+
+      &.document-section-for-transcription .document-section-content,
       &.document-section-for-analyse .document-section-content,
       &.document-section-for-dates .document-section-content {
         margin-left: 0 !important;
+      }
+
+      &.document-section-for-title,
+      &.document-section-for-analyse .document-section-content,
+      &.document-section-for-transcription .document-section-content {
+        ::v-deep {
+          h3 {
+            margin-left: 40px;
+          }
+          .rich-text-editor {
+            margin-left: 40px;
+          }
+          .ql-editor {
+            background-color: #F8F8F8;
+            font-family: $family-primary;
+            font-size: $font-size-text;
+
+            @include on-tablet {
+              font-size: $font-size-text-tablet;
+            }
+
+            @include on-mobile {
+              font-size: $font-size-text-mobile;
+            }
+
+            p {
+              margin: 10px 0;
+
+              &:first-child {
+                margin-top: 0;
+              }
+              &:last-child {
+                margin-bottom: 0;
+              }
+            }
+          }
+        }
       }
 
       &.collections-document-section .document-section-content {
@@ -1139,7 +1179,6 @@ export default {
         }
       }
 
-
       ::v-deep {
 
         .witness-list {
@@ -1148,6 +1187,11 @@ export default {
 
             @include on-mobile {
               padding: 5px 7px;
+            }
+
+            &:after {
+              content: "" !important;
+              margin-right: 0 !important;
             }
           }
         }
@@ -1173,8 +1217,12 @@ export default {
           display: flex !important;
         }
 
+        .document__transcription {
+          margin-left: 0;
+        }
+
         .document__transcription .panel-block {
-          align-items: flex-start;
+          display: block !important;
         }
 
         .document-correspondents .panel-block {
@@ -1329,7 +1377,7 @@ nav.previous-next-navigation {
 
   font-family: $family-primary;
   font-size: $font-size-text;
-  line-height: 1.2;
+  line-height: 1.3;
 
   @include on-tablet {
     font-size: $font-size-text-tablet;
@@ -1357,11 +1405,19 @@ nav.previous-next-navigation {
     }
   }
 
+  .document-title__component {
+    margin-right: 40px;
+  }
+
   .document-languages__component {
     ::v-deep {
 
       .field {
         gap: 10px;
+      }
+
+      .label {
+        line-height: 40px;
       }
 
       .tag:not(body).is-light {
@@ -1415,15 +1471,18 @@ nav.previous-next-navigation {
 
   & .document-section-content {
     margin-left: 40px;
+    margin-right: 40px;
     margin-bottom: 20px;
 
     @include on-tablet {
       margin-left: 20px;
+      margin-right: 20px;
       margin-bottom: 10px;
     }
 
     @include on-mobile {
       margin-left: 0;
+      margin-right: 0;
       margin-bottom: 0;
     }
 
@@ -1549,11 +1608,6 @@ nav.previous-next-navigation {
 
         .control.autocomplete .control {
           position: relative;
-          max-width: 75%;
-
-          @include on-mobile {
-            max-width: 100%;
-          }
 
           input {
             padding-right: 40px;
