@@ -103,6 +103,7 @@
             :disabled="!currentStep.next"
             type="is-primary"
             size="is-medium"
+            class="next-button"
             @click="gotoNextStep"
           >
             <span>Suivant</span>
@@ -503,13 +504,18 @@ export default {
   &.modal-card {
     padding: 30px 40px !important;
     min-height: 100vh !important;
+    overflow-y: auto !important;
 
     @include on-tablet {
       width: 100% !important;
-      padding: 20px 10px !important;
+      padding: 20px 20px !important;
       min-height: auto;
       overflow-x: hidden !important;
       overflow-y: auto !important;
+    }
+
+    @include on-mobile {
+      padding: 10px 10px !important;
     }
   }
 
@@ -540,6 +546,16 @@ export default {
     }
   }
 
+  ::v-deep {
+    .place-wizard-center-form .expanded-select  {
+      max-height: 180px !important;
+
+      & dt.expanded-selection {
+        background-color: #CB2158;
+      }
+    }
+  }
+
   .previous-button {
     margin-left: 40px;
   }
@@ -547,7 +563,7 @@ export default {
   /* Grid */
   .root-grid-container {
     display: grid;
-    min-height: inherit;
+    min-height: unset;
     height: 100%;
     background: none;
 
@@ -557,6 +573,7 @@ export default {
   }
 
   .popup-mode {
+    margin: auto;
     grid-template-columns: auto 320px;
     grid-template-rows: 62px auto 80px;
     grid-template-areas:
@@ -565,6 +582,7 @@ export default {
       "leftbar-footer nav-footer";
 
     @include on-tablet {
+      margin: 0;
       grid-template-columns: 100%;
       grid-template-rows: 62px auto min(100px) 80px;
       grid-template-areas:

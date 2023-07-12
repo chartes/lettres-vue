@@ -1136,6 +1136,10 @@ export default {
 
           .tags.has-addons {
             margin-bottom: 5px !important;
+
+            a.tag.is-delete {
+              top: 5px !important;
+            }
           }
         }
       }
@@ -1741,20 +1745,19 @@ nav.previous-next-navigation {
 ::v-deep {
   .modal.is-active {
     .animation-content {
-      width: 100% !important;
-
-      max-width: 80% !important;
+      width: 90% !important;
+      max-width: 100% !important;
       margin: 20px auto !important;
 
       @include on-tablet {
-        max-width: 100% !important;
+        width: 100% !important;
         margin: 0 !important;
       }
 
       .modal-close {
         @include on-tablet {
-          right: 10px !important;
-          top: 10px !important;
+          right: 30px !important;
+          top: 20px !important;
         }
 
         @include on-mobile {
