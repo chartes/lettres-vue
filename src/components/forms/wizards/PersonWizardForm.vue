@@ -484,6 +484,10 @@ export default {
   height: inherit;
   background: transparent !important;
 
+  @include on-tablet {
+    padding: 0 !important;
+  }
+
   &.modal-card {
     margin: 0 !important;
     padding: 30px 40px !important;
