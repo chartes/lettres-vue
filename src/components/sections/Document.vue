@@ -1135,6 +1135,7 @@ export default {
           }
 
           .tags.has-addons {
+            padding: 5px 32px 7px 7px !important;
             margin-bottom: 5px !important;
 
             a.tag.is-delete {
@@ -1182,21 +1183,6 @@ export default {
       }
 
       ::v-deep {
-
-        .witness-list {
-          .tags.has-addons {
-            padding: 5px 10px;
-
-            @include on-mobile {
-              padding: 5px 7px;
-            }
-
-            &:after {
-              content: "" !important;
-              margin-right: 0 !important;
-            }
-          }
-        }
 
         .document-date__attributes {
           display: flex;
@@ -1273,6 +1259,23 @@ export default {
             }
           }
         }
+
+        /* Etiquettes témoins */
+        .witness-list {
+          .tags.has-addons {
+            padding: 5px 10px 4px !important;
+
+            @include on-mobile {
+              padding: 5px 7px 3px !important;
+            }
+
+            &:after {
+              content: "" !important;
+              margin-right: 0 !important;
+            }
+          }
+        }
+
 
       }
 
@@ -1762,7 +1765,7 @@ nav.previous-next-navigation {
 
         @include on-mobile {
           right: 10px !important;
-          top: 10px !important;
+          top: 20px !important;
         }
       }
     }

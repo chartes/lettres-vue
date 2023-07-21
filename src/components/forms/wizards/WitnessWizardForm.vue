@@ -402,6 +402,7 @@ export default {
   background: transparent !important;
 
   &.modal-card {
+    margin: 0 !important;
     padding: 30px 40px !important;
     min-height: 100vh !important;
     overflow-y: auto !important;
@@ -496,7 +497,7 @@ export default {
       "leftbar-footer nav-footer";
 
     @include on-tablet {
-      margin: 10px 0;
+      margin: 0;
       grid-template-columns: 100%;
       grid-template-rows: 62px auto auto 80px;
       grid-template-areas:
@@ -641,6 +642,39 @@ export default {
         .tab-content,
         .tab-item {
           height: 100%;
+        }
+
+        .manage-manifest-buttons {
+          margin-left: 0 !important;
+          margin-bottom: 20px !important;
+        }
+
+        .control.plus button,
+        .control.minus button {
+          background-color: #CB2158 !important;
+        }
+
+        @include on-mobile {
+
+          .input-form {
+            width: 100%;
+            padding-right: 40px;
+          }
+
+          .gallica-form {
+            width: 100%;
+            margin-right: 0 !important;
+
+            .field.has-addons {
+              width: 100%;
+              margin-right: 0 !important;
+
+              .control:not(:last-child) {
+                flex: calc(100% - 64px) 0 0;
+              }
+            }
+          }
+
         }
       }
     }

@@ -502,6 +502,7 @@ export default {
   background: transparent !important;
 
   &.modal-card {
+    margin: 0 !important;
     padding: 30px 40px !important;
     min-height: 100vh !important;
     overflow-y: auto !important;
@@ -716,6 +717,45 @@ export default {
         .tab-content,
         .tab-item {
           height: 100%;
+        }
+
+        .tag:not(body) {
+          white-space: break-spaces;
+          line-height: 1.2;
+          height: auto;
+          padding: 6px;
+        }
+
+        @include on-mobile {
+
+          .searchbox-container {
+            width: 100%;
+          }
+
+          .term-search {
+            width: 100%;
+            margin-right: 0 !important;
+
+            .field.has-addons {
+              width: 100%;
+              margin-right: 0 !important;
+
+              .control:not(:last-child) {
+                flex: calc(100% - 64px) 0 0;
+              }
+            }
+          }
+
+          .create-place-form {
+            .control.has-icons-right {
+              .icon.is-right {
+                top: 0 !important;
+                line-height: 1;
+                padding: 0;
+              }
+            }
+          }
+
         }
       }
     }
