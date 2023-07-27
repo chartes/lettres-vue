@@ -26,5 +26,6 @@ class LinkBlot extends Inline {
 }
 LinkBlot.blotName = 'link';
 LinkBlot.tagName = 'a';
+LinkBlot.className = 'lk';
 
 export default LinkBlot;

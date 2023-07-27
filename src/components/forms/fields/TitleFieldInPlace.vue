@@ -9,13 +9,16 @@
         <rich-text-editor
           ref="input"
           v-model="value"
+          label="title"
           :multiline="false"
           :formats="formats()"
           :tabindex="tabulationIndex"
           @change="inputChanged"
+          @refresh-title="refreshTitle($event)"
           @on-keyup-escape="cancelInput"
           @add-note="addNote($event)"
-        ><!-- removing @on-keyup-enter="clickSave", since there is a save button, as it prevented key stroke on other editors-->
+
+        ><!-- removing @on-keyup-enter="clickSave", since there is a save button, as it prevented key stroke on other editors -->
           <button
             class="button is-small"
             :class="saveButtonClass"
@@ -99,6 +102,7 @@ export default {
       type: Function,
     },
   },
+  emits: ["refresh-title"],
   computed: {
     saveButtonClass() {
       switch (this.status) {
@@ -153,7 +157,12 @@ export default {
       });
     },
     addNote(evt) {
+      console.log("titleFieldInPlace addNote(evt)", evt, {...evt})
       this.$emit("add-note", { ...evt });
+    },
+    refreshTitle(evt) {
+      console.log("TitleFieldInPlace / refreshTitle(evt)", evt)
+      this.$emit("refresh-title",  evt)
     },
   },
 };

@@ -21,6 +21,9 @@ class LocationBlot extends Inline {
       node.setAttribute('target', '_blank');
       node.setAttribute('href', data.ref);
     }
+    if (data.label) {
+      node.setAttribute('title', data.label);
+    }
     node.setAttribute('id', data.id);
     return node;
   }
@@ -33,6 +36,10 @@ class LocationBlot extends Inline {
     } else {
       ref = {id: domNode.getAttribute('id')};
     }
+    if (domNode.hasAttribute('title')) {
+      ref.label = domNode.getAttribute('title')
+    }
+
     return ref || true;
   }
 
@@ -41,6 +48,9 @@ class LocationBlot extends Inline {
       if (data.ref) {
         this.domNode.setAttribute('target', '_blank');
         this.domNode.setAttribute('href', data.ref);
+      }
+      if (data.label) {
+        this.domNode.setAttribute('title', data.label);
       }
       this.domNode.setAttribute('id', data.id);
     } else {

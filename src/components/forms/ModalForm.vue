@@ -26,8 +26,8 @@
         <button
           v-if="submit"
           class="button is-success"
-          :class="{'modalbutton_disabled' : !valid}"
-          :disabled="!valid || submitting"
+          :class="{'modalbutton_disabled' : !submitValid}"
+          :disabled="!submitValid || submitting"
           @click="submit"
         >
           {{ submitText }}
@@ -46,8 +46,8 @@
         >
           <button
             class="button is-danger"
-            :class="{'modalbutton_disabled': submitting}"
-            :disabled="submitting"
+            :class="{'modalbutton_disabled' : !previousValue || submitting}"
+            :disabled="!previousValue || submitting"
             @click="remove"
           >
             {{ removeText }}
@@ -66,7 +66,8 @@ export default {
     cancel: { type: Function, default: () => {} },
     submit: { type: Function, default: () => {} },
     remove: { type: Function, default: () => {} },
-    valid: { type: Boolean, required: true },
+    submitValid: { type: Boolean, required: true },
+    previousValue: { type: Boolean, required: true },
     submitText: { type: String, default: "Enregistrer" },
     removeText: { type: String, default: "Supprimer" },
     submitting: { type: Boolean, default: false },
