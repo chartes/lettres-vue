@@ -82,7 +82,8 @@ const getPersons = function (included) {
   },
 
   getNotes = function (included) {
-    return  included.filter(item => item.type === 'note').map(lang => { return { id: lang.id, ...lang.attributes }});
+    console.log("getNotes : ", included.filter(item => item.type === 'note').map(note => { return { id: note.id, ...note.attributes }}))
+    return  included.filter(item => item.type === 'note').map(note => { return { id: note.id, ...note.attributes }});
   },
 
   getCurrentLock = function (included) {
