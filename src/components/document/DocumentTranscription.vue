@@ -9,42 +9,44 @@
         <h3 class="heading">
           Adresse
         </h3>
-        <span
-          v-if="!preview && editable && !editModeAddress"
-          class="edit-btn"
-          @click="enterEditModeAddress"
-        />
-        <rich-text-editor
-          v-if="editable && editModeAddress"
-          v-model="addressContent"
-          label="address"
-          :formats="[['close'], ['italic', 'superscript'], ['person', 'location'], ['note']]"
-          @add-place="addPlace($event, 'address')"
-          @add-person="addPerson($event, 'address')"
-          @add-note="addNote($event)"
-          @refresh-address="refreshAddress($event)"
-          @on-keyup-escape="cancelAddressInput($event)"
-        >
-          <editor-save-button
-            :doc-id="document.id"
-            name="address"
-            :value="addressContent"
+        <div class="document__transcription--component is-flex">
+          <span
+            v-if="!preview && editable && !editModeAddress"
+            class="edit-btn"
+            @click="enterEditModeAddress"
+          />
+          <rich-text-editor
+            v-if="editable && editModeAddress"
+            v-model="addressContent"
+            label="address"
+            :formats="[['close'], ['italic', 'superscript'], ['person', 'location'], ['note']]"
+            @add-place="addPlace($event, 'address')"
+            @add-person="addPerson($event, 'address')"
+            @add-note="addNote($event)"
+            @refresh-address="refreshAddress($event)"
+            @on-keyup-escape="cancelAddressInput($event)"
+          >
+            <editor-save-button
+              :doc-id="document.id"
+              name="address"
+              :value="addressContent"
+            />
+            <div
+              class="close__button"
+              @click="cancelAddressInput"
+            />
+          </rich-text-editor>
+          <div
+            v-else-if="!preview && searchTerm && highlight(addressContent).includes('mark')"
+            class="document__transcription--content"
+            v-html="highlight(addressContent)"
           />
           <div
-            class="close__button"
-            @click="cancelAddressInput"
+            v-else
+            class="document__transcription--content"
+            v-html="addressContent && addressContent.length > 0 ? addressContent : 'Non renseignée'"
           />
-        </rich-text-editor>
-        <div
-          v-else-if="!preview && searchTerm && highlight(addressContent).includes('mark')"
-          class="document__transcription--content"
-          v-html="highlight(addressContent)"
-        />
-        <div
-          v-else
-          class="document__transcription--content"
-          v-html="addressContent && addressContent.length > 0 ? addressContent : 'Non renseignée'"
-        />
+        </div>
       </div>
 
       <div
@@ -53,69 +55,71 @@
       >
         <h3
           v-if="!preview"
-          class="heading mt-3"
+          class="heading"
         >
           Lettre
         </h3>
-        <span
-          v-if="!preview && editable && !editModeTranscription"
-          class="edit-btn"
-          @click="enterEditModeTranscription"
-        />
-        <rich-text-editor
-          v-if="editable && editModeTranscription"
-          v-model="transcriptionContent"
-          label="transcription"
-          :formats="[['close'], ['italic', 'superscript', 'page'], ['person', 'location'], ['note']]"
-          @add-place="addPlace($event, 'transcription')"
-          @add-person="addPerson($event, 'transcription')"
-          @add-note="addNote($event)"
-          @refresh-transcription="refreshTranscription($event)"
-          @on-keyup-escape="cancelTranscriptionInput($event)"
-        >
-          <editor-save-button
-            :doc-id="document.id"
-            name="transcription"
-            :value="transcriptionContent"
-          />
-        </rich-text-editor>
-        <div
-          v-else-if="preview && searchTerm && Array.isArray(transcriptionContent)"
-          class="document__transcription--content"
-        >
+        <div class="document__transcription--component is-flex">
           <span
-            v-for="(phrase, index) in transcriptionContent"
-            class="highlighted"
-            :key="index"
-            v-html="phrase"
+            v-if="!preview && editable && !editModeTranscription"
+            class="edit-btn"
+            @click="enterEditModeTranscription"
+          />
+          <rich-text-editor
+            v-if="editable && editModeTranscription"
+            v-model="transcriptionContent"
+            label="transcription"
+            :formats="[['close'], ['italic', 'superscript', 'page'], ['person', 'location'], ['note']]"
+            @add-place="addPlace($event, 'transcription')"
+            @add-person="addPerson($event, 'transcription')"
+            @add-note="addNote($event)"
+            @refresh-transcription="refreshTranscription($event)"
+            @on-keyup-escape="cancelTranscriptionInput($event)"
           >
-            <!--<span
-              v-html="phrase"
-              class="highlighted"
-            />-->
-          </span>
-        </div>
-        <div
-          v-else-if="!preview && searchTerm && highlight(transcriptionContent).includes('mark')"
-          class="document__transcription--content"
-        >
-          <span v-for="(phrase, index) in highlight(transcriptionContent).replaceAll('</p>', '</p>###').split('###')" :key="index">
-            <span
-              v-html="phrase"
+            <editor-save-button
+              :doc-id="document.id"
+              name="transcription"
+              :value="transcriptionContent"
             />
-          </span>
+          </rich-text-editor>
+          <div
+            v-else-if="preview && searchTerm && Array.isArray(transcriptionContent)"
+            class="document__transcription--content"
+          >
+            <span
+              v-for="(phrase, index) in transcriptionContent"
+              class="highlighted"
+              :key="index"
+              v-html="phrase"
+            >
+              <!--<span
+                v-html="phrase"
+                class="highlighted"
+              />-->
+            </span>
+          </div>
+          <div
+            v-else-if="!preview && searchTerm && highlight(transcriptionContent).includes('mark')"
+            class="document__transcription--content"
+          >
+            <span v-for="(phrase, index) in highlight(transcriptionContent).replaceAll('</p>', '</p>###').split('###')" :key="index">
+              <span
+                v-html="phrase"
+              />
+            </span>
+          </div>
+          <div
+            v-else-if="preview"
+            class="document__transcription--content"
+            v-html="truncate(transcriptionContent, 399, true)"
+          >
+          </div>
+          <div
+            v-else
+            class="document__transcription--content"
+            v-html="transcriptionContent && transcriptionContent.length > 0 ? transcriptionContent : 'Non renseignée'"
+          />
         </div>
-        <div
-          v-else-if="preview"
-          class="document__transcription--content"
-          v-html="truncate(transcriptionContent, 399, true)"
-        >
-        </div>
-        <div
-          v-else
-          class="document__transcription--content"
-          v-html="transcriptionContent && transcriptionContent.length > 0 ? transcriptionContent : 'Non renseignée'"
-        />
       </div>
     </div>
     <!--<div v-if="!preview && transcriptionContent || !preview && addressContent">
@@ -415,13 +419,6 @@ export default {
   i {display: none;
   }
 }*/
-.document__transcription--content {
-  font-size: $font-size-text-tablet;
-
-  @include on-mobile {
-    font-size: $font-size-text-mobile;
-  }
-}
 .edit-btn {
   position: unset;
   flex: 55px 0 0;

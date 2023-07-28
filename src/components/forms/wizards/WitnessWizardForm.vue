@@ -99,6 +99,7 @@
             v-if="currentStep.next"
             type="is-primary"
             size="is-medium"
+            class="next-button"
             @click="gotoNextStep"
           >
             <span>Suivant</span>
@@ -400,16 +401,26 @@ export default {
   height: inherit;
   background: transparent !important;
 
+  @include on-tablet {
+    padding: 0 !important;
+  }
+
   &.modal-card {
+    margin: 0 !important;
     padding: 30px 40px !important;
     min-height: 100vh !important;
+    overflow-y: auto !important;
 
     @include on-tablet {
       width: 100% !important;
-      padding: 20px 10px !important;
+      padding: 20px 20px !important;
       min-height: auto;
       overflow-x: hidden !important;
       overflow-y: auto !important;
+    }
+
+    @include on-mobile {
+      padding: 10px 10px !important;
     }
   }
 
@@ -445,6 +456,25 @@ export default {
     }
   }
 
+  ::v-deep {
+    select option:checked {
+      background-color: #CB2158CC;
+      color: #FFF;
+    }
+
+    /* Inputs clear button */
+    .control.has-icons-left .icon,
+    .control.has-icons-right .icon {
+      height: 18px;
+      top: 50% !important;
+      transform: translateY(-50%) !important;
+    }
+
+    .input-form {
+      margin-bottom: 40px;
+    }
+  }
+
   .previous-button {
     margin-left: 40px;
   }
@@ -452,7 +482,7 @@ export default {
   /* Grid */
   .root-grid-container {
     display: grid;
-    min-height: inherit;
+    min-height: unset;
     height: 100%;
     background: none;
 
@@ -462,7 +492,8 @@ export default {
   }
 
   .popup-mode {
-    grid-template-columns: auto 320px;
+    margin: auto 0;
+    grid-template-columns: calc(100% - 320px) 320px;
     grid-template-rows: 62px auto 80px;
     grid-template-areas:
       "leftbar-header leftbar-header"
@@ -470,6 +501,7 @@ export default {
       "leftbar-footer nav-footer";
 
     @include on-tablet {
+      margin: 0;
       grid-template-columns: 100%;
       grid-template-rows: 62px auto auto 80px;
       grid-template-areas:
@@ -615,6 +647,39 @@ export default {
         .tab-item {
           height: 100%;
         }
+
+        .manage-manifest-buttons {
+          margin-left: 0 !important;
+          margin-bottom: 20px !important;
+        }
+
+        .control.plus button,
+        .control.minus button {
+          background-color: #CB2158 !important;
+        }
+
+        @include on-mobile {
+
+          .input-form {
+            width: 100%;
+            padding-right: 40px;
+          }
+
+          .gallica-form {
+            width: 100%;
+            margin-right: 0 !important;
+
+            .field.has-addons {
+              width: 100%;
+              margin-right: 0 !important;
+
+              .control:not(:last-child) {
+                flex: calc(100% - 64px) 0 0;
+              }
+            }
+          }
+
+        }
       }
     }
   }
@@ -627,7 +692,7 @@ export default {
 
     .buttons {
       position: absolute;
-      bottom: 60px;
+      bottom: 25px;
 
       display: flex;
       justify-content: center;
@@ -642,7 +707,7 @@ export default {
 
       button {
         width: 140px;
-        margin: 10px !important;
+        margin: 10px 10px 0 !important;
         background-color: #CB2158;
 
         @include on-tablet {

@@ -1,5 +1,5 @@
 <template>
-  <div class="component is-flex is-justify-items-space-between">
+  <div class="document-languages__component component is-flex is-justify-items-space-between is-align-items-center">
     <span
       v-if="editable"
       :class="!editMode ? 'edit-btn' : 'close-btn'"

@@ -231,8 +231,6 @@ export default {
 
   @include on-tablet {
     flex-direction: column;
-    margin-left: 10px;
-    margin-top: 10px;
   }
 
   .creation-date-input {
@@ -253,7 +251,7 @@ export default {
 }
 .edit-btn {
   position: unset;
-  flex: 55px 0 0;
+  flex: 40px 0 0;
 
   display: inline-block;
   width: 25px;

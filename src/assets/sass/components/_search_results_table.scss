@@ -12,6 +12,10 @@
     &.has-mobile-cards {
       tr {
         display: table-row !important;
+
+        &:not([class*="is-"]) {
+          background: transparent;
+        }
       }
     }
 
@@ -167,6 +171,180 @@
           &:not(.detail) {
             border-bottom: 1px solid #fdb3cc !important;
             box-shadow: none !important;
+
+            td {
+              display: table-cell !important;
+              vertical-align: middle;
+              border-color: #fdb3cc !important;
+              padding: 15px 15px 15px 0;
+
+              font-family: $family-primary;
+              font-size: 16px;
+              text-align: left !important;
+
+              &::before {
+                display: none;
+              }
+
+              /* Numéro de lettre */
+              &.td-bookmarks:nth-child(1) {
+                min-width: 72px;
+              }
+
+              /* Chevron */
+              &.chevron-cell {
+                a {
+                  display: flex;
+                  align-items: center;
+                  color: #CB2158 !important;
+
+                  span.icon {
+                    &::after {
+                      content: "";
+                      display: inline-block;
+                      width: 24px;
+                      height: 24px;
+                      background: url(#{$image-path}/icons/open_text.svg) center right / 18px auto no-repeat;
+                      transform-origin: 50% 50%;
+                      transform: rotate(-90deg);
+                    }
+
+                    &.opened::after {
+                      transform: rotate(0deg);
+                    }
+                  }
+                }
+
+                i {
+                  display: none;
+                }
+              }
+
+              &.td-search-results:nth-child(1),
+              &.td-collection-results:nth-child(1) {
+
+                grid-area: document-detail-toggle;
+
+                min-width: unset;
+                padding-left: 0;
+                padding-right: 0;
+
+
+              }
+
+              &:nth-child(2) {
+                .tags {
+                  margin-bottom: 0 !important;
+
+                  .tag {
+                    height: auto !important;
+                    background: none;
+
+                    font-family: $family-primary;
+                    font-size: 16px;
+                    font-weight: 400;
+                    line-height: 1.2;
+                    color: #515151;
+                    white-space: break-spaces;
+
+                    &:not(:last-child) {
+                      margin-bottom: 20px;
+                    }
+                  }
+                }
+              }
+
+              /* ID Lettre */
+              &.td-search-results:nth-child(2),
+              &.td-collection-results:nth-child(2) {
+                grid-area: document-id;
+
+                padding-left: 0;
+                padding-right: 0;
+              }
+
+              &:nth-child(3) {
+                color: #4A4A4A;
+                font-size: 16px;
+                font-weight: 500;
+                line-height: 20px;
+
+                @include on-mobile {
+                  font-size: 16px;
+                }
+              }
+
+              /* Date lettre */
+              &.td-search-results:nth-child(3),
+              &.td-collection-results:nth-child(3) {
+                grid-area: document-date;
+
+                @include on-mobile {
+                  font-size: 14px;
+                  line-height: 25px;
+                }
+              }
+
+              /* Titre */
+              &:nth-child(4) {
+                grid-area: document-title;
+              }
+
+              /* Expéditeur */
+              &:nth-child(5) {
+                grid-area: document-sender;
+              }
+
+              /* Destinataire(s) */
+              &:nth-child(6) {
+                grid-area: document-recipients;
+              }
+
+              /* Lieu d'expédition */
+              &:nth-child(7) {
+                grid-area: document-location-origin;
+              }
+
+              /* Lieu de destination */
+              &:nth-child(8) {
+              }
+
+              a {
+                font-family: $family-secondary;
+                color: #000000;
+                line-height: 20px;
+                word-break: break-all;
+
+                /*
+                font-size: 16px;
+                font-weight: 600;
+                 */
+
+                &:hover {
+                  color: #CB2158 !important;
+                  text-decoration: underline;
+                  text-decoration-style: dotted;
+                  text-underline-offset: 4px;
+
+                  @include on-mobile {
+                    color: #FFF !important;
+                    opacity: 0.5;
+                  }
+                }
+
+                @include on-mobile {
+                  font-size: 14px !important;
+                }
+              }
+
+              span {
+                font-size: 16px !important;
+
+                @include on-mobile {
+                  font-size: 14px !important;
+                }
+              }
+            }
           }
 
           &.detail {
@@ -296,174 +474,6 @@
                   }
 
                 }
-              }
-            }
-          }
-
-          td {
-            display: table-cell !important;
-            vertical-align: middle;
-            border-color: #fdb3cc;
-            padding: 15px 15px 15px 0;
-
-            font-family: $family-primary;
-            font-size: 16px;
-            text-align: left !important;
-
-            &::before {
-              display: none;
-            }
-
-            /* Numéro de lettre */
-            &.td-bookmarks:nth-child(1) {
-              min-width: 72px;
-            }
-
-            /* Chevron */
-            &.chevron-cell {
-              a {
-                display: flex;
-                align-items: center;
-                color: #CB2158 !important;
-
-                span.icon {
-                  &::after {
-                    content: "";
-                    display: inline-block;
-                    width: 24px;
-                    height: 24px;
-                    background: url(#{$image-path}/icons/open_text.svg) center right / 18px auto no-repeat;
-                    transform-origin: 50% 50%;
-                    transform: rotate(-90deg);
-                  }
-
-                  &.opened::after {
-                    transform: rotate(0deg);
-                  }
-                }
-              }
-
-              i {
-                display: none;
-              }
-            }
-
-            &.td-search-results:nth-child(1),
-            &.td-collection-results:nth-child(1) {
-
-              grid-area: document-detail-toggle;
-
-              min-width: unset;
-              padding-left: 0;
-              padding-right: 0;
-
-
-            }
-
-            &:nth-child(2) {
-              .tags {
-                margin-bottom: 0 !important;
-
-                .tag {
-                  height: auto !important;
-                  background: none;
-
-                  font-family: $family-primary;
-                  font-size: 16px;
-                  font-weight: 400;
-                  line-height: 1.2;
-                  color: #515151;
-                  white-space: break-spaces;
-
-                  &:not(:last-child) {
-                    margin-bottom: 20px;
-                  }
-                }
-              }
-            }
-
-            /* ID Lettre */
-            &.td-search-results:nth-child(2),
-            &.td-collection-results:nth-child(2) {
-              grid-area: document-id;
-
-              padding-left: 0;
-              padding-right: 0;
-            }
-
-            &:nth-child(3) {
-              color: #4A4A4A;
-              font-size: 16px;
-              font-weight: 500;
-              line-height: 20px;
-
-              @include on-mobile {
-                font-size: 16px;
-              }
-            }
-
-            /* Date lettre */
-            &.td-search-results:nth-child(3),
-            &.td-collection-results:nth-child(3) {
-              grid-area: document-date;
-
-              @include on-mobile {
-                font-size: 14px;
-                line-height: 25px;
-              }
-            }
-
-            /* Titre */
-            &:nth-child(4) {
-              grid-area: document-title;
-            }
-
-            /* Expéditeur */
-            &:nth-child(5) {
-              grid-area: document-sender;
-            }
-
-            /* Destinataire(s) */
-            &:nth-child(6) {
-              grid-area: document-recipients;
-            }
-
-            /* Lieu d'expédition */
-            &:nth-child(7) {
-              grid-area: document-location-origin;
-            }
-
-            /* Lieu de destination */
-            &:nth-child(8) {
-            }
-
-            a {
-              font-family: $family-secondary;
-              color: #000000;
-              line-height: 20px;
-
-              /*
-              font-size: 16px;
-              font-weight: 600;
-               */
-
-              &:hover {
-                color: #CB2158 !important;
-                text-decoration: underline;
-                text-decoration-style: dotted;
-                text-underline-offset: 4px;
-              }
-
-              @include on-mobile {
-                font-size: 14px !important;
-              }
-            }
-
-            span {
-              font-size: 16px !important;
-
-              @include on-mobile {
-                font-size: 14px !important;
               }
             }
           }
@@ -653,7 +663,7 @@
 
         tr:not(.detail) {
           display: grid !important;
-          grid-template-columns: 30px 50px 100px auto;
+          grid-template-columns: 30px 50px minmax(80px, auto) auto;
           grid-template-rows: auto auto auto auto auto auto;
           grid-template-areas:
           "document-detail-toggle document-id document-date document-title"

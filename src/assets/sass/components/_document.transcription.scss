@@ -14,8 +14,7 @@
 }
 
 .document__transcription--tr-content {
-  & > .document__transcription--content {
-    margin-top: 20px;
+  & .document__transcription--content {
     padding-top: 10px;
     padding-left: 75px;
     background: url(#{$image-path}/icons/guillemet.svg) no-repeat;

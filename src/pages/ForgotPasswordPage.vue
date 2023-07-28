@@ -141,6 +141,11 @@ export default {
     padding-left: 30px;
     padding-right: 30px;
 
+    .control.has-icons-left .icon,
+    .control.has-icons-right .icon {
+      padding: 0;
+    }
+
     @include on-mobile {
       padding-left: 10px;
       padding-right: 10px;

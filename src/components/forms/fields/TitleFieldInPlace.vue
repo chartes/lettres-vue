@@ -195,7 +195,7 @@ export default {
 
     .edit-btn {
       position: unset;
-      flex: 55px 0 0;
+      flex: 48px 0 0;
 
       display: inline-block;
       width: 25px;

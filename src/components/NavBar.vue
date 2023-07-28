@@ -24,7 +24,8 @@
         </router-link>
       </div>
 
-      <div class="navbar-menu is-align-items-center">
+      <div class="navbar-menu is-align-items-center"
+           :class="menuOpenedCssClass">
         <ul class="navbar-end is-align-items-center">
           <li class="navbar-start-item">
             <router-link
@@ -57,8 +58,9 @@
             <a
               :title="current_user.username"
               class="user-account active"
+              @touchstart="openDropDownMenu"
             />
-            <div class="navbar-dropdown is-align-items-center">
+            <div class="navbar-dropdown is-align-items-center" >
               <div
                 v-if="current_user"
                 class="item user-name"
@@ -209,6 +211,14 @@ export default {
     ...mapState("user", ["current_user"]),
     ...mapState("layout", ["showLeftSideBar"]),
     ...mapGetters("user", ["isAuthenticated"]),
+    menuOpenedCssClass() {
+      return this.menuOpened ? "is-active" : "";
+    },
+  },
+  data() {
+    return {
+      menuOpened: false
+    };
   },
   methods: {
     ...mapActions("document", ["resetDocumentState"]),
@@ -220,14 +230,20 @@ export default {
       //this.$store.state.layout.showLeftSideBar = false;
     },
     async logout() {
-      this.$store.dispatch("user/logout")
-      .then(() => {
-      this.$router.push('/login');
-      this.clearState();
-
-    })
+      this.$store.dispatch("user/logout").then(() => {
+        this.$router.push('/login');
+        this.clearState();
+      })
     },
+    openDropDownMenu() {
+      this.menuOpened = !this.menuOpened;
+    }
   },
+  watch:{
+    $route (to, from){
+      this.menuOpened = false;
+    }
+  }
 };
 </script>
 
@@ -388,6 +404,11 @@ export default {
     }
 
   }
+
+  .navbar-menu.is-active .navbar-dropdown {
+    display:block !important;
+  }
+
   .navbar-dropdown .user-name {
     font-size: 18px;
     font-weight: 500;
@@ -400,6 +421,8 @@ export default {
     font-style: italic;
     color: #C04B7F;
   }
+
+
   .menu-label {
     display: flex;
     margin: 20px 0 5px !important;

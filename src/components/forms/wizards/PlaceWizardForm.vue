@@ -103,6 +103,7 @@
             :disabled="!currentStep.next"
             type="is-primary"
             size="is-medium"
+            class="next-button"
             @click="gotoNextStep"
           >
             <span>Suivant</span>
@@ -500,16 +501,26 @@ export default {
   height: inherit;
   background: transparent !important;
 
+  @include on-tablet {
+    padding: 0 !important;
+  }
+
   &.modal-card {
+    margin: 0 !important;
     padding: 30px 40px !important;
     min-height: 100vh !important;
+    overflow-y: auto !important;
 
     @include on-tablet {
       width: 100% !important;
-      padding: 20px 10px !important;
+      padding: 20px 20px !important;
       min-height: auto;
       overflow-x: hidden !important;
       overflow-y: auto !important;
+    }
+
+    @include on-mobile {
+      padding: 10px 10px !important;
     }
   }
 
@@ -540,6 +551,16 @@ export default {
     }
   }
 
+  ::v-deep {
+    .place-wizard-center-form .expanded-select  {
+      max-height: 180px !important;
+
+      & dt.expanded-selection {
+        background-color: #CB2158;
+      }
+    }
+  }
+
   .previous-button {
     margin-left: 40px;
   }
@@ -547,7 +568,7 @@ export default {
   /* Grid */
   .root-grid-container {
     display: grid;
-    min-height: inherit;
+    min-height: unset;
     height: 100%;
     background: none;
 
@@ -557,6 +578,7 @@ export default {
   }
 
   .popup-mode {
+    margin: auto;
     grid-template-columns: auto 320px;
     grid-template-rows: 62px auto 80px;
     grid-template-areas:
@@ -565,6 +587,7 @@ export default {
       "leftbar-footer nav-footer";
 
     @include on-tablet {
+      margin: 0;
       grid-template-columns: 100%;
       grid-template-rows: 62px auto min(100px) 80px;
       grid-template-areas:
@@ -698,6 +721,45 @@ export default {
         .tab-content,
         .tab-item {
           height: 100%;
+        }
+
+        .tag:not(body) {
+          white-space: break-spaces;
+          line-height: 1.2;
+          height: auto;
+          padding: 6px;
+        }
+
+        @include on-mobile {
+
+          .searchbox-container {
+            width: 100%;
+          }
+
+          .term-search {
+            width: 100%;
+            margin-right: 0 !important;
+
+            .field.has-addons {
+              width: 100%;
+              margin-right: 0 !important;
+
+              .control:not(:last-child) {
+                flex: calc(100% - 64px) 0 0;
+              }
+            }
+          }
+
+          .create-place-form {
+            .control.has-icons-right {
+              .icon.is-right {
+                top: 0 !important;
+                line-height: 1;
+                padding: 0;
+              }
+            }
+          }
+
         }
       }
     }
