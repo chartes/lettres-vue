@@ -1,18 +1,16 @@
 /*
- Note
- Blot : embed
+ Lien
+ Blot : inline
  Utilisation : Appel de note
 */
 
-//import Parchment from 'parchment';
-import Quill from 'quill';
+// TODO
 
-const Embed  = Quill.import('blots/embed')
+import Quill from 'quill';
 
 const ATTRIBUTES = [
   'href',
 ];
-
 const getNoteId = domNode => { //domNode.getAttribute('href')//.substring(1)
   console.log("getNoteId :",  domNode.getAttribute('href').substring(1))
   return domNode.getAttribute('href').substring(1)
@@ -26,81 +24,120 @@ const getIndex = domNode => {
   return domNode.innerText.match(/\d/g).join("")
 }
 
-export default class NoteBlot extends Embed {
+let Inline = Quill.import('blots/inline');
 
+class NoteBlot extends Inline {
   static create(value) {
-    let node = super.create(value);
-    console.log("static create", value, typeof(value))
-    if (value.index) {
-      node.setAttribute('href', '#' + value.id);
-      //node.setAttribute('contenteditable', false);
-      node.innerText = `[${value.index}]`
-
+    console.log ("NoteBlot create init value : ", value)
+    let node = super.create();
+    console.log("NoteBlot create node", value, typeof(value))
+    if (value.note) {
+      node.setAttribute('href', '#' + value.note.id);
+      if (value.note.index) {
+        node.innerText = `[${value.note.index}]`
+      }
     } else {
-      node.setAttribute('href', '#' + value);
-      //node.setAttribute('contenteditable', false);
-      node.innerText = `[note]`
+      node.setAttribute('href', '#' + value.id);
+      /*if (value.index) {
+        node.innerText = `[${value.index}]`
+      }*/
     }
-    console.log("static create", node)
+    console.log ("NoteBlot create node : ", node)
     return node;
   }
-  static value(domNode) {
-    console.log("static value : ", domNode)
+  /*static value(domNode) {
+    console.log("NoteBlot static value : ", domNode)
     //return getNoteId(domNode)
     if (domNode.innerText.includes('[note]')) {
       return {id: getNoteId(domNode), index: getIndex(domNode)}
     } else {
       return {id: getNoteId(domNode), index: getIndex(domNode)}
     }
-  }
-  constructor(domNode, value) {
+  }*/
+  /*constructor(domNode, value) {
     console.log("constructor", domNode, value)
 
-    domNode.setAttribute('contenteditable', false)
-    let original =  domNode.innerHTML
-    console.log("test : ", original, "\n", domNode.innerHTML)
+
     super(domNode, value);
-    domNode.innerHTML = domNode.innerHTML.replace(/\uFEFF/gm, "")
-    domNode.innerHTML = domNode.innerHTML.replace(/<span.*>(\[\d*])<\/span>/g, "$1")
-  }
-
-  static formats(domNode) {
-    if (domNode.innerText.match(/\d/g).join("")) {
-      return {note: {id: getNoteId(domNode), index: getIndex(domNode)}}
-    } else {
-      return {note: {id: getNoteId(domNode)}}
+    if (value.pageNum) {
+      domNode.innerText = `[p. ${value.pageNum}]`
     }
-  }
+  }*/
+
+  /*static value(domNode) {
+    console.log ("NoteBlot static value : ", domNode);
+    console.log ("NoteBlot static value return: ", {
+      href: domNode.getAttribute('href'),
+      pageNum: getPageNum(domNode.innerText)
+    })
+    return {
+      href: domNode.getAttribute('href'),
+      pageNum: getPageNum(domNode.innerText)
+    }
+  }*/
 
 
-
-  format(name, value) {
-    console.log("format(name, value)", ATTRIBUTES, name, value )
-    if (name === 'note' && value) {
-      if (this.domNode.getAttribute('href') !== value.id) {
-        console.log("cond 1", this.domNode)
-        if (value.index) {
-
-          this.domNode.setAttribute(name, value.id);
-          this.domNode.innerHTML = this.domNode.innerHTML.replace(/\uFEFF/gm, "")
-          this.domNode.innerHTML = this.domNode.innerHTML.replace(/<span.*>(\[\d*])<\/span>/g, "$1")
-          console.log("cond 2", this.domNode)
+  format(name, data) {
+    console.log("NoteBlot format(name, value)", name, data )
+    if (name === 'note') {
+      if (data !== null && data !== false) {
+        console.log("format(name, data) cond 0 : ", name, data)
+        /*console.log("cond 0", this.domNode)
+        super.remove(name, value);
+        return*/
+        if (data.id) { //this.domNode.getAttribute('href').substring(1) !==
+          console.log("cond 1", data.id)
+          this.domNode.setAttribute('href', '#' + data.id)
         } else {
-          this.domNode.removeAttribute(name);
+          this.domNode.setAttribute('href', "#");
+        }
+        if (data.index) {
+          //this.domNode.innerText = `[${data.index}]`
+          //this.domNode.innerHTML = this.domNode.innerHTML.replace(/\uFEFF/gm, "")
+          //this.domNode.innerHTML = this.domNode.innerHTML.replace(/<span.*>(\[\d*])<\/span>/g, "$1")
+          console.log("cond 2", this.domNode)
+        } else if (data.note) {
+          this.domNode.innerText = `[${data.note.index}]`
+          this.domNode.setAttribute('href', '#' + data.note.id)
+          console.log("cond change note link", this.domNode)
+        } else {
+          this.domNode.innerText = `[note]`
           console.log("cond 3", this.domNode)
         }
-      } else {
-        console.log("cond 4", this.domNode)
-        super.format(name, value);
-        console.log("cond 4", this.domNode)
+      } else if (data === null) {
+        console.log("format(name, data) cond B : ", name, data)
+        super.format(name, data)
+        //super.format(name, value);
+      } else if (data === false) {
+        console.log("format(name, data) cond C : ", name, data)
+        super.remove(name, data);
       }
     } else {
-    console.log("cond 5", this.domNode)
-      super.format(name, value);
-    console.log("cond 5", this.domNode)
+      console.log("format(name, data) cond D : ", name, data)
+      super.format(name, data);
     }
   }
+  static formats(domNode) {
+    console.log("NoteBlot formats domNode : ", domNode)
+    if (domNode.innerText.match(/\d/g) !== null ) {
+      console.log("NoteBlot node.innerText", domNode.innerText.length, domNode.innerText)
+      console.log("NoteBlot formats return 1", {id: getNoteId(domNode), index: getIndex(domNode)})
+      return {id: getNoteId(domNode), index: getIndex(domNode)}
+    } else {
+      console.log("NoteBlot formats return 2", {id: getNoteId(domNode), index: null})
+      return {id: getNoteId(domNode), index: null}
+    }
+  }
+  /*formats() {
+    let formats = super.formats();
+    console.log("formats :", formats)
+    formats['note'] = NoteBlot.formats(this.domNode);
+    return formats;
+  }*/
+
 }
 NoteBlot.blotName = 'note';
 NoteBlot.tagName = 'a';
 NoteBlot.className = 'note';
+
+export default NoteBlot;

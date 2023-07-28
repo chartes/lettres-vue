@@ -84,9 +84,7 @@ export default {
     },
     computed: {
       ...mapState("user", ["current_user"]),
-      ...mapGetters("user", [
-      "isAuthenticated"
-    ]),
+      ...mapGetters("user", ["isAuthenticated"]),
     },
     created() {
       if (this.isAuthenticated) {

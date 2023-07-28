@@ -1,5 +1,11 @@
 <template>
+  <div v-if="!isLoading && !authorised">
+    <section>
+      Le document n'est pas publié. Veuillez-vous connecter pour pouvoir le visualiser.
+    </section>
+  </div>
   <div
+    v-else-if="!isLoading"
     class="document"
     :class="documentCssClass"
   >
@@ -149,8 +155,10 @@
                     v-if="!preview"
                     :editable="canEdit"
                     :preview="preview"
+                    :title-editor="titleEditor ? titleEditor : titleContent"
                     class="column"
-                    @add-note="addNote"
+                    @add-note="addNote($event)"
+                    @refresh-title="refreshTitle($event)"
                   />
                   <document-languages
                     :editable="canEdit"
@@ -294,9 +302,11 @@
                   <document-argument
                     :editable="canEdit"
                     :preview="preview"
+                    :argument-editor="argumentEditor ? argumentEditor : argumentContent"
                     @add-place="addPlace"
                     @add-person="addPerson"
                     @add-note="addNote"
+                    @refresh-argument="refreshArgument($event)"
                   />
                 </div>
               </template>
@@ -332,14 +342,65 @@
                   <document-transcription
                     :editable="canEdit"
                     :preview="preview"
+                    :transcription-editor="transcriptionEditor ? transcriptionEditor : transcriptionContent"
+                    :address-editor="addressEditor ? addressEditor : addressContent"
                     @add-place="addPlace"
                     @add-person="addPerson"
                     @add-note="addNote"
+                    @refresh-transcription="refreshTranscription($event)"
+                    @refresh-address="refreshAddress($event)"
                   />
                 </div>
               </template>
             </b-collapse>
           </section>
+
+          <!-- notes -->
+          <section class="document-section">
+            <div class="heading is-uppercase is-flex is-justify-content-space-between">
+              <span class="heading-content">Notes</span>
+              <span
+                v-if="canEdit"
+                class="icon"
+                :aria-expanded="isNotesOpen"
+                aria-controls="notesSection"
+                @click="isNotesOpen = !isNotesOpen"
+              >
+                <i :class="isNotesOpen ? 'fas fa-angle-up' : 'fas fa-angle-down'" />
+              </span>
+              <!--<div class="slope-container">
+                <span class="slope tier-1" />
+                <span class="slope tier-2" />
+                <span class="slope tier-3" />
+                <span class="slope tier-4" />
+              </div>-->
+            </div>
+            <b-collapse
+              :class="!canEdit? '' : isNotesOpen? '' : 'hiddendiv'"
+              aria-id="notesSection"
+            >
+              <template #default>
+                <div class="document-section-content">
+                  <document-notes
+                    :editable="canEdit"
+                    :preview="preview"
+                    :title-editor="titleEditor ? titleEditor : titleContent"
+                    :argument-editor="argumentEditor ? argumentEditor : argumentContent"
+                    :transcription-editor="transcriptionEditor ? transcriptionEditor : transcriptionContent"
+                    :address-editor="addressEditor ? addressEditor : addressContent"
+                    @add-place="addPlace"
+                    @add-person="addPerson"
+                    @add-note="addNote"
+                    @refresh-title="refreshTitle($event)"
+                    @refresh-argument="refreshArgument($event)"
+                    @refresh-transcription="refreshTranscription($event)"
+                    @refresh-address="refreshAddress($event)"
+                  />
+                </div>
+              </template>
+            </b-collapse>
+          </section>
+
 
           <!-- témoins
           <document-witnesses :editable="canEdit" :list="witnesses" />
@@ -438,8 +499,8 @@
 
         <!-- modals -->
         <b-modal
-          v-if="canEdit"
-          v-model="isNoteFormModalActive"
+          v-if="canEdit && isNewNoteFormModalActive"
+          v-model="isNewNoteFormModalActive"
           trap-focus
           has-modal-card
           :can-cancel="['escape', 'x']"
@@ -452,7 +513,7 @@
         >
           <template #default="props">
             <note-form
-              title="Note"
+              title="Actions de notes"
               :input-data="noteInputData"
               @add-place="addPlace($event)"
               @add-person="addPerson($event)"
@@ -464,6 +525,61 @@
             />
           </template>
         </b-modal>
+        <!--new-->
+        <b-modal
+          v-if="canEdit && isNoteFormModalActive"
+          v-model="isNoteFormModalActive"
+          trap-focus
+          has-modal-card
+          :can-cancel="['escape', 'x']"
+          scroll="clip"
+          width="80%"
+          :destroy-on-hide="true"
+          aria-role="dialog"
+          aria-label="Note"
+          aria-modal
+        >
+          <template #default="props">
+            <note-actions
+              title="Actions de notes"
+              :input-data="noteInputData"
+              @add-note="addNote($event)"
+              @close="
+                () => {
+                  props.close();
+                }
+              "
+            />
+          </template>
+        </b-modal>
+        <b-modal
+          v-if="canEdit && isNoteListFormModalActive"
+          v-model="isNoteListFormModalActive"
+          trap-focus
+          has-modal-card
+          :can-cancel="['escape', 'x']"
+          scroll="clip"
+          width="80%"
+          :destroy-on-hide="true"
+          aria-role="dialog"
+          aria-label="Note"
+          aria-modal
+        >
+          <template #default="props">
+            <note-form
+              title="Actions de notes"
+              :input-data="noteInputData"
+              :input-list="notesListData"
+              @add-note="addNote($event)"
+              @close="
+                () => {
+                  props.close();
+                }
+              "
+            />
+          </template>
+        </b-modal>
+        <!--end new-->
 
         <b-modal
           v-if="canEdit"
@@ -593,11 +709,14 @@ import WitnessList from "@/components/document/WitnessList.vue";
 import PlaceWizardForm from "@/components/forms/wizards/PlaceWizardForm.vue";
 import PersonWizardForm from "@/components/forms/wizards/PersonWizardForm.vue";
 import IconAdd from "@/components/ui/icons/IconAdd";
-
+import NoteActions from "@/components/forms/editor/NoteActions.vue";
+import NewNoteActions from "@/components/forms/editor/NewNoteActions.vue";
+import DocumentNotes from "@/components/document/DocumentNotes.vue";
 export default {
   name: "Document",
   //emit: ["open-witness-modal"],
   components: {
+    DocumentNotes,
     IconAdd,
     Changelog,
     DocumentSkeleton,
@@ -615,6 +734,7 @@ export default {
     PlaceWizardForm,
     PersonWizardForm,
     NoteForm,
+    NoteActions
   },
   props: {
     docId: { required: true, type: Number },
@@ -628,6 +748,7 @@ export default {
       isPlacesOpen: true,
       isAnalyseOpen: true,
       isTranscriptionOpen: true,
+      isNotesOpen: true,
       isWitnessOpen: true,
       isCollectionsOpen: true,
 
@@ -639,6 +760,7 @@ export default {
       docIdList: [],
 
       isLoading: true,
+      authorised: true,
 
       openWitnessModal: false,
 
@@ -649,7 +771,19 @@ export default {
       isPersonWizardFormModalActive: false,
 
       noteInputData: null,
+      notesListData: [],
       isNoteFormModalActive: false,
+      isNewNoteFormModalActive: false,
+      isNoteListFormModalActive: false,
+      titleContent: null,
+      titleEditor: null,
+      argumentContent: null,
+      argumentEditor: null,
+      transcriptionContent: null,
+      transcriptionEditor: null,
+      addressContent: null,
+      addressEditor: null,
+      newNoteFunction: null
     };
   },
   computed: {
@@ -668,6 +802,7 @@ export default {
     ]),
     ...mapState("user", ["current_user", "jwt"]),
     ...mapState("locks", ["lockOwner"]),
+    ...mapActions("search", ["getDocumentsTotal"]),
     ...mapGetters("document", ["locationDateFrom", "locationDateTo"]),
     ...mapGetters("placenames", ["getRoleByLabel"]),
     ...mapGetters("persons", ["getRoleByLabel"]),
@@ -725,54 +860,85 @@ export default {
       return false
     },
   },
-  watch: {},
+  watch: {
+    titleEditor: function (val) {
+      console.log("DocumentVue / watch / titleEditor : ", val)
+    },
+    argumentEditor : function (val) {
+      console.log("DocumentVue / watch / argumentEditor : ", val)
+    },
+    transcriptionEditor : function (val) {
+      console.log("DocumentVue / watch / transcriptionEditor : ", val)
+    },
+    addressEditor : function (val) {
+      console.log("DocumentVue / watch / addressEditor : ", val)
+    },
+  },
   async created() {
     this.isLoading = true;
     try {
-      let documentsTotal = await this.getDocumentsTotal().then(resp => {
-        return resp.documentsTotal
-      });
-      console.log('documentsTotal : ', documentsTotal)
-      this.lastDocId = await this.getDocumentsTotal().then(resp => {
-        return resp.lastDocId
-      });
-      console.log('lastDocId : ', this.lastDocId);
-      this.firstDocId = await this.getDocumentsTotal().then(resp => {
-        return resp.docIdList[resp.docIdList.length - 1].id
-      });
-      console.log('firstDocId : ', this.firstDocId);
-      await this.getDocumentsTotal().then(resp => {
-        this.docIdList = resp.docIdList;
-        this.currentIndex = resp.docIdList.findIndex(doc => doc.id === this.docId);
+      if (!this.$store.state.search.docIdList) {
+        await this.getDocumentsTotal()
+      }
+      this.docIdList = this.$store.state.search.docIdList;
+
+      if (!this.current_user && !this.docIdList.filter(d => d.id === this.docId).length > 0) {
+        this.authorised = false;
+      } else {
+        let documentsTotal = this.$store.state.search.documents_total
+        //console.log('documentsTotal : ', documentsTotal)
+        this.lastDocId = this.$store.state.search.lastDocId;
+        this.firstDocId = this.$store.state.search.firstDocId;
+
+        this.currentIndex = this.docIdList.findIndex(doc => doc.id === this.docId);
         console.log("currentIndex", this.currentIndex);
-        if (this.currentIndex < this.docIdList.length - 1 ) {
-          this.previousDocId = this.docIdList[this.currentIndex + 1].id
+        if (this.currentIndex > 0) {
+          this.previousDocId = this.docIdList[this.currentIndex - 1].id
         } else {
           this.previousDocId = this.firstDocId;
         }
-        if (this.currentIndex > 0) {
-          this.nextDocId = this.docIdList[this.currentIndex - 1].id;
+        if (this.currentIndex < this.docIdList.length - 1) {
+          this.nextDocId = this.docIdList[this.currentIndex + 1].id;
         } else {
           this.nextDocId = this.lastDocId;
         }
-        console.log("previousDocId", this.previousDocId); // give you the previous doc id
-        console.log("nextDocId", this.nextDocId); // give you the next doc id
-        return this.docIdList, this.previousDocId, this.nextDocId
-      });
-      console.log('docIdList : ', this.docIdList);
+        console.log("firstDocId : ", this.firstDocId, "\npreviousDocId : ", this.previousDocId, "\nthis.docId : ", this.docId, "\nthis.nextDocId : ", this.nextDocId, "\nthis.lastDocId : ", this.lastDocId);
+        console.log('docIdList : ', this.docIdList);
 
-      await this.$store.dispatch("document/fetch", this.docId);
-      this.setLastSeen(this.docId);
+        await this.$store.dispatch("document/fetch", this.docId);
+        this.setLastSeen(this.docId);
+      }
     } catch (e) {
       console.log("e : ", e)
       await this.$router.push({name: "home"});
     }
-    this.isLoading = false;
+    if (this.$store.state.document.document) {
+      console.log("note dict : ", this.$store.state.document.notes);
+      /*let title = this.$store.state.document.document.title
+      let argument = this.$store.state.document.document.argument
+      let transcription = this.$store.state.document.document.transcription
+      let addresss = this.$store.state.document.document.address
+      const personRegexp = /(?:class="persName" (?:target="_blank" href="[^>]*".)?id=")(\d+)/gmi;
+      let persNameArgumentList = [...argument.matchAll(personRegexp)].map(m => parseInt(m[1]));
+      let persNameTranscriptionList = [...transcription.matchAll(personRegexp)].map(m => parseInt(m[1]));
+      let persNameAddressList = [...addresss.matchAll(personRegexp)].map(m => parseInt(m[1]));
+
+      let persNameList = persNameArgumentList.concat(persNameTranscriptionList, persNameAddressList)
+      let persNameTranscriptionDict = {}
+      for (let i = 0; i < persNameList.length; i++) {
+      persNameTranscriptionDict[persNameList[i]] = 1 + (persNameTranscriptionDict[persNameList[i]] || 0);
+      }
+      console.log("persName dict: ", persNameTranscriptionDict)*/
+      this.titleContent = this.$store.state.document.document.title;
+      this.transcriptionContent = this.$store.state.document.document.transcription;
+      this.addressContent = this.$store.state.document.document.address;
+      this.argumentContent = this.$store.state.document.document.argument;
+    }
+    this.isLoading = false
   },
   methods: {
     ...mapActions("locks", ["fetchLockOwner"]),
     ...mapActions("layout", ["setLastSeen"]),
-    ...mapActions("search", ["getDocumentsTotal"]),
     addPlace(evt) {
       this.placeInputData = evt;
       this.isPlaceWizardFormModalActive = true;
@@ -798,8 +964,50 @@ export default {
     },
     addNote(evt) {
       console.log("Document.vue / addNote : ", evt)
+      this.noteInputData = null;
       this.noteInputData = evt;
-      this.isNoteFormModalActive = true;
+      this.isNoteListFormModalActive = false;
+      this.isNoteFormModalActive = false;
+      if (evt.list) {
+        // open NoteForm with list of existing Notes
+        console.log("Document.vue / addNote is a list of Notes, evt, noteInputData", evt, this.noteInputData);
+        this.noteInputData = evt;
+        this.notesListData = evt.list;
+        this.isNoteListFormModalActive = true;
+      } else if (evt.action === "new") {
+          // open NoteForm for new note
+          console.log("Document.vue / addNote has evt with NEW flag", evt, this.noteInputData);
+          this.noteInputData = evt;
+          this.isNewNoteFormModalActive = true
+      } else if (evt.action === "update") {
+          // open NoteActions
+          console.log("Document.vue / addNote has evt with UPDATE flag, evt, noteInputData", evt, this.noteInputData);
+          this.noteInputData = evt;
+          this.isNewNoteFormModalActive = true;
+        } else {
+          console.log("Document.vue / addNote has evt with NO flag, evt, noteInputData", evt, this.noteInputData);
+          this.noteInputData = evt;
+          this.isNoteFormModalActive = true;
+      }
+    },
+    refreshTitle(evt) {
+      console.log("DocumentVue / refreshTitle(evt) or titleEditor", evt)
+      this.titleEditor = evt
+    },
+    refreshArgument(evt) {
+      console.log("DocumentVue / refreshArgument(evt) or argumentEditor", evt)
+      this.argumentEditor = evt
+      this.argumentContent = evt;
+    },
+    refreshTranscription(evt) {
+      console.log("DocumentVue / refreshTranscription(evt) or transcriptionEditor", evt)
+      this.transcriptionEditor = evt;
+      this.transcriptionContent = evt;
+    },
+    refreshAddress(evt) {
+      console.log("DocumentVue / refreshAddress(evt) or addressEditor", evt)
+      this.addressEditor = evt
+      this.addressContent = evt;
     },
   },
 };

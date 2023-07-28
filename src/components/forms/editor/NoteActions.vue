@@ -1,115 +1,313 @@
 <template>
-  <div class="note-actions">
-    <div class="field">
-      <p class="control">
-        <a
-          class="button is-primary"
+  <div
+    v-if="!noteIdToDelete"
+    class="modal-card note-form"
+  >
+    <header class="is-uppercase is-size-2 mb-5">
+      <h1
+        :title="existingNote ? 'Choisir \'Editer :\' pour modifier le contenu de la note \nChoisir \'Supprimer :\' pour supprimer l\'appel de note' : ''"
+      >{{ $attrs.title }} : {{ existingNote ? 'édition de la sélection' : 'nouvel appel de note' }}</h1>
+    </header>
+    <div class="note-actions__container">
+      <div
+        v-if="existingNote"
+        class="editor">
+        <b-table
+          ref="multiSortTable"
+          :data="[existingNote]"
+          :narrowed="true"
+          :mobile-cards="true"
+          class="note-table"
+        >
+          <!-- for admins debugging  : show NoteID
+          <b-table-column
+            v-slot="props"
+            field="id"
+            label="ID"
+          >
+            <div class="id">
+              {{ props.row.id }}
+            </div>
+          </b-table-column>
+          -->
+          <b-table-column v-slot="props" field="description" label="Note">
+            <div
+              class="description"
+              v-html="props.row.content"
+            />
+          </b-table-column>
+          <template #empty>
+            <div class="has-text-centered">Aucun résultat</div>
+          </template>
+        </b-table>
+      </div>
+      <div class="buttons">
+        <b-button
+          :disabled="existingNote"
+          :title="existingNote ? 'Une note est en cours de sélection' : 'Créer une nouvelle note pour cet appel'"
+          type="is-primary"
+          size="is-medium"
           @click="newAction"
         >
-          <span class="icon is-small">
-            <i class="fas fa-plus" />
-          </span>
-          <span>Lier à une nouvelle note</span>
-        </a>
-      </p>
-    </div>
-    <div class="field">
-      <p class="control">
-        <a
-          class="button is-info"
+          <span>Créer</span>
+        </b-button>
+        <b-button
+          :disabled="existingNote ? docNotesCount <= 1 : docNotesCount === 0"
+          :title="existingNote ? docNotesCount <= 1 ? 'Cette note est l\'unique note existante' : 'Lier cet appel à une autre note' : 'Lier cet appel à une note existante'"
+          type="is-primary"
+          size="is-medium"
           @click="updateLinkAction"
         >
-          <span class="icon is-small">
-            <i class="fas fa-link" />
-          </span>
-          <span>Lier à une note existante</span>
-        </a>
-      </p>
-    </div>
-    <div class="field">
-      <p class="control">
-        <a
-          class="button is-link"
-          @click="unlinkAction"
-        >
-          <span class="icon is-small">
-            <i class="fas fa-unlink" />
-          </span>
-          <span>Supprimer le lien vers la note</span>
-        </a>
-      </p>
-    </div>
-    <div class="field">
-      <p class="control">
-        <a
-          class="button is-warning"
+          <span>Lier</span>
+        </b-button>
+        <b-button
+          :disabled="!existingNote"
+          :title="!existingNote ? 'Aucune note sélectionnée' : 'Modifier le contenu de la note'"
+          type="is-primary"
+          size="is-medium"
           @click="editAction"
         >
-          <span class="icon is-small">
-            <i class="fas fa-edit" />
-          </span>
-          <span>Éditer la note</span>
-        </a>
-      </p>
-    </div>
-    <hr>
-    <div class="field">
-      <p class="control">
-        <a
-          class="button is-danger"
-          @click="deleteAction"
+          <span>Éditer</span>
+        </b-button>
+      </div>
+      <div>
+        <div
+          v-if="existingNote"
+          class="note-actions__danger"
         >
-          <span class="icon is-small">
-            <i class="fas fa-trash" />
+          <span class="note-actions__danger_icon">
+            <i class="fas fa-exclamation-triangle" />
           </span>
-          <span>Supprimer la note</span>
-        </a>
-      </p>
+          <span
+            v-if="existingNote.occurences === 1"
+            class="note-actions__danger_txt"
+          >
+            Dernier appel vers cette note :<br/>la note sera également supprimée du document.
+          </span>
+          <span
+            v-else
+            class="note-actions__danger_txt"
+          >
+            Seul l'appel de note sélectionné sera supprimé<br/>car d'autres appels pointent vers la note.<br/>
+            Pour supprimer la note :<br/>
+            - supprimer tous les appels de la note ou<br/>
+            - supprimer la note dans la section Notes
+          </span>
+        </div>
+        <div class="buttons">
+          <b-button
+            :disabled="!existingNote"
+            :title="!existingNote ? 'Aucune note sélectionnée' : ''"
+            type="is-primary"
+            size="is-medium"
+            @click="deleteAction(parseInt(inputData.formats.note.id))"
+          >
+            <span>Supprimer</span>
+          </b-button>
+          <b-button
+            title="Revenir à l'éditeur"
+            type="is-primary"
+            size="is-medium"
+            @click="cancelNoteAction"
+          >
+            <span>Annuler</span>
+          </b-button>
+        </div>
+      </div>
     </div>
+  </div>
+  <div
+    v-else-if="noteIdToDelete"
+    class="modal-card note-form"
+  >
+    <modal-confirm-note-delete
+      :note-id="noteIdToDelete ? noteIdToDelete : null"
+      :cancel="cancelNoteDelete"
+      :submit="confirmNoteDelete"
+    />
   </div>
 </template>
 
 <script>
+  import {mapState, mapActions} from "vuex";
+  import ModalConfirmNoteDelete from "@/components/forms/ModalConfirmNoteDelete.vue";
+
   export default {
     name: "NoteActions",
+    components: {ModalConfirmNoteDelete},
     props: {
-      edit: {
-        type: Function,
-        required: true
+      inputData: {
+        type: Object,
+        default: () => {
+          return null;
+        }
       },
-      newNote: {
-        type: Function,
-        required: true
-      },
-      delete: {
-        type: Function,
-        required: true
-      },
-      updateLink: {
-        type: Function,
-        required: true
-      },
-      unlink: {
-        type: Function,
-        required: true
+    },
+    emits: ["add-note", "close"],
+    data() {
+      return {
+        NoteMode: "",
+        docNotesCount: 0,
+        existingNote: null,
+        noteIdToDelete: null,
+        noteWithMode: false,
+        documentNotes: []
+      };
+    },
+    computed: {
+    ...mapState("notes", ["notes"]),
+    ...mapState("document", ["document"]),
+    ...mapState("user", ["current_user"])
+    },
+    mounted() {
+      // check if triggered from notes list (this.inputData.note) or existing note in editor (this.inputData.formats.note) :
+      console.log("NoteActions mounted inputData", this.inputData)
+      this.docNotesCount = this.$store.state.document.notes.length;
+      //console.log("NoteActions mounted newNote", this.newNote)
+      if (this.inputData.note || this.inputData.formats.note) {
+        if (this.inputData.note) {
+          console.log("NNoteActions mounted inputData : ", this.inputData)
+        } else {
+          console.log("NoteActions mounted inputData (existing note) : ", this.inputData)
+          // retrieve note if from inputData
+          let existingNoteId = parseInt(this.inputData.formats.note.id);
+          console.log("NoteActions mounted existingNoteId : ", existingNoteId)
+          // retrieve note content from store
+          this.existingNote = this.$store.state.document.notes.filter((note) => parseInt(note.id) === existingNoteId)[0];
+          console.log("NoteActions existingNote : ", this.existingNote);
+        }
       }
     },
     methods: {
-      newAction () {
-        this.$props.newNote();
+      newAction() {
+        //console.log("this.$props.newNote", this.$props.newNote)
+        //console.log("type this.$props.newNote", typeof (this.$props.newNote))
+        console.log("NoteActions newAction this.inputData : ", this.inputData)
+        this.noteWithMode = this.inputData;
+        this.noteWithMode.action = "new";
+        this.$emit("add-note", this.noteWithMode);
+        this.$emit("close");
       },
-      deleteAction () {
-        this.$props.delete();
+      deleteAction(noteId) {
+        console.log("deleteAction : noteId", noteId)
+        let storeNoteToUpdate = this.$store.state.document.notes.filter(n => n.id === noteId)[0];
+        console.log("deleteAction : found storeNoteToUpdate", storeNoteToUpdate)
+        if (storeNoteToUpdate.occurences && storeNoteToUpdate.occurences > 1) {
+          storeNoteToUpdate.occurences -= 1;
+          console.log("deleteAction : storeNoteToUpdate decrement", storeNoteToUpdate)
+          this.$store.dispatch("document/updateNote", storeNoteToUpdate).then((storeNote) => {
+          console.log("NoteActions / deleteAction / Updated Note", storeNote);
+          })
+          this.inputData.removeTagCallback();
+          this.$emit("close");
+        } else if (storeNoteToUpdate.occurences && storeNoteToUpdate.occurences === 1) {
+          console.log("WARNING, last occurrence of Note", storeNoteToUpdate.id)
+          this.noteIdToDelete = storeNoteToUpdate.id;
+        }
       },
-      editAction () {
-        this.$props.edit();
+      confirmNoteDelete(noteIdToDelete) {
+        console.log("confirmNoteDelete(noteId)", noteIdToDelete)
+        this.$store.dispatch("document/removeNote", noteIdToDelete).then((noteIdToDelete) => {
+          this.inputData.removeTagCallback();
+          //this.removeNoteFromDocument(noteIdToDelete);
+          //this.removeNoteFromWitnesses(noteIdToDelete);
+          this.cancelNoteDelete();
+          this.$emit("close");
+          });
       },
-      unlinkAction () {
-        this.$props.unlink();
+      cancelNoteDelete() {
+        this.noteIdToDelete = null;
       },
-      updateLinkAction () {
-        this.$props.updateLink();
+      editAction() {
+        console.log("NoteActions / editAction / this.inputData", this.inputData)
+        this.noteWithMode = this.inputData;
+        this.noteWithMode.action = "update";
+        this.$emit("add-note", this.noteWithMode);
+        this.$emit("close");
+      },
+      updateLinkAction() {
+        this.documentNotes = this.$store.state.document.notes
+        console.log("NoteActions / updateLinkAction / this.documentNotes is a list ?", Array.isArray(this.documentNotes))
+        let inputNotesData= this.inputData
+        inputNotesData.list = this.documentNotes
+        if (this.existingNote) {
+          inputNotesData.selected = this.existingNote
+        }
+        this.$emit("add-note", inputNotesData);
+        console.log("NoteActions / updateLinkAction / this.inputNotesData", inputNotesData)
+        this.$emit("close");
+      },
+      cancelNoteAction() {
+        this.$emit("close");
       }
     }
   }
 </script>
+<style lang="scss" scoped>
+@import "@/assets/sass/main.scss";
+
+.note-form {
+  overflow: visible;
+  padding-bottom: 20px;
+
+  header {
+    background-color: #CB2158;
+    border: none;
+    border-radius: 5px;
+    padding: 3px 20px;
+    margin-bottom: 10px !important;
+
+    h1 {
+      padding: 0;
+      font-family: $family-apptitle;
+      font-size: 30px;
+      color: #FFFFFF;
+      font-weight: 200;
+      letter-spacing: 0;
+      text-transform: none;
+    }
+  }
+  .note-actions__container {
+    background-color: #FFFFFF;
+    border-radius: 5px;
+    padding: 5px;
+
+    .note-actions__danger {
+      display: table;
+      padding: 5px;
+      .note-actions__danger_icon {
+        display: table-cell;
+        vertical-align: middle;
+        padding: 5px;
+      }
+      .note-actions__danger_txt {
+        display: table-cell;
+        vertical-align: middle;
+        padding: 5px;
+      }
+    }
+  }
+  .note-form-item__text {
+    background-color: #FFFFFF;
+    padding: 20px;
+  }
+  .editor {
+    background-color: #FFFFFF;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    padding: 20px;
+  }
+
+  .buttons {
+    display: flex;
+    background-color: #FFFFFF;
+    padding: 20px;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+
+    .button {
+      background-color: #CB2158;
+    }
+  }
+}
+</style>

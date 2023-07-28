@@ -8,13 +8,14 @@
       style="display: inline-block; width: 100%"
     >
       <span
-        v-if="!editMode"
+        v-if="editable && !editMode"
         class="edit-btn"
         @click="enterEditMode"
       />
       <rich-text-editor
         v-if="editable && editMode"
         v-model="form"
+        label="argument"
         :formats="[
           ['close'],
           ['italic', 'superscript'],
@@ -24,6 +25,7 @@
         @add-place="addPlace($event, 'argument')"
         @add-person="addPerson($event, 'argument')"
         @add-note="addNote($event)"
+        @refresh-argument="refreshArgument($event)"
         @on-keyup-escape="cancelInput($event)"
       >
         <editor-save-button
@@ -63,9 +65,13 @@ export default {
     preview: {
       type: Boolean,
       default: false,
+    },
+    argumentEditor: {
+      type: String,
+      default: "",
     }
   },
-  emits: ["add-place", "add-person", "add-note"],
+  emits: ["add-place", "add-person", "add-note", "refresh-argument"],
   data() {
     return {
       //editorEnabled: true,
@@ -73,12 +79,28 @@ export default {
       form: "",
     };
   },
+  watch: {
+    argumentEditor: function (newVal, Oldval) {
+      console.log("DocumentArgument / watch / form old new : ", Oldval, newVal)
+      this.form = newVal;
+      this.$emit("refresh-argument", this.form)
+    },
+  },
   computed: {
     ...mapState("document", ["document"]),
     ...mapState("search", ["searchTerm"])
   },
   mounted() {
     this.form = this.document.argument || "";
+    //TODO Victor remove once [note] have been replaced in database
+    this.getNoteIndex(this.form, "argument");
+
+    //TODO Victor remove once attributes title have been added in database
+    this.getPersonsLabel(this.form, "argument");
+
+    //TODO Victor remove once attributes title have been added in database
+    this.getPlacesLabel(this.form, "argument");
+
   },
   created() {
     console.log("argument created searchTerm : ", this.searchTerm)
@@ -102,11 +124,120 @@ export default {
     addNote(evt) {
       this.$emit("add-note", { ...evt });
     },
+    refreshArgument(evt) {
+      console.log("DocumentArgument / refreshArgument(evt)", evt);
+      this.form = evt;
+      this.$emit("refresh-argument", evt)
+    },
+
     highlight(text) {
       const terms = this.searchTerm.split(new RegExp("\\s+")).map(escapeRegExp).filter(term => term !== "")
       const re = new RegExp(`(${terms.join("|")})`)
       return text.replace(new RegExp(re, 'gi'), (match => `<mark>${match}</mark>`))
     },
+    //TODO Victor remove once [note] have been replaced in database
+    getNoteIndex(content, type) {
+      const pattern = /<a class="note" href="#(\d+)">\[note]<\/a>/gmi
+      console.log("DocumentArgument / getNoteIndex", content, type)
+      if (content) {
+        this.contentPrep = content
+        //console.log(`DocumentArgument / getNoteIndex / this.${type}Prep : `, this.contentPrep)
+        let inContent = pattern.test(this.contentPrep);
+        console.log(`DocumentArgument / getNoteIndex in${type}`, inContent)
+        if (inContent) {
+          //console.log(`in${type}`, this.contentPrep)
+          let contentMatch = content.match(pattern)
+          //console.log(`${type}Match`, contentMatch)
+          let contentMatches = [...content.matchAll(pattern)]
+          //console.log(`${type}Matches`, contentMatches)
+          let DocumentsNotes = this.$store.state.document.notes
+          let contentMatcheswithIndex = []
+          //console.log("DocumentsNotes", DocumentsNotes)
+          contentMatches.forEach(m => {
+            //console.log("m[0], m[1]", m[0], m[1], DocumentsNotes.findIndex(n => n.id === parseInt(m[1])) + 1)
+            m.push(String(DocumentsNotes.findIndex(n => n.id === parseInt(m[1])) + 1))
+            contentMatcheswithIndex.push(m)
+            //console.log(`${type}withIndex`, contentMatcheswithIndex)
+          })
+          contentMatcheswithIndex.forEach(m => {
+            //console.log("m[0], m[1]", m[0], m[1], typeof (m[1]))
+            //console.log("m[0].replace('[note]', '['+ m[2] +']')", m[0].replace('[note]', '[' + m[2] + ']'))
+            this.form = this.form.replace(m[0], m[0].replace('[note]', '[' + m[2] + ']'));
+          })
+          console.log(`DocumentArgument / getNoteIndex / in${type} replaced`, this.form)
+        }
+      }
+    },
+    //TODO Victor remove once attributes title have been added in database
+    async getPersonsLabel(content, type) {
+      const persPattern = /<a class="persName" target="_blank" href="[^>]*" id="(\d+)">[^<]*<\/a>/gmi
+      console.log("DocumentArgument / getPersonsLabel", content, type)
+      if (content) {
+        this.contentPrep = content
+        //console.log(`DocumentArgument / getPersonsLabel / this.${type}Prep : `, this.contentPrep)
+        let inContent = persPattern.test(this.contentPrep);
+        console.log(`DocumentArgument / getPersonsLabel in${type}`, inContent)
+        if (inContent) {
+          //console.log(`DocumentArgument / getPersonsLabel in${type}`, this.contentPrep)
+          let contentMatch = content.match(persPattern)
+          console.log(`DocumentArgument / getPersonsLabel ${type}Match`, contentMatch)
+          let contentMatches = [...content.matchAll(persPattern)]
+          //console.log(`DocumentArgument / getPersonsLabel ${type}Matches`, contentMatches)
+          let contentMatcheswithLabel = []
+          await Promise.all(contentMatches.map(async (m) => {
+            await this.$store.dispatch("persons/getPersonById", parseInt(m[1])).then(
+                (response) => {
+                  //console.log("m[0], m[1], response.attributes.label", m[0], m[1], response.attributes.label)
+                  m.push(response.attributes.label)
+                  contentMatcheswithLabel.push(m)
+                }
+            )
+            //console.log(`DocumentArgument / getPersonsLabel contentMatcheswithLabel`, contentMatcheswithLabel)
+          }))
+          contentMatcheswithLabel.forEach(m => {
+            //console.log("m[0], m[1]", m[0], m[1], typeof (m[1]))
+            console.log("m[0].replace('target=\"_blank\"', 'target=\"_blank\"' + ' title=\"' + m[2] + '\"')", m[0].replace('target="_blank"', 'target="_blank"' + ' title="' + m[2] + '"'))
+            this.form = this.form.replace(m[0], m[0].replace('target="_blank"', 'target="_blank"' + ' title="' + m[2] + '"'));
+          })
+          console.log(`DocumentArgument / getPersonsLabel in${type} replaced`, this.form)
+        }
+      }
+    },
+    //TODO Victor remove once attributes title have been added in database
+    async getPlacesLabel(content, type) {
+      const placePattern = /<a class="placeName" target="_blank" href="[^>]*" id="(\d+)">[^<]*<\/a>/gmi
+      console.log("DocumentArgument / getPlacesLabel", content, type)
+      if (content) {
+        this.contentPrep = content
+        //console.log(`DocumentArgument / getPlacesLabel / this.${type}Prep : `, this.contentPrep)
+        let inContent = placePattern.test(this.contentPrep);
+        console.log(`DocumentArgument / getPlacesLabel in${type}`, inContent)
+        if (inContent) {
+          //console.log(`DocumentArgument / getPlacesLabel in${type}`, this.contentPrep)
+          let contentMatch = content.match(placePattern)
+          console.log(`DocumentArgument / getPlacesLabel / ${type}Match`, contentMatch)
+          let contentMatches = [...content.matchAll(placePattern)]
+          //console.log(`DocumentArgument / getPlacesLabel / ${type}Matches`, contentMatches)
+          let contentMatcheswithLabel = []
+          await Promise.all(contentMatches.map(async (m) => {
+            await this.$store.dispatch("placenames/getPlacenameById", parseInt(m[1])).then(
+                (response) => {
+                  //console.log("m[0], m[1], response.attributes.label", m[0], m[1], response.attributes.label)
+                  m.push(response.attributes.label)
+                  contentMatcheswithLabel.push(m)
+                }
+            )
+            //console.log(`DocumentArgument / getPlacesLabel / ${type}withTitle`, contentMatcheswithLabel)
+          }))
+          contentMatcheswithLabel.forEach(m => {
+            //console.log("m[0], m[1]", m[0], m[1], typeof (m[1]))
+            console.log("m[0].replace('target=\"_blank\"', 'target=\"_blank\"' + ' title=\"' + m[2] + '\"')", m[0].replace('target="_blank"', 'target="_blank"' + ' title="' + m[2] + '"'))
+            this.form = this.form.replace(m[0], m[0].replace('target="_blank"', 'target="_blank"' + ' title="' + m[2] + '"'));
+          })
+          console.log(`DocumentArgument / getPlacesLabel in${type} replaced`, this.form)
+        }
+      }
+    }
   },
 };
 </script>

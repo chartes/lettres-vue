@@ -72,6 +72,7 @@ const options = {
           shiftKey: true,
           handler: function (range) {
             this.quill.insertEmbed(range.index, 'linebreak', true, 'user');
+            console.log("LettresQuill linebreak handler")
             this.quill.setSelection(range.index + 1, Quill.sources.SILENT);
           }
         },
@@ -95,7 +96,7 @@ const options = {
 function getNewQuill (elt, opt = null) {
 
   const opts = {...options, ...opt};
-  console.log("quill options:", opts);
+  console.log("quill options:", elt, opts);
   
   let quill = new Quill(elt, opts);
   var length = quill.getLength()

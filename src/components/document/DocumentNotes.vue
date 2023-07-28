@@ -61,14 +61,60 @@ export default {
       type: Boolean,
       default: false,
     },
+    transcriptionEditor: {
+      type: String,
+      default: "",
+    },
+    addressEditor: {
+      type: String,
+      default: "",
+    },
+    titleEditor: {
+      type: String,
+      default: "",
+    },
+    argumentEditor: {
+      type: String,
+      default: "",
+    },
   },
-  emits: ["add-note"],
+  emits: ["add-note", "refresh-title", "refresh-argument", "refresh-transcription", "refresh-address"],
   data() {
     return {
       noteId: null,
+      noteWithMode: false,
+      titleContent:"",
+      argumentContent:"",
+      transcriptionContent: "",
+      addressContent: "",
     };
   },
-
+  watch: {
+     titleEditor: function() {
+       this.titleContent = this.titleEditor;
+     },
+     argumentEditor: function() {
+       this.argumentContent = this.argumentEditor;
+     },
+     transcriptionEditor: function(val) {
+       console.log("DocumentNotes / watch / transcriptionEditor props", val)
+       this.transcriptionContent = this.transcriptionEditor;
+     },
+     addressEditor: function() {
+       this.addressContent = this.addressEditor;
+     },
+  },
+  mounted() {
+    this.titleContent = this.$props.titleEditor;
+    console.log("DocumentNotes / mounted / this.$props.titleEditor", this.$props.titleEditor)
+    console.log("DocumentNotes / mounted / this.titleContent", this.titleContent)
+    this.argumentContent = this.$props.argumentEditor;
+    console.log("DocumentNotes / mounted / this.$props.argumentEditor", this.$props.argumentEditor);
+    this.transcriptionContent = this.$props.transcriptionEditor;
+    console.log("DocumentNotes / mounted / this.transcriptionContent", this.transcriptionContent)
+    this.addressContent = this.$props.addressEditor;
+    console.log("DocumentNotes / mounted / this.addressContent", this.addressContent)
+  },
   computed: {
     ...mapState("document", ["document", "notes", "witnesses"]),
     noteItemClass() {
@@ -88,7 +134,10 @@ export default {
       this.noteId = false;
     },
     openNoteEdit(note) {
-      this.$emit("add-note", { note });
+      console.log("DocumentNotes / openNoteEdit / note", note)
+      this.noteWithMode = {note: note};
+      this.noteWithMode.action = "update";
+      this.$emit("add-note", this.noteWithMode);
     },
 
     removeNoteFromDocument(noteId) {
@@ -110,22 +159,31 @@ export default {
           console.log("inTranscription", inTranscription)
           attributes.transcription = docTranscription.replace(pattern, "");
           changed = true;
+          this.$emit("refresh-transcription", attributes.transcription)
         }
       }
+      console.log("changed this.addressContent", this.addressContent, this.document.address)
       if (this.addressContent) {
         const docAddress = removeContentEditableAttributesFromString(this.addressContent);
         const inAddress = pattern.test(docAddress);
+        console.log("inAddress", inAddress);
         if (inAddress) {
+          console.log("inAddress", inAddress)
           attributes.address = docAddress.replace(pattern, "");
           changed = true;
+          this.$emit("refresh-address", attributes.address);
         }
       }
-      if (this.document.title) {
-        const docTitle = removeContentEditableAttributesFromString(this.document.title);
+      console.log("changed this.titleContent", this.titleContent, this.document.title);
+      if (this.titleContent) {
+        const docTitle = removeContentEditableAttributesFromString(this.titleContent);
         const inTitle = pattern.test(docTitle);
+        console.log("inTitle", inTitle);
         if (inTitle) {
+          console.log("inTitle", inTitle);
           attributes.title = docTitle.replace(pattern, "");
           changed = true;
+          this.$emit("refresh-title", attributes.title)
         }
       }
       if (this.document["creation-label"]) {
@@ -138,16 +196,17 @@ export default {
           changed = true;
         }
       }
-      if (this.document.argument) {
+      console.log("changed this.argumentContent", this.argumentContent, this.document.argument);
+      if (this.argumentContent) {
         const docArgument = removeContentEditableAttributesFromString(
-          this.document.argument
+          this.argumentContent
         );
-        console.log("changed docArgument", docArgument)
         const inArgument = pattern.test(docArgument);
+        console.log("inArgument", inArgument);
         if (inArgument) {
-          console.log("docArgument pattern found")
           attributes.argument = docArgument.replace(pattern, "");
           changed = true;
+          this.$emit("refresh-argument", attributes.argument)
         }
       }
       if (changed) {

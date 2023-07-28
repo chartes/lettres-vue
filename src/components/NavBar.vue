@@ -221,16 +221,18 @@ export default {
     };
   },
   methods: {
+    ...mapActions("document", ["resetDocumentState"]),
     ...mapActions("search", ["resetSearchState"]),
     clearState() {
       this.$store.state.collections.selectedCollection = {};
+      this.resetDocumentState();
       this.resetSearchState();
       //this.$store.state.layout.showLeftSideBar = false;
     },
-    logout() {
-      this.$store.dispatch("user/logout")
-      .then(() => {
-        this.$router.push('/login')
+    async logout() {
+      this.$store.dispatch("user/logout").then(() => {
+        this.$router.push('/login');
+        this.clearState();
       })
     },
     openDropDownMenu() {

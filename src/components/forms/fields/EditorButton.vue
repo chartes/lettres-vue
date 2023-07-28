@@ -33,6 +33,9 @@ export default {
       return icons[this.format];
     },
   },
+  watch(format) {
+
+  }
 };
 </script>
 

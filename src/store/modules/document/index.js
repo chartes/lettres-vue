@@ -22,8 +22,19 @@ const TRANSLATION_MAPPING = {
 
 const placenameRegexp = /(?:class="placeName" (?:target="_blank" href="[^>]*".)?id=")(\d+)/gmi;
 const personRegexp = /(?:class="persName" (?:target="_blank" href="[^>]*".)?id=")(\d+)/gmi;
+const noteRegexp = /(?:class="note" href="#(\d+)")/gmi;
 
 const state = {
+  documentLoading: false,
+  document: null,
+  persons: [],
+  placenames: [],
+  witnesses: [],
+  languages: [],
+  collections: [],
+  notes: []
+};
+const initial_State = {
 
   documentLoading: false,
   document: null,
@@ -67,6 +78,10 @@ function makeDummyDocument(data) {
 const dummy = makeDummyDocument();
 
 const mutations = {
+  RESET_DOCUMENT_STATE(state, initial_State) {
+    Object.assign(state, initial_State);
+    console.log('RESET_DOCUMENT_STATE', initial_State)
+  },
 
   UPDATE_DOCUMENT (state, {data, included}) {
     console.log('UPDATE_DOCUMENT', data, included);
@@ -99,12 +114,17 @@ const mutations = {
     const index = state.notes.indexOf(no)
     no = { ...payload }
     state.notes.splice(index, 1, no)
+    console.log("UPDATE_NOTE state.notes", state.notes)
   },
   ADD_NOTE (state, payload) {
     const exists = state.notes.find(note => note.id === payload.id)
-    if (exists) return;
+    if (exists) {
+      console.log("exists")
+      return
+    }
     const before = state.notes.length;
     state.notes = [ ...state.notes, payload ]
+    console.log("ADD_NOTE state.notes", state.notes)
   },
   REMOVE_NOTE (state, payload) {
     let note = state.notes.find(n => n.id === payload)
@@ -164,6 +184,10 @@ const mutations = {
 };
 
 const actions = {
+  resetDocumentState({commit}) {
+    commit('RESET_DOCUMENT_STATE', initial_State);
+  },
+
   fetch ({ rootState, commit }, id) {
     commit('LOADING_STATUS', true);
 
@@ -253,7 +277,7 @@ const actions = {
       inlined[parseInt(_id)] = field.join(',')
     }
     console.log('@@saving inlined placenames:', inlined);
-    await this.dispatch("placenames/fetchRoles");
+    //await this.dispatch("placenames/fetchRoles");
 
     // s'il y a des matches
     // ajout / mise à jour / suppression
@@ -323,6 +347,40 @@ const actions = {
             await http.delete(`/persons-having-roles/${phr.id}`)
         }
     })
+
+    /* =========== find notes =========== */
+    let IdsInTitle = attrs.title ? [...attrs.title.matchAll(noteRegexp)].map(m => parseInt(m[1])) : []
+    IdsInAddress = attrs.address ? [...attrs.address.matchAll(noteRegexp)].map(m => parseInt(m[1])) : []
+    IdsInArgument = attrs.argument ? [...attrs.argument.matchAll(noteRegexp)].map(m => parseInt(m[1])) : []
+    IdsInTranscription = attrs.transcription ? [...attrs.transcription.matchAll(noteRegexp)].map(m => parseInt(m[1])) : []
+
+    console.log("Note IdsInTitle match : ", [...attrs.title.matchAll(noteRegexp)])
+    console.log("Note IdsInTitle map : ", [...attrs.title.matchAll(noteRegexp)].map(m => parseInt(m[1])))
+
+    console.log("Note IdsInAddress match : ", [...attrs.address.matchAll(noteRegexp)])
+    console.log("Note IdsInAddress map : ", [...attrs.address.matchAll(noteRegexp)].map(m => parseInt(m[1])))
+
+    console.log("Note IdsInTranscription match : ", [...attrs.transcription.matchAll(noteRegexp)])
+    console.log("Note IdsInTranscription map : ", [...attrs.transcription.matchAll(noteRegexp)].map(m => parseInt(m[1])))
+
+    let notesList = IdsInTitle.concat(IdsInAddress, IdsInArgument, IdsInTranscription)
+    let notesDict = {}
+    notesDict = Array.from(new Set(notesList)).map((value) => {
+      return {
+        id: value,
+        type: 'note',
+        occurences: notesList.filter((val) => val === value).length,
+      }
+    })
+    console.log("notes dict: ", notesDict)
+    if (Object.entries(notesDict).length > 0) {
+      [notesDict].forEach(note => {
+        console.log("document/updateNote forEarch note", note[0])
+        this.dispatch("document/updateNote", note[0]).then((storeNote) => {
+          console.log("Save doc / Updated Note", storeNote);
+        })
+      })
+    }
 
     // track changes
     if (state.document.id !== dummy.data.id) {
@@ -623,9 +681,10 @@ const actions = {
     return http.post(`notes?without-relationships`, {data})
       .then(response => {
         console.log('response', response.data)
-        note.id = response.data.data.id
-        commit('ADD_NOTE', note);
-        return note;
+        let storeNote = [response.data.data].map(({id, attributes}) => ({ id: id, content: attributes.content, occurences: attributes.occurences }))[0]
+        console.log("storeNote", storeNote)
+        commit('ADD_NOTE', storeNote);
+        return storeNote;
       })
   },
   updateNote ({commit, state, rootState}, note) {
@@ -633,15 +692,19 @@ const actions = {
     const data = {
       id: note.id,
       type: 'note',
-      attributes: { content: note.content }
+      attributes: {
+        content: note.content,
+        occurences: note.occurences
+      }
     }
-    
+    console.log("doc index.js updateNote / note : ", note)
     const http = http_with_auth(rootState.user.jwt);
     return http.patch(`notes/${note.id}?without-relationships`, {data})
       .then(response => {
-        console.log('response', note.content)
-        commit('UPDATE_NOTE', note);
-        return note;
+        console.log('store updateNote response', response.data.data)
+        let storeNote = [response.data.data].map(({id, attributes}) => ({ id: id, content: attributes.content, occurences: attributes.occurences }))[0]
+        commit('UPDATE_NOTE', storeNote);
+        return storeNote;
       })
   },
   removeNote ({commit, state, rootState}, noteId) {
