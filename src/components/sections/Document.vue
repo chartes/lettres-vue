@@ -1,5 +1,11 @@
 <template>
+  <div v-if="!isLoading && !authorised">
+    <section>
+      Le document n'est pas publié. Veuillez-vous connecter pour pouvoir le visualiser.
+    </section>
+  </div>
   <div
+    v-else-if="!isLoading"
     class="document"
     :class="documentCssClass"
   >
@@ -754,6 +760,7 @@ export default {
       docIdList: [],
 
       isLoading: true,
+      authorised: true,
 
       openWitnessModal: false,
 
@@ -795,6 +802,7 @@ export default {
     ]),
     ...mapState("user", ["current_user", "jwt"]),
     ...mapState("locks", ["lockOwner"]),
+    ...mapActions("search", ["getDocumentsTotal"]),
     ...mapGetters("document", ["locationDateFrom", "locationDateTo"]),
     ...mapGetters("placenames", ["getRoleByLabel"]),
     ...mapGetters("persons", ["getRoleByLabel"]),
@@ -869,70 +877,68 @@ export default {
   async created() {
     this.isLoading = true;
     try {
-      let documentsTotal = await this.getDocumentsTotal().then(resp => {
-        return resp.documentsTotal
-      });
-      console.log('documentsTotal : ', documentsTotal)
-      this.lastDocId = await this.getDocumentsTotal().then(resp => {
-        return resp.lastDocId
-      });
-      console.log('lastDocId : ', this.lastDocId);
-      this.firstDocId = await this.getDocumentsTotal().then(resp => {
-        return resp.docIdList[resp.docIdList.length - 1].id
-      });
-      console.log('firstDocId : ', this.firstDocId);
-      await this.getDocumentsTotal().then(resp => {
-        this.docIdList = resp.docIdList;
-        this.currentIndex = resp.docIdList.findIndex(doc => doc.id === this.docId);
+      if (!this.$store.state.search.docIdList) {
+        await this.getDocumentsTotal()
+      }
+      this.docIdList = this.$store.state.search.docIdList;
+
+      if (!this.current_user && !this.docIdList.filter(d => d.id === this.docId).length > 0) {
+        this.authorised = false;
+      } else {
+        let documentsTotal = this.$store.state.search.documents_total
+        //console.log('documentsTotal : ', documentsTotal)
+        this.lastDocId = this.$store.state.search.lastDocId;
+        this.firstDocId = this.$store.state.search.firstDocId;
+
+        this.currentIndex = this.docIdList.findIndex(doc => doc.id === this.docId);
         console.log("currentIndex", this.currentIndex);
-        if (this.currentIndex < this.docIdList.length - 1 ) {
-          this.previousDocId = this.docIdList[this.currentIndex + 1].id
+        if (this.currentIndex > 0) {
+          this.previousDocId = this.docIdList[this.currentIndex - 1].id
         } else {
           this.previousDocId = this.firstDocId;
         }
-        if (this.currentIndex > 0) {
-          this.nextDocId = this.docIdList[this.currentIndex - 1].id;
+        if (this.currentIndex < this.docIdList.length - 1) {
+          this.nextDocId = this.docIdList[this.currentIndex + 1].id;
         } else {
           this.nextDocId = this.lastDocId;
         }
-        console.log("previousDocId", this.previousDocId); // give you the previous doc id
-        console.log("nextDocId", this.nextDocId); // give you the next doc id
-        return this.docIdList, this.previousDocId, this.nextDocId
-      });
-      console.log('docIdList : ', this.docIdList);
+        console.log("firstDocId : ", this.firstDocId, "\npreviousDocId : ", this.previousDocId, "\nthis.docId : ", this.docId, "\nthis.nextDocId : ", this.nextDocId, "\nthis.lastDocId : ", this.lastDocId);
+        console.log('docIdList : ', this.docIdList);
 
-      await this.$store.dispatch("document/fetch", this.docId);
-      this.setLastSeen(this.docId);
+        await this.$store.dispatch("document/fetch", this.docId);
+        this.setLastSeen(this.docId);
+      }
     } catch (e) {
       console.log("e : ", e)
       await this.$router.push({name: "home"});
     }
-    console.log("note dict : ", this.$store.state.document.notes);
-    /*let title = this.$store.state.document.document.title
-    let argument = this.$store.state.document.document.argument
-    let transcription = this.$store.state.document.document.transcription
-    let addresss = this.$store.state.document.document.address
-    const personRegexp = /(?:class="persName" (?:target="_blank" href="[^>]*".)?id=")(\d+)/gmi;
-    let persNameArgumentList = [...argument.matchAll(personRegexp)].map(m => parseInt(m[1]));
-    let persNameTranscriptionList = [...transcription.matchAll(personRegexp)].map(m => parseInt(m[1]));
-    let persNameAddressList = [...addresss.matchAll(personRegexp)].map(m => parseInt(m[1]));
+    if (this.$store.state.document.document) {
+      console.log("note dict : ", this.$store.state.document.notes);
+      /*let title = this.$store.state.document.document.title
+      let argument = this.$store.state.document.document.argument
+      let transcription = this.$store.state.document.document.transcription
+      let addresss = this.$store.state.document.document.address
+      const personRegexp = /(?:class="persName" (?:target="_blank" href="[^>]*".)?id=")(\d+)/gmi;
+      let persNameArgumentList = [...argument.matchAll(personRegexp)].map(m => parseInt(m[1]));
+      let persNameTranscriptionList = [...transcription.matchAll(personRegexp)].map(m => parseInt(m[1]));
+      let persNameAddressList = [...addresss.matchAll(personRegexp)].map(m => parseInt(m[1]));
 
-    let persNameList = persNameArgumentList.concat(persNameTranscriptionList, persNameAddressList)
-    let persNameTranscriptionDict = {}
-    for (let i = 0; i < persNameList.length; i++) {
-    persNameTranscriptionDict[persNameList[i]] = 1 + (persNameTranscriptionDict[persNameList[i]] || 0);
+      let persNameList = persNameArgumentList.concat(persNameTranscriptionList, persNameAddressList)
+      let persNameTranscriptionDict = {}
+      for (let i = 0; i < persNameList.length; i++) {
+      persNameTranscriptionDict[persNameList[i]] = 1 + (persNameTranscriptionDict[persNameList[i]] || 0);
+      }
+      console.log("persName dict: ", persNameTranscriptionDict)*/
+      this.titleContent = this.$store.state.document.document.title;
+      this.transcriptionContent = this.$store.state.document.document.transcription;
+      this.addressContent = this.$store.state.document.document.address;
+      this.argumentContent = this.$store.state.document.document.argument;
     }
-    console.log("persName dict: ", persNameTranscriptionDict)*/
-    this.titleContent = this.$store.state.document.document.title;
-    this.transcriptionContent = this.$store.state.document.document.transcription;
-    this.addressContent = this.$store.state.document.document.address;
-    this.argumentContent = this.$store.state.document.document.argument;
-    this.isLoading = false;
+    this.isLoading = false
   },
   methods: {
     ...mapActions("locks", ["fetchLockOwner"]),
     ...mapActions("layout", ["setLastSeen"]),
-    ...mapActions("search", ["getDocumentsTotal"]),
     addPlace(evt) {
       this.placeInputData = evt;
       this.isPlaceWizardFormModalActive = true;

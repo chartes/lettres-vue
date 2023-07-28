@@ -193,6 +193,11 @@ const state = {
   included: [],
   totalCount: 0,
   links: [],
+  documents_total: null,
+  firstDocId: null,
+  lastDocId : null,
+  docIdList : []
+
 
 };
 
@@ -232,6 +237,10 @@ const initial_State = {
   included: [],
   totalCount: 0,
   links: [],
+  documents_total: null,
+  firstDocId: null,
+  lastDocId : null,
+  docIdList : []
 
 };
 
@@ -239,6 +248,13 @@ const mutations = {
   RESET_SEARCH_STATE(state, initial_State) {
     Object.assign(state, initial_State);
     console.log('RESET_SEARCH_STATE', initial_State)
+  },
+
+  SET_SEARCH_SCOPE(state, scope) {
+    state.documents_total = scope.documentsTotal,
+    state.firstDocId = scope.firstDocId,
+    state.lastDocId = scope.lastDocId,
+    state.docIdList = scope.docIdList
   },
 
   SET_SEARCH_TERM(state, term) {
@@ -310,6 +326,9 @@ const actions = {
   resetSearchState({commit}) {
     commit('RESET_SEARCH_STATE', initial_State);
   },
+  setSearchScope({commit}, scope) {
+    commit('SET_SEARCH_SCOPE', scope);
+  },
   setSearchTerm({commit}, term) {
     commit('SET_SEARCH_TERM', term);
   },
@@ -377,19 +396,16 @@ const actions = {
   },
   async getDocumentsTotal ({commit, rootState}) {
     const http = http_with_auth(rootState.user.jwt);
-    let query ='';
-    let highlights = false;
-    if (!query || query.length === 0) {
-      query = '*'
-    }
+    const response = await http.get(`/all-documents`);
+    let docIdList = response.data.data;
     if (!rootState.user.current_user){
-      query = `${query} AND (is-published:true)`
+      docIdList = docIdList.filter(d => d.is_published === true)
     }
-    const response = await http.get(`/search?query=${query}&without-relationships&sort=-id&highlight=${highlights}`);
-    const documentsTotal = response.data.meta['total-count'];
-    const lastDocId = response.data.data[0].id;
-    const docIdList = response.data.data.map(id => id);
-    return {documentsTotal: documentsTotal, lastDocId: lastDocId, docIdList: docIdList};
+    let documentsTotal = docIdList.length;
+    let lastDocId = docIdList[docIdList.length - 1].id
+    let firstDocId = docIdList[0].id
+    commit('SET_SEARCH_SCOPE', {documentsTotal: documentsTotal, firstDocId: firstDocId, lastDocId: lastDocId, docIdList: docIdList});
+    return {documentsTotal: documentsTotal, firstDocId: firstDocId, lastDocId: lastDocId, docIdList: docIdList};
   },
   performSearch: debounce(async ({commit, state, rootState}, type) => {
     commit('SET_LOADING_STATUS', true);

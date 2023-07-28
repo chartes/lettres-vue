@@ -25,6 +25,16 @@ const personRegexp = /(?:class="persName" (?:target="_blank" href="[^>]*".)?id="
 const noteRegexp = /(?:class="note" href="#(\d+)")/gmi;
 
 const state = {
+  documentLoading: false,
+  document: null,
+  persons: [],
+  placenames: [],
+  witnesses: [],
+  languages: [],
+  collections: [],
+  notes: []
+};
+const initial_State = {
 
   documentLoading: false,
   document: null,
@@ -68,6 +78,10 @@ function makeDummyDocument(data) {
 const dummy = makeDummyDocument();
 
 const mutations = {
+  RESET_DOCUMENT_STATE(state, initial_State) {
+    Object.assign(state, initial_State);
+    console.log('RESET_DOCUMENT_STATE', initial_State)
+  },
 
   UPDATE_DOCUMENT (state, {data, included}) {
     console.log('UPDATE_DOCUMENT', data, included);
@@ -170,6 +184,10 @@ const mutations = {
 };
 
 const actions = {
+  resetDocumentState({commit}) {
+    commit('RESET_DOCUMENT_STATE', initial_State);
+  },
+
   fetch ({ rootState, commit }, id) {
     commit('LOADING_STATUS', true);
 
