@@ -8,7 +8,7 @@
       style="display: inline-block; width: 100%"
     >
       <span
-        v-if="!editMode"
+        v-if="editable && !editMode"
         class="edit-btn"
         @click="enterEditMode"
       />
