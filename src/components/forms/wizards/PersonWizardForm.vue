@@ -704,6 +704,10 @@ export default {
             padding: 5px 8px 5px 5px;
             font-size: 13px;
           }
+
+          @include on-small-mobile {
+            font-size: 11px;
+          }
         }
 
         .tab-content {

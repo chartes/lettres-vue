@@ -357,8 +357,12 @@ export default {
                   font-size: 16px;
                   color: #71757B;
 
-                  @include on-mobile {
+                  @include on-tablet {
                     font-size: 13px;
+                  }
+
+                  @include on-mobile {
+                    font-size: 12px;
                   }
 
                   &:after {
@@ -371,8 +375,12 @@ export default {
                   font-size: 16px;
                   color: #363636;
 
-                  @include on-mobile {
+                  @include on-tablet {
                     font-size: 13px;
+                  }
+
+                  @include on-mobile {
+                    font-size: 12px;
                   }
                 }
               }
@@ -381,6 +389,11 @@ export default {
 
           .buttons {
             display: flex;
+
+            @include on-mobile {
+              flex: 100% 0 0;
+              justify-content: flex-end;
+            }
 
             .field {
               margin-right: 0;
