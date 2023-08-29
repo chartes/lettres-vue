@@ -265,6 +265,7 @@ export default {
 
 .witness-list {
   display: inline-block;
+  width: 100%;
   margin-bottom: 20px;
 }
 
