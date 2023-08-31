@@ -519,12 +519,19 @@ export default {
   .leftbar-header-area {
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
 
     background-color: #CB2158;
     border: none;
     border-radius: 5px;
     padding: 3px 20px;
     margin-bottom: 10px;
+
+    h1::after {
+      content: ":";
+      padding-right: 6px;
+    }
+
 
     h1,
     h2 {
@@ -543,11 +550,6 @@ export default {
 
     h2 {
       text-transform: none !important;
-
-      &::before {
-        content: ":";
-        margin: 0 5px;
-      }
     }
   }
 
@@ -633,9 +635,13 @@ export default {
           font-weight: 500;
           text-transform: uppercase;
 
-          @include on-mobile {
+          @include on-tablet {
             padding: 5px 8px 5px 5px;
             font-size: 13px;
+          }
+
+          @include on-small-mobile {
+            font-size: 11px;
           }
         }
 
