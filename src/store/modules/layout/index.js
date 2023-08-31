@@ -3,7 +3,8 @@ const state = {
   showLeftSideBar: false,
   showRightSideBar: false,
   lastSeenDocId: null,
-  displayedManifestUrl: null
+  displayedManifestUrl: null,
+  viewerMode: null
 };
 
 
@@ -19,7 +20,10 @@ const mutations = {
   },
   SET_DISPLAYED_MANIFEST_URL(state, u) {
     state.displayedManifestUrl = u
-  }
+  },
+  SET_VIEWER_MODE(state, m) {
+    state.viewerMode = m;
+  },
 };
 
 const actions = {
@@ -48,6 +52,9 @@ const actions = {
 
   setDisplayedManifestUrl({commit}, url) {
     commit('SET_DISPLAYED_MANIFEST_URL', url)
+  },
+  setViewerMode({commit}, mode) {
+    commit('SET_VIEWER_MODE', mode)
   }
 };
 

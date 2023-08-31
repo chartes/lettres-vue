@@ -369,6 +369,7 @@
         :sort-multiple-data="sortingPriority"
         detail-key="id"
         show-detail-icon
+        :row-class="(row, index) => showDetailIcon(row.id) === true ? '': 'hide-arrow-icon-detail'"
 
         :narrowed="true"
         :mobile-cards="true"
@@ -494,7 +495,7 @@
               <h2
                 v-else
                 class="document-preview-card__title"
-                v-html="props.row.title"
+                v-html="cleanHTML(props.row.title)"
               />
             </router-link>
           </template>
@@ -758,25 +759,51 @@ export default {
     },
   },
   watch: {
-    documents() {
-      this.loadAsyncData()
-    }
+    async documents() {
+      await this.loadAsyncData()
+    },
   },
-  created() {
+  async created() {
     this.setSorts([{field: 'creation', order: 'asc'}]);
-    this.loadAsyncData();
+    await this.loadAsyncData();
   },
   methods: {
+    ...mapState("search", ["documents"]),
     ...mapActions("search", ["setNumPage", "performSearch", "setSorts", "setSelectedCollections"]),
+    showDetailIcon(rowDocId) {
+      let showIcon = false
+      if (!this.loadingStatus && this.searchTerm && this.searchTerm.length > 0) {
+        let searchDocuments = this.$store.state.search.documents
+        let currRowDocument = searchDocuments.filter(d => d.id === rowDocId)
+        console.log("currRowDocument :", currRowDocument)
+        if (currRowDocument[0].transcription && currRowDocument[0].transcription.highlight) {
+          showIcon = true
+        } else if (currRowDocument[0].argument && this.highlight(currRowDocument[0].argument) && this.highlight(currRowDocument[0].argument).includes('mark')) {
+          showIcon = true;
+        }
+        return showIcon
+      } else {
+        return showIcon
+      }
+    },
     searchCollection() {
       //console.log("searchCollection / this.$store.state.search.selectedCollections", this.$store.state.search.selectedCollections);
       this.$store.state.layout.showLeftSideBar = true
     },
+    cleanHTML(text) {
+      // remove notes from Titles in search results table
+      if (text && text.length > 0) {
+        return text.replace(/<a.*\/a>/ig,'');
+      }
+    },
     highlight(text) {
-      if (this.searchTerm.length > 0) {
-        const terms = this.searchTerm.split(new RegExp("\\s+")).map(escapeRegExp).filter(term => term !== "")
-        const re = new RegExp(`(${terms.join("|")})`)
-        return text.replace( /(<([^>]+)>)/ig, '').replace(new RegExp(re, 'gi'), (match => `<mark>${match}</mark>`))
+      if (this.searchTerm && this.searchTerm.length > 0) {
+        const terms = this.searchTerm.split(new RegExp("\\s+")).map(escapeRegExp).filter(term => term !== "");
+        const re = new RegExp(`(${terms.join("|")})`);
+        text = this.cleanHTML(text);
+        return text.replace(new RegExp(re, 'gi'), (match => `<mark>${match}</mark>`))
+      } else {
+        return text
       }
     },
     resetPriority(){
@@ -1207,5 +1234,8 @@ input::-webkit-inner-spin-button {
 input[type=number] {
   -moz-appearance: textfield;
 }
+::v-deep .b-table .hide-arrow-icon-detail span.icon {
+		display: none !important;
+	}
 
 </style>

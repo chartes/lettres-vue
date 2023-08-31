@@ -85,7 +85,7 @@
             <slot />
           </div>
         </div>
-        <div
+        <!--<div
           v-show="rightSideBarIsVisible"
           class="column is-5"
           style="background-color: #f6f6f6"
@@ -95,7 +95,7 @@
             class="mirador-container"
             :manifest-url="displayedManifestUrl"
           />
-        </div>
+        </div>-->
       </div>
     </section>
     <footer class="footer">
@@ -141,8 +141,8 @@ export default {
     /*SideBar,*/
     SearchBox,
     AdvancedSearchForm: () => import("@/components/AdvancedSearchForm.vue"),
-    MiradorViewer: () => import("@/components/MiradorViewer"),
-  },
+
+  },//MiradorViewer: () => import("@/components/MiradorViewer"),
   data: function () {
     return {
       background_image: background_image,

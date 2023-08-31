@@ -261,9 +261,33 @@ export default {
       }
     },
     highlight(text) {
-      const terms = this.searchTerm.split(new RegExp("\\s+")).map(escapeRegExp).filter(term => term !== "")
-      const re = new RegExp(`(${terms.join("|")})`)
-      return text.replace(new RegExp(re, 'gi'), (match => `<mark>${match}</mark>`))
+      // Split search terms (by space) if multiple TODO Victor : implement if multiple not enclosed in quotes
+      //previous rule : const terms = this.searchTerm.split(new RegExp("\\s+")).map(escapeRegExp).filter(term => term !== "")
+      let terms = this.searchTerm.replaceAll(/^"|"$/g, "").match(/\p{L}+|\d+/gu); // TODO Victor : does match "i568" works with .match(/\p{L}{2,}|\p{L}+\d+/gu)
+      console.log('transcription text without quotes :', text)
+      console.log('transcription terms without quotes :', terms)
+      // Create regex with list of search terms and ensuring they are not searched within attributes (eg do not match/replace "a" in <a class=""...>
+      if (terms) {
+        // include word boundaries to exclude matching characters within a word, e.g. search and match "de" in "deuxième"
+        let regexTerms = [];
+        for (let i = 0, len = terms.length; i < len; i++) {
+          regexTerms.push("\\b" + terms[i] + "\\b");
+        }
+        if (text.includes('p')) {
+          // if source is pseudo HTML (has tags) it is necessary to add a lookahead
+          let re = new RegExp(`(${regexTerms.join("|")})(?=[^<>]*<)`);
+          console.log("transcription match re :", re)
+          return text.replace(new RegExp(re, 'gi'), (match => `<mark>${match}</mark>`))
+        } else {
+          // if source is text, no need for positive lookahead otherwise they will not match
+          let re = new RegExp(`(${regexTerms.join("|")})`);
+          console.log("transcription match re :", re)
+          return text.replace(new RegExp(re, 'gi'), (match => `<mark>${match}</mark>`))
+        }
+      //const re = new RegExp(`(${terms.join("|")})(?=[^<>]*<)`)
+      } else {
+        return text
+      }
     },
     cancelAddressInput(evt) {
       console.log("address escape event ", { ...evt });
@@ -408,6 +432,9 @@ export default {
 }
 ::v-deep .highlighted:after {
   content: " [...] ";
+  /*content: " [...]\A";
+  white-space: pre-wrap;*/
+
   font-weight: bold;
 }
 /*span.edit-btn {

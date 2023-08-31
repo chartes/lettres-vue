@@ -4,7 +4,24 @@
     class="document-title__component"
   >
     <div>
-      <header v-if="!preview">
+      <!-- TODO Victor: to add highlights to Titles (visualisation only : not ES highlights)
+      <header v-if="!preview && searchTerm && highlight(titleContent).includes('mark')">
+        <title-field-in-place
+          :tabulation-index="0"
+          label="Titre"
+          name="title"
+          not-set="Non renseigné"
+          :initial-value="highlight(titleContent)"
+          :editable="editable"
+          :status="titleStatus"
+          specific-class="field-title__input"
+          @changed="titleChanged"
+          @add-note="addNote($event)"
+          @refresh-title="refreshTitle($event)"
+          @on-keyup-escape="cancelInput($event)"
+        />
+      </header> -->
+      <header v-if="!preview"><!-- TODO Victor: if highlights (see above) change to v-else-if -->
         <title-field-in-place
           :tabulation-index="0"
           label="Titre"
@@ -162,8 +179,10 @@ export default {
       this.titleContent = evt
     },
     highlight(text) {
+      // Split search terms (by space) if multiple
       const terms = this.searchTerm.split(new RegExp("\\s+")).map(escapeRegExp).filter(term => term !== "")
-      const re = new RegExp(`(${terms.join("|")})`)
+      // Create regex with list of search terms and ensuring they are not searched within attributes (eg do not match/replace "a" in <a class=""...>
+      const re = new RegExp(`(${terms.join("|")})(?=[^<>]*<)`)
       return text.replace(new RegExp(re, 'gi'), (match => `<mark>${match}</mark>`))
     },
     //TODO Victor remove once [note] have been replaced in database

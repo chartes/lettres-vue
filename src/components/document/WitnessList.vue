@@ -216,11 +216,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions("layout", [
-      "showRightSideBar",
-      "setDisplayedManifestUrl",
-      "toggleRightSideBar",
-    ]),
+    ...mapActions("layout", ["setDisplayedManifestUrl", "setViewerMode"]),
     async recomputeOrder() {
       this.witnessTmpList.forEach((element, i) => {
         element.num = i + 1;
@@ -236,15 +232,14 @@ export default {
         this.recomputeOrder();
       }
     },
-    showWitness(witness, forceSideBar = true) {
+    showWitness(witness) {
+      //console.log("this.displayedWitness / witness", this.displayedWitness, witness)
       if (this.displayedWitness && witness.id === this.displayedWitness.id) {
-        this.toggleRightSideBar();
-        this.displayedWitness = null;
+        this.setDisplayedManifestUrl(null)
+        this.setViewerMode(null)
       } else {
         this.displayedWitness = witness;
-        if (forceSideBar) {
-          this.showRightSideBar();
-        }
+        this.setViewerMode("text-and-images-mode")
         this.setDisplayedManifestUrl(witness["manifest-url"]);
       }
     },

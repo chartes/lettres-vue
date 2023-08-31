@@ -19,63 +19,93 @@
         class="mb-3 previous-next-navigation"
       >
         <!-- User connected, navigation is docId +/- 1 and range bounds are 1 to last doc in database -->
-        <a
-          :href="$router.resolve({ name: 'document', params: {docId: docId - 1 } } ).href"
+        <router-link
+          :to="{ name: 'document', params: {docId: docId - 1 } }"
           aria-label="Previous page"
           class="pagination-link pagination-previous"
           :disabled="docId === 1"
         >
-          <span
-            class="icon"
-            aria-hidden="true"
-          >
-            <i class="fas fa-angle-left" />
-          </span>
-        </a>
-        <a
-          :href="$router.resolve({ name: 'document', params: {docId: docId + 1 } } ).href"
+        </router-link>
+        <router-link
+          :to="{ name: 'document', params: {docId: docId + 1 } }"
           aria-label="Next page"
           class="pagination-link pagination-next"
           :disabled="docId === lastDocId"
         >
-          <span
-            class="icon"
-            aria-hidden="true"
-          >
-            <i class="fas fa-angle-left" />
-          </span>
-        </a>
+        </router-link>
+        <ul
+          v-if="displayedManifestUrl"
+          class="controls is-flex"
+        >
+        <li>
+          <a
+            class="text-btn"
+            aria-label="texte seul"
+            @click="changeViewMode($event, 'text-mode')"
+          ></a>
+        </li>
+        <li>
+          <a
+            class="text-images-btn"
+            aria-label="texte et images"
+            @click="changeViewMode($event, 'text-and-images-mode')"
+          ></a>
+        </li>
+        <li>
+          <a
+            class="images-btn"
+            aria-label="images seules"
+            @click="changeViewMode($event, 'images-mode')"
+          ></a>
+        </li>
+      </ul>
+
       </nav>
       <nav
         v-if="!current_user && firstDocId && previousDocId && nextDocId && lastDocId && docIdList"
         class="mb-3 previous-next-navigation"
       >
-        <a
-          :href="$router.resolve({ name: 'document', params: {docId: previousDocId } } ).href"
+        <router-link
+          :to="{ name: 'document', params: {docId: previousDocId } }"
           aria-label="Previous page"
           class="pagination-link pagination-previous"
           :disabled="docId === firstDocId"
         >
-          <span
-            class="icon"
-            aria-hidden="true"
-          >
-            <i class="fas fa-angle-left" />
-          </span>
-        </a>
-        <a
-          :href="$router.resolve({ name: 'document', params: {docId: nextDocId } } ).href"
+        </router-link>
+        <router-link
+          :to="{ name: 'document', params: {docId: nextDocId } }"
           aria-label="Next page"
           class="pagination-link pagination-next"
           :disabled="docId === lastDocId"
         >
-          <span
-            class="icon"
-            aria-hidden="true"
-          >
-            <i class="fas fa-angle-left" />
-          </span>
-        </a>
+        </router-link>
+        <ul
+          v-if="displayedManifestUrl"
+          class="controls is-flex"
+        >
+        <li>
+          <a
+            class="text-btn"
+            aria-label="texte seul"
+            @click="changeViewMode($event, 'text-mode')"
+          ></a>
+        </li>
+        <li>
+          <a
+            class="text-images-btn"
+            aria-label="texte et images"
+            @click="changeViewMode($event, 'text-and-images-mode')"
+          ></a>
+        </li>
+        <li>
+          <a
+            class="images-btn"
+            aria-label="images seules"
+            @click="changeViewMode($event, 'images-mode')"
+          ></a>
+        </li>
+      </ul>
+
       </nav>
       <!--<nav class="mb-3 previous-next-navigation">
         <a
@@ -127,371 +157,385 @@
             :doc-id="docId"
           />
         </div>
-        <article
-          v-if="document && !isLoading"
-          class="document__content"
-        >
-          <!-- titre et langue -->
-          <section class="document-section document-section-for-title">
-            <div class="heading is-uppercase is-flex is-justify-content-space-between">
-              <span class="heading-content">Titre</span>
-              <span
-                v-if="canEdit"
-                class="icon"
-                :aria-expanded="isTitleOpen"
-                aria-controls="titleSection"
-                @click="isTitleOpen = !isTitleOpen"
-              >
-                <i :class="isTitleOpen ? 'fas fa-angle-up' : 'fas fa-angle-down'" />
-              </span>
-            </div>
-            <b-collapse
-              :class="!canEdit? '' : isTitleOpen? '' : 'hiddendiv'"
-              aria-id="titleSection"
-            >
-              <template #default>
-                <div>
-                  <document-title
-                    v-if="!preview"
-                    :editable="canEdit"
-                    :preview="preview"
-                    :title-editor="titleEditor ? titleEditor : titleContent"
-                    class="column"
-                    @add-note="addNote($event)"
-                    @refresh-title="refreshTitle($event)"
-                  />
-                  <document-languages
-                    :editable="canEdit"
-                    class="column"
-                  />
-                </div>
-              </template>
-            </b-collapse>
-          </section>
-
-          <!-- correspondants -->
-          <section class="document-section">
-            <div class="heading is-uppercase is-flex is-justify-content-space-between">
-              <span class="heading-content">Correspondants</span>
-              <span
-                v-if="canEdit"
-                class="icon"
-                :aria-expanded="isPersonsOpen"
-                aria-controls="personsSection"
-                @click="isPersonsOpen = !isPersonsOpen"
-              >
-                <i :class="isPersonsOpen ? 'fas fa-angle-up' : 'fas fa-angle-down'" />
-              </span>
-              <!--<div class="slope-container">
-                <span class="slope tier-1" />
-                <span class="slope tier-2" />
-                <span class="slope tier-3" />
-                <span class="slope tier-4" />
-              </div>-->
-            </div>
-            <b-collapse
-              :class="!canEdit? '' : isPersonsOpen? '' : 'hiddendiv'"
-              aria-id="personsSection"
-            >
-              <template #default>
-                <div class="document-section-content">
-                  <document-persons
-                    :editable="canEdit"
-                    @add-person="addPerson"
-                    @unlink-person="unlinkPerson"
-                  />
-                </div>
-              </template>
-            </b-collapse>
-          </section>
-
-          <!-- dates de temps -->
-          <section class="document-section document-section-for-dates">
-            <div class="heading is-uppercase is-flex is-justify-content-space-between">
-              <span class="heading-content">Dates</span>
-              <span
-                v-if="canEdit"
-                class="icon"
-                :aria-expanded="isDatesOpen"
-                aria-controls="datesSection"
-                @click="isDatesOpen = !isDatesOpen"
-              >
-                <i :class="isDatesOpen ? 'fas fa-angle-up' : 'fas fa-angle-down'" />
-              </span>
-              <!--<div class="slope-container">
-                <span class="slope tier-1" />
-                <span class="slope tier-2" />
-                <span class="slope tier-3" />
-                <span class="slope tier-4" />
-              </div>-->
-            </div>
-            <b-collapse
-              :class="!canEdit? '' : isDatesOpen? '' : 'hiddendiv'"
-              aria-id="datesSection"
-            >
-              <template #default>
-                <div class="document-section-content">
-                  <document-date-attributes :editable="canEdit" />
-                </div>
-              </template>
-            </b-collapse>
-          </section>
-
-          <!-- dates de lieux -->
-          <section class="document-section dates-section">
-            <div class="heading is-uppercase is-flex is-justify-content-space-between">
-              <span class="heading-content">Lieux</span>
-              <span
-                v-if="canEdit"
-                class="icon"
-                :aria-expanded="isPlacesOpen"
-                aria-controls="placesSection"
-                @click="isPlacesOpen = !isPlacesOpen"
-              >
-                <i :class="isPlacesOpen ? 'fas fa-angle-up' : 'fas fa-angle-down'" />
-              </span>
-              <!--<div class="slope-container">
-                <span class="slope tier-1" />
-                <span class="slope tier-2" />
-                <span class="slope tier-3" />
-                <span class="slope tier-4" />
-              </div>-->
-            </div>
-            <b-collapse
-              :class="!canEdit? '' : isPlacesOpen? '' : 'hiddendiv'"
-              aria-id="placesSection"
-            >
-              <template #default>
-                <div class="document-section-content">
-                  <document-placenames
-                    :editable="canEdit"
-                    @add-place="addPlace"
-                    @unlink-place="unlinkPlace"
-                  />
-                </div>
-              </template>
-            </b-collapse>
-          </section>
-
-          <!-- analyse -->
-          <section class="document-section document-section-for-analyse">
-            <div class="heading is-uppercase is-flex is-justify-content-space-between">
-              <span class="heading-content">Analyse</span>
-              <span
-                v-if="canEdit"
-                class="icon"
-                :aria-expanded="isAnalyseOpen"
-                aria-controls="analyseSection"
-                @click="isAnalyseOpen = !isAnalyseOpen"
-              >
-                <i :class="isAnalyseOpen ? 'fas fa-angle-up' : 'fas fa-angle-down'" />
-              </span>
-              <!--<div class="slope-container">
-                <span class="slope tier-1" />
-                <span class="slope tier-2" />
-                <span class="slope tier-3" />
-                <span class="slope tier-4" />
-              </div>-->
-            </div>
-            <b-collapse
-              :class="!canEdit? '' : isAnalyseOpen? '' : 'hiddendiv'"
-              aria-id="analyseSection"
-            >
-              <template #default>
-                <div class="document-section-content">
-                  <document-argument
-                    :editable="canEdit"
-                    :preview="preview"
-                    :argument-editor="argumentEditor ? argumentEditor : argumentContent"
-                    @add-place="addPlace"
-                    @add-person="addPerson"
-                    @add-note="addNote"
-                    @refresh-argument="refreshArgument($event)"
-                  />
-                </div>
-              </template>
-            </b-collapse>
-          </section>
-
-          <!-- transcription -->
-          <section class="document-section document-section-for-transcription">
-            <div class="heading is-uppercase is-flex is-justify-content-space-between">
-              <span class="heading-content">Transcription</span>
-              <span
-                v-if="canEdit"
-                class="icon"
-                :aria-expanded="isTranscriptionOpen"
-                aria-controls="transcriptionSection"
-                @click="isTranscriptionOpen = !isTranscriptionOpen"
-              >
-                <i :class="isTranscriptionOpen ? 'fas fa-angle-up' : 'fas fa-angle-down'" />
-              </span>
-              <!--<div class="slope-container">
-                <span class="slope tier-1" />
-                <span class="slope tier-2" />
-                <span class="slope tier-3" />
-                <span class="slope tier-4" />
-              </div>-->
-            </div>
-            <b-collapse
-              :class="!canEdit? '' : isTranscriptionOpen? '' : 'hiddendiv'"
-              aria-id="transcriptionSection"
-            >
-              <template #default>
-                <div class="document-section-content">
-                  <document-transcription
-                    :editable="canEdit"
-                    :preview="preview"
-                    :transcription-editor="transcriptionEditor ? transcriptionEditor : transcriptionContent"
-                    :address-editor="addressEditor ? addressEditor : addressContent"
-                    @add-place="addPlace"
-                    @add-person="addPerson"
-                    @add-note="addNote"
-                    @refresh-transcription="refreshTranscription($event)"
-                    @refresh-address="refreshAddress($event)"
-                  />
-                </div>
-              </template>
-            </b-collapse>
-          </section>
-
-          <!-- notes -->
-          <section class="document-section">
-            <div class="heading is-uppercase is-flex is-justify-content-space-between">
-              <span class="heading-content">Notes</span>
-              <span
-                v-if="canEdit"
-                class="icon"
-                :aria-expanded="isNotesOpen"
-                aria-controls="notesSection"
-                @click="isNotesOpen = !isNotesOpen"
-              >
-                <i :class="isNotesOpen ? 'fas fa-angle-up' : 'fas fa-angle-down'" />
-              </span>
-              <!--<div class="slope-container">
-                <span class="slope tier-1" />
-                <span class="slope tier-2" />
-                <span class="slope tier-3" />
-                <span class="slope tier-4" />
-              </div>-->
-            </div>
-            <b-collapse
-              :class="!canEdit? '' : isNotesOpen? '' : 'hiddendiv'"
-              aria-id="notesSection"
-            >
-              <template #default>
-                <div class="document-section-content">
-                  <document-notes
-                    :editable="canEdit"
-                    :preview="preview"
-                    :title-editor="titleEditor ? titleEditor : titleContent"
-                    :argument-editor="argumentEditor ? argumentEditor : argumentContent"
-                    :transcription-editor="transcriptionEditor ? transcriptionEditor : transcriptionContent"
-                    :address-editor="addressEditor ? addressEditor : addressContent"
-                    @add-place="addPlace"
-                    @add-person="addPerson"
-                    @add-note="addNote"
-                    @refresh-title="refreshTitle($event)"
-                    @refresh-argument="refreshArgument($event)"
-                    @refresh-transcription="refreshTranscription($event)"
-                    @refresh-address="refreshAddress($event)"
-                  />
-                </div>
-              </template>
-            </b-collapse>
-          </section>
-
-
-          <!-- témoins
-          <document-witnesses :editable="canEdit" :list="witnesses" />
-           -->
-          <section class="document-section">
-            <div class="heading is-uppercase is-flex is-justify-content-space-between">
-              <div class="has-add-btn is-flex is-align-items-center is-justify-content-center">
-                <span class="heading-content">Témoins</span>
-              </div>
-              <span
-                v-if="canEdit"
-                class="icon"
-                :aria-expanded="isWitnessOpen"
-                aria-controls="witnessSection"
-                @click="isWitnessOpen = !isWitnessOpen"
-              >
-                <i :class="isWitnessOpen ? 'fas fa-angle-up' : 'fas fa-angle-down'" />
-              </span>
-              <!--<div class="slope-container">
-                <span class="slope tier-1" />
-                <span class="slope tier-2" />
-                <span class="slope tier-3" />
-                <span class="slope tier-4" />
-              </div>-->
-            </div>
-            <b-collapse
-              :class="!canEdit? '' : isWitnessOpen? '' : 'hiddendiv'"
-              aria-id="witnessSection"
-            >
-              <template #default>
-                <div class="document-section-content">
-                  <witness-list
-                    :editable="canEdit"
-                    :open-modal="openWitnessModal"
-                    @add-note="addNote"
-                    @close-witness-modal="openWitnessModal = false"
-                  />
-                  <b-button
-                    v-if="canEdit"
-                    value="+"
-                    class="open-modal-button "
-                    @click="openWitnessModal = true"
-                  >
-                    <icon-add />
-                  </b-button>
-                </div>
-              </template>
-            </b-collapse>
-          </section>
-
-          <!-- collections -->
-          <section class="document-section collections-document-section">
-            <div class="heading is-uppercase is-flex is-justify-content-space-between">
-              <span class="heading-content">Collections</span>
-              <span
-                v-if="canEdit"
-                class="icon"
-                :aria-expanded="isCollectionsOpen"
-                aria-controls="collectionsSection"
-                @click="isCollectionsOpen = !isCollectionsOpen"
-              >
-                <i :class="isCollectionsOpen ? 'fas fa-angle-up' : 'fas fa-angle-down'" />
-              </span>
-            </div>
-            <b-collapse
-              :class="!canEdit? '' : isCollectionsOpen? '' : 'hiddendiv'"
-              aria-id="collectionsSection"
-            >
-              <template #default>
-                <div class="document-section-content">
-                  <document-collections :editable="canEdit" />
-                </div>
-              </template>
-            </b-collapse>
-          </section>
-
+        <div class="document__display is-flex">
           <div
-            v-if="current_user"
-            class=""
-            style="margin-left: 0; margin-top: 50px"
+            v-if="document && !isLoading"
+            class="document__content"
+            :class=viewerMode
           >
-            <header class="subtitle mb-3">
-              Historique des modifications
-            </header>
-            <changelog
-              :doc-id="docId"
-              :per-page="10"
+            <!-- titre et langue -->
+            <section class="document-section document-section-for-title">
+              <div class="heading is-uppercase is-flex is-justify-content-space-between">
+                <span class="heading-content">Titre</span>
+                <span
+                  v-if="canEdit"
+                  class="icon"
+                  :aria-expanded="isTitleOpen"
+                  aria-controls="titleSection"
+                  @click="isTitleOpen = !isTitleOpen"
+                >
+                  <i :class="isTitleOpen ? 'fas fa-angle-up' : 'fas fa-angle-down'" />
+                </span>
+              </div>
+              <b-collapse
+                :class="!canEdit? '' : isTitleOpen? '' : 'hiddendiv'"
+                aria-id="titleSection"
+              >
+                <template #default>
+                  <div>
+                    <document-title
+                      v-if="!preview"
+                      :editable="canEdit"
+                      :preview="preview"
+                      :title-editor="titleEditor ? titleEditor : titleContent"
+                      class="column"
+                      @add-note="addNote($event)"
+                      @refresh-title="refreshTitle($event)"
+                    />
+                    <document-languages
+                      :editable="canEdit"
+                      class="column"
+                    />
+                  </div>
+                </template>
+              </b-collapse>
+            </section>
+
+            <!-- correspondants -->
+            <section class="document-section">
+              <div class="heading is-uppercase is-flex is-justify-content-space-between">
+                <span class="heading-content">Correspondants</span>
+                <span
+                  v-if="canEdit"
+                  class="icon"
+                  :aria-expanded="isPersonsOpen"
+                  aria-controls="personsSection"
+                  @click="isPersonsOpen = !isPersonsOpen"
+                >
+                  <i :class="isPersonsOpen ? 'fas fa-angle-up' : 'fas fa-angle-down'" />
+                </span>
+                <!--<div class="slope-container">
+                  <span class="slope tier-1" />
+                  <span class="slope tier-2" />
+                  <span class="slope tier-3" />
+                  <span class="slope tier-4" />
+                </div>-->
+              </div>
+              <b-collapse
+                :class="!canEdit? '' : isPersonsOpen? '' : 'hiddendiv'"
+                aria-id="personsSection"
+              >
+                <template #default>
+                  <div class="document-section-content">
+                    <document-persons
+                      :editable="canEdit"
+                      @add-person="addPerson"
+                      @unlink-person="unlinkPerson"
+                    />
+                  </div>
+                </template>
+              </b-collapse>
+            </section>
+
+            <!-- dates de temps -->
+            <section class="document-section document-section-for-dates">
+              <div class="heading is-uppercase is-flex is-justify-content-space-between">
+                <span class="heading-content">Dates</span>
+                <span
+                  v-if="canEdit"
+                  class="icon"
+                  :aria-expanded="isDatesOpen"
+                  aria-controls="datesSection"
+                  @click="isDatesOpen = !isDatesOpen"
+                >
+                  <i :class="isDatesOpen ? 'fas fa-angle-up' : 'fas fa-angle-down'" />
+                </span>
+                <!--<div class="slope-container">
+                  <span class="slope tier-1" />
+                  <span class="slope tier-2" />
+                  <span class="slope tier-3" />
+                  <span class="slope tier-4" />
+                </div>-->
+              </div>
+              <b-collapse
+                :class="!canEdit? '' : isDatesOpen? '' : 'hiddendiv'"
+                aria-id="datesSection"
+              >
+                <template #default>
+                  <div class="document-section-content">
+                    <document-date-attributes :editable="canEdit" />
+                  </div>
+                </template>
+              </b-collapse>
+            </section>
+
+            <!-- dates de lieux -->
+            <section class="document-section dates-section">
+              <div class="heading is-uppercase is-flex is-justify-content-space-between">
+                <span class="heading-content">Lieux</span>
+                <span
+                  v-if="canEdit"
+                  class="icon"
+                  :aria-expanded="isPlacesOpen"
+                  aria-controls="placesSection"
+                  @click="isPlacesOpen = !isPlacesOpen"
+                >
+                  <i :class="isPlacesOpen ? 'fas fa-angle-up' : 'fas fa-angle-down'" />
+                </span>
+                <!--<div class="slope-container">
+                  <span class="slope tier-1" />
+                  <span class="slope tier-2" />
+                  <span class="slope tier-3" />
+                  <span class="slope tier-4" />
+                </div>-->
+              </div>
+              <b-collapse
+                :class="!canEdit? '' : isPlacesOpen? '' : 'hiddendiv'"
+                aria-id="placesSection"
+              >
+                <template #default>
+                  <div class="document-section-content">
+                    <document-placenames
+                      :editable="canEdit"
+                      @add-place="addPlace"
+                      @unlink-place="unlinkPlace"
+                    />
+                  </div>
+                </template>
+              </b-collapse>
+            </section>
+
+            <!-- analyse -->
+            <section class="document-section document-section-for-analyse">
+              <div class="heading is-uppercase is-flex is-justify-content-space-between">
+                <span class="heading-content">Analyse</span>
+                <span
+                  v-if="canEdit"
+                  class="icon"
+                  :aria-expanded="isAnalyseOpen"
+                  aria-controls="analyseSection"
+                  @click="isAnalyseOpen = !isAnalyseOpen"
+                >
+                  <i :class="isAnalyseOpen ? 'fas fa-angle-up' : 'fas fa-angle-down'" />
+                </span>
+                <!--<div class="slope-container">
+                  <span class="slope tier-1" />
+                  <span class="slope tier-2" />
+                  <span class="slope tier-3" />
+                  <span class="slope tier-4" />
+                </div>-->
+              </div>
+              <b-collapse
+                :class="!canEdit? '' : isAnalyseOpen? '' : 'hiddendiv'"
+                aria-id="analyseSection"
+              >
+                <template #default>
+                  <div class="document-section-content">
+                    <document-argument
+                      :editable="canEdit"
+                      :preview="preview"
+                      :argument-editor="argumentEditor ? argumentEditor : argumentContent"
+                      @add-place="addPlace"
+                      @add-person="addPerson"
+                      @add-note="addNote"
+                      @refresh-argument="refreshArgument($event)"
+                    />
+                  </div>
+                </template>
+              </b-collapse>
+            </section>
+
+            <!-- transcription -->
+            <section class="document-section document-section-for-transcription">
+              <div class="heading is-uppercase is-flex is-justify-content-space-between">
+                <span class="heading-content">Transcription</span>
+                <span
+                  v-if="canEdit"
+                  class="icon"
+                  :aria-expanded="isTranscriptionOpen"
+                  aria-controls="transcriptionSection"
+                  @click="isTranscriptionOpen = !isTranscriptionOpen"
+                >
+                  <i :class="isTranscriptionOpen ? 'fas fa-angle-up' : 'fas fa-angle-down'" />
+                </span>
+                <!--<div class="slope-container">
+                  <span class="slope tier-1" />
+                  <span class="slope tier-2" />
+                  <span class="slope tier-3" />
+                  <span class="slope tier-4" />
+                </div>-->
+              </div>
+              <b-collapse
+                :class="!canEdit? '' : isTranscriptionOpen? '' : 'hiddendiv'"
+                aria-id="transcriptionSection"
+              >
+                <template #default>
+                  <div class="document-section-content">
+                    <document-transcription
+                      :editable="canEdit"
+                      :preview="preview"
+                      :transcription-editor="transcriptionEditor ? transcriptionEditor : transcriptionContent"
+                      :address-editor="addressEditor ? addressEditor : addressContent"
+                      @add-place="addPlace"
+                      @add-person="addPerson"
+                      @add-note="addNote"
+                      @refresh-transcription="refreshTranscription($event)"
+                      @refresh-address="refreshAddress($event)"
+                    />
+                  </div>
+                </template>
+              </b-collapse>
+            </section>
+
+            <!-- notes -->
+            <section class="document-section">
+              <div class="heading is-uppercase is-flex is-justify-content-space-between">
+                <span class="heading-content">Notes</span>
+                <span
+                  v-if="canEdit"
+                  class="icon"
+                  :aria-expanded="isNotesOpen"
+                  aria-controls="notesSection"
+                  @click="isNotesOpen = !isNotesOpen"
+                >
+                  <i :class="isNotesOpen ? 'fas fa-angle-up' : 'fas fa-angle-down'" />
+                </span>
+                <!--<div class="slope-container">
+                  <span class="slope tier-1" />
+                  <span class="slope tier-2" />
+                  <span class="slope tier-3" />
+                  <span class="slope tier-4" />
+                </div>-->
+              </div>
+              <b-collapse
+                :class="!canEdit? '' : isNotesOpen? '' : 'hiddendiv'"
+                aria-id="notesSection"
+              >
+                <template #default>
+                  <div class="document-section-content">
+                    <document-notes
+                      :editable="canEdit"
+                      :preview="preview"
+                      :title-editor="titleEditor ? titleEditor : titleContent"
+                      :argument-editor="argumentEditor ? argumentEditor : argumentContent"
+                      :transcription-editor="transcriptionEditor ? transcriptionEditor : transcriptionContent"
+                      :address-editor="addressEditor ? addressEditor : addressContent"
+                      @add-place="addPlace"
+                      @add-person="addPerson"
+                      @add-note="addNote"
+                      @refresh-title="refreshTitle($event)"
+                      @refresh-argument="refreshArgument($event)"
+                      @refresh-transcription="refreshTranscription($event)"
+                      @refresh-address="refreshAddress($event)"
+                    />
+                  </div>
+                </template>
+              </b-collapse>
+            </section>
+
+
+            <!-- témoins
+            <document-witnesses :editable="canEdit" :list="witnesses" />
+             -->
+            <section class="document-section">
+              <div class="heading is-uppercase is-flex is-justify-content-space-between">
+                <div class="has-add-btn is-flex is-align-items-center is-justify-content-center">
+                  <span class="heading-content">Témoins</span>
+                </div>
+                <span
+                  v-if="canEdit"
+                  class="icon"
+                  :aria-expanded="isWitnessOpen"
+                  aria-controls="witnessSection"
+                  @click="isWitnessOpen = !isWitnessOpen"
+                >
+                  <i :class="isWitnessOpen ? 'fas fa-angle-up' : 'fas fa-angle-down'" />
+                </span>
+                <!--<div class="slope-container">
+                  <span class="slope tier-1" />
+                  <span class="slope tier-2" />
+                  <span class="slope tier-3" />
+                  <span class="slope tier-4" />
+                </div>-->
+              </div>
+              <b-collapse
+                :class="!canEdit? '' : isWitnessOpen? '' : 'hiddendiv'"
+                aria-id="witnessSection"
+              >
+                <template #default>
+                  <div class="document-section-content">
+                    <witness-list
+                      :editable="canEdit"
+                      :open-modal="openWitnessModal"
+                      @add-note="addNote"
+                      @close-witness-modal="openWitnessModal = false"
+                    />
+                    <b-button
+                      v-if="canEdit"
+                      value="+"
+                      class="open-modal-button "
+                      @click="openWitnessModal = true"
+                    >
+                      <icon-add />
+                    </b-button>
+                  </div>
+                </template>
+              </b-collapse>
+            </section>
+
+            <!-- collections -->
+            <section class="document-section collections-document-section">
+              <div class="heading is-uppercase is-flex is-justify-content-space-between">
+                <span class="heading-content">Collections</span>
+                <span
+                  v-if="canEdit"
+                  class="icon"
+                  :aria-expanded="isCollectionsOpen"
+                  aria-controls="collectionsSection"
+                  @click="isCollectionsOpen = !isCollectionsOpen"
+                >
+                  <i :class="isCollectionsOpen ? 'fas fa-angle-up' : 'fas fa-angle-down'" />
+                </span>
+              </div>
+              <b-collapse
+                :class="!canEdit? '' : isCollectionsOpen? '' : 'hiddendiv'"
+                aria-id="collectionsSection"
+              >
+                <template #default>
+                  <div class="document-section-content">
+                    <document-collections :editable="canEdit" />
+                  </div>
+                </template>
+              </b-collapse>
+            </section>
+
+            <div
+              v-if="current_user"
+              class=""
+              style="margin-left: 0; margin-top: 50px"
+            >
+              <header class="subtitle mb-3">
+                Historique des modifications
+              </header>
+              <changelog
+                :doc-id="docId"
+                :per-page="10"
+              />
+            </div>
+          </div>
+          <div
+            v-show="type === 'text-and-images-mode' | type === 'images-mode'"
+            class="column_mirador"
+            :class=viewerMode
+            style="background-color: #f6f6f6"
+          >
+            <mirador-viewer
+              v-if="document && displayedManifestUrl"
+              class="mirador-container"
+              :manifest-url="displayedManifestUrl"
             />
           </div>
-        </article>
-
+        </div>
         <document-skeleton
           v-if="isLoading"
           class="mt-5"
@@ -637,7 +681,7 @@
 
     <!-- preview mode -->
     <div v-else>
-      <article
+      <div
         v-if="document && !isLoading"
         class="document__content"
       >
@@ -651,7 +695,10 @@
           </div>
         </section>
         <!-- analyse -->
-        <section class="document-section">
+        <section
+          v-if="argumentContent && searchTerm && highlight(argumentContent).includes('mark')"
+          class="document-section"
+        >
           <div class="heading is-uppercase">
             <span class="heading-content">Analyse</span>
           </div>
@@ -662,7 +709,7 @@
             />
           </div>
         </section>
-        <!-- témoins -->
+        <!-- témoins
         <section class="document-section">
           <div class="heading is-uppercase">
             <span class="heading-content ">Témoins</span>
@@ -672,8 +719,8 @@
               :editable="canEdit"
             />
           </div>
-        </section>
-        <!-- collections -->
+        </section> -->
+        <!-- collections
         <section class="document-section collections-document-section">
           <div class="heading is-uppercase">
             <span class="heading-content">Collections</span>
@@ -681,8 +728,8 @@
           <div class="document-section-content">
             <document-collections :editable="canEdit" />
           </div>
-        </section>
-      </article>
+        </section> -->
+      </div>
     </div>
   </div>
 </template>
@@ -712,6 +759,9 @@ import IconAdd from "@/components/ui/icons/IconAdd";
 import NoteActions from "@/components/forms/editor/NoteActions.vue";
 import NewNoteActions from "@/components/forms/editor/NewNoteActions.vue";
 import DocumentNotes from "@/components/document/DocumentNotes.vue";
+import documentArgument from "@/components/document/DocumentArgument.vue";
+import escapeRegExp from "lodash/escapeRegExp";
+import MiradorViewer from "@/components/MiradorViewer.vue";
 export default {
   name: "Document",
   //emit: ["open-witness-modal"],
@@ -734,7 +784,8 @@ export default {
     PlaceWizardForm,
     PersonWizardForm,
     NoteForm,
-    NoteActions
+    NoteActions,
+    MiradorViewer
   },
   props: {
     docId: { required: true, type: Number },
@@ -751,6 +802,7 @@ export default {
       isNotesOpen: true,
       isWitnessOpen: true,
       isCollectionsOpen: true,
+      type: null,
 
       firstDocId: 0,
       lastDocId: 0,
@@ -787,6 +839,9 @@ export default {
     };
   },
   computed: {
+    documentArgument() {
+      return documentArgument
+    },
     documentCssClass: function(){
       if (this.canEdit && !this.preview) {
         return 'can-edit';
@@ -800,13 +855,16 @@ export default {
       "witnesses",
       "currentLock",
     ]),
+    ...mapState("search", ["searchTerm"]),
     ...mapState("user", ["current_user", "jwt"]),
     ...mapState("locks", ["lockOwner"]),
+    ...mapState("layout", [
+      "displayedManifestUrl", "viewerMode"
+    ]),
     ...mapActions("search", ["getDocumentsTotal"]),
     ...mapGetters("document", ["locationDateFrom", "locationDateTo"]),
     ...mapGetters("placenames", ["getRoleByLabel"]),
     ...mapGetters("persons", ["getRoleByLabel"]),
-
     collectionURL() {
       const baseUrl = window.location.origin
         ? window.location.origin + "/"
@@ -873,12 +931,32 @@ export default {
     addressEditor : function (val) {
       console.log("DocumentVue / watch / addressEditor : ", val)
     },
+    displayedManifestUrl : function (val, oldVal)  {
+      if (!this.displayedManifestUrl || val === oldVal) {
+        this.type = "text-mode";
+        this.setDisplayedManifestUrl();
+        this.setViewerMode();
+      } else if (val != oldVal) {
+        this.type = "text-and-images-mode"
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        //this.$emit("refresh-viewer");
+      }
+    },
+    type: function () {
+      console.log("watch type", this.type)
+    },
+    docId: async function () {
+      this.type = null;
+      this.setViewerMode();
+      await this.load(this.docId);
+    },
   },
   async created() {
-    this.isLoading = true;
+    await this.load()
+    /*this.isLoading = true;
     try {
-      if (!this.$store.state.search.docIdList) {
-        await this.getDocumentsTotal()
+      if (!this.$store.state.search.docIdList | this.$store.state.search.docIdList.length === 0) {
+        await this.getDocumentsTotal
       }
       this.docIdList = this.$store.state.search.docIdList;
 
@@ -928,17 +1006,116 @@ export default {
       for (let i = 0; i < persNameList.length; i++) {
       persNameTranscriptionDict[persNameList[i]] = 1 + (persNameTranscriptionDict[persNameList[i]] || 0);
       }
-      console.log("persName dict: ", persNameTranscriptionDict)*/
+      console.log("persName dict: ", persNameTranscriptionDict)*//*
       this.titleContent = this.$store.state.document.document.title;
       this.transcriptionContent = this.$store.state.document.document.transcription;
       this.addressContent = this.$store.state.document.document.address;
       this.argumentContent = this.$store.state.document.document.argument;
     }
-    this.isLoading = false
+    this.witnessTmpList = this.witnesses;
+    console.log("created type", this.type)
+
+    this.isLoading = false*/
   },
   methods: {
     ...mapActions("locks", ["fetchLockOwner"]),
-    ...mapActions("layout", ["setLastSeen"]),
+    ...mapActions("layout", ["setLastSeen", "hideRightSideBar", "setDisplayedManifestUrl", "setViewerMode"]),
+    async load(docId) {
+      this.isLoading = true;
+      try {
+        if (!this.$store.state.search.docIdList | this.$store.state.search.docIdList.length === 0) {
+          await this.getDocumentsTotal
+        }
+        this.docIdList = this.$store.state.search.docIdList;
+
+        if (!this.current_user && !this.docIdList.filter(d => d.id === this.docId).length > 0) {
+          this.authorised = false;
+        } else {
+          let documentsTotal = this.$store.state.search.documents_total
+          //console.log('documentsTotal : ', documentsTotal)
+          this.lastDocId = this.$store.state.search.lastDocId;
+          this.firstDocId = this.$store.state.search.firstDocId;
+
+          this.currentIndex = this.docIdList.findIndex(doc => doc.id === this.docId);
+          console.log("currentIndex", this.currentIndex);
+          if (this.currentIndex > 0) {
+            this.previousDocId = this.docIdList[this.currentIndex - 1].id
+          } else {
+            this.previousDocId = this.firstDocId;
+          }
+          if (this.currentIndex < this.docIdList.length - 1) {
+            this.nextDocId = this.docIdList[this.currentIndex + 1].id;
+          } else {
+            this.nextDocId = this.lastDocId;
+          }
+          console.log("firstDocId : ", this.firstDocId, "\npreviousDocId : ", this.previousDocId, "\nthis.docId : ", this.docId, "\nthis.nextDocId : ", this.nextDocId, "\nthis.lastDocId : ", this.lastDocId);
+          console.log('docIdList : ', this.docIdList);
+
+          await this.$store.dispatch("document/fetch", this.docId);
+          this.setLastSeen(this.docId);
+        }
+      } catch (e) {
+        console.log("e : ", e)
+        await this.$router.push({name: "home"});
+      }
+      if (this.$store.state.document.document) {
+        console.log("note dict : ", this.$store.state.document.notes);
+        /*let title = this.$store.state.document.document.title
+        let argument = this.$store.state.document.document.argument
+        let transcription = this.$store.state.document.document.transcription
+        let addresss = this.$store.state.document.document.address
+        const personRegexp = /(?:class="persName" (?:target="_blank" href="[^>]*".)?id=")(\d+)/gmi;
+        let persNameArgumentList = [...argument.matchAll(personRegexp)].map(m => parseInt(m[1]));
+        let persNameTranscriptionList = [...transcription.matchAll(personRegexp)].map(m => parseInt(m[1]));
+        let persNameAddressList = [...addresss.matchAll(personRegexp)].map(m => parseInt(m[1]));
+
+        let persNameList = persNameArgumentList.concat(persNameTranscriptionList, persNameAddressList)
+        let persNameTranscriptionDict = {}
+        for (let i = 0; i < persNameList.length; i++) {
+        persNameTranscriptionDict[persNameList[i]] = 1 + (persNameTranscriptionDict[persNameList[i]] || 0);
+        }
+        console.log("persName dict: ", persNameTranscriptionDict)*/
+        this.titleContent = this.$store.state.document.document.title;
+        this.transcriptionContent = this.$store.state.document.document.transcription;
+        this.addressContent = this.$store.state.document.document.address;
+        this.argumentContent = this.$store.state.document.document.argument;
+      }
+      this.witnessTmpList = this.witnesses;
+      console.log("created type", this.type)
+
+      this.isLoading = false
+    },
+    changeViewMode($event, type) {
+      if (type === "text-mode") {
+        console.log("changeViewMode : ", $event, type, this.viewerMode);
+        this.type = type
+        this.$store.dispatch('layout/setViewerMode', type);
+        console.log("changeViewMode : ", type, this.$store.state.layout.viewerMode)
+      } else if (this.displayedManifestUrl && type === "text-and-images-mode") {
+        this.type = type
+        console.log("changeViewMode : ", $event, type, this.viewerMode);
+        this.$store.dispatch('layout/setViewerMode', type);
+        console.log("changeViewMode : ", type, this.$store.state.layout.viewerMode)
+      } else if (this.displayedManifestUrl && type === "images-mode") {
+        this.type = type
+        this.$store.dispatch('layout/setViewerMode', type);
+        console.log("changeViewMode : ", type, this.$store.state.layout.viewerMode)
+      }
+    },
+    highlight(text) {
+      // Split search terms (by space) if multiple TODO Victor : implement if multiple not enclosed in quotes
+      //previous rule : const terms = this.searchTerm.split(new RegExp("\\s+")).map(escapeRegExp).filter(term => term !== "")
+      let terms = this.searchTerm.replaceAll(/^"|"$/g, "").match(/\p{L}+|\d+/gu);  // TODO Victor : does match "i568" works with .match(/\p{L}{2,}|\p{L}+\d+/gu)
+      // Create regex with list of search terms and ensuring they are not searched within attributes (eg do not match/replace "a" in <a class=""...>
+        let regexTerms = [];
+        for (let i = 0, len = terms.length; i < len; i++) {
+          regexTerms.push("\\b" + terms[i] + "\\b");
+        }
+      const re = new RegExp(`(${regexTerms.join("|")})(?=[^<>]*<)`);
+      //const re = new RegExp(`(${terms.join("|")})(?=[^<>]*<)`)
+      //console.log("transcription match re :", re)
+      return text.replace(new RegExp(re, 'gi'), (match => `<mark>${match}</mark>`))
+    },
     addPlace(evt) {
       this.placeInputData = evt;
       this.isPlaceWizardFormModalActive = true;
@@ -1036,7 +1213,21 @@ export default {
 
   // Mode lecture
   &:not(.can-edit) {
+    /* Ajout par Victor */
+    & > .document__display > .document__content.images-mode {
+      margin-top: 20px;
+      display: none !important;
+    }
 
+    & > .document__display > .document__content.text-mode {
+      margin-top: 20px; /* margin not working ?? */
+    }
+
+    & > .document__display > .document__content.text-and-images-mode {
+      margin-top: 20px;
+      width: 50% !important;
+    }
+    /* Fin ajout par Victor */
     .document-section {
       margin-bottom: 40px;
 
@@ -1168,10 +1359,26 @@ export default {
       border-bottom: #FDB3CC solid 1px;
       margin-bottom: 30px;
     }
-
+    /* version originale Denis avant ajouts/modifications par Victor
     & > .document__content {
       margin-top: 20px;
+    } */
+
+    /* Ajout par Victor */
+    & > .document__display > .document__content.images-mode {
+      margin-top: 20px;
+      display: none !important;
     }
+
+    & > .document__display > .document__content.text-mode {
+      margin-top: 20px; /* margin not working ?? */
+    }
+
+    & > .document__display > .document__content.text-and-images-mode {
+      margin-top: 20px;
+      width: 50% !important;
+    }
+    /* Fin ajout par Victor */
 
     & > .columns {
       display: flex !important;
@@ -2022,4 +2229,100 @@ nav.previous-next-navigation {
 .hiddendiv {
   display: none;
 }
+/* Ajout par Victor */
+.controls a.text-btn {
+  display: inline-block;
+  width: 38px;
+  max-width: unset;
+  max-height: unset;
+  height: 38px;
+  background: url(../../assets/images/icons/b_text_off.svg) center / 38px auto no-repeat !important;
+  border-radius: 0!important;
+  border: none !important;
+  margin: 0;
+  text-indent: -9999px;
+}
+.text-mode .controls a.text-btn {
+  display: inline-block;
+  width: 38px;
+  max-width: unset;
+  max-height: unset;
+  height: 38px;
+  background-image: url(../../assets/images/icons/b_text_on.svg) center / 38px auto no-repeat !important;
+  border-radius: 0!important;
+  border: none !important;
+  margin: 0;
+  text-indent: -9999px;
+}
+.controls a.text-images-btn {
+  display: inline-block;
+  width: 38px;
+  max-width: unset;
+  max-height: unset;
+  height: 38px;
+  background: url(../../assets/images/icons/b_text-image_off.svg) center / 38px auto no-repeat !important;
+  border-radius: 0!important;
+  border: none !important;
+  margin: 0;
+  text-indent: -9999px;
+}
+.text-and-images-mode .controls a.text-images-btn {
+  display: inline-block;
+  width: 38px;
+  max-width: unset;
+  max-height: unset;
+  height: 38px;
+  background-image: url(../../assets/images/icons/b_text-image_on.svg) center / 38px auto no-repeat !important;
+  border-radius: 0!important;
+  border: none !important;
+  margin: 0;
+  text-indent: -9999px;
+}
+.controls a.images-btn {
+  display: inline-block;
+  width: 38px;
+  max-width: unset;
+  max-height: unset;
+  height: 38px;
+  background: url(../../assets/images/icons/b_image_off.svg) center / 38px auto no-repeat !important;
+  border-radius: 0!important;
+  border: none !important;
+  margin: 0;
+  text-indent: -9999px;
+}
+.images-mode .controls a.images-btn {
+  display: inline-block;
+  width: 38px;
+  max-width: unset;
+  max-height: unset;
+  height: 38px;
+  background-image: url(../../assets/images/icons/b_image_on.svg) center / 38px auto no-repeat !important;
+  border-radius: 0!important;
+  border: none !important;
+  margin: 0;
+  text-indent: -9999px;
+}
+.text-mode-only .controls a.text-btn {
+  pointer-events: none;
+}
+.text-mode-only .controls a.text-images-btn,
+.text-mode-only .controls a.images-btn {
+  pointer-events: none;
+  opacity: 0.2;
+}
+.column_mirador.text-mode {
+  display: none;
+}
+.column_mirador.text-and-images-mode {
+  width: 50%;
+}
+.column_mirador.images-mode {
+  display: inline-block;
+  width: 100%;
+}
+.mirador-container {
+  display: inline-block;
+  box-shadow: 0px 0px 5px 5px #00000040;
+}
+/* Fin ajout par Victor */
 </style>

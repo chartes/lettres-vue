@@ -272,9 +272,14 @@ export default {
       if (!this.multiline) {
         newValue = newValue.replace(/<(br)?(\/)?(p)?>/gi, "");
       }
-      newValue = newValue === "" ? "<br>" : newValue;
-      const test = wrapPattern.test(newValue);
-      newValue = test ? newValue : `<p>${newValue}</p>`;
+      if (newValue.length) {
+        const test = wrapPattern.test(newValue);
+        newValue = test ? newValue : `<p>${newValue}</p>`;
+      }
+      //30 08 2023 remove below logic to prevent adding <p><br></p> to database when empty content is saved in editor
+      //newValue = newValue === "" ? "<br>" : newValue;
+      //const test = wrapPattern.test(newValue);
+      //newValue = test ? newValue : `<p>${newValue}</p>`;
       // console.log("RTE sanitize : ", val, newValue)
       console.log("sanitize", newValue)
       if (this.$props.label === "title") {

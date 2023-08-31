@@ -37,12 +37,17 @@
       <div
         v-else-if="!preview && searchTerm && highlight(form).includes('mark')"
         class="argument__content"
-        v-html="highlight(form)">
+        v-html="form && form.length > 0 ? highlight(form) : 'Non renseignée'">
+      </div>
+      <div
+        v-else-if="preview && searchTerm && highlight(form).includes('mark')"
+        class="argument__content"
+        v-html="form && form.length > 0 ? highlight(form) : 'Non renseignée'">
       </div>
       <div
         v-else
         class="argument__content"
-        v-html="form && form.length > 0 ? form : 'Non renseignée'">
+        v-html="form && form.length > 0 ? form + 'test' : 'Non renseignée'">
       </div>
     </div>
   </div>
@@ -129,11 +134,37 @@ export default {
       this.form = evt;
       this.$emit("refresh-argument", evt)
     },
-
+    cleanHTML(text) {
+      // remove notes from Titles in search results table
+      if (text && text.length > 0) {
+        return text.replace(/<[^p][^>]*>/gi, '');
+      }
+    },
     highlight(text) {
-      const terms = this.searchTerm.split(new RegExp("\\s+")).map(escapeRegExp).filter(term => term !== "")
-      const re = new RegExp(`(${terms.join("|")})`)
-      return text.replace(new RegExp(re, 'gi'), (match => `<mark>${match}</mark>`))
+      //if (/^"".*""$/.test(text)) {
+        /// Split search terms (by space) TODO Victor : implement if multiple not enclosed in quotes
+        // previous rule : const terms = this.searchTerm.split(new RegExp("\\s+")).map(escapeRegExp).filter(term => term !== "");
+        let terms = this.searchTerm.replaceAll(/^"|"$/g, "").match(/\p{L}+|\d+/gu); // TODO Victor : does match "i568" works with .match(/\p{L}{2,}|\p{L}+\d+/gu)
+        //console.log('terms without quotes :', terms)
+        // Create regex with list of search terms and ensuring they are not searched within attributes (eg do not match/replace "a" in <a class=""...>
+        let regexTerms = [];
+        for (let i = 0, len = terms.length; i < len; i++) {
+          regexTerms.push("\\b" + terms[i] + "\\b");
+        }
+        const re = new RegExp(`(${regexTerms.join("|")})(?=[^<>]*<)`);
+        //console.log("match without quotes re :", re)
+        return text.replace(new RegExp(re, 'gi'), (match => `<mark>${match}</mark>`));
+      /*} else {
+        let searchTermWithoutQuotes = this.searchTerm.replaceAll(/^"|"$/g, "");
+        let terms = searchTermWithoutQuotes.split(/((?<=\s)|,)/g).filter(term => term !== "");
+        console.log("match with quotes terms :", terms)
+        const first_term = terms[0];
+        const last_term = terms.slice(-1);
+        const re = new RegExp(`(${terms.join("|")})(?=[^<>]*<)`);
+        //const re = new RegExp(`${first_term}.*?${last_term}\\s?[^<]*<\\/[^<]*>(?=[^<>]*<)`);
+        console.log("match with quotes re :", re)
+        return text.replace(new RegExp(re, 'gi'), (match => `<mark>${match}</mark>`));
+      }*/
     },
     //TODO Victor remove once [note] have been replaced in database
     getNoteIndex(content, type) {
