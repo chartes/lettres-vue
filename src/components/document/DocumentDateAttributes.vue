@@ -27,7 +27,7 @@
           v-model="creation"
           class="creation-date-input"
           name="creation"
-          placeholder="1574-12-09"
+          :placeholder="editMode ? '1574-12-09' : ''"
           expanded
           :disabled="!editMode"
           @keyup.esc.native="cancelInput($event)"
@@ -41,7 +41,7 @@
           v-model="creationLabel"
           class="creation-date-input"
           name="creationLabel"
-          placeholder="1574, 9 Décembre"
+          :placeholder="editMode ? '1574, 9 Décembre' : ''"
           expanded
           :disabled="!editMode"
           @keyup.esc.native="cancelInput($event)"
@@ -55,7 +55,7 @@
           v-model="creationNotAfter"
           class="creation-date-input"
           name="creationNotAfter"
-          placeholder="1575, 1er Janvier"
+          :placeholder="editMode ? '1575, 1er Janvier' : ''"
           expanded
           :disabled="!editMode"
           @keyup.esc.native="cancelInput($event)"
