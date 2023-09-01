@@ -68,7 +68,7 @@
       </div>
       <div
         class="columns advanced-search_row"
-        :class="showLeftSideBar && $route.name === 'search' ? 'with-side-bar' : ''"
+        :class="columnsCssClass"
       >
         <div
           v-if="showLeftSideBar && $route.name === 'search'"
@@ -154,13 +154,21 @@ export default {
     ...mapState("layout", [
       "showLeftSideBar",
       "showRightSideBar",
-      "displayedManifestUrl",
+      "displayedManifestUrl"
     ]),
     ...mapState("document", ["document", "witnesses"]),
 
     rightSideBarIsVisible() {
       return this.showRightSideBar;
     },
+    columnsCssClass() {
+      if (this.$route.name === 'search' && this.showLeftSideBar) {
+        return 'with-side-bar';
+      } else if (this.$store.state.layout.viewerMode === "text-and-images-mode") {
+        return 'with-viewer';
+      }
+      return "";
+    }
   },
   watch: {
     displayedManifestUrl() {
@@ -180,7 +188,7 @@ export default {
       if (this.showRightSideBar) {
         this.$emit("refresh-viewer");
       }
-    },
+    }
   },
   created() {},
   methods: {
@@ -504,6 +512,11 @@ a.portail_button:hover {
     padding-left: $container-mobile-margin;
     padding-right: $container-mobile-margin;
   }
+}
+
+.advanced-search_row.with-viewer {
+  padding-left: $container-tablet-margin;
+  padding-right: $container-tablet-margin;
 }
 
 .search_row {

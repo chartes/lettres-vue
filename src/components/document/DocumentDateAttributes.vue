@@ -228,6 +228,8 @@ export default {
 
 .creation-date {
   display: inline-flex;
+  flex-wrap: wrap;
+  gap: 10px;
 
   @include on-tablet {
     flex-direction: column;
