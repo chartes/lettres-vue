@@ -1,6 +1,7 @@
 <template>
   <div
     class="document-date__attributes"
+    :class="editMode ? 'edit-mode' : 'read-mode'"
     style="width: 100%"
   >
     <span
@@ -245,12 +246,25 @@ export default {
       }
       input[disabled] {pointer-events:none}
     }
+
   }
 
   .label {
     font-size: 12px !important;
   }
 }
+
+.document-date__attributes.read-mode {
+  .creation-date-input {
+    ::v-deep {
+      ::placeholder {
+        color: transparent;
+        text-indent: -9999px;
+      }
+    }
+  }
+}
+
 .edit-btn {
   position: unset;
   flex: 40px 0 0;
