@@ -64,6 +64,10 @@
               padding-right: 5px;
             }
 
+            &.th-search-results {
+              vertical-align: bottom;
+            }
+
             /* Numéro de lettre + tri */
             &.th-bookmarks:nth-child(1) {
               min-width: 72px;
