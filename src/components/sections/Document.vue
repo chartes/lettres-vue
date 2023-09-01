@@ -1367,7 +1367,9 @@ export default {
         }
       }
 
-
+      & > .document__display {
+        gap: 10px;
+      }
 
     }
   }
@@ -1380,13 +1382,6 @@ export default {
       border-bottom: #FDB3CC solid 1px;
       margin-bottom: 30px;
     }
-
-    /* version originale Denis avant ajouts/modifications par Victor
-    & > .document__content {
-      margin-top: 20px;
-    } */
-
-    /* Ajout par Victor */
 
     & > .document__display {
       gap: 10px;
