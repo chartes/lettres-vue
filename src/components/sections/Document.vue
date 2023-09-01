@@ -1527,9 +1527,11 @@ export default {
           h3 {
             margin-left: 40px;
           }
+
           .rich-text-editor {
             margin-left: 40px;
           }
+
           .ql-editor {
             background-color: #F8F8F8;
             font-family: $family-primary;
@@ -1552,6 +1554,22 @@ export default {
               &:last-child {
                 margin-bottom: 0;
               }
+            }
+          }
+        }
+      }
+
+      &.document-section-for-title {
+        ::v-deep {
+          .rich-text-editor {
+            padding-right: 40px;
+
+            @include on-tablet {
+              padding-right: 20px;
+            }
+
+            @include on-mobile {
+              padding-right: 0;
             }
           }
         }
@@ -1916,7 +1934,7 @@ nav.previous-next-navigation {
     }
   }
 
-  & .document-section-content {
+  .document-section-content {
     margin-left: 40px;
     margin-right: 40px;
     margin-bottom: 20px;
