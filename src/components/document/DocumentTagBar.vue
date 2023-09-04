@@ -115,6 +115,7 @@ export default {
       baseUrl: `${process.env.VUE_APP_APP_ROOT_URL}`,
       lockEditMode: false,
       status: null,
+      lockUser: null,
     };
   },
   computed: {
@@ -127,6 +128,9 @@ export default {
       if (this.withStatus) {
         await this.fetchStatus();
       }
+    },
+    lockOwner () {
+      this.lockUser = this.lockOwner
     }
   },
   async created() {
@@ -137,17 +141,19 @@ export default {
 
   },
   methods: {
-        ...mapActions("locks", ["fetchLockOwner"]),
+    ...mapActions("locks", ["fetchLockOwner"]),
     async fetchStatus() {
       this.status = await this.getDocumentStatus(this.docId);
       console.log("status", this.docId, this.status);
     },
     async fetchData() {
+      console.log("TagBar created this.status.currentLock.id", this.status.currentLock.id)
       if (this.status.currentLock.id) {
-        this.$store.state.lockOwner = await this.fetchLockOwner({
+        this.lockUser = await this.fetchLockOwner({
         docId: this.docId,
         lockId: this.status.currentLock.id
-        })
+        }).then(response => response)
+        console.log("TagBar created this.lockUser", this.lockUser)
       }
     },
     addBookmark() {

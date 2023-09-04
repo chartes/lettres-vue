@@ -26,11 +26,11 @@ function addUserToData(data, included) {
   return dataWithUsers;
 }
 function sortMethodAsc(a, b) {
-    return a == b ? 0 : a > b ? 1 : -1;
+    return a === b ? 0 : a > b ? 1 : -1;
 }
 
 function sortMethodWithDirection(direction) {
-    if (direction === undefined || direction == "asc") {
+    if (direction === undefined || direction === "asc") {
         return sortMethodAsc;
     } else {
         return function(a, b) {
@@ -42,7 +42,7 @@ function sortMethodWithDirection(direction) {
 function sortMethodWithDirectionByColumn(columnName, direction){
     const sortMethod = sortMethodWithDirection(direction)
     return function(a, b){
-        if (columnName != 'collections') {
+        if (columnName !== 'collections') {
             return sortMethod(a[columnName], b[columnName]);
         } else if (columnName === 'username') {
             return sortMethod(a[columnName].toLowerCase(), b[columnName].toLowerCase());
@@ -211,11 +211,12 @@ const actions = {
     }
   },
 
-  fetchLockOwner({ rootState, commit}, {docId, lockId}) {
+  async fetchLockOwner({ rootState, commit}, {docId, lockId}) {
     const http = http_with_auth(rootState.user.jwt);
-    return http.get(`/locks/${lockId}/user`).then(response => {
-      commit('FETCH_LOCK_OWNER', {docId: docId, user: response.data.data});
-    });
+    let lockOwnerUser = await http.get(`/locks/${lockId}/user`).then(response => response.data.data)
+    let fetchedLockOwner = {docId: docId, user: lockOwnerUser}
+    commit('FETCH_LOCK_OWNER',  fetchedLockOwner)
+    return fetchedLockOwner
   },
 
   saveLock({ rootState, commit}, lock) {
