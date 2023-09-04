@@ -115,10 +115,11 @@ export default {
 @import "@/assets/sass/main.scss";
 
 #vue-mirador-container {
-  min-height: calc(100% - 170px);
-  min-width: calc(100vw * (5 / 12));
-  position: fixed;
+  position: relative;
+  width: 100%;
+  height: 100vh;
 }
+
 .mosaic-root {
   top: 0 !important;
   bottom: 0 !important;
