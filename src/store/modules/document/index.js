@@ -32,7 +32,8 @@ const state = {
   witnesses: [],
   languages: [],
   collections: [],
-  notes: []
+  notes: [],
+  currentLock: {}
 };
 const initial_State = {
 
@@ -43,7 +44,8 @@ const initial_State = {
   witnesses: [],
   languages: [],
   collections: [],
-  notes: []
+  notes: [],
+  currentLock: {}
 };
 
 
