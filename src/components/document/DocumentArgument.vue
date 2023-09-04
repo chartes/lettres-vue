@@ -37,18 +37,18 @@
       <div
         v-else-if="!preview && searchTerm && highlight(form).includes('mark')"
         class="argument__content"
-        v-html="form && form.length > 0 ? highlight(form) : 'Non renseignée'">
-      </div>
+        v-html="form && form.length > 0 ? highlight(form) : 'Non renseignée'"
+      />
       <div
         v-else-if="preview && searchTerm && highlight(form).includes('mark')"
         class="argument__content"
-        v-html="form && form.length > 0 ? highlight(form) : 'Non renseignée'">
-      </div>
+        v-html="form && form.length > 0 ? highlight(form) : 'Non renseignée'"
+      />
       <div
         v-else
         class="argument__content"
-        v-html="form && form.length > 0 ? form + 'test' : 'Non renseignée'">
-      </div>
+        v-html="form && form.length > 0 ? form : 'Non renseignée'"
+      />
     </div>
   </div>
 </template>
@@ -57,7 +57,7 @@
 import { mapState } from "vuex";
 import RichTextEditor from "../forms/fields/RichTextEditor";
 import EditorSaveButton from "../forms/fields/EditorSaveButton";
-import escapeRegExp from "lodash/escapeRegExp";
+//import escapeRegExp from "lodash/escapeRegExp";
 
 export default {
   name: "DocumentArgument",
@@ -84,16 +84,16 @@ export default {
       form: "",
     };
   },
+  computed: {
+    ...mapState("document", ["document"]),
+    ...mapState("search", ["searchTerm"])
+  },
   watch: {
     argumentEditor: function (newVal, Oldval) {
       console.log("DocumentArgument / watch / form old new : ", Oldval, newVal)
       this.form = newVal;
       this.$emit("refresh-argument", this.form)
     },
-  },
-  computed: {
-    ...mapState("document", ["document"]),
-    ...mapState("search", ["searchTerm"])
   },
   mounted() {
     this.form = this.document.argument || "";

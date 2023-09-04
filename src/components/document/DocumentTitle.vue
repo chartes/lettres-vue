@@ -37,23 +37,32 @@
           @on-keyup-escape="cancelInput($event)"
         />
       </header>
-      <!--<rich-text-editor
-        v-if="editable && editMode"
-        v-model="form"
-        :editable="editable && editMode"
-        :formats="[['italic', 'superscript'], ['note']]"
-        @changed="titleChanged"
-        @add-note="addNote($event)"
-        @on-keyup-escape="cancelInput($event)"
-      >
+      <!-- // switch TitleFieldInPlace to RichTextEditor :
+        <span
+          v-if="editable && !editMode"
+          class="edit-btn"
+          @click="enterEditMode"
+        />
+        <rich-text-editor
+          v-if="editable && editMode"
+          v-model="titleContent"
+          class="??"
+          :editable="editable && editMode"
+          :formats="[['close'], ['italic', 'superscript'], ['note']]"
+          @changed="titleChanged"
+          @add-note="addNote($event)"
+          @on-keyup-escape="cancelInput($event)"
+          @refresh-title="refreshTitle($event)"
+        >
           <editor-save-button
             :doc-id="document.id"
             name="title"
-            :value="form"
+            :value="titleContent"
           />
-        </rich-text-editor>-->
-    <!--</header>
-    <header v-if="!preview">
+        </rich-text-editor>
+      </header>-->
+
+      <!--<header v-if="!preview">
       <title-field-in-place
         :tabulation-index="0"
         label="Titre"
@@ -75,8 +84,8 @@
       <div
         v-else
         class="argument__content"
-        v-html="titleContent">
-      </div>
+        v-html="titleContent"
+      />
       <!--<div v-if="!preview && titleContent">
         <document-notes
             v-show="false"
@@ -93,11 +102,11 @@ import TitleFieldInPlace from "../forms/fields/TitleFieldInPlace";
 // switch TitleFieldInPlace to RichTextEditor : import EditorSaveButton from "@/components/forms/fields/EditorSaveButton.vue";
 // switch TitleFieldInPlace to RichTextEditor : import RichTextEditor from "@/components/forms/fields/RichTextEditor.vue";
 import escapeRegExp from "lodash/escapeRegExp";
-import DocumentNotes from "@/components/document/DocumentNotes.vue";
+//import DocumentNotes from "@/components/document/DocumentNotes.vue";
 
 export default {
   name: "DocumentTitle",
-  components: {TitleFieldInPlace }, //switch TitleFieldInPlace to RichTextEditor : RichTextEditor, EditorSaveButton
+  components: {TitleFieldInPlace}, //switch TitleFieldInPlace to RichTextEditor : RichTextEditor, EditorSaveButton
   emit: ["add-note"],
   props: {
     editable: {
@@ -121,7 +130,8 @@ export default {
   data() {
     return {
       titleStatus: "normal",
-      titleContent:""
+      titleContent:"",
+      // if RTE instead of TitleFieldInPlace editMode: false,
     };
   },
   watch: {
@@ -136,7 +146,7 @@ export default {
   mounted() {
     console.log("this.searchTerm : ", this.searchTerm)
     this.titleContent = this.$props.titleEditor ? this.$props.titleEditor: this.document.title;
-    //console.log("DocumentTitle / Created / this.titleContent : ", this.titleContent)
+    console.log("DocumentTitle / Created / this.titleContent : ", this.titleContent)
     //TODO Victor remove once [note] have been replaced in database
     this.getNoteIndex(this.titleContent, "title")
   },
@@ -145,6 +155,11 @@ export default {
       console.log("Title event ", { ...evt });
       this.enterEditMode()
     },
+    /* if RTE instead of TitleFieldInPlace
+    enterEditMode() {
+      this.editMode = !this.editMode
+      console.log("Title editMode updated", this.editMode)
+    },*/
     titleChanged(fieldProps) {
       const data = { id: this.document.id, attributes: {} };
       data.attributes[fieldProps.name] = fieldProps.value;
@@ -228,16 +243,6 @@ export default {
 .document-title__component {
   margin-bottom: 15px;
 }
-/*span.edit-btn {
-  display: inline-block;
-  cursor: pointer;
-  width: 24px;
-  height: 24px;
-  background: url(../../assets/images/icons/bouton_edit.svg) center / 24px auto no-repeat;
-  i {
-    display: none;
-  }
-}*/
 .edit-btn {
   position: unset;
   flex: 55px 0 0;
