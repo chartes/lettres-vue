@@ -24,42 +24,13 @@
           aria-label="Previous page"
           class="pagination-link pagination-previous"
           :disabled="docId === 1"
-        >
-        </router-link>
+        />
         <router-link
           :to="{ name: 'document', params: {docId: docId + 1 } }"
           aria-label="Next page"
           class="pagination-link pagination-next"
           :disabled="docId === lastDocId"
-        >
-        </router-link>
-        <ul
-          v-if="displayedManifestUrl"
-          class="controls is-flex"
-        >
-        <li>
-          <a
-            class="text-btn"
-            aria-label="texte seul"
-            @click="changeViewMode($event, 'text-mode')"
-          ></a>
-        </li>
-        <li>
-          <a
-            class="text-images-btn"
-            aria-label="texte et images"
-            @click="changeViewMode($event, 'text-and-images-mode')"
-          ></a>
-        </li>
-        <li>
-          <a
-            class="images-btn"
-            aria-label="images seules"
-            @click="changeViewMode($event, 'images-mode')"
-          ></a>
-        </li>
-      </ul>
-
+        />
       </nav>
       <nav
         v-if="!current_user && firstDocId && previousDocId && nextDocId && lastDocId && docIdList"
@@ -70,75 +41,14 @@
           aria-label="Previous page"
           class="pagination-link pagination-previous"
           :disabled="docId === firstDocId"
-        >
-        </router-link>
+        />
         <router-link
           :to="{ name: 'document', params: {docId: nextDocId } }"
           aria-label="Next page"
           class="pagination-link pagination-next"
           :disabled="docId === lastDocId"
-        >
-        </router-link>
-        <ul
-          v-if="displayedManifestUrl"
-          class="controls is-flex"
-        >
-        <li>
-          <a
-            class="text-btn"
-            aria-label="texte seul"
-            @click="changeViewMode($event, 'text-mode')"
-          ></a>
-        </li>
-        <li>
-          <a
-            class="text-images-btn"
-            aria-label="texte et images"
-            @click="changeViewMode($event, 'text-and-images-mode')"
-          ></a>
-        </li>
-        <li>
-          <a
-            class="images-btn"
-            aria-label="images seules"
-            @click="changeViewMode($event, 'images-mode')"
-          ></a>
-        </li>
-      </ul>
-
+        />
       </nav>
-      <!--<nav class="mb-3 previous-next-navigation">
-        <a
-          v-if="firstDocId && previousDocId && docIdList"
-          role="button"
-          :href="current_user ? `/documents/${ docId-1 }`: `/documents/${ previousDocId }`"
-          :disabled="current_user ? docId === 1 : docId === firstDocId"
-          aria-label="Previous page"
-          class="pagination-link pagination-previous"
-        >
-          <span
-            class="icon"
-            aria-hidden="true"
-          >
-            <i class="fas fa-angle-left" />
-          </span>
-        </a>
-        <a
-          v-if="nextDocId && lastDocId"
-          role="button"
-          :href="current_user ? `/documents/${ docId + 1 }`: `/documents/${ nextDocId }`"
-          aria-label="Next page"
-          :disabled="docId === lastDocId"
-          class="pagination-link pagination-next"
-        >
-          <span
-            class="icon"
-            aria-hidden="true"
-          >
-            <i class="fas fa-angle-right" />
-          </span>
-        </a>
-      </nav>-->
       <div
         class="document"
         :class="documentCssClass"
@@ -157,11 +67,39 @@
             :doc-id="docId"
           />
         </div>
+        <div class="is-flex is-justify-content-center is-align-content-center">
+          <ul
+            v-if="displayedManifestUrl"
+            class="controls is-flex"
+          >
+            <li>
+              <a
+                :class="type === 'text-mode' ? 'text-btn text-mode' : 'text-btn'"
+                aria-label="texte seul"
+                @click="changeViewMode($event, 'text-mode')"
+              />
+            </li>
+            <li>
+              <a
+                :class="type === 'text-and-images-mode' ? 'text-images-btn text-and-images-mode' : 'text-images-btn'"
+                aria-label="texte et images"
+                @click="changeViewMode($event, 'text-and-images-mode')"
+              />
+            </li>
+            <li>
+              <a
+                :class="type === 'images-mode' ? 'images-btn images-mode' : 'images-btn'"
+                aria-label="images seules"
+                @click="changeViewMode($event, 'images-mode')"
+              />
+            </li>
+          </ul>
+        </div>
         <div class="document__display is-flex">
           <div
             v-if="document && !isLoading"
             class="document__content"
-            :class=viewerMode
+            :class="viewerMode"
           >
             <!-- titre et langue -->
             <section class="document-section document-section-for-title">
@@ -524,9 +462,9 @@
             </div>
           </div>
           <div
-            v-show="type === 'text-and-images-mode' | type === 'images-mode'"
+            v-show="type === 'text-and-images-mode' || type === 'images-mode'"
             class="column_mirador"
-            :class=viewerMode
+            :class="viewerMode"
             style="background-color: #f6f6f6"
           >
             <mirador-viewer
@@ -743,7 +681,7 @@ import DocumentTagBar from "../document/DocumentTagBar";
 import DocumentDeletion from "../document/DocumentDeletion";
 import DocumentCollections from "../document/DocumentCollections";
 import DocumentPlacenames from "../document/DocumentPlacenames";
-import { baseApiURL } from "../../modules/http-common";
+//import { baseApiURL } from "@/modules/http-common";
 import DocumentArgument from "../document/DocumentArgument";
 import DocumentTitle from "../document/DocumentTitle";
 import DocumentLanguages from "../document/DocumentLanguages";
@@ -757,10 +695,9 @@ import PlaceWizardForm from "@/components/forms/wizards/PlaceWizardForm.vue";
 import PersonWizardForm from "@/components/forms/wizards/PersonWizardForm.vue";
 import IconAdd from "@/components/ui/icons/IconAdd";
 import NoteActions from "@/components/forms/editor/NoteActions.vue";
-import NewNoteActions from "@/components/forms/editor/NewNoteActions.vue";
+//import NewNoteActions from "@/components/forms/editor/NewNoteActions.vue";
 import DocumentNotes from "@/components/document/DocumentNotes.vue";
-import documentArgument from "@/components/document/DocumentArgument.vue";
-import escapeRegExp from "lodash/escapeRegExp";
+//import escapeRegExp from "lodash/escapeRegExp";
 import MiradorViewer from "@/components/MiradorViewer.vue";
 export default {
   name: "Document",
@@ -839,42 +776,33 @@ export default {
     };
   },
   computed: {
-    documentArgument() {
-      return documentArgument
-    },
     documentCssClass: function(){
       if (this.canEdit && !this.preview) {
         return 'can-edit';
       }
       return this.preview ? "is-preview" : "";
     },
-    ...mapState("document", [
-      "document",
-      "documentLoading",
-      "collections",
-      "witnesses",
-      "currentLock",
-    ]),
+    ...mapState("document", ["document", "documentLoading", "collections", "witnesses", "currentLock"]),
     ...mapState("search", ["searchTerm"]),
     ...mapState("user", ["current_user", "jwt"]),
     ...mapState("locks", ["lockOwner"]),
-    ...mapState("layout", [
-      "displayedManifestUrl", "viewerMode"
-    ]),
+    ...mapState("layout", ["displayedManifestUrl", "viewerMode"]),
     ...mapActions("search", ["getDocumentsTotal"]),
     ...mapGetters("document", ["locationDateFrom", "locationDateTo"]),
     ...mapGetters("placenames", ["getRoleByLabel"]),
     ...mapGetters("persons", ["getRoleByLabel"]),
-    collectionURL() {
+    /*collectionURL() {
       const baseUrl = window.location.origin
         ? window.location.origin + "/"
         : window.location.protocol + "/" + window.location.host;
       return `${baseUrl}${baseApiURL.substr(1)}/iiif/documents/${
         this.docId
       }/collection/default`;
-    },
+    },*/
     canEdit() {
+      //console.log("recalculating canEdit", this.isLoading, this.preview, this.current_user, this.lockOwner)
       if (this.isLoading === false) {
+
         if (this.preview) {
           //console.log("canEdit false if preview", this.preview)
           return false;
@@ -898,6 +826,8 @@ export default {
           return true
         }
         if (this.lockOwner && this.lockOwner[this.docId]) {
+          console.log("canEdit lockOwner test", this.lockOwner[this.docId] &&
+                  this.lockOwner[this.docId].id === this.current_user.id)
           return (
               (this.lockOwner[this.docId] &&
                   this.lockOwner[this.docId].id === this.current_user.id)
@@ -913,9 +843,11 @@ export default {
             this.lockOwner[this.docId].id === this.current_user.id))
         );*/
         }
-        return false
+        //console.log("canEdit default1 True")
+        return true
       }
-      return false
+      //console.log("canEdit default2 null")
+      return null
     },
   },
   watch: {
@@ -934,9 +866,9 @@ export default {
     displayedManifestUrl : function (val, oldVal)  {
       if (!this.displayedManifestUrl || val === oldVal) {
         this.type = "text-mode";
-        this.setDisplayedManifestUrl();
-        this.setViewerMode();
-      } else if (val != oldVal) {
+        this.setDisplayedManifestUrl(undefined);
+        this.setViewerMode(undefined);
+      } else if (val !== oldVal) {
         this.type = "text-and-images-mode"
         window.scrollTo({ top: 0, behavior: 'smooth' });
         //this.$emit("refresh-viewer");
@@ -947,88 +879,38 @@ export default {
     },
     docId: async function () {
       this.type = null;
-      this.setViewerMode();
+      this.setDisplayedManifestUrl(undefined);
+      this.setViewerMode(undefined);
       await this.load(this.docId);
     },
+    canEdit: function () {
+      console.log("watch canEdit", this.canEdit)
+    },
   },
-  async created() {
-    await this.load()
-    /*this.isLoading = true;
-    try {
-      if (!this.$store.state.search.docIdList | this.$store.state.search.docIdList.length === 0) {
-        await this.getDocumentsTotal
-      }
-      this.docIdList = this.$store.state.search.docIdList;
-
-      if (!this.current_user && !this.docIdList.filter(d => d.id === this.docId).length > 0) {
-        this.authorised = false;
-      } else {
-        let documentsTotal = this.$store.state.search.documents_total
-        //console.log('documentsTotal : ', documentsTotal)
-        this.lastDocId = this.$store.state.search.lastDocId;
-        this.firstDocId = this.$store.state.search.firstDocId;
-
-        this.currentIndex = this.docIdList.findIndex(doc => doc.id === this.docId);
-        console.log("currentIndex", this.currentIndex);
-        if (this.currentIndex > 0) {
-          this.previousDocId = this.docIdList[this.currentIndex - 1].id
-        } else {
-          this.previousDocId = this.firstDocId;
-        }
-        if (this.currentIndex < this.docIdList.length - 1) {
-          this.nextDocId = this.docIdList[this.currentIndex + 1].id;
-        } else {
-          this.nextDocId = this.lastDocId;
-        }
-        console.log("firstDocId : ", this.firstDocId, "\npreviousDocId : ", this.previousDocId, "\nthis.docId : ", this.docId, "\nthis.nextDocId : ", this.nextDocId, "\nthis.lastDocId : ", this.lastDocId);
-        console.log('docIdList : ', this.docIdList);
-
-        await this.$store.dispatch("document/fetch", this.docId);
-        this.setLastSeen(this.docId);
-      }
-    } catch (e) {
-      console.log("e : ", e)
-      await this.$router.push({name: "home"});
-    }
-    if (this.$store.state.document.document) {
-      console.log("note dict : ", this.$store.state.document.notes);
-      /*let title = this.$store.state.document.document.title
-      let argument = this.$store.state.document.document.argument
-      let transcription = this.$store.state.document.document.transcription
-      let addresss = this.$store.state.document.document.address
-      const personRegexp = /(?:class="persName" (?:target="_blank" href="[^>]*".)?id=")(\d+)/gmi;
-      let persNameArgumentList = [...argument.matchAll(personRegexp)].map(m => parseInt(m[1]));
-      let persNameTranscriptionList = [...transcription.matchAll(personRegexp)].map(m => parseInt(m[1]));
-      let persNameAddressList = [...addresss.matchAll(personRegexp)].map(m => parseInt(m[1]));
-
-      let persNameList = persNameArgumentList.concat(persNameTranscriptionList, persNameAddressList)
-      let persNameTranscriptionDict = {}
-      for (let i = 0; i < persNameList.length; i++) {
-      persNameTranscriptionDict[persNameList[i]] = 1 + (persNameTranscriptionDict[persNameList[i]] || 0);
-      }
-      console.log("persName dict: ", persNameTranscriptionDict)*//*
-      this.titleContent = this.$store.state.document.document.title;
-      this.transcriptionContent = this.$store.state.document.document.transcription;
-      this.addressContent = this.$store.state.document.document.address;
-      this.argumentContent = this.$store.state.document.document.argument;
-    }
-    this.witnessTmpList = this.witnesses;
-    console.log("created type", this.type)
-
-    this.isLoading = false*/
+  beforeDestroy() {
+    this.setViewerMode(undefined);
+    this.setDisplayedManifestUrl(undefined);
+  },
+  async mounted() {
+    await this.load(this.docId);
+    /*console.log("mounted this.currentLock", this.currentLock)
+    if (this.currentLock && this.currentLock.id) {
+      console.log("created this.currentLock.id", this.currentLock.id)
+      this.fetchLockOwner(this.docId, this.currentLock.id);
+    }*/
   },
   methods: {
     ...mapActions("locks", ["fetchLockOwner"]),
-    ...mapActions("layout", ["setLastSeen", "hideRightSideBar", "setDisplayedManifestUrl", "setViewerMode"]),
+    ...mapActions("layout", ["setLastSeen", "setDisplayedManifestUrl", "setViewerMode"]),
     async load(docId) {
       this.isLoading = true;
       try {
-        if (!this.$store.state.search.docIdList | this.$store.state.search.docIdList.length === 0) {
+        if (!this.$store.state.search.docIdList || this.$store.state.search.docIdList.length === 0) {
           await this.getDocumentsTotal
         }
         this.docIdList = this.$store.state.search.docIdList;
 
-        if (!this.current_user && !this.docIdList.filter(d => d.id === this.docId).length > 0) {
+        if (!this.current_user && this.docIdList.filter(d => d.id === this.docId).length === 0) {
           this.authorised = false;
         } else {
           let documentsTotal = this.$store.state.search.documents_total
@@ -2236,23 +2118,16 @@ nav.previous-next-navigation {
   max-width: unset;
   max-height: unset;
   height: 38px;
-  background: url(../../assets/images/icons/b_text_off.svg) center / 38px auto no-repeat !important;
   border-radius: 0!important;
   border: none !important;
   margin: 0;
   text-indent: -9999px;
-}
-.text-mode .controls a.text-btn {
-  display: inline-block;
-  width: 38px;
-  max-width: unset;
-  max-height: unset;
-  height: 38px;
-  background-image: url(../../assets/images/icons/b_text_on.svg) center / 38px auto no-repeat !important;
-  border-radius: 0!important;
-  border: none !important;
-  margin: 0;
-  text-indent: -9999px;
+  &:not(.text-mode) {
+    background: url(../../assets/images/icons/b_text_off.svg) center / 38px auto no-repeat !important;
+  }
+  &.text-mode {
+    background: url(../../assets/images/icons/b_text_on.svg) center / 38px auto no-repeat !important;
+  }
 }
 .controls a.text-images-btn {
   display: inline-block;
@@ -2260,23 +2135,16 @@ nav.previous-next-navigation {
   max-width: unset;
   max-height: unset;
   height: 38px;
-  background: url(../../assets/images/icons/b_text-image_off.svg) center / 38px auto no-repeat !important;
   border-radius: 0!important;
   border: none !important;
   margin: 0;
   text-indent: -9999px;
-}
-.text-and-images-mode .controls a.text-images-btn {
-  display: inline-block;
-  width: 38px;
-  max-width: unset;
-  max-height: unset;
-  height: 38px;
-  background-image: url(../../assets/images/icons/b_text-image_on.svg) center / 38px auto no-repeat !important;
-  border-radius: 0!important;
-  border: none !important;
-  margin: 0;
-  text-indent: -9999px;
+  &:not(.text-and-images-mode) {
+    background: url(../../assets/images/icons/b_text-image_off.svg) center / 38px auto no-repeat !important;
+  }
+  &.text-and-images-mode {
+    background: url(../../assets/images/icons/b_text-image_on.svg) center / 38px auto no-repeat !important;
+  }
 }
 .controls a.images-btn {
   display: inline-block;
@@ -2284,32 +2152,25 @@ nav.previous-next-navigation {
   max-width: unset;
   max-height: unset;
   height: 38px;
-  background: url(../../assets/images/icons/b_image_off.svg) center / 38px auto no-repeat !important;
   border-radius: 0!important;
   border: none !important;
   margin: 0;
   text-indent: -9999px;
+  &:not(.images-mode) {
+    background: url(../../assets/images/icons/b_image_off.svg) center / 38px auto no-repeat !important;
+  }
+  &.images-mode {
+    background: url(../../assets/images/icons/b_image_on.svg) center / 38px auto no-repeat !important;
+  }
 }
-.images-mode .controls a.images-btn {
-  display: inline-block;
-  width: 38px;
-  max-width: unset;
-  max-height: unset;
-  height: 38px;
-  background-image: url(../../assets/images/icons/b_image_on.svg) center / 38px auto no-repeat !important;
-  border-radius: 0!important;
-  border: none !important;
-  margin: 0;
-  text-indent: -9999px;
-}
-.text-mode-only .controls a.text-btn {
+/*.text-mode-only .controls a.text-btn {
   pointer-events: none;
 }
 .text-mode-only .controls a.text-images-btn,
 .text-mode-only .controls a.images-btn {
   pointer-events: none;
   opacity: 0.2;
-}
+}*/
 .column_mirador.text-mode {
   display: none;
 }

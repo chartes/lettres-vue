@@ -229,14 +229,15 @@ export default {
     async deleteWitness(witness) {
       if (witness && witness.id) {
         await this.$store.dispatch("document/removeWitness", witness);
-        this.recomputeOrder();
+        await this.recomputeOrder();
       }
     },
     showWitness(witness) {
       //console.log("this.displayedWitness / witness", this.displayedWitness, witness)
       if (this.displayedWitness && witness.id === this.displayedWitness.id) {
-        this.setDisplayedManifestUrl(null)
-        this.setViewerMode(null)
+        this.displayedWitness = null;
+        this.setDisplayedManifestUrl(undefined)
+        this.setViewerMode(undefined)
       } else {
         this.displayedWitness = witness;
         this.setViewerMode("text-and-images-mode")
