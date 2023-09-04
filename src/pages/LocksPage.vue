@@ -1,44 +1,45 @@
 <template>
   <div>
-    <div class="results-count-and-pagination is-flex is-justify-content-space-between is-align-items-center">
-      <div class="popup-list-header is-inline-block">
+    <span class="menu__title">Mes verrous</span>
+    <div class="results-count-and-pagination">
+      <div class="popup-list-header is-flex is-justify-content-space-between is-align-items-center">
         <div class="results-count">
           <span class="total-count">{{ totalCount }}</span> résultat(s)
         </div>
-      </div>
-      <div class="is-inline-block">
-        <div
-          v-if="totalPages"
-          class="pagination-controls"
-        >
-          <a
-            :class="currentPage <= 1 ? 'button first-page disabled' : 'button first-page'"
-            @click="currentPage <= 1 ? null : currentPage = 1"
-          />
-          <a
-            :class="currentPage <= 1 ? 'button previous-page disabled' : 'button previous-page'"
-            @click="currentPage <= 1 ? null : --currentPage"
-          />
-          <input
-            v-model="currentPage"
-            name="page"
-            type="number"
-            min="1"
-            :max="totalPages"
-            placeholder="Page..."
-            class="current-page"
-            @change.prevent="currentPage = parseInt(p)"
+        <div>
+          <div
+            v-if="totalPages"
+            class="pagination-controls"
           >
-          <span class="label-sur-page">sur</span>
-          <span class="total-pages">{{ totalPages }}</span>
-          <a
-            :class="currentPage < totalPages ? 'button next-page' : 'button next-page disabled'"
-            @click="currentPage < totalPages ? ++currentPage : null"
-          />
-          <a
-            :class="currentPage < totalPages ? 'button last-page' : 'button last-page disabled'"
-            @click="currentPage < totalPages ? currentPage = totalPages : null"
-          />
+            <a
+              :class="currentPage <= 1 ? 'button first-page disabled' : 'button first-page'"
+              @click="currentPage <= 1 ? null : currentPage = 1"
+            />
+            <a
+              :class="currentPage <= 1 ? 'button previous-page disabled' : 'button previous-page'"
+              @click="currentPage <= 1 ? null : --currentPage"
+            />
+            <input
+              v-model="currentPage"
+              name="page"
+              type="number"
+              min="1"
+              :max="totalPages"
+              placeholder="Page..."
+              class="current-page"
+              @change.prevent="currentPage = parseInt(p)"
+            >
+            <span class="label-sur-page">sur</span>
+            <span class="total-pages">{{ totalPages }}</span>
+            <a
+              :class="currentPage < totalPages ? 'button next-page' : 'button next-page disabled'"
+              @click="currentPage < totalPages ? ++currentPage : null"
+            />
+            <a
+              :class="currentPage < totalPages ? 'button last-page' : 'button last-page disabled'"
+              @click="currentPage < totalPages ? currentPage = totalPages : null"
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -75,9 +76,6 @@
 
         @details-open="(row, index) => $buefy.toast.open(`Expanded ${row['object-id']}`)"
       >
-        <template #top-left>
-          <span class="table_title">Status des verrouillages</span>
-        </template>
         <template #bottom-left>
           <b>Total checked</b>: {{ checkedRows.length }}
         </template>
@@ -705,8 +703,8 @@ export default {
     }
   }
   .popup-list-header {
-    /*border-top: solid 1px #FDB3CC;
-    border-bottom: solid 1px #C7C7C7;*/
+    border-top: solid 1px #FDB3CC;
+    border-bottom: solid 1px #C7C7C7;
     margin-bottom: 25px;
 
     @include on-mobile {
@@ -742,6 +740,19 @@ export default {
     font-size: 20px;
     font-weight: 500;
     color: #C00055;
+  }
+  .menu__title {
+    margin-top: 10px; /* margin does not work */
+    margin-bottom: 10px; /* margin does not work */
+
+    border: none;
+    padding: 10px 0;
+    font-family: $family-secondary;
+    font-size: 16px;
+    color: #C00055 !important;
+    font-weight: 500;
+    text-decoration: none;
+    text-transform: uppercase;
   }
 
   /* Chrome, Safari, Edge, Opera */

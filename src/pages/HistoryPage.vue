@@ -1,5 +1,6 @@
 <template>
   <div>
+    <span class="menu__title">Mon historique</span>
     <changelog />
   </div>
 </template>
@@ -62,4 +63,17 @@ export default {
 @import "@/assets/sass/main.scss";
 @import "@/assets/sass/components/_search_results_table.scss";
 @import "@/assets/sass/components/_search_results_pagination.scss";
+.menu__title {
+  margin-top: 10px; /* margin does not work */
+  margin-bottom: 10px; /* margin does not work */
+
+  border: none;
+  padding: 10px 0;
+  font-family: $family-secondary;
+  font-size: 16px;
+  color: #C00055 !important;
+  font-weight: 500;
+  text-decoration: none;
+  text-transform: uppercase;
+}
 </style>
