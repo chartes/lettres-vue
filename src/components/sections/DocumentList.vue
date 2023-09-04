@@ -768,7 +768,7 @@ export default {
     await this.loadAsyncData();
   },
   methods: {
-    ...mapState("search", ["documents"]),
+    //...mapState("search", ["documents"]),
     ...mapActions("search", ["setNumPage", "performSearch", "setSorts", "setSelectedCollections"]),
     showDetailIcon(rowDocId) {
       let showIcon = false
@@ -860,7 +860,6 @@ export default {
           this.setSorts(this.sortingPriority)
         } else {
           // request regular sorted data from backend
-          console.log('tada')
           this.sortingPriority = [] // [{field, order}]
           this.setSorts([])
         }
@@ -1234,8 +1233,11 @@ input::-webkit-inner-spin-button {
 input[type=number] {
   -moz-appearance: textfield;
 }
-::v-deep .b-table .hide-arrow-icon-detail span.icon {
-		display: none !important;
-	}
+::v-deep .b-table .hide-arrow-icon-detail td.chevron-cell a {
+  pointer-events: none;
+  span.icon:after {
+    display: none !important;
+  }
+}
 
 </style>
