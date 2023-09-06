@@ -1098,7 +1098,8 @@ export default {
 
   & > .columns {
     align-items: center;
-    margin: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
 
     .tags {
       padding: 0;
