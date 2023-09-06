@@ -1248,29 +1248,38 @@ input[type=number] {
   }
 }
 
-::v-deep {
 
-  .b-table.no-search-term {
-    thead {
-      td {
+.is-active {
+
+  ::v-deep {
+
+    .b-table.search-results.no-search-term {
+
+      thead {
+        tr {
+          /* Flèche */
+          th:nth-child(1) {
+            width: 0 !important;
+            display: none !important;
+          }
+
+          /* Lettre */
+          th:nth-child(2) .th-wrap {
+            transform: none !important;
+          }
+        }
+      }
+
+      tbody {
         /* Flèche */
-        &.th-search-results:nth-child(1),
-        &.th-collection-results:nth-child(1) {
-          display: none;
+        td.chevron-cell {
+          width: 0 !important;
+          display: none !important;
         }
       }
     }
 
-    tbody {
-      /* Flèche */
-      td.chevron-cell {
-        width: 0 !important;
-        display: none !important;
-        background-color: red;
-      }
-    }
   }
-
 }
 
 </style>
