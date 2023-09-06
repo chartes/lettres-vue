@@ -765,17 +765,17 @@ export default {
     }
 
     .collection-actions {
-      //justify-content: space-between;
       display: flex;
       flex-direction: row;
       align-items: center;
+      justify-content: space-between;
+
       .edit-btn {
         display: inline-block;
-        flex: 1;
         margin-left: 0;
         cursor: pointer;
         width: 24px;
-        height: 24px;
+        height: 40px;
         background: url(../assets/images/icons/bouton_edit.svg) right / 24px auto no-repeat;
         i {
           display: none;
