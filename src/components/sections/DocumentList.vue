@@ -1254,6 +1254,7 @@ input[type=number] {
 
   ::v-deep {
 
+    .b-table.collection-results.no-search-term,
     .b-table.search-results.no-search-term {
 
       thead {
