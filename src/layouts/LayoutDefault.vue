@@ -517,6 +517,16 @@ a.portail_button:hover {
 .advanced-search_row.with-viewer {
   padding-left: $container-tablet-margin;
   padding-right: $container-tablet-margin;
+
+  @include on-tablet {
+    padding-left: $container-tablet-margin;
+    padding-right: $container-tablet-margin;
+  }
+
+  @include on-mobile {
+    padding-left: $container-mobile-margin;
+    padding-right: $container-mobile-margin;
+  }
 }
 
 .search_row {

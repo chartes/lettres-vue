@@ -1112,6 +1112,7 @@ export default {
 
   // Mode lecture
   &:not(.can-edit) {
+
     /* Ajout par Victor */
     & > .document__display > .document__content.images-mode {
       margin-top: 20px;
@@ -1125,8 +1126,14 @@ export default {
     & > .document__display > .document__content.text-and-images-mode {
       margin-top: 20px;
       width: 50% !important;
+
+      @include on-mobile {
+        width: 100% !important;
+      }
     }
+
     /* Fin ajout par Victor */
+
     .document-section {
       margin-bottom: 40px;
 
@@ -1248,7 +1255,19 @@ export default {
       }
 
       & > .document__display {
-        gap: 10px;
+        gap: 20px;
+
+        @include on-mobile {
+          flex-direction: column-reverse;
+        }
+
+        & > .document__display > .document__content.text-and-images-mode {
+          width: calc( 50% - 10px ) !important;
+
+          @include on-mobile {
+            width: 100% !important;
+          }
+        }
       }
 
     }
@@ -1264,8 +1283,12 @@ export default {
     }
 
     & > .document__display {
-      gap: 10px;
+      gap: 20px;
       margin-top: 20px;
+
+      @include on-mobile {
+        flex-direction: column-reverse;
+      }
     }
 
     & > .document__display > .document__content,
@@ -1279,7 +1302,11 @@ export default {
     }
 
     & > .document__display > .document__content.text-and-images-mode {
-      width: 50% !important;
+      width: calc( 50% - 10px ) !important;
+
+      @include on-mobile {
+        width: 100% !important;
+      }
     }
 
     /* Fin ajout par Victor */
@@ -2151,58 +2178,74 @@ nav.previous-next-navigation {
 .hiddendiv {
   display: none;
 }
+
 /* Ajout par Victor */
+.controls {
+  width: 100%;
+  border-top: 1px dashed #b9192f;
+  border-bottom: 1px solid #b8b8b8;
+  padding: 12px 0 5px;
+  margin-bottom: 30px;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+
+  @include on-mobile {
+    gap: 10px;
+  }
+
+  & > li {
+
+    @include on-mobile {
+      &:nth-child(2) {
+        /* display: none; */
+      }
+    }
+
+    & > a {
+      display: inline-block;
+      height: 42px;
+      max-width: unset;
+      max-height: unset;
+      border-radius: 0!important;
+      border: none !important;
+      margin: 0;
+      text-indent: -9999px;
+    }
+  }
+}
+
+
 .controls a.text-btn {
-  display: inline-block;
-  width: 38px;
-  max-width: unset;
-  max-height: unset;
-  height: 38px;
-  border-radius: 0!important;
-  border: none !important;
-  margin: 0;
-  text-indent: -9999px;
+  width: 42px;
   &:not(.text-mode) {
-    background: url(../../assets/images/icons/b_text_off.svg) center / 38px auto no-repeat !important;
+    background: url(../../assets/images/icons/b_text_off.svg) center / auto 42px no-repeat !important;
   }
   &.text-mode {
-    background: url(../../assets/images/icons/b_text_on.svg) center / 38px auto no-repeat !important;
+    background: url(../../assets/images/icons/b_text_on.svg) center / auto 42px no-repeat !important;
   }
 }
+
 .controls a.text-images-btn {
-  display: inline-block;
-  width: 38px;
-  max-width: unset;
-  max-height: unset;
-  height: 38px;
-  border-radius: 0!important;
-  border: none !important;
-  margin: 0;
-  text-indent: -9999px;
+  width: 80px;
   &:not(.text-and-images-mode) {
-    background: url(../../assets/images/icons/b_text-image_off.svg) center / 38px auto no-repeat !important;
+    background: url(../../assets/images/icons/b_text-image_off.svg) center / auto 42px no-repeat !important;
   }
   &.text-and-images-mode {
-    background: url(../../assets/images/icons/b_text-image_on.svg) center / 38px auto no-repeat !important;
+    background: url(../../assets/images/icons/b_text-image_on.svg) center / auto 42px no-repeat !important;
   }
 }
+
 .controls a.images-btn {
-  display: inline-block;
-  width: 38px;
-  max-width: unset;
-  max-height: unset;
-  height: 38px;
-  border-radius: 0!important;
-  border: none !important;
-  margin: 0;
-  text-indent: -9999px;
+  width: 42px;
   &:not(.images-mode) {
-    background: url(../../assets/images/icons/b_image_off.svg) center / 38px auto no-repeat !important;
+    background: url(../../assets/images/icons/b_image_off.svg) center / auto 42px no-repeat !important;
   }
   &.images-mode {
-    background: url(../../assets/images/icons/b_image_on.svg) center / 38px auto no-repeat !important;
+    background: url(../../assets/images/icons/b_image_on.svg) center / auto 42px no-repeat !important;
   }
 }
+
 /*.text-mode-only .controls a.text-btn {
   pointer-events: none;
 }
@@ -2217,6 +2260,9 @@ nav.previous-next-navigation {
 }
 .column_mirador.text-and-images-mode {
   width: 50%;
+  @include on-mobile {
+    width: 100%;
+  }
 }
 .column_mirador.images-mode {
   display: inline-block;
