@@ -425,6 +425,10 @@
                   &:last-child {
                     margin-bottom: 0;
                     border-bottom: none !important;
+
+                    .document-section-content {
+                      margin-bottom: 0 !important;
+                    }
                   }
 
                   .document-section-content {
