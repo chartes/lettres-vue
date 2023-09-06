@@ -319,7 +319,7 @@
               a {
                 font-family: $family-secondary;
                 color: #000000;
-                background: none !important;
+                background-color: transparent !important;
                 line-height: 20px;
                 word-break: break-all;
 
@@ -535,7 +535,7 @@
       padding-right: 0;
 
       @include on-tablet {
-        width: 80px !important;
+        width: 100px !important;
       }
 
       .tags {

@@ -239,7 +239,8 @@ export default {
 
     a {
       display: inline-block;
-      min-width: 40px;
+      min-width: 35px;
+      min-height: 35px;
       height: 100%;
     }
 
