@@ -930,6 +930,7 @@ export default {
         return {
           class: this.contentType ? 'td-' + this.contentType : '',
           style: {
+            'min-width': '130px',
             'max-width': '300px'
           }
         }
@@ -1276,9 +1277,15 @@ input[type=number] {
           width: 0 !important;
           display: none !important;
         }
-      }
-    }
 
+        @include on-small-tablet {
+          tr:not(.detail) {
+            grid-template-columns: 0 50px 100px auto;
+          }
+        }
+      }
+
+    }
   }
 }
 
