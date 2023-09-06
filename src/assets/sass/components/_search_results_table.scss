@@ -51,6 +51,7 @@
             text-transform: uppercase;
             border-bottom: 1px solid #fdb3cc;
             padding: 0 10px 10px 0 !important;
+            vertical-align: bottom;
 
             &:last-child {
               padding-right: 0 !important;
@@ -151,6 +152,7 @@
 
             }
           }
+
         }
       }
 
@@ -253,7 +255,7 @@
                     white-space: break-spaces;
 
                     &:not(:last-child) {
-                      margin-bottom: 20px;
+                      margin-bottom: 0; /* 20px */
                     }
                   }
                 }
@@ -317,6 +319,7 @@
               a {
                 font-family: $family-secondary;
                 color: #000000;
+                background: none !important;
                 line-height: 20px;
                 word-break: break-all;
 
@@ -421,6 +424,7 @@
 
                   &:last-child {
                     margin-bottom: 0;
+                    border-bottom: none !important;
                   }
 
                   .document-section-content {
@@ -482,7 +486,8 @@
               }
             }
           }
-       }
+
+        }
       }
     }
   }

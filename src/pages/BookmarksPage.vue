@@ -511,8 +511,9 @@ export default {
     }
   }
   .menu__title {
-    margin-top: 10px; /* margin does not work */
-    margin-bottom: 10px; /* margin does not work */
+    display: block;
+    margin-top: 10px;
+    margin-bottom: 20px;
 
     border: none;
     padding: 10px 0;

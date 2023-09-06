@@ -348,7 +348,7 @@
     <div :class="toggleCssClass">
       <b-table
         ref="multiSortTable"
-        :class="contentType"
+        :class="tableCssClass"
         :data="tableData"
 
         :loading="loadingStatus"
@@ -369,6 +369,8 @@
         :sort-multiple-data="sortingPriority"
         detail-key="id"
         show-detail-icon
+
+
         :row-class="(row, index) => showDetailIcon(row.id) === true ? '': 'hide-arrow-icon-detail'"
 
         :narrowed="true"
@@ -756,6 +758,12 @@ export default {
     },
     toggleCssClass: function() {
       return this.isActive ? 'is-active' : 'is-inactive';
+    },
+    hasSearchTerm: function() {
+      return this.searchTerm && this.searchTerm.length > 0 ? 'has-search-term' : 'no-search-term';
+    },
+    tableCssClass: function() {
+      return [ this.contentType, this.hasSearchTerm ].join(' ') ;
     },
   },
   watch: {
@@ -1238,6 +1246,31 @@ input[type=number] {
   span.icon:after {
     display: none !important;
   }
+}
+
+::v-deep {
+
+  .b-table.no-search-term {
+    thead {
+      td {
+        /* Flèche */
+        &.th-search-results:nth-child(1),
+        &.th-collection-results:nth-child(1) {
+          display: none;
+        }
+      }
+    }
+
+    tbody {
+      /* Flèche */
+      td.chevron-cell {
+        width: 0 !important;
+        display: none !important;
+        background-color: red;
+      }
+    }
+  }
+
 }
 
 </style>
