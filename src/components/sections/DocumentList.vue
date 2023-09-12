@@ -362,7 +362,7 @@
         aria-previous-label="Page précédente"
         aria-page-label="Page"
         aria-current-label="Page courante"
-
+        :opened-detailed="[]"
         detailed
         :backend-sorting="true"
         :sort-multiple="true"
@@ -490,7 +490,7 @@
               <h2
                 v-if="searchTerm && searchTerm.length > 0"
                 class="document-preview-card__title"
-                v-html="highlight(props.row.title)"
+                v-html="highlight(props.row.title, 'title')"
               />
               <h2
                 v-else
@@ -696,6 +696,7 @@ export default {
       tableData: [],
       p: 1,
       isActive: true,
+      loadingTable: false
     };
   },
   computed: {
@@ -772,18 +773,29 @@ export default {
     ...mapActions("search", ["setNumPage", "performSearch", "setSorts", "setSelectedCollections"]),
     showDetailIcon(rowDocId) {
       let showIcon = false
-      if (!this.loadingStatus && this.searchTerm && this.searchTerm.length > 0) {
-        let searchDocuments = this.$store.state.search.documents
-        let currRowDocument = searchDocuments.filter(d => d.id === rowDocId)
-        console.log("currRowDocument :", currRowDocument)
-        if (currRowDocument[0].transcription && currRowDocument[0].transcription.highlight) {
-          showIcon = true
-        } else if (currRowDocument[0].argument && this.highlight(currRowDocument[0].argument) && this.highlight(currRowDocument[0].argument).includes('mark')) {
-          showIcon = true;
+      if (!this.loadingTable) {
+        if (!this.loadingStatus && this.searchTerm && this.searchTerm.length > 0) {
+          let searchDocuments = this.$store.state.search.documents
+          if (searchDocuments.length > 0) {
+            let currRowDocument = searchDocuments.filter(d => d.id === rowDocId)
+            if (currRowDocument && currRowDocument.length > 0) {
+              console.log("currRowDocument :", currRowDocument)
+              if (currRowDocument[0].transcription && currRowDocument[0].transcription.highlight) {
+                showIcon = true
+              } else if (currRowDocument[0].argument && this.highlight(currRowDocument[0].argument).includes('mark')) {
+                console.log("list currRowDocument[0].id, argument", currRowDocument[0].id, currRowDocument[0].argument)
+                showIcon = true;
+              }
+            } else {
+              return showIcon
+            }
+          } else {
+            return showIcon
+          }
+          return showIcon
+        } else {
+          return showIcon
         }
-        return showIcon
-      } else {
-        return showIcon
       }
     },
     searchCollection() {
@@ -796,12 +808,33 @@ export default {
         return text.replace(/<a.*\/a>/ig,'');
       }
     },
-    highlight(text) {
-      if (this.searchTerm && this.searchTerm.length > 0) {
-        const terms = this.searchTerm.split(new RegExp("\\s+")).map(escapeRegExp).filter(term => term !== "");
+    highlight(text, type) {
+      // function called only if this.searchTerm && this.searchTerm.length > 0
+      // split search terms (by space) if multiple
+      // if (/^"".*""$/.test(text)) {TODO Victor : implement enclosed in quotes ?
+      // previous rule : const terms = this.searchTerm.split(new RegExp("\\s+")).map(escapeRegExp).filter(term => term !== "")
+      const terms = this.searchTerm.replaceAll(/^"|"$/g, "").split(new RegExp("[,;:.\\s+]+")).map(escapeRegExp).filter(term => term !== "");
+
+      if (terms && terms.length > 0) {
         const re = new RegExp(`(${terms.join("|")})`);
-        text = this.cleanHTML(text);
-        return text.replace(new RegExp(re, 'gi'), (match => `<mark>${match}</mark>`))
+        if (type === 'title') {
+          // if title : only remove notes
+          text = this.cleanHTML(text);
+          return text.replace(new RegExp(re, 'gi'), (match => `<mark>${match}</mark>`))
+        } else {
+          // if argument, parse pseudo HTML if required
+          if (text.includes('p')) {
+            // if source is pseudo HTML (has tags)
+            let div = document.createElement("div");
+            div.innerHTML = text;
+            let textWithoutHTML = div.textContent || div.innerText || "";
+            text = textWithoutHTML;
+            console.log("list highlight doc id cleanhtml text", text)
+            return text.replace(new RegExp(re, 'gi'), (match => `<mark>${match}</mark>`))
+          } else {
+            return text.replace(new RegExp(re, 'gi'), (match => `<mark>${match}</mark>`))
+          }
+        }
       } else {
         return text
       }
@@ -869,6 +902,7 @@ export default {
     },
 
     async loadAsyncData() {
+      this.loadingTable = true
       if (this.documents) {
         console.log('this.included : ', this.included);
         const phr = [];
@@ -888,7 +922,7 @@ export default {
           destinations: d.destinations.map(destinations => (this.$store.state.placenames.places[1].places.find(p => p.placename_id === destinations.id) || {}).label).filter(Boolean).join(", ")*/
         }
         }));
-      }
+      } this.loadingTable = false
     },
     toggle() {
       if (this.isActive === true) {

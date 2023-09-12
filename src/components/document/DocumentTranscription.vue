@@ -261,13 +261,16 @@ export default {
       }
     },
     highlight(text) {
-      // Split search terms (by space) if multiple TODO Victor : implement if multiple not enclosed in quotes
-      //previous rule : const terms = this.searchTerm.split(new RegExp("\\s+")).map(escapeRegExp).filter(term => term !== "")
-      let terms = this.searchTerm.replaceAll(/^"|"$/g, "").match(/\p{L}+|\d+/gu); // TODO Victor : does match "i568" works with .match(/\p{L}{2,}|\p{L}+\d+/gu)
+      // function called only if this.searchTerm && this.searchTerm.length > 0
+      // split search terms (by space) if multiple
+      // if (/^"".*""$/.test(text)) {TODO Victor : implement enclosed in quotes ?
+      // previous rule : const terms = this.searchTerm.split(new RegExp("\\s+")).map(escapeRegExp).filter(term => term !== "")
+      const terms = this.searchTerm.replaceAll(/^"|"$/g, "").split(new RegExp("[,;:.\\s+]+")).filter(term => term !== "")
+      //let terms = this.searchTerm.replaceAll(/^"|"$/g, "").match(/\p{L}+|\d+/gu); // TODO Victor : does match "i568" works with .match(/\p{L}{2,}|\p{L}+\d+/gu)
       console.log('transcription text without quotes :', text)
       console.log('transcription terms without quotes :', terms)
       // Create regex with list of search terms and ensuring they are not searched within attributes (eg do not match/replace "a" in <a class=""...>
-      if (terms) {
+      if (terms && terms.length > 0) {
         // include word boundaries to exclude matching characters within a word, e.g. search and match "de" in "deuxième"
         let regexTerms = [];
         for (let i = 0, len = terms.length; i < len; i++) {

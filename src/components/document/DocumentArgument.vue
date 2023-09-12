@@ -35,12 +35,12 @@
         />
       </rich-text-editor>
       <div
-        v-else-if="!preview && searchTerm && highlight(form).includes('mark')"
+        v-else-if="!preview && searchTerm && searchTerm.length > 0 && highlight(form).includes('mark')"
         class="argument__content"
         v-html="form && form.length > 0 ? highlight(form) : 'Non renseignée'"
       />
       <div
-        v-else-if="preview && searchTerm && highlight(form).includes('mark')"
+        v-else-if="preview && searchTerm && searchTerm.length > 0 && highlight(form).includes('mark')"
         class="argument__content"
         v-html="form && form.length > 0 ? highlight(form) : 'Non renseignée'"
       />
@@ -57,7 +57,7 @@
 import { mapState } from "vuex";
 import RichTextEditor from "../forms/fields/RichTextEditor";
 import EditorSaveButton from "../forms/fields/EditorSaveButton";
-//import escapeRegExp from "lodash/escapeRegExp";
+import escapeRegExp from "lodash/escapeRegExp";
 
 export default {
   name: "DocumentArgument",
@@ -141,11 +141,14 @@ export default {
       }
     },
     highlight(text) {
-      //if (/^"".*""$/.test(text)) {
-        /// Split search terms (by space) TODO Victor : implement if multiple not enclosed in quotes
-        // previous rule : const terms = this.searchTerm.split(new RegExp("\\s+")).map(escapeRegExp).filter(term => term !== "");
-        let terms = this.searchTerm.replaceAll(/^"|"$/g, "").match(/\p{L}+|\d+/gu); // TODO Victor : does match "i568" works with .match(/\p{L}{2,}|\p{L}+\d+/gu)
-        //console.log('terms without quotes :', terms)
+      // function called only if this.searchTerm && this.searchTerm.length > 0
+      // split search terms (by space) if multiple
+      // if (/^"".*""$/.test(text)) {TODO Victor : implement enclosed in quotes ?
+      // previous rule : const terms = this.searchTerm.split(new RegExp("\\s+")).map(escapeRegExp).filter(term => term !== "")
+      const terms = this.searchTerm.replaceAll(/^"|"$/g, "").split(new RegExp("[,;:.\\s+]+")).map(escapeRegExp).filter(term => term !== "");
+      //let terms = this.searchTerm.replaceAll(/^"|"$/g, "").match(/\p{L}+|\d+/gu); // TODO Victor : does match "i568" works with .match(/\p{L}{2,}|\p{L}+\d+/gu)
+      if (terms && terms.length > 0) {
+        console.log('terms without quotes :', terms)
         // Create regex with list of search terms and ensuring they are not searched within attributes (eg do not match/replace "a" in <a class=""...>
         let regexTerms = [];
         for (let i = 0, len = terms.length; i < len; i++) {
@@ -154,7 +157,7 @@ export default {
         const re = new RegExp(`(${regexTerms.join("|")})(?=[^<>]*<)`);
         //console.log("match without quotes re :", re)
         return text.replace(new RegExp(re, 'gi'), (match => `<mark>${match}</mark>`));
-      /*} else {
+      /*} else {TODO Victor : if enclosed in quotes tests
         let searchTermWithoutQuotes = this.searchTerm.replaceAll(/^"|"$/g, "");
         let terms = searchTermWithoutQuotes.split(/((?<=\s)|,)/g).filter(term => term !== "");
         console.log("match with quotes terms :", terms)
@@ -165,6 +168,9 @@ export default {
         console.log("match with quotes re :", re)
         return text.replace(new RegExp(re, 'gi'), (match => `<mark>${match}</mark>`));
       }*/
+      } else {
+        return text
+      }
     },
     //TODO Victor remove once [note] have been replaced in database
     getNoteIndex(content, type) {

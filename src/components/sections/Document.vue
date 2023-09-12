@@ -451,16 +451,16 @@
 
               <!-- historique des modifications -->
               <div
-                  v-if="current_user"
-                  class=""
-                  style="margin-left: 0; margin-top: 50px"
+                v-if="current_user"
+                class=""
+                style="margin-left: 0; margin-top: 50px"
               >
                 <header class="subtitle mb-3">
                   Historique des modifications
                 </header>
                 <changelog
-                    :doc-id="docId"
-                    :per-page="10"
+                  :doc-id="docId"
+                  :per-page="10"
                 />
               </div>
             </div>
@@ -638,7 +638,7 @@
         </section>
         <!-- analyse -->
         <section
-          v-if="argumentContent && searchTerm && highlight(argumentContent).includes('mark')"
+          v-if="argumentContent && searchTerm && searchTerm.length > 0 && highlight(argumentContent).includes('mark')"
           class="document-section"
         >
           <div class="heading is-uppercase">
@@ -701,7 +701,7 @@ import IconAdd from "@/components/ui/icons/IconAdd";
 import NoteActions from "@/components/forms/editor/NoteActions.vue";
 //import NewNoteActions from "@/components/forms/editor/NewNoteActions.vue";
 import DocumentNotes from "@/components/document/DocumentNotes.vue";
-//import escapeRegExp from "lodash/escapeRegExp";
+import escapeRegExp from "lodash/escapeRegExp";
 import MiradorViewer from "@/components/MiradorViewer.vue";
 export default {
   name: "Document",
@@ -993,18 +993,25 @@ export default {
       }
     },
     highlight(text) {
-      // Split search terms (by space) if multiple TODO Victor : implement if multiple not enclosed in quotes
-      //previous rule : const terms = this.searchTerm.split(new RegExp("\\s+")).map(escapeRegExp).filter(term => term !== "")
-      let terms = this.searchTerm.replaceAll(/^"|"$/g, "").match(/\p{L}+|\d+/gu);  // TODO Victor : does match "i568" works with .match(/\p{L}{2,}|\p{L}+\d+/gu)
-      // Create regex with list of search terms and ensuring they are not searched within attributes (eg do not match/replace "a" in <a class=""...>
+      // function called only if this.searchTerm && this.searchTerm.length > 0
+      // split search terms (by space) if multiple
+      // if (/^"".*""$/.test(text)) {TODO Victor : implement enclosed in quotes ?
+      // previous rule : const terms = this.searchTerm.split(new RegExp("\\s+")).map(escapeRegExp).filter(term => term !== "")
+      const terms = this.searchTerm.replaceAll(/^"|"$/g, "").split(new RegExp("[,;:.\\s+]+")).map(escapeRegExp).filter(term => term !== "")
+      //let terms = this.searchTerm.replaceAll(/^"|"$/g, "").match(/\p{L}+|\d+/gu);  // TODO Victor : does match "i568" works with .match(/\p{L}{2,}|\p{L}+\d+/gu)
+      if (terms && terms.length > 0) {
+        // Create regex with list of search terms and ensuring they are not searched within attributes (eg do not match/replace "a" in <a class=""...>
         let regexTerms = [];
         for (let i = 0, len = terms.length; i < len; i++) {
           regexTerms.push("\\b" + terms[i] + "\\b");
         }
-      const re = new RegExp(`(${regexTerms.join("|")})(?=[^<>]*<)`);
-      //const re = new RegExp(`(${terms.join("|")})(?=[^<>]*<)`)
-      //console.log("transcription match re :", re)
-      return text.replace(new RegExp(re, 'gi'), (match => `<mark>${match}</mark>`))
+        const re = new RegExp(`(${regexTerms.join("|")})(?=[^<>]*<)`);
+        //const re = new RegExp(`(${terms.join("|")})(?=[^<>]*<)`)
+        //console.log("transcription match re :", re)
+        return text.replace(new RegExp(re, 'gi'), (match => `<mark>${match}</mark>`))
+      } else {
+        return text
+      }
     },
     addPlace(evt) {
       this.placeInputData = evt;
