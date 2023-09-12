@@ -348,7 +348,7 @@
     <div :class="toggleCssClass">
       <b-table
         ref="multiSortTable"
-        :class="contentType"
+        :class="tableCssClass"
         :data="tableData"
 
         :loading="loadingStatus"
@@ -369,6 +369,8 @@
         :sort-multiple-data="sortingPriority"
         detail-key="id"
         show-detail-icon
+
+
         :row-class="(row, index) => showDetailIcon(row.id) === true ? '': 'hide-arrow-icon-detail'"
 
         :narrowed="true"
@@ -758,6 +760,12 @@ export default {
     toggleCssClass: function() {
       return this.isActive ? 'is-active' : 'is-inactive';
     },
+    hasSearchTerm: function() {
+      return this.searchTerm && this.searchTerm.length > 0 ? 'has-search-term' : 'no-search-term';
+    },
+    tableCssClass: function() {
+      return [ this.contentType, this.hasSearchTerm ].join(' ') ;
+    },
   },
   watch: {
     async documents() {
@@ -956,6 +964,7 @@ export default {
         return {
           class: this.contentType ? 'td-' + this.contentType : '',
           style: {
+            'min-width': '130px',
             'max-width': '300px'
           }
         }
@@ -1271,6 +1280,47 @@ input[type=number] {
   pointer-events: none;
   span.icon:after {
     display: none !important;
+  }
+}
+
+
+.is-active {
+
+  ::v-deep {
+
+    .b-table.collection-results.no-search-term,
+    .b-table.search-results.no-search-term {
+
+      thead {
+        tr {
+          /* Flèche */
+          th:nth-child(1) {
+            width: 0 !important;
+            display: none !important;
+          }
+
+          /* Lettre */
+          th:nth-child(2) .th-wrap {
+            transform: none !important;
+          }
+        }
+      }
+
+      tbody {
+        /* Flèche */
+        td.chevron-cell {
+          width: 0 !important;
+          display: none !important;
+        }
+
+        @include on-small-tablet {
+          tr:not(.detail) {
+            grid-template-columns: 0 50px 100px auto;
+          }
+        }
+      }
+
+    }
   }
 }
 

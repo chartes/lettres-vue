@@ -64,8 +64,9 @@ export default {
 @import "@/assets/sass/components/_search_results_table.scss";
 @import "@/assets/sass/components/_search_results_pagination.scss";
 .menu__title {
-  margin-top: 10px; /* margin does not work */
-  margin-bottom: 10px; /* margin does not work */
+  display: block;
+  margin-top: 10px;
+  margin-bottom: 20px;
 
   border: none;
   padding: 10px 0;
