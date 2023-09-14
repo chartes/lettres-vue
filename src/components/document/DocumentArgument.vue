@@ -150,12 +150,14 @@ export default {
       if (terms && terms.length > 0) {
         console.log('terms without quotes :', terms)
         // Create regex with list of search terms and ensuring they are not searched within attributes (eg do not match/replace "a" in <a class=""...>
+        /*with word boundaries
         let regexTerms = [];
         for (let i = 0, len = terms.length; i < len; i++) {
           regexTerms.push("\\b" + terms[i] + "\\b");
-        }
         const re = new RegExp(`(${regexTerms.join("|")})(?=[^<>]*<)`);
-        //console.log("match without quotes re :", re)
+        }*/
+        const re = new RegExp(`(?:(?!\\w)|\\b(?=\\w))(${terms.join("|")})(?:(?<=\\w)\\b|(?<!\\w))(?=[^<>]*<)`);
+        console.log("match without quotes re :", re)
         return text.replace(new RegExp(re, 'gi'), (match => `<mark>${match}</mark>`));
       /*} else {TODO Victor : if enclosed in quotes tests
         let searchTermWithoutQuotes = this.searchTerm.replaceAll(/^"|"$/g, "");
