@@ -770,11 +770,22 @@ export default {
         }
       }
 
+      @include on-small-tablet {
+        .tag.document-status-card__doc-tag {
+          position: unset !important;
+          text-align: center !important;
+        }
+
+        & > span.badge.tag {
+          margin-left: 0 !important;
+        }
+      }
+
       .publish-tag a {
         min-width: 30px !important;
         background-size: 15px auto !important;
       }
-      
+
       .bookmark-tag a,
       .lock-tag a {
         min-width: 30px !important;
