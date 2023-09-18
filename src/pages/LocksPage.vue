@@ -616,9 +616,10 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import "@/assets/sass/main.scss";
-@import "@/assets/sass/components/_search_results_table.scss";
-@import "@/assets/sass/components/_search_results_pagination.scss";
+
+  @import "@/assets/sass/main.scss";
+  @import "@/assets/sass/components/_search_results_table.scss";
+  @import "@/assets/sass/components/_search_results_pagination.scss";
 
   .pagination-controls {
     display: flex;
@@ -754,6 +755,32 @@ export default {
     font-weight: 500;
     text-decoration: none;
     text-transform: uppercase;
+  }
+
+  // Smaller tags :
+  ::v-deep {
+    .tags.document-tag-bar {
+      margin-right: 10px !important;
+
+      @include on-tablet {
+        margin-right: 0 !important;
+
+        & > span.badge.tag {
+          margin-left: 15px !important;
+        }
+      }
+
+      .publish-tag a {
+        min-width: 30px !important;
+        background-size: 15px auto !important;
+      }
+      
+      .bookmark-tag a,
+      .lock-tag a {
+        min-width: 30px !important;
+        background-size: 12px auto !important;
+      }
+    }
   }
 
   /* Chrome, Safari, Edge, Opera */
