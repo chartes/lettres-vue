@@ -783,7 +783,7 @@ export default {
       @media screen and (max-width:500px) {
         flex-direction: column;
         justify-content: flex-start;
-        align-items: flex-start;
+        align-items: flex-end;
         gap: 20px;
       }
 
