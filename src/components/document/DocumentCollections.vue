@@ -110,8 +110,19 @@ export default {
         .catch(() => {
           this.error = true
         }).finally(() => {
-          this.savingCollections = false
+          this.savingCollections = false;
+        });
+        this.$store.dispatch("changelog/trackChanges", {
+          objId: this.document.id,
+          objType: 'document',
+          userId: this.$store.state.user.current_user.id,
+          msg: `Ajout dans la collection ${collection.title}`
+        }).then(() => {
+          console.log("changelog collection updated")
         })
+        .catch(() => {
+          console.log("changelog collection not updated")
+        });
     },
     removeCollection(collection) {
       this.error = false;
@@ -125,7 +136,19 @@ export default {
           this.error = true
         }).finally(() => {
           this.savingCollections = false
+        });
+        this.$store.dispatch("changelog/trackChanges", {
+          objId: this.document.id,
+          objType: 'document',
+          userId: this.$store.state.user.current_user.id,
+          msg: `Suppression de la collection ${collection.title}`
+        }).then(() => {
+          console.log("changelog collection updated")
         })
+        .catch(() => {
+          console.log("changelog collection not updated")
+        });
+
     },
     collectionPathAsText(collectionId) {
         const path = this.collectionPath(collectionId);
