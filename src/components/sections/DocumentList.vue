@@ -3,14 +3,38 @@
     <div v-if="$route.name === 'search'">
       <div
         class="section"
-        :class="toggleCssClass"
+        :class="toggleScopeCssClass"
       >
         <div class="document-list-header is-flex is-justify-content-space-between is-align-items-center">
+          <div class="is-inline-block px-1">
+            <div class="control">
+              <div class="switch-button-div">
+                <div
+                  class="switch-button-scope"
+                  :class="toggleScopeCssClass"
+                  @click="toggleScope"
+                >
+                  <input
+                    class="switch-button-checkbox"
+                    type="checkbox"
+                  >
+                  <label
+                    class="switch-button-label"
+                    for=""
+                  >
+                    <span class="switch-button-label-span">PLEIN TEXTE</span>
+                  </label>
+                </div>
+              </div>
+            </div><!-- v-model="isResultTableMode"-->
+          </div>
           <div class="is-inline-block">
             <div class="results-count">
               <span class="total-count">{{ totalCount }}</span> résultat(s)
             </div>
           </div>
+        </div>
+        <div class="is-flex toggle-list-and-pagination is-justify-content-space-between">
           <div class="is-inline-block px-1">
             <div class="control">
               <div class="switch-button-div">
@@ -33,8 +57,6 @@
               </div>
             </div><!-- v-model="isResultTableMode"-->
           </div>
-        </div>
-        <div class="is-flex toggle-list-and-pagination is-justify-content-space-between">
           <div
             v-if="!isActive"
             class="field is-inline-block mb-0 px-1"
@@ -698,6 +720,7 @@ export default {
       tableData: [],
       p: 1,
       isActive: true,
+      isFulltext: true,
       loadingTable: false
     };
   },
@@ -760,6 +783,9 @@ export default {
     toggleCssClass: function() {
       return this.isActive ? 'is-active' : 'is-inactive';
     },
+    toggleScopeCssClass: function() {
+      return this.isFulltext ? 'is-fulltext' : 'is-notice';
+    },
     hasSearchTerm: function() {
       return this.searchTerm && this.searchTerm.length > 0 ? 'has-search-term' : 'no-search-term';
     },
@@ -778,7 +804,7 @@ export default {
   },
   methods: {
     //...mapState("search", ["documents"]),
-    ...mapActions("search", ["setNumPage", "performSearch", "setSorts", "setSelectedCollections"]),
+    ...mapActions("search", ["setSearchTerm","setNumPage", "performSearch", "setSorts", "setSelectedCollections"]),
     showDetailIcon(rowDocId) {
       let showIcon = false
       if (!this.loadingTable) {
@@ -792,19 +818,25 @@ export default {
                 showIcon = true
               } else if (currRowDocument[0].argument && this.highlight(currRowDocument[0].argument).includes('mark')) {
                 console.log("list currRowDocument[0].id, argument", currRowDocument[0].id, currRowDocument[0].argument)
+                console.log("this.highlight(currRowDocument[0].argument)", this.highlight(currRowDocument[0].argument))
                 showIcon = true;
+              }/* else {
+                return showIcon
               }
-            } else {
+              return showIcon*/
+            }/* else {
               return showIcon
-            }
-          } else {
+            }*/
+          }/* else {
             return showIcon
-          }
+          }*/
+          //return showIcon
+        }/* else {
           return showIcon
-        } else {
-          return showIcon
-        }
-      }
+        }*/
+                console.log("showIcon", showIcon)
+
+      } return showIcon
     },
     searchCollection() {
       //console.log("searchCollection / this.$store.state.search.selectedCollections", this.$store.state.search.selectedCollections);
@@ -940,6 +972,29 @@ export default {
       }
       if (this.sorts[0].field !== 'creation' || this.sorts[0].order !== 'asc') {
         this.setSorts([{field: 'creation', order: 'asc'}]);
+        this.performSearch();
+        this.loadAsyncData();
+      }
+    },
+    toggleScope() {
+      if (this.searchTerm) {
+        let scopeSearchTerm ="";
+        if (this.isFulltext === true) {
+          this.isFulltext = false;
+          if (this.searchTerm.includes('transcription')) {
+            scopeSearchTerm = this.searchTerm.replace('transcription', 'title').replace('address', 'argument')
+          } else {
+            scopeSearchTerm = "title:" + this.searchTerm + " OR " + "argument:" + this.searchTerm;
+          }
+        } else {
+          this.isFulltext = true;
+          if (this.searchTerm.includes('title')) {
+            scopeSearchTerm = this.searchTerm.replace('title', 'transcription').replace('argument', 'address')
+          } else {
+            scopeSearchTerm = "transcription:" + this.searchTerm + " OR " + "address:" + this.searchTerm;
+          }
+        }
+        this.setSearchTerm(scopeSearchTerm);
         this.performSearch();
         this.loadAsyncData();
       }
@@ -1143,6 +1198,111 @@ progress {
     }
   }
 }
+.switch-button-scope {
+  background-color: lightgrey;
+  border-radius: 30px;
+  overflow: hidden;
+  width: 240px;
+  height: 35px;
+  text-align: center;
+  position: relative;
+  padding-right: 120px;
+
+  font-family: $family-primary;
+  font-size: 14px;
+
+  color: white;
+  transition: all ease-in-out 300ms;
+
+  @include on-mobile {
+    width: 160px;
+  }
+
+  &.is-fulltext {
+    color: grey;
+    .switch-button-label-span {
+      color: white;
+    }
+  }
+
+  &.is-notice {
+    color: white;
+    .switch-button-label-span {
+      color: grey;
+    }
+  }
+
+  &:before {
+    content: "NOTICE";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    width: 120px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 3;
+    pointer-events: none;
+
+    @include on-mobile {
+      width: 80px;
+    }
+  }
+
+  &-checkbox {
+    cursor: pointer;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    z-index: 2;
+
+    &:checked + .switch-button-label:before {
+      transform: translateX(120px);
+      transition: transform 300ms linear;
+
+      @include on-mobile {
+        transform: translateX(80px);
+      }
+    }
+
+    & + .switch-button-label {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      user-select: none;
+      pointer-events: none;
+      height: 100%;
+
+      @include on-mobile {
+        width: 90px;
+      }
+
+      &:before {
+        content: "";
+        background: rgb(255, 0, 83);
+        height: 35px;
+        width: 100%;
+        position: absolute;
+        left: 0;
+        top: 0;
+        border-radius: 30px;
+        transform: translateX(0);
+        transition: transform 300ms;
+      }
+
+      .switch-button-label-span {
+        position: relative;
+      }
+    }
+  }
+}
 
 .pagination-controls {
   display: flex;
@@ -1276,6 +1436,7 @@ input::-webkit-inner-spin-button {
 input[type=number] {
   -moz-appearance: textfield;
 }
+//TODO Victor : vérifier .b-table ou b-table et :after ou ::after après les changements de Denis
 ::v-deep .b-table .hide-arrow-icon-detail td.chevron-cell a {
   pointer-events: none;
   span.icon:after {
