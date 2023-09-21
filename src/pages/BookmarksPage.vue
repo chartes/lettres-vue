@@ -484,6 +484,11 @@ export default {
     margin-bottom: 25px;
 
     @include on-mobile {
+      flex-direction: column;
+      justify-content: flex-start !important;
+      align-items: flex-start !important;
+      gap: 10px;
+      padding-bottom: 10px;
       margin-bottom: 10px;
     }
 

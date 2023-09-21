@@ -169,33 +169,35 @@
           >
             <component :is="saveButtonIcon" />
           </button>-->
-          <div
-            v-if="editModeEnabled"
-            class="control"
-          >
-            <a
-              type="submit"
-              :disabled="!collection.title"
-              class="button is-primary"
-              :class="saving === 'loading' ? 'is-loading' : ''"
-              @click.stop="save"
+          <div class="is-flex">
+            <div
+              v-if="editModeEnabled"
+              class="control"
             >
+              <a
+                type="submit"
+                :disabled="!collection.title"
+                class="button is-primary"
+                :class="saving === 'loading' ? 'is-loading' : ''"
+                @click.stop="save"
+              >
               <save-button-icon
-                :status="status"
-              />
-            </a>
+                  :status="status"
+                />
+              </a>
+            </div>
+            <div
+              v-if="current_user && current_user.isAdmin"
+              :class="editModeEnabled ? 'edit-btn-closed' : 'edit-btn'"
+              @click="enterEditMode"
+            />
+            <!-- Supprimer la collection -->
+            <collection-deletion
+              v-if="current_user && current_user.isAdmin"
+              :collection-id="collectionId"
+              :collection-title="collection.title"
+            />
           </div>
-          <div
-            v-if="current_user && current_user.isAdmin"
-            :class="editModeEnabled ? 'edit-btn-closed' : 'edit-btn'"
-            @click="enterEditMode"
-          />
-          <!-- Supprimer la collection -->
-          <collection-deletion
-            v-if="current_user && current_user.isAdmin"
-            :collection-id="collectionId"
-            :collection-title="collection.title"
-          />
         </div>
       </div>
 
@@ -723,8 +725,16 @@ export default {
     align-items: flex-end;
     margin-bottom: 22px;
 
+    @include on-small-desktop {
+      gap: 42px;
+    }
+
     @include on-tablet {
       gap: 30px;
+    }
+
+    @include on-mobile {
+      gap: 15px;
     }
 
     .parent-collection-title {
@@ -755,8 +765,8 @@ export default {
         flex: $collection-thumbnail-tablet-size 0 0;
       }
 
-      @include on-tablet {
-        flex: 100% 0 0;
+      @include on-mobile {
+        flex: $collection-thumbnail-mobile-size 0 0;
       }
 
       & > a {
@@ -770,28 +780,60 @@ export default {
       align-items: center;
       justify-content: space-between;
 
+      @media screen and (max-width:500px) {
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: flex-end;
+        gap: 20px;
+      }
+
+      & > div:last-child {
+        align-items: center;
+        gap: 20px;
+
+        @include on-small-desktop {
+          gap: 10px;
+        }
+      }
+
       .edit-btn {
         display: inline-block;
         margin-left: 0;
         cursor: pointer;
         width: 24px;
-        height: 40px;
+        height: 38px;
         background: url(../assets/images/icons/bouton_edit.svg) right / 24px auto no-repeat;
         i {
           display: none;
         }
       }
+
       .edit-btn-closed {
         display: inline-block;
         cursor: pointer;
         width: 24px;
-        height: 24px;
+        height: 38px;
         background: url(../assets/images/icons/close_text.svg) center / 18px auto no-repeat;
         i {
           display: none;
         }
       }
 
+      .collection-deletion {
+        display: inline-block;
+        margin: 0;
+      }
+
+      .control > a {
+        width: 38px !important;
+        height: 38px !important;
+      }
+
+      .create-collection-btn {
+        @include on-small-mobile {
+          font-size: 12px;
+        }
+      }
     }
   }
 
@@ -799,16 +841,24 @@ export default {
     width: calc( 100% - $collection-thumbnail-size - 290px - 2 * 55px );
 
     @include on-small-desktop {
-      width: calc( 100% - $collection-thumbnail-small-desktop-size - 290px - 2 * 55px );
+      width: calc( 100% - $collection-thumbnail-small-desktop-size - 290px - 2 * 42px );
     }
 
     @include on-tablet {
-      width: calc( 100% - $collection-thumbnail-tablet-size - 290px - 2 * 30px );
+      width: calc( 100% - $collection-thumbnail-tablet-size - 30px );
+    }
+
+    @include on-mobile {
+      width: calc( 100% - $collection-thumbnail-mobile-size - 15px );
     }
   }
 
   .collection-card-body {
     gap: 55px;
+
+    @include on-small-desktop {
+      gap: 42px;
+    }
 
     @include on-tablet {
       display: grid !important;
