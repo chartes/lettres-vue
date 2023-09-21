@@ -8,11 +8,11 @@
         <div class="heading mb-2 has-add-btn is-flex is-align-items-center">
           Expéditeur{{ documentSender.length > 1 ? "s" : "" }}
           <a
-            v-if="editable"
+            v-if="editable && documentSender.length === 0"
             class="tag"
             href="#"
             @click.prevent="openAddPerson('sender')"
-          >
+          ><!-- to add + icon (icon-add) even if there is one Sender, remove from above v-if: && documentSender.length === 0 -->
             <icon-add />
           </a>
         </div>
@@ -37,7 +37,7 @@
             <a
               v-if="editable"
               class="tag is-delete"
-              @click.prevent="unlinkPerson(c.person.id, c.relation.id, c.role.id)"
+              @click.prevent="unlinkPerson(c.person.label, c.person.id, c.relation.id, c.role.id)"
             />
           </div>
         </div>
@@ -58,7 +58,7 @@
             class="tag"
             href="#"
             @click.prevent="openAddPerson('recipient')"
-          >
+          ><!-- to remove + icon (icon-add) when there is one Recipient, add to above v-if: && documentRecipients.length === 0 -->
             <icon-add />
           </a>
         </div>
@@ -83,7 +83,7 @@
             <a
               v-if="editable"
               class="tag is-delete"
-              @click.prevent="unlinkPerson(c.person.id, c.relation.id, c.role.id)"
+              @click.prevent="unlinkPerson(c.person.label, c.person.id, c.relation.id, c.role.id)"
             />
           </div>
         </div>
@@ -120,9 +120,9 @@ export default {
     openAddPerson(role) {
       this.$emit("add-person", { role });
     },
-    unlinkPerson(id, relationId, roleId) {
-      console.log("UNLINK", id, relationId, roleId);
-      this.$emit("unlink-person", { id, relationId, roleId });
+    unlinkPerson(label, id, relationId, roleId) {
+      console.log("UNLINK", label, id, relationId, roleId);
+      this.$emit("unlink-person", { label, id, relationId, roleId });
     },
   },
 };

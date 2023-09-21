@@ -263,7 +263,7 @@ const actions = {
         return response.data.meta['total-count']
     },
 
-    async linkToDocument({commit, rootState}, {roleId, placenameId, func, phrId}) {
+    async linkToDocument({commit, rootState}, {label, roleId, placenameId, func, phrId}) {
         let data = {
             data: {
                 type: 'placename-has-role',
@@ -295,29 +295,77 @@ const actions = {
 
         const http = http_with_auth(rootState.user.jwt);
         if (!phrId) {
-            const response = await http.get(`/documents/${rootState.document.document.id}/placenames-having-roles`)   
-            const foundPhr = response.data.data.find(phr => phr.relationships.placename.data.id === placenameId && phr.relationships['placename-role'].data.id === roleId) 
+            const getPhr = await http.get(`/documents/${rootState.document.document.id}/placenames-having-roles`)
+            const foundPhr = getPhr.data.data.find(phr => phr.relationships.placename.data.id === placenameId && phr.relationships['placename-role'].data.id === roleId)
             if (foundPhr) {
               phrId = foundPhr.id
             }
           }
 
         if (phrId) {
+            //console.log("updating place link to doc, place relationship already exists", phrId)
             data.data.id = phrId
-            return http.patch(`/placenames-having-roles/${phrId}`, data).then(response => {
-                return response.data.data
-            }).catch(error => console.log(error))
+            const patchPhr = await http.patch(`/placenames-having-roles/${phrId}`, data).then(response => {
+                    return response.data.data
+                }).catch(error => console.log("patchPhr error", error))
+            // if update worked, also save the document to modify indexes with appropriate data
+            if (patchPhr) {
+                //if update is location from or location to (inlined needs saving the RTE first) then save and update changelog
+                if (roleId === 1 || roleId === 2) {
+                    let attributes = {};
+                    //cannot set an updated attribute : locations are not a doc attribute and relationships are not implemented, instead pass a changelog value
+                    let docData = {id: rootState.document.document.id, attributes};
+                    let role = {1: "lieu d'expédition", 2: "lieu de destination"}[roleId]
+                    docData['changelog_msg'] = `Modification du ${role} : ${label}`
+                    this.dispatch("document/save", docData)
+                        .then(docSaveResponse => {
+                            return docSaveResponse
+                        }).catch(error => console.log("linking place : saving document error", error));
+                }
+            }
         } else {
-            return http.post(`/placenames-having-roles`, data).then(response => {
+            //console.log("updating place link to doc, place relationship is new")
+            const postPhr = await http.post(`/placenames-having-roles`, data).then(response => {
                 return response.data.data
-            }).catch(error => console.log(error))
+            }).catch(error => console.log("postPhr error", error))
+            if (postPhr) {
+                //if addition is location from or location to (inlined needs saving the RTE first) then save and update changelog
+                if (roleId === 1 || roleId === 2) {
+                    let attributes = {};
+                    //cannot set an updated attribute : locations are not a doc attribute and relationships are not implemented, instead pass a changelog value
+                    let docData = {id: rootState.document.document.id, attributes};
+                    let role = {1: "lieu d'expédition", 2: "lieu de destination"}[roleId]
+                    docData['changelog_msg'] = `Ajout du ${role} : ${label}`
+                    this.dispatch("document/save", docData)
+                        .then(docSaveResponse => {
+                            return docSaveResponse
+                        }).catch(error => console.log("linking place : saving document error", error));
+                }
+            }
         }
     },
-    unlinkFromDocument({commit, rootState}, {relationId, personId, roleId}) {
+    async unlinkFromDocument({commit, rootState}, { label, id, relationId, roleId }) {
         const http = http_with_auth(rootState.user.jwt);
-        return http.delete(`/placenames-having-roles/${relationId}`)
-            .then(() => this.dispatch('document/removePlacename', relationId))
-            .catch(error => console.log(error))
+        const removePhr = await http.delete(`/placenames-having-roles/${relationId}`)
+            .then((response) => {
+                this.dispatch('document/removePlacename', relationId);
+                return response
+            })
+            .catch(error => console.log("delete placenames-having-roles error", error))
+        if (removePhr.status === 204) {
+            //if removal is location from or location to (inlined needs saving the RTE first) then save and update changelog
+            if (roleId === 1 || roleId === 2) {
+                let attributes = {};
+                //cannot set an updated attribute : locations are not a doc attribute and relationships are not implemented, instead pass a changelog value
+                let docData = {id: rootState.document.document.id, attributes};
+                let role = {1: "lieu d'expédition", 2: "lieu de destination"}[roleId]
+                docData['changelog_msg'] = `Suppression du ${role} : ${label}`
+                this.dispatch("document/save", docData)
+                    .then(docSaveResponse => {
+                        return docSaveResponse
+                    }).catch(error => console.log("unlinking place : saving document error", error));
+            }
+        }
     },
 
     async updateInlinedRole({state, rootState, dispatch}, {inlined}) {

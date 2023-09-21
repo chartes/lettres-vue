@@ -216,7 +216,7 @@ const actions = {
     const persons = response.data.data;
     commit('SET_PERSONS', persons)
 },
-  async linkToDocument ({ commit, rootState }, {roleId, personId, func, phrId}) {
+  async linkToDocument ({ commit, rootState }, {label, roleId, personId, func, phrId}) {
     const data = { data: {
         type: 'person-has-role',
         attributes: {
@@ -246,29 +246,80 @@ const actions = {
       const http = http_with_auth(rootState.user.jwt);
       
       if (!phrId) {
-        const response = await http.get(`/documents/${rootState.document.document.id}/persons-having-roles`)   
-        const foundPhr = response.data.data.find(phr => phr.relationships.person.data.id === personId && phr.relationships['person-role'].data.id === roleId) 
+        const getPhr = await http.get(`/documents/${rootState.document.document.id}/persons-having-roles`)
+        const foundPhr = getPhr.data.data.find(phr => phr.relationships.person.data.id === personId && phr.relationships['person-role'].data.id === roleId)
         if (foundPhr) {
           phrId = foundPhr.id
         }
       }
 
       if (phrId) {
+        //console.log("updating person link to doc, person relationship already exists", phrId)
         data.data.id = phrId
-        return http.patch(`/persons-having-roles/${phrId}`, data).then(response => {
-            return response.data.data
-        }).catch(error => console.log(error))
-    } else {
-        return http.post(`/persons-having-roles`, data).then(response => {
-            return response.data.data
-        }).catch(error => console.log(error))
+        const patchPhr = await http.patch(`/persons-having-roles/${phrId}`, data).then(response => {
+                return response.data.data
+            }).catch(error => console.log("patchPhr error", error))
+        // if update worked, also save the document to modify indexes with appropriate data
+        if (patchPhr) {
+            //if update is sender or recipient (inlined needs saving the RTE first) then save and update changelog
+            if (roleId === 1 || roleId === 2) {
+            let attributes = {}
+            //cannot set an updated attribute : persons are not a doc attribute and relationships are not implemented, instead pass a changelog value
+            let docData = {id: rootState.document.document.id, attributes};
+            let role = {1: "de l'expéditeur", 2: "du destinataire"}[roleId]
+            docData['changelog_msg'] = `Modification ${role} : ${label}`
+            this.dispatch("document/save", docData)
+                .then(docSaveResponse => {
+                    return docSaveResponse
+                }).catch(error => console.log("linking person : saving document error", error));
+            }
+        }
+      } else {
+        //console.log("updating person link to doc, person relationship is new")
+        const postPhr = await http.post(`/persons-having-roles`, data).then(response => {
+                return response.data.data
+            }).catch(error => console.log("postPhr error", error))
+        // if update worked, also save the document to modify indexes with appropriate data
+        if (postPhr) {
+            //if addition is sender or recipient (inlined needs saving the RTE first) then save and update changelog
+            if (roleId === 1 || roleId === 2) {
+                let attributes = {};
+                //cannot set an updated attribute : persons are not a doc attribute and relationships are not implemented, instead pass a changelog value
+                let docData = {id: rootState.document.document.id, attributes};
+                let role = {1: "de l'expéditeur", 2: "du destinataire"}[roleId]
+                docData['changelog_msg'] = `Ajout ${role} : ${label}`
+                this.dispatch("document/save", docData)
+                    .then(docSaveResponse => {
+                        return docSaveResponse
+                    }).catch(error => console.log("linking person : saving document error", error));
+            }
+        }
     }
   },
-  unlinkFromDocument ({ commit, rootState }, {relationId, personId, roleId}) {
+  async unlinkFromDocument ({ commit, rootState }, { label, id, relationId, roleId }) {
     const http = http_with_auth(rootState.user.jwt)
-    return http.delete(`/persons-having-roles/${relationId}`)
-      .then (() => this.dispatch('document/removePerson', relationId))
-      .catch(error => console.log(error))
+    const removePhr = await http.delete(`/persons-having-roles/${relationId}`)
+      .then ((response) => {
+          this.dispatch('document/removePerson', relationId);
+          return response
+      })
+      .catch(error => console.log("delete persons-having-roles error", error))
+    // if update worked, also save the document to modify indexes with appropriate data
+    //console.log("unlink person saving document response", removePhr)
+    if (removePhr.status === 204) {
+        //if removal is sender or recipient (inlined needs saving the RTE first) then save and update changelog
+        if (roleId === 1 || roleId === 2) {
+            let attributes = {};
+            //cannot set an updated attribute : locations are not a doc attribute and relationships are not implemented, instead pass a changelog value
+            let docData = {id: rootState.document.document.id, attributes};
+            let role = {1: "de l'expéditeur", 2: "du destinataire"}[roleId]
+            docData['changelog_msg'] = `Suppression ${role} : ${label}`
+            this.dispatch("document/save", docData)
+                .then(docSaveResponse => {
+                    return docSaveResponse
+                }).catch(error => console.log("unlinking person : saving document error", error));
+        }
+    }
   },
 
   async checkIfRefExists({rootState}, ref) {

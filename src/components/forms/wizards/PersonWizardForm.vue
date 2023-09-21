@@ -402,8 +402,9 @@ export default {
             const roleId = role && role.id ? role.id : null;
 
             await this.$store.dispatch("persons/linkToDocument", {
+              label: personToSave.label,
               personId: personToSave.id,
-              roleId,
+              roleId: roleId,
               func: this.person.description,
               phrId: this.person.phrId,
             });

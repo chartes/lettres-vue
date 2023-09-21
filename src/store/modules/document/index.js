@@ -214,7 +214,11 @@ const actions = {
 
   async save ({ commit, state, rootState, dispatch }, data) {
     const http = http_with_auth(rootState.user.jwt);
-
+    let track_topic = "";
+    if (data['changelog_msg']) {
+      track_topic = data['changelog_msg'];
+      delete data['changelog_msg'];
+    }
     const modifiedData = data.attributes || data.relationships;
     console.log('document/save', data)
     data.type = 'document';
@@ -387,10 +391,16 @@ const actions = {
     // track changes
     if (state.document.id !== dummy.data.id) {
       let msg = null;
-      if (modifiedData) {
+      if (modifiedData && modifiedData.length > 0) {
+        console.log("track_topic modifiedData && modifiedData.length", track_topic, modifiedData, modifiedData.length)
         msg = `Modification de ${Object.keys(modifiedData).map(
           d => `'${TRANSLATION_MAPPING[d] ? TRANSLATION_MAPPING[d] : d}'`
         ).join(', ')}`;
+      }
+      console.log("changelog track_topic", track_topic)
+      if (track_topic){
+        msg = track_topic
+        console.log("track_topic msg", track_topic, msg)
       }
       console.log("dispatch changelog")
       this.dispatch('changelog/trackChanges', {

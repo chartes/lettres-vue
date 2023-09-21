@@ -238,7 +238,7 @@
                       <document-placenames
                         :editable="canEdit"
                         @add-place="addPlace"
-                        @unlink-place="unlinkPlace"
+                        @unlink-place="unlinkPlace($event)"
                       />
                     </div>
                   </template>
@@ -1001,14 +1001,30 @@ export default {
       //let terms = this.searchTerm.replaceAll(/^"|"$/g, "").match(/\p{L}+|\d+/gu);  // TODO Victor : does match "i568" works with .match(/\p{L}{2,}|\p{L}+\d+/gu)
       if (terms && terms.length > 0) {
         // Create regex with list of search terms and ensuring they are not searched within attributes (eg do not match/replace "a" in <a class=""...>
-        let regexTerms = [];
+        const re = new RegExp(`(${terms.join("|")})`);
+        //const re = new RegExp(`(?:(?!\\w)|\\b(?=\\w))(${terms.join("|")})(?:(?<=\\w)\\b|(?<!\\w))(?=[^<>]*<)`);
+        /*let regexTerms = [];
         for (let i = 0, len = terms.length; i < len; i++) {
           regexTerms.push("\\b" + terms[i] + "\\b");
         }
-        const re = new RegExp(`(${regexTerms.join("|")})(?=[^<>]*<)`);
+        const re = new RegExp(`(${regexTerms.join("|")})(?=[^<>]*<)`);*/
         //const re = new RegExp(`(${terms.join("|")})(?=[^<>]*<)`)
         //console.log("transcription match re :", re)
-        return text.replace(new RegExp(re, 'gi'), (match => `<mark>${match}</mark>`))
+        /*return text.replace(new RegExp(re, 'gi'), (match => `<mark>${match}</mark>`))*/
+
+        // if argument, parse pseudo HTML if required
+        if (text.includes('p')) {
+          // if source is pseudo HTML (has tags)
+          let div = document.createElement("div");
+          div.innerHTML = text;
+          let textWithoutHTML = div.textContent || div.innerText || "";
+          text = textWithoutHTML;
+          console.log("list highlight doc id cleanhtml text", text)
+          return text.replace(new RegExp(re, 'gi'), (match => `<mark>${match}</mark>`))
+        } else {
+          return text.replace(new RegExp(re, 'gi'), (match => `<mark>${match}</mark>`))
+        }
+
       } else {
         return text
       }
@@ -1017,8 +1033,10 @@ export default {
       this.placeInputData = evt;
       this.isPlaceWizardFormModalActive = true;
     },
-    unlinkPlace({ id, relationId, roleId }) {
+    unlinkPlace({ label, id, relationId, roleId }) {
+      console.log("Document.vue unlinkPlace { id, relationId, roleId }", label, id, relationId, roleId)
       this.$store.dispatch("placenames/unlinkFromDocument", {
+        label,
         id,
         relationId,
         roleId,
@@ -1027,10 +1045,11 @@ export default {
     addPerson(evt) {
       this.personInputData = evt;
       this.isPersonWizardFormModalActive = true;
-      console.log("this.personInputData / this.isPersonWizardFormModalActive", this.personInputData, this.isPersonWizardFormModalActive)
+      console.log("this.personInputData(=evt) / this.isPersonWizardFormModalActive", this.personInputData, this.isPersonWizardFormModalActive)
     },
-    unlinkPerson({ id, relationId, roleId }) {
+    unlinkPerson({ label, id, relationId, roleId }) {
       this.$store.dispatch("persons/unlinkFromDocument", {
+        label,
         id,
         relationId,
         roleId,

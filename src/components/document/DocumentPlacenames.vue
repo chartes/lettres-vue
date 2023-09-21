@@ -12,7 +12,7 @@
             class="tag"
             href="#"
             @click.prevent="openAddPlace('location-date-from')"
-          >
+          ><!-- to add + icon (icon-add) even if there is one locationDateFrom, remove from above v-if: && locationDateFrom.length === 0 -->
             <icon-add />
           </a>
         </h3>
@@ -37,7 +37,7 @@
             <a
               v-if="editable"
               class="tag is-delete"
-              @click.prevent="unlinkPlace(c.placename.id, c.relation.id, c.role.id)"
+              @click.prevent="unlinkPlace(c.placename.label, c.placename.id, c.relation.id, c.role.id)"
             />
           </div>
         </div>
@@ -52,11 +52,11 @@
         <h3 class="document-placenames__subtitle heading has-add-btn is-flex is-align-items-center">
           Destination
           <a
-            v-if="editable && locationDateTo.length === 0"
+            v-if="editable"
             class="tag"
             href="#"
             @click.prevent="openAddPlace('location-date-to')"
-          >
+          ><!-- to remove + icon (icon-add) when there is one locationDateTo, add to above v-if: && locationDateTo.length === 0 -->
             <icon-add />
           </a>
         </h3>
@@ -81,7 +81,7 @@
             <a
               v-if="editable"
               class="tag is-delete"
-              @click.prevent="unlinkPlace(c.placename.id, c.relation.id, c.role.id)"
+              @click.prevent="unlinkPlace(c.placename.label, c.placename.id, c.relation.id, c.role.id)"
             />
           </div>
         </div>
@@ -119,9 +119,9 @@ export default {
     openAddPlace(role) {
       this.$emit("add-place", { role });
     },
-    unlinkPlace(id, relationId, roleId) {
-      console.log("UNLINK", id, relationId, roleId);
-      this.$emit("unlink-place", { id, relationId, roleId });
+    unlinkPlace(label, id, relationId, roleId) {
+      console.log("UNLINK", label, id, relationId, roleId);
+      this.$emit("unlink-place", { label, id, relationId, roleId });
     },
   },
 };
