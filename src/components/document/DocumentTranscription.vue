@@ -207,20 +207,21 @@ export default {
     } else {
       this.transcriptionContent = this.document.transcription || "";
       console.log('default this.document.transcription', this.document.transcription)
+
+      //TODO Victor remove once [note] have been replaced in database
+      this.getNoteIndex(this.transcriptionContent, "transcription")
+      this.getNoteIndex(this.addressContent, "address")
+
+      //TODO Victor remove once attributes title have been added in database
+      this.getPersonsLabel(this.transcriptionContent, "transcription");
+      this.getPersonsLabel(this.addressContent, "address");
+
+      //TODO Victor remove once attributes title have been added in database
+      this.getPlacesLabel(this.transcriptionContent, "transcription");
+      this.getPlacesLabel(this.addressContent, "address");
     }
     console.log('default this.document.address', this.document.address)
     this.addressContent = this.document.address || "";
-    //TODO Victor remove once [note] have been replaced in database
-    this.getNoteIndex(this.transcriptionContent, "transcription")
-    this.getNoteIndex(this.addressContent, "address")
-
-    //TODO Victor remove once attributes title have been added in database
-    this.getPersonsLabel(this.transcriptionContent, "transcription");
-    this.getPersonsLabel(this.addressContent, "address");
-
-    //TODO Victor remove once attributes title have been added in database
-    this.getPlacesLabel(this.transcriptionContent, "transcription");
-    this.getPlacesLabel(this.addressContent, "address");
   },
   methods: {
     addPlace(evt, source) {
@@ -276,7 +277,7 @@ export default {
         for (let i = 0, len = terms.length; i < len; i++) {
           regexTerms.push("\\b" + terms[i] + "\\b");
         }
-        if (text.includes('p')) {
+        if (text.includes('<p>')) {
           // if source is pseudo HTML (has tags) it is necessary to add a lookahead
           let re = new RegExp(`(${regexTerms.join("|")})(?=[^<>]*<)`);
           console.log("transcription match re :", re)

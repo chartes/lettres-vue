@@ -884,13 +884,17 @@ export default {
       }
     },
     type: function () {
-      console.log("watch type", this.type)
+      if (!this.preview) {
+        console.log("watch type", this.type)
+      }
     },
     docId: async function () {
-      this.type = null;
-      this.setDisplayedManifestUrl(undefined);
-      this.setViewerMode(undefined);
-      await this.load(this.docId);
+      if (!this.preview) {
+        this.type = null;
+        this.setDisplayedManifestUrl(undefined);
+        this.setViewerMode(undefined);
+      }
+        await this.load(this.docId);
     },
     canEdit: function () {
       console.log("watch canEdit", this.canEdit)
@@ -1013,7 +1017,7 @@ export default {
         /*return text.replace(new RegExp(re, 'gi'), (match => `<mark>${match}</mark>`))*/
 
         // if argument, parse pseudo HTML if required
-        if (text.includes('p')) {
+        if (text.includes('<p>')) {
           // if source is pseudo HTML (has tags)
           let div = document.createElement("div");
           div.innerHTML = text;

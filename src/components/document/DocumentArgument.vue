@@ -97,15 +97,16 @@ export default {
   },
   mounted() {
     this.form = this.document.argument || "";
-    //TODO Victor remove once [note] have been replaced in database
-    this.getNoteIndex(this.form, "argument");
+    if (!this.preview) {
+      //TODO Victor remove once [note] have been replaced in database
+      this.getNoteIndex(this.form, "argument");
 
-    //TODO Victor remove once attributes title have been added in database
-    this.getPersonsLabel(this.form, "argument");
+      //TODO Victor remove once attributes title have been added in database
+      this.getPersonsLabel(this.form, "argument");
 
-    //TODO Victor remove once attributes title have been added in database
-    this.getPlacesLabel(this.form, "argument");
-
+      //TODO Victor remove once attributes title have been added in database
+      this.getPlacesLabel(this.form, "argument");
+    }
   },
   created() {
     console.log("argument created searchTerm : ", this.searchTerm)
