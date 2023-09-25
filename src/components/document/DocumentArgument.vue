@@ -40,7 +40,7 @@
         v-html="form && form.length > 0 ? highlight(form) : 'Non renseignée'"
       />
       <div
-        v-else-if="preview && searchTerm && searchTerm.length > 0 && highlight(form).includes('mark')"
+        v-else-if="preview && searchTerm && searchTerm.length > 0 && searchType === 'isParatextSearch'"
         class="argument__content"
         v-html="form && form.length > 0 ? highlight(form) : 'Non renseignée'"
       />
@@ -86,7 +86,7 @@ export default {
   },
   computed: {
     ...mapState("document", ["document"]),
-    ...mapState("search", ["searchTerm"])
+    ...mapState("search", ["searchTerm", "searchType"])
   },
   watch: {
     argumentEditor: function (newVal, Oldval) {
@@ -110,6 +110,7 @@ export default {
   },
   created() {
     console.log("argument created searchTerm : ", this.searchTerm)
+    console.log("argument created searchType : ", this.searchType)
     console.log("argument created editMode : ", this.editMode)
   },
   methods: {

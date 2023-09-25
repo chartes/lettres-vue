@@ -6,35 +6,11 @@
         :class="toggleScopeCssClass"
       >
         <div class="document-list-header is-flex is-justify-content-space-between is-align-items-center">
-          <div class="is-inline-block px-1">
-            <div class="control">
-              <div class="switch-button-div">
-                <div
-                  class="switch-button-scope"
-                  :class="toggleScopeCssClass"
-                  @click="toggleScope"
-                >
-                  <input
-                    class="switch-button-checkbox"
-                    type="checkbox"
-                  >
-                  <label
-                    class="switch-button-label"
-                    for=""
-                  >
-                    <span class="switch-button-label-span">PLEIN TEXTE</span>
-                  </label>
-                </div>
-              </div>
-            </div><!-- v-model="isResultTableMode"-->
-          </div>
           <div class="is-inline-block">
             <div class="results-count">
               <span class="total-count">{{ totalCount }}</span> résultat(s)
             </div>
           </div>
-        </div>
-        <div class="is-flex toggle-list-and-pagination is-justify-content-space-between">
           <div class="is-inline-block px-1">
             <div class="control">
               <div class="switch-button-div">
@@ -57,6 +33,8 @@
               </div>
             </div><!-- v-model="isResultTableMode"-->
           </div>
+        </div>
+        <div class="is-flex toggle-list-and-pagination is-justify-content-space-between">
           <div
             v-if="!isActive"
             class="field is-inline-block mb-0 px-1"
@@ -725,7 +703,7 @@ export default {
     };
   },
   computed: {
-    ...mapState("search", ["searchTerm", "included", "documents", "loadingStatus", "numPage", "pageSize", "totalCount", "withStatus", "sorts"]),
+    ...mapState("search", ["searchTerm", "searchType", "included", "documents", "loadingStatus", "numPage", "pageSize", "totalCount", "withStatus", "sorts"]),
     ...mapState("user", ["current_user"]),
     //...mapGetters("document", ["documentSender", "documentRecipients"]),
 
@@ -757,7 +735,7 @@ export default {
         console.log('SET value', value);
         if (this.sorts !== value) {
             this.setSorts(value)
-            this.performSearch()
+            this.performSearch(this.isFulltext)
             this.loadAsyncData()
         }
       }
@@ -772,7 +750,8 @@ export default {
           if (newValue && newValue !== oldValue) {
             this.p = newValue
             this.setNumPage(newValue)
-            this.performSearch(this.sortingPriority)
+            this.setSorts(this.sortingPriority)
+            this.performSearch(this.isFulltext)
             this.loadAsyncData()
           }
         }
@@ -784,6 +763,7 @@ export default {
       return this.isActive ? 'is-active' : 'is-inactive';
     },
     toggleScopeCssClass: function() {
+      this.switchSearchScope()
       return this.isFulltext ? 'is-fulltext' : 'is-notice';
     },
     hasSearchTerm: function() {
@@ -808,33 +788,47 @@ export default {
     showDetailIcon(rowDocId) {
       let showIcon = false
       if (!this.loadingTable) {
-        if (!this.loadingStatus && this.searchTerm && this.searchTerm.length > 0) {
-          let searchDocuments = this.$store.state.search.documents
+        if (!this.loadingStatus && this.searchType === "isParatextSearch"){
+          showIcon = true
+          /*let searchDocuments = this.$store.state.search.documents
           if (searchDocuments.length > 0) {
             let currRowDocument = searchDocuments.filter(d => d.id === rowDocId)
             if (currRowDocument && currRowDocument.length > 0) {
               console.log("currRowDocument :", currRowDocument)
-              if (currRowDocument[0].transcription && currRowDocument[0].transcription.highlight) {
+              if (currRowDocument[0].witnesses.length > 0 || currRowDocument[0].argument) {
                 showIcon = true
-              } else if (currRowDocument[0].argument && this.highlight(currRowDocument[0].argument).includes('mark')) {
-                console.log("list currRowDocument[0].id, argument", currRowDocument[0].id, currRowDocument[0].argument)
-                console.log("this.highlight(currRowDocument[0].argument)", this.highlight(currRowDocument[0].argument))
-                showIcon = true;
+              }
+            }
+          }*/
+        } else {
+          if (!this.loadingStatus && this.searchTerm && this.searchTerm.length > 0) {
+            let searchDocuments = this.$store.state.search.documents
+            if (searchDocuments.length > 0) {
+              let currRowDocument = searchDocuments.filter(d => d.id === rowDocId)
+              if (currRowDocument && currRowDocument.length > 0) {
+                console.log("currRowDocument :", currRowDocument)
+                if (currRowDocument[0].transcription && currRowDocument[0].transcription.highlight) {
+                  showIcon = true
+                } else if (currRowDocument[0].argument && this.highlight(currRowDocument[0].argument).includes('mark')) {
+                  console.log("list currRowDocument[0].id, argument", currRowDocument[0].id, currRowDocument[0].argument)
+                  console.log("this.highlight(currRowDocument[0].argument)", this.highlight(currRowDocument[0].argument))
+                  showIcon = true;
+                }/* else {
+                  return showIcon
+                }
+                return showIcon*/
               }/* else {
                 return showIcon
-              }
-              return showIcon*/
+              }*/
             }/* else {
               return showIcon
             }*/
+            //return showIcon
           }/* else {
-            return showIcon
-          }*/
-          //return showIcon
-        }/* else {
           return showIcon
         }*/
-                console.log("showIcon", showIcon)
+        }
+        console.log("showIcon", showIcon)
 
       } return showIcon
     },
@@ -863,7 +857,7 @@ export default {
           return text.replace(new RegExp(re, 'gi'), (match => `<mark>${match}</mark>`))
         } else {
           // if argument, parse pseudo HTML if required
-          if (text.includes('p')) {
+          if (text.includes('<p>')) {
             // if source is pseudo HTML (has tags)
             let div = document.createElement("div");
             div.innerHTML = text;
@@ -885,7 +879,7 @@ export default {
       // reset local backend sorting
       if(this.backendSortingEnabled) {
         this.sortingPriority = []
-        this.performSearch()
+        this.performSearch(this.isFulltext)
         this.loadAsyncData()
       }
     },
@@ -901,7 +895,7 @@ export default {
           this.sortingPriority = [{ field: "creation", order: "asc" }];
           console.log("Default sorting new Priority", newPriority, this.sortingPriority);
       }
-      this.performSearch()
+      this.performSearch(this.isFulltext)
       this.loadAsyncData()
     },
 
@@ -937,7 +931,7 @@ export default {
           this.setSorts([])
         }
       
-      this.performSearch()
+      this.performSearch(this.isFulltext)
       this.loadAsyncData()
     },
 
@@ -972,30 +966,16 @@ export default {
       }
       if (this.sorts[0].field !== 'creation' || this.sorts[0].order !== 'asc') {
         this.setSorts([{field: 'creation', order: 'asc'}]);
-        this.performSearch();
+        this.performSearch(this.isFulltext);
         this.loadAsyncData();
       }
     },
+    switchSearchScope() {
+      this.isFulltext = !this.isFulltext
+    },
     toggleScope() {
       if (this.searchTerm) {
-        let scopeSearchTerm ="";
-        if (this.isFulltext === true) {
-          this.isFulltext = false;
-          if (this.searchTerm.includes('transcription')) {
-            scopeSearchTerm = this.searchTerm.replace('transcription', 'title').replace('address', 'argument')
-          } else {
-            scopeSearchTerm = "title:" + this.searchTerm + " OR " + "argument:" + this.searchTerm;
-          }
-        } else {
-          this.isFulltext = true;
-          if (this.searchTerm.includes('title')) {
-            scopeSearchTerm = this.searchTerm.replace('title', 'transcription').replace('argument', 'address')
-          } else {
-            scopeSearchTerm = "transcription:" + this.searchTerm + " OR " + "address:" + this.searchTerm;
-          }
-        }
-        this.setSearchTerm(scopeSearchTerm);
-        this.performSearch();
+        this.performSearch(this.isFulltext);
         this.loadAsyncData();
       }
     },
@@ -1436,7 +1416,6 @@ input::-webkit-inner-spin-button {
 input[type=number] {
   -moz-appearance: textfield;
 }
-//TODO Victor : vérifier .b-table ou b-table et :after ou ::after après les changements de Denis
 ::v-deep .b-table .hide-arrow-icon-detail td.chevron-cell a {
   pointer-events: none;
   span.icon:after {

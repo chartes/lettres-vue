@@ -627,8 +627,10 @@
         v-if="document && !isLoading"
         class="document__content"
       >
-        <!-- transcription -->
-        <section class="document-section">
+        <!-- transcription en mode preview -->
+        <section
+          v-if="transcriptionContent && searchTerm && searchTerm.length > 0 && searchType === 'isFullTextSearch'"
+          class="document-section">
           <div class="document-section-content">
             <document-transcription
               :editable="canEdit"
@@ -636,11 +638,11 @@
             />
           </div>
         </section>
-        <!-- analyse -->
+        <!-- analyse en mode preview -->
         <section
-          v-if="argumentContent && searchTerm && searchTerm.length > 0 && highlight(argumentContent).includes('mark')"
+          v-if="argumentContent && searchTerm && searchTerm.length > 0 && searchType === 'isParatextSearch'"
           class="document-section"
-        >
+        ><!-- && highlight(argumentContent).includes('mark') -->
           <div class="heading is-uppercase">
             <span class="heading-content">Analyse</span>
           </div>
@@ -651,8 +653,10 @@
             />
           </div>
         </section>
-        <!-- témoins
-        <section class="document-section">
+        <!-- témoins en mode preview -->
+        <section
+          v-if="witnesses.length > 0 && searchType === 'isParatextSearch'"
+          class="document-section">
           <div class="heading is-uppercase">
             <span class="heading-content ">Témoins</span>
           </div>
@@ -661,7 +665,7 @@
               :editable="canEdit"
             />
           </div>
-        </section> -->
+        </section>
         <!-- collections
         <section class="document-section collections-document-section">
           <div class="heading is-uppercase">
@@ -792,7 +796,7 @@ export default {
       return 'margin-top:' +  this.miradorViewBoundingTop + 'px';
     },
     ...mapState("document", ["document", "documentLoading", "collections", "witnesses", "currentLock"]),
-    ...mapState("search", ["searchTerm"]),
+    ...mapState("search", ["searchTerm", "searchType"]),
     ...mapState("user", ["current_user", "jwt"]),
     ...mapState("locks", ["lockOwner"]),
     ...mapState("layout", ["displayedManifestUrl", "viewerMode"]),
@@ -930,26 +934,28 @@ export default {
         if (!this.current_user && this.docIdList.filter(d => d.id === this.docId).length === 0) {
           this.authorised = false;
         } else {
-          let documentsTotal = this.$store.state.search.documents_total
-          //console.log('documentsTotal : ', documentsTotal)
-          this.lastDocId = this.$store.state.search.lastDocId;
-          this.firstDocId = this.$store.state.search.firstDocId;
+          if (!this.$props.preview) {
+            console.log("Document.vue this.$props.preview: ", this.$props.preview)
+            let documentsTotal = this.$store.state.search.documents_total
+            //console.log('documentsTotal : ', documentsTotal)
+            this.lastDocId = this.$store.state.search.lastDocId;
+            this.firstDocId = this.$store.state.search.firstDocId;
 
-          this.currentIndex = this.docIdList.findIndex(doc => doc.id === this.docId);
-          console.log("currentIndex", this.currentIndex);
-          if (this.currentIndex > 0) {
-            this.previousDocId = this.docIdList[this.currentIndex - 1].id
-          } else {
-            this.previousDocId = this.firstDocId;
+            this.currentIndex = this.docIdList.findIndex(doc => doc.id === this.docId);
+            console.log("currentIndex", this.currentIndex);
+            if (this.currentIndex > 0) {
+              this.previousDocId = this.docIdList[this.currentIndex - 1].id
+            } else {
+              this.previousDocId = this.firstDocId;
+            }
+            if (this.currentIndex < this.docIdList.length - 1) {
+              this.nextDocId = this.docIdList[this.currentIndex + 1].id;
+            } else {
+              this.nextDocId = this.lastDocId;
+            }
+            console.log("firstDocId : ", this.firstDocId, "\npreviousDocId : ", this.previousDocId, "\nthis.docId : ", this.docId, "\nthis.nextDocId : ", this.nextDocId, "\nthis.lastDocId : ", this.lastDocId);
+            console.log('docIdList : ', this.docIdList);
           }
-          if (this.currentIndex < this.docIdList.length - 1) {
-            this.nextDocId = this.docIdList[this.currentIndex + 1].id;
-          } else {
-            this.nextDocId = this.lastDocId;
-          }
-          console.log("firstDocId : ", this.firstDocId, "\npreviousDocId : ", this.previousDocId, "\nthis.docId : ", this.docId, "\nthis.nextDocId : ", this.nextDocId, "\nthis.lastDocId : ", this.lastDocId);
-          console.log('docIdList : ', this.docIdList);
-
           await this.$store.dispatch("document/fetch", this.docId);
           this.setLastSeen(this.docId);
         }

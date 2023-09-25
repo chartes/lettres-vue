@@ -1,6 +1,20 @@
 <template>
   <div class="search-container">
     <b-field>
+      <div>
+        <b-select
+          v-model="searchType"
+          @change.native="search"
+        >
+          <option
+            v-for="option in options"
+            :key="option.value"
+            :value="option.value"
+          >
+            {{ option.text }}
+          </option>
+        </b-select>
+      </div>
       <b-input
         v-model="inputTerm"
         class="search_input"
@@ -44,6 +58,11 @@ export default {
   data() {
     return {
       inputTerm: null,
+      searchType: 'isFullTextSearch',
+      options: [
+          { value: 'isFullTextSearch', text: "dans la lettre"},
+          { value: 'isParatextSearch', text: "dans la notice"},
+        ]
     };
   },
   computed: {
@@ -51,17 +70,26 @@ export default {
   },
   watch: {
     inputTerm() {
+      if (this.$route.name === "document") {
+        this.search()
+      } else
       this.setSearchTerm(this.inputTerm);
       this.performSearch();
+    },
+    searchType() {
+      this.setSearchType(this.searchType);
+      //this.performSearch();
     }
   },
   created() {
     this.inputTerm = this.searchTerm;
+    this.setSearchType(this.searchType);
   },
   methods: {
-    ...mapActions("search", ["performSearch", "setSearchTerm", "setNumPage"]),
+    ...mapActions("search", ["performSearch", "setSearchType", "setSearchTerm", "setNumPage"]),
     search() {
       if (!this.documentLoading) {
+        this.setSearchType(this.searchType);
         this.setSearchTerm(this.inputTerm);
         this.setNumPage(1);
         this.performSearch();
@@ -71,6 +99,10 @@ export default {
         }
       }
     },
+    /*selectSearchType(selectedSearchType) {
+      console.log("setSearchType : ", selectedSearchType)
+      this.setSearchType(selectedSearchType);
+    }*/
   },
 };
 </script>

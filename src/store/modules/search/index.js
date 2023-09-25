@@ -160,7 +160,8 @@ const keysToCamel = function (obj) {
 const state = {
 
   searchTerm: null,
-  
+  searchType: null,
+
   sorts: [{field: 'creation', order: 'asc'}],
 
   creationDateFrom: {
@@ -204,6 +205,7 @@ const state = {
 const initial_State = {
 
   searchTerm: null,
+  searchType: null,
 
   sorts: [{field: 'creation', order: 'asc'}],
 
@@ -255,6 +257,9 @@ const mutations = {
     state.firstDocId = scope.firstDocId,
     state.lastDocId = scope.lastDocId,
     state.docIdList = scope.docIdList
+  },
+  SET_SEARCH_TYPE(state, type) {
+    state.searchType = type;
   },
 
   SET_SEARCH_TERM(state, term) {
@@ -329,6 +334,10 @@ const actions = {
   setSearchScope({commit}, scope) {
     commit('SET_SEARCH_SCOPE', scope);
   },
+  setSearchType({commit}, type) {
+    commit('SET_SEARCH_TYPE', type);
+  },
+
   setSearchTerm({commit}, term) {
     commit('SET_SEARCH_TERM', term);
   },
@@ -413,6 +422,7 @@ const actions = {
     /* =========== filters =========== */
     let query ='';
     let highlights = false;
+    let searchType = 'fulltext';
     if (state.selectedCollections && state.selectedCollections.length > 1) {
       let selectedCollectionsIds = state.selectedCollections.map((coll) => coll.id);
       console.log("selectedCollectionsIds", selectedCollectionsIds)
@@ -431,17 +441,26 @@ const actions = {
       } else {
         query = '' + selectedCollectionsWithChildren.map(c => `(collections.id:${c.id})`).join(' OR ');
       }
+      console.log('collection query', query);
     }
-    console.log('collection query', query);
-    if (state.searchTerm && state.searchTerm.length > 0) {
+
+    if (state.searchTerm && state.searchTerm.length > 0 && state.searchType === 'isFullTextSearch') {
       highlights = true
+      if (query.length === 0) {
+        query = `(${state.searchTerm})`
+      } else {
+        query = `(${query} AND (${state.searchTerm})`
+      }
+    } else if (state.searchTerm && state.searchTerm.length > 0 && state.searchType === 'isParatextSearch') {
+      highlights = false
+      searchType = 'paratext'
       if (query.length === 0) {
         query = `(${state.searchTerm})`
       } else {
         query = `(${query} AND (${state.searchTerm}))`
       }
     }
- 
+
 
     if (!query || query.length === 0) {
       query = '*'
@@ -626,7 +645,7 @@ const actions = {
       const includes = toInclude.length ? `&include=${[toInclude].join(',')}` : '';
       
       const http = http_with_auth(rootState.user.jwt);
-      const response = await http.get(`/search?query=${query}${filters}${includes}&sort=${sorts}&highlight=${highlights}&page[size]=${state.pageSize}&page[number]=${state.numPage}`);
+      const response = await http.get(`/search?query=${query}&searchtype=${searchType}${filters}${includes}&sort=${sorts}&highlight=${highlights}&page[size]=${state.pageSize}&page[number]=${state.numPage}`);
       //const response = await http.get(`/search?query=${query}${filters}${includes}&sort=${sorts}&page[size]=${state.pageSize}&page[number]=${state.numPage}`);
       const {data, links, meta, included} = response.data
       const hyphensToUnderscore = (key) => key.replace("-", "_");
@@ -669,7 +688,7 @@ const actions = {
       {
         // fetch collections associated with search criteriae :
 
-        const searchScopeCollections = await http.get(`/search?query=${query}&facade=hierarchy&${filters}&groupby[doc-type]=collection&groupby[field]=collections.id`);
+        const searchScopeCollections = await http.get(`/search?query=${query}&searchtype=${searchType}&facade=hierarchy&${filters}&groupby[doc-type]=collection&groupby[field]=collections.id`);
         let searchScopeCollectionsIds = searchScopeCollections.data.data.reduce((c, v) => c.concat(v), []).map(o => o.id);
         console.log("searchScopeCollectionsIds", searchScopeCollectionsIds);
 
@@ -693,9 +712,9 @@ const actions = {
         commit('collections/SET_COLLECTIONS_TAGS', collectionsTags, {root: true})
 
         // fetch persons associated with search criteriae :
-        const searchScopePersonsFrom = await http.get(`/search?query=${query}${filters}&groupby[doc-type]=person&groupby[field]=senders.id&without-relationships`);
-        const searchScopePersonsTo = await http.get(`/search?query=${query}${filters}&groupby[doc-type]=person&groupby[field]=recipients.id&without-relationships`);
-        const searchScopePersonsCit = await http.get(`/search?query=${query}${filters}&groupby[doc-type]=person&groupby[field]=person-inlined.id&without-relationships`);
+        const searchScopePersonsFrom = await http.get(`/search?query=${query}&searchtype=${searchType}${filters}&groupby[doc-type]=person&groupby[field]=senders.id&without-relationships`);
+        const searchScopePersonsTo = await http.get(`/search?query=${query}&searchtype=${searchType}${filters}&groupby[doc-type]=person&groupby[field]=recipients.id&without-relationships`);
+        const searchScopePersonsCit = await http.get(`/search?query=${query}&searchtype=${searchType}${filters}&groupby[doc-type]=person&groupby[field]=person-inlined.id&without-relationships`);
         console.log('searchScopePersonsFrom', searchScopePersonsFrom)
         let uniqueSearchScopePersonsFrom = searchScopePersonsFrom.data.data.map(({
                                                                                    id,
@@ -752,9 +771,9 @@ const actions = {
         commit('persons/SET_PERSONS_ROLES', persons_roles, {root: true})
 
         // fetch placenames associated with search criteriae :
-        const searchScopePlacesFrom = await http.get(`/search?query=${query}${filters}&groupby[doc-type]=placename&groupby[field]=location-date-from.id&without-relationships`);
-        const searchScopePlacesTo = await http.get(`/search?query=${query}${filters}&groupby[doc-type]=placename&groupby[field]=location-date-to.id&without-relationships`);
-        const searchScopePlacesCit = await http.get(`/search?query=${query}${filters}&groupby[doc-type]=placename&groupby[field]=location-inlined.id&without-relationships`);
+        const searchScopePlacesFrom = await http.get(`/search?query=${query}&searchtype=${searchType}${filters}&groupby[doc-type]=placename&groupby[field]=location-date-from.id&without-relationships`);
+        const searchScopePlacesTo = await http.get(`/search?query=${query}&searchtype=${searchType}${filters}&groupby[doc-type]=placename&groupby[field]=location-date-to.id&without-relationships`);
+        const searchScopePlacesCit = await http.get(`/search?query=${query}&searchtype=${searchType}${filters}&groupby[doc-type]=placename&groupby[field]=location-inlined.id&without-relationships`);
         console.log('searchScopePlacesFrom', searchScopePlacesFrom)
         let uniqueSearchScopePlacesFrom = searchScopePlacesFrom.data.data.map(({
                                                                                  id,
