@@ -422,7 +422,7 @@ const actions = {
     /* =========== filters =========== */
     let query ='';
     let highlights = false;
-    let searchType = 'fulltext';
+    let searchType = 'paratext';
     if (state.selectedCollections && state.selectedCollections.length > 1) {
       let selectedCollectionsIds = state.selectedCollections.map((coll) => coll.id);
       console.log("selectedCollectionsIds", selectedCollectionsIds)
@@ -446,6 +446,7 @@ const actions = {
 
     if (state.searchTerm && state.searchTerm.length > 0 && state.searchType === 'isFullTextSearch') {
       highlights = true
+      searchType = 'fulltext'
       if (query.length === 0) {
         query = `(${state.searchTerm})`
       } else {
@@ -453,7 +454,6 @@ const actions = {
       }
     } else if (state.searchTerm && state.searchTerm.length > 0 && state.searchType === 'isParatextSearch') {
       highlights = false
-      searchType = 'paratext'
       if (query.length === 0) {
         query = `(${state.searchTerm})`
       } else {

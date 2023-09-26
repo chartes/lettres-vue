@@ -492,8 +492,8 @@
               <h2
                 v-if="searchTerm && searchTerm.length > 0"
                 class="document-preview-card__title"
-                v-html="highlight(props.row.title, 'title')"
-              />
+                v-html="props.row.title"
+              /><!-- v-html="highlight(props.row.title, 'title')" -->
               <h2
                 v-else
                 class="document-preview-card__title"
