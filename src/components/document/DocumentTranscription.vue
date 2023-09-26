@@ -279,7 +279,7 @@ export default {
         }
         if (text.includes('<p>')) {
           // if source is pseudo HTML (has tags) it is necessary to add a lookahead
-          let re = new RegExp(`(${regexTerms.join("|")})(?=[^<>]*<)`);
+          let re = new RegExp(`(?:(?!\\w)|\\b(?=\\w))(${terms.join("|")})(?:(?<=\\w)\\b|(?<!\\w))(?=[^<>]*<)`);
           console.log("transcription match re :", re)
           return text.replace(new RegExp(re, 'gi'), (match => `<mark>${match}</mark>`))
         } else {

@@ -640,7 +640,7 @@
         </section>
         <!-- analyse en mode preview -->
         <section
-          v-if="argumentContent && searchTerm && searchTerm.length > 0 && searchType === 'isParatextSearch'"
+          v-if="argumentContent && searchType === 'isParatextSearch'"
           class="document-section"
         ><!-- && highlight(argumentContent).includes('mark') -->
           <div class="heading is-uppercase">

@@ -45,6 +45,11 @@
         v-html="form && form.length > 0 ? highlight(form) : 'Non renseignée'"
       />
       <div
+        v-else-if="preview && (!searchTerm || searchTerm.length === 0) && searchType === 'isParatextSearch'"
+        class="argument__content"
+        v-html="form && form.length > 0 ? form : 'Non renseignée'"
+      />
+      <div
         v-else
         class="argument__content"
         v-html="form && form.length > 0 ? form : 'Non renseignée'"

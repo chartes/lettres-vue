@@ -4,7 +4,6 @@
       <div>
         <b-select
           v-model="searchType"
-          @change.native="search"
         >
           <option
             v-for="option in options"
@@ -58,10 +57,10 @@ export default {
   data() {
     return {
       inputTerm: null,
-      searchType: 'isFullTextSearch',
+      searchType: 'isParatextSearch',
       options: [
-          { value: 'isFullTextSearch', text: "dans la lettre"},
-          { value: 'isParatextSearch', text: "dans la notice"},
+          { value: 'isFullTextSearch', text: "lettres"},
+          { value: 'isParatextSearch', text: "notices"},
         ]
     };
   },
@@ -70,11 +69,24 @@ export default {
   },
   watch: {
     inputTerm() {
-      if (this.$route.name === "document") {
-        this.search()
-      } else
-      this.setSearchTerm(this.inputTerm);
-      this.performSearch();
+      if (!this.inputTerm || this.inputTerm.length >0) {
+        if (this.$route.name === "document") {
+          this.searchType = 'isParatextSearch';
+          this.search()
+        } else
+          this.searchType = 'isParatextSearch';
+          this.setSearchTerm(this.inputTerm);
+          this.setSearchType(this.searchType);
+          this.performSearch();
+      } else {
+        if (this.$route.name === "document") {
+          this.search()
+          } else {
+          this.setSearchTerm(this.inputTerm);
+          this.setSearchType(this.searchType);
+          this.performSearch();
+        }
+      }
     },
     searchType() {
       this.setSearchType(this.searchType);
