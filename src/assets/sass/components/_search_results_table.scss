@@ -295,6 +295,10 @@
               /* Titre */
               &:nth-child(4) {
                 grid-area: document-title;
+
+                h2 {
+                  word-break: break-word;
+                }
               }
 
               /* Expéditeur */
