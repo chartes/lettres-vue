@@ -1424,44 +1424,4 @@ input[type=number] {
 }
 
 
-.is-active {
-
-  ::v-deep {
-
-    .b-table.collection-results.no-search-term,
-    .b-table.search-results.no-search-term {
-
-      thead {
-        tr {
-          /* Flèche */
-          th:nth-child(1) {
-            width: 0 !important;
-            display: none !important;
-          }
-
-          /* Lettre */
-          th:nth-child(2) .th-wrap {
-            transform: none !important;
-          }
-        }
-      }
-
-      tbody {
-        /* Flèche */
-        td.chevron-cell {
-          width: 0 !important;
-          display: none !important;
-        }
-
-        @include on-small-tablet {
-          tr:not(.detail) {
-            grid-template-columns: 0 50px 100px auto;
-          }
-        }
-      }
-
-    }
-  }
-}
-
 </style>
