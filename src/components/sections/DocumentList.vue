@@ -1416,12 +1416,6 @@ input::-webkit-inner-spin-button {
 input[type=number] {
   -moz-appearance: textfield;
 }
-::v-deep .b-table .hide-arrow-icon-detail td.chevron-cell a {
-  pointer-events: none;
-  span.icon:after {
-    display: none !important;
-  }
-}
 
 
 </style>
