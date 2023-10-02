@@ -769,8 +769,11 @@ export default {
     hasSearchTerm: function() {
       return this.searchTerm && this.searchTerm.length > 0 ? 'has-search-term' : 'no-search-term';
     },
+    withStatusCssClass: function() {
+      return this.withStatus ? 'with-status' : '';
+    },
     tableCssClass: function() {
-      return [ this.contentType, this.hasSearchTerm ].join(' ') ;
+      return [ this.contentType, this.hasSearchTerm, this.withStatusCssClass ].join(' ') ;
     },
   },
   watch: {
