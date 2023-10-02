@@ -185,9 +185,10 @@
               border-color: #fdb3cc !important;
               padding: 15px 15px 15px 0;
 
-              font-family: $family-primary;
+              font-family: $family-secondary;
               font-size: 16px;
               text-align: left !important;
+              line-height: 20px;
 
               &::before {
                 display: none;
