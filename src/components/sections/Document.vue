@@ -666,6 +666,12 @@
             />
           </div>
         </section>
+        <mirador-viewer
+            v-if="document && displayedManifestUrl"
+            class="mirador-container"
+            :manifest-url="displayedManifestUrl"
+        />
+
         <!-- collections
         <section class="document-section collections-document-section">
           <div class="heading is-uppercase">
@@ -882,8 +888,14 @@ export default {
         this.setDisplayedManifestUrl(undefined);
         this.setViewerMode(undefined);
       } else if (val !== oldVal) {
-        this.type = "text-and-images-mode"
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        if (!this.preview) {
+          this.type = "text-and-images-mode"
+          window.scrollTo({top: 0, behavior: 'smooth'});
+        } else {
+          // Mode Preview : on conserve les marges
+          this.type = "images-mode"
+          this.setViewerMode(undefined);
+        }
         //this.$emit("refresh-viewer");
       }
     },
