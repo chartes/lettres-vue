@@ -128,6 +128,7 @@ export default {
       autocompleteData: [],
       selected: null,
       existsCount: 0,
+      existingPlace: {},
       isFetching: false,
       placeNameWikidataInput: "",
 
@@ -169,14 +170,25 @@ export default {
   watch: {
     async selected() {
       if (this.selected) {
+        let _selected = this.selected
         if (this.selected.item) {
           this.selectedPlaceName = null;
-          this.existsCount = await this.$store.dispatch(
+          await this.$store.dispatch(
             "placenames/checkIfRefExists",
             this.selected.item
-          );
+          ).then((response) => {
+            this.existsCount = response.count;
+            this.existingPlace = response.place
+          });
           if (this.existsCount === 0) {
             this.selectNewPlace();
+          } else {
+            this.selected.label = this.existingPlace.attributes.label
+            this.selected.item = this.existingPlace.attributes.ref
+            this.selected.description = _selected.description ? _selected.description : ""
+            this.placeNameInput = this.existingPlace.attributes.label
+            this.newPlace.id = this.existingPlace.id
+            this.selectedPlaceName = this.filteredPlacenames.findIndex((placeLabel) => placeLabel === this.existingPlace.attributes.label)
           }
         } else {
           this.existsCount = 0;
@@ -186,7 +198,9 @@ export default {
     placeNameInput() {
       this.placeName = this.placeNameInput;
       this.placeNameWikidataInput = "";
-      this.selected = null;
+      if (!this.existingPlace) {
+        this.selected = null;
+      }
       this.selectNewPlace();
     },
   },
@@ -201,7 +215,9 @@ export default {
     selectionChanged(evt) {
       this.placeName = evt.item;
       this.selectedPlaceName = evt.index;
-      this.selected = null;
+      if (!this.existingPlace) {
+        this.selected = null;
+      }
       this.selectNewPlace();
     },
 
@@ -220,10 +236,10 @@ export default {
               coordsTmp = [parseFloat(coordsTmp[1]), parseFloat(coordsTmp[0])];
             }
             return {
-              item: b.item.value,
+              item: b.item.value.replace("http:", "https:"),
               coords: coordsTmp,
               label: b.label.value,
-              description: b.itemDescription.value,
+              description: b.itemDescription ? b.itemDescription.value : null,
               country: b.paysLabel.value,
             };
           });

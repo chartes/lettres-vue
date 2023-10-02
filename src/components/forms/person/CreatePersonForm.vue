@@ -96,7 +96,7 @@
     </div>
 
     <b-message v-if="existsCount > 0" type="is-warning is-small" has-icon>
-      Un lieu possédant l'identifiant <b>{{ selected.item }}</b> existe déjà dans
+      Une personne possédant l'identifiant <b>{{ selected.item }}</b> existe déjà dans
       l'application.
     </b-message>
   </div>
@@ -125,6 +125,7 @@ export default {
       autocompleteData: [],
       selected: null,
       existsCount: 0,
+      existingPerson: {},
       isFetching: false,
       personNameWikidataInput: "",
 
@@ -166,14 +167,25 @@ export default {
   watch: {
     async selected() {
       if (this.selected) {
+        let _selected = this.selected
         if (this.selected.item) {
           this.selectedPersonName = null;
-          this.existsCount = await this.$store.dispatch(
+          await this.$store.dispatch(
             "persons/checkIfRefExists",
             this.selected.item
-          );
+          ).then((response) => {
+            this.existsCount = response.count;
+            this.existingPerson = response.person
+          });
           if (this.existsCount === 0) {
             this.selectNewPerson();
+          } else {
+            this.selected.label = this.existingPerson.attributes.label
+            this.selected.item = this.existingPerson.attributes.ref
+            this.selected.description = _selected.description ? _selected.description : ""
+            this.personNameInput = this.existingPerson.attributes.label
+            this.newPerson.id = this.existingPerson.id
+            this.selectedPersonName = this.filteredPersons.findIndex((personLabel) => personLabel === this.existingPerson.attributes.label)
           }
         } else {
           this.existsCount = 0;
@@ -183,7 +195,9 @@ export default {
     personNameInput() {
       this.personName = this.personNameInput;
       this.personNameWikidataInput = "";
-      this.selected = null;
+      if (!this.existingPerson) {
+        this.selected = null;
+      }
       this.selectNewPerson();
     },
   },
@@ -198,7 +212,9 @@ export default {
     selectionChanged(evt) {
       this.personName = evt.item;
       this.selectedPersonName = evt.index;
-      this.selected = null;
+      if (!this.existingPerson) {
+        this.selected = null;
+      }
       this.selectNewPerson();
     },
 
@@ -213,7 +229,7 @@ export default {
           this.tableData = response.results.bindings.map((b) => {
             console.log(b);
             return {
-              item: b.human.value,
+              item: b.human.value.replace("http:", "https:"),
               label: b.humanLabel.value,
               description: b.humanDescription ? b.humanDescription.value : null,
             };
