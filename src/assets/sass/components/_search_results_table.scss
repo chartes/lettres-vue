@@ -185,9 +185,10 @@
               border-color: #fdb3cc !important;
               padding: 15px 15px 15px 0;
 
-              font-family: $family-primary;
+              font-family: $family-secondary;
               font-size: 16px;
               text-align: left !important;
+              line-height: 20px;
 
               &::before {
                 display: none;
@@ -622,7 +623,7 @@
           /* Les colonnes des Lieux sont masquées en mode tableau */
           &:nth-child(7),
           &:nth-child(8) {
-            // display: none !important;
+            display: none !important;
           }
 
         }
@@ -636,7 +637,7 @@
           /* Les colonnes des Lieux sont masquées en mode tableau */
           &:nth-child(7),
           &:nth-child(8) {
-            // display: none !important;
+            display: none !important;
           }
 
         }
