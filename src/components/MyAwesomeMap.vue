@@ -77,6 +77,7 @@ export default {
 
 <style lang="scss" scoped>
 .l-map {
+  max-width: 100%;
   width: 460px;
   height: 320px;
 

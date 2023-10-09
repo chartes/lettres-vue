@@ -581,7 +581,7 @@ export default {
   .popup-mode {
     margin: auto;
     grid-template-columns: auto 320px;
-    grid-template-rows: 62px auto 80px;
+    grid-template-rows: 62px min(600px)  min(80px);
     grid-template-areas:
       "leftbar-header leftbar-header"
       "center-content leftbar-content"
@@ -590,7 +590,7 @@ export default {
     @include on-tablet {
       margin: 0;
       grid-template-columns: 100%;
-      grid-template-rows: 62px auto min(100px) 80px;
+      grid-template-rows: 62px auto auto min(80px);
       grid-template-areas:
       "leftbar-header"
       "center-content"
@@ -778,7 +778,7 @@ export default {
 
     .buttons {
       position: absolute;
-      bottom: 60px;
+      bottom: 40px;
 
       display: flex;
       justify-content: center;
@@ -793,11 +793,14 @@ export default {
 
       button {
         width: 140px;
-        margin: 10px !important;
+        margin: 7px 10px !important;
         background-color: #CB2158;
 
-        @include on-tablet {
+        &.is-medium {
+          font-size: 16px;
+        }
 
+        @include on-tablet {
           font-size: 14px;
 
           &.button {
