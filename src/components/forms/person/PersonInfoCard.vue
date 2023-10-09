@@ -44,6 +44,7 @@ export default {
   }
 }
 .l-map {
+  max-width: 100%;
   width: 270px;
   height: 280px;
 }
