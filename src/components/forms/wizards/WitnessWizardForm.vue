@@ -494,7 +494,7 @@ export default {
   .popup-mode {
     margin: auto 0;
     grid-template-columns: calc(100% - 320px) 320px;
-    grid-template-rows: 62px auto 80px;
+    grid-template-rows: 62px min(600px) 80px;
     grid-template-areas:
       "leftbar-header leftbar-header"
       "center-content leftbar-content"
@@ -716,8 +716,11 @@ export default {
         margin: 10px 10px 0 !important;
         background-color: #CB2158;
 
-        @include on-tablet {
+        &.is-medium {
+          font-size: 16px;
+        }
 
+        @include on-tablet {
           font-size: 14px;
 
           &.button {
