@@ -328,7 +328,8 @@ const actions = {
   async checkIfRefExists({rootState}, ref) {
     const http = http_with_auth(rootState.user.jwt);
     const response = await http.get(`persons?page[size]=1&without-relationships&filter[ref]=${ref}`)
-    return response.data.meta['total-count']
+    let existingPerson = {person: response.data.data[0], count: response.data.meta['total-count']}
+      return existingPerson
   },
   async updateInlinedRole({state, rootState, dispatch}, {inlined}) {
     const http = http_with_auth(rootState.user.jwt);
