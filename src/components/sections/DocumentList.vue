@@ -945,6 +945,21 @@ export default {
           id: d.id,
           title:  d.title,
           creation:  d.creation,
+          senders: d.sender.length > 0 ? d.sender.map(p => p.label).filter(Boolean).join(", ") : '',
+          recipients: d.recipients.length > 0 ? d.recipients.map(p => p.label).filter(Boolean).join(", ") : '',
+          origins: d.origin.length > 0 ? d.origin.map(o => o.label).filter(Boolean).join(", ") : '',
+          destinations: d.destinations.length > 0 ? d.destinations.map(d => d.label).filter(Boolean).join(", ") : '',
+          /* previous logic fails on collection page if this.$store.state.persons.persons_roles/placenames.places have not been loaded
+          previous senders: d.sender.map(sender => (this.$store.state.persons.persons_roles[1].persons.find(p => p.person_id === sender.id) || {}).label).filter(Boolean).join(", "),
+          recipients: d.recipients.map(recipient => (this.$store.state.persons.persons_roles[1].persons.find(p => p.person_id === recipient.id) || {}).label).filter(Boolean).join(", "),
+          origins: d.origin.map(origin => (this.$store.state.placenames.places[0].places.find(p => p.placename_id === origin.id) || {}).label).filter(Boolean).join(", "),
+          destinations: d.destinations.map(destinations => (this.$store.state.placenames.places[1].places.find(p => p.placename_id === destinations.id) || {}).label).filter(Boolean).join(", ")*/
+        }
+
+        /*return {
+          id: d.id,
+          title:  d.title,
+          creation:  d.creation,
           senders: this.included.length > 0 ? d.sender.map(sender => (this.included.find(item => item.id === sender.id & item.type === 'person')).attributes.label).filter(Boolean).join(", ") : '',
           recipients: this.included.length > 0 ? d.recipients.map(recipient => (this.included.find(item => item.id === recipient.id & item.type === 'person')).attributes.label).filter(Boolean).join(", ") : '',
           origins: this.included.length > 0 ? d.origin.map(origin => (this.included.find(item => item.id === origin.id & item.type === 'placename')).attributes.label).filter(Boolean).join(", ") : '',
@@ -954,7 +969,7 @@ export default {
           recipients: d.recipients.map(recipient => (this.$store.state.persons.persons_roles[1].persons.find(p => p.person_id === recipient.id) || {}).label).filter(Boolean).join(", "),
           origins: d.origin.map(origin => (this.$store.state.placenames.places[0].places.find(p => p.placename_id === origin.id) || {}).label).filter(Boolean).join(", "),
           destinations: d.destinations.map(destinations => (this.$store.state.placenames.places[1].places.find(p => p.placename_id === destinations.id) || {}).label).filter(Boolean).join(", ")*/
-        }
+        /*}*/
         }));
       } this.loadingTable = false
     },

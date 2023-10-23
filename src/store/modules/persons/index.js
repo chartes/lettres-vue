@@ -62,14 +62,17 @@ const actions = {
   async getPersonsTotal({rootState}) {
     const http = http_with_auth(rootState.user.jwt);
     let query ='';
+    let published = false;
+
     if (!query || query.length === 0) {
       query = '*'
     }
     if (!rootState.user.current_user) {
-        query = `${query} AND (is-published:true)`;
+        published = true
+        //query = `${query} AND (is-published:true)`;
     }
     // fetch persons associated with search criteriae :
-    const searchScopePersons = await http.get(`/search?query=${query}&groupby[doc-type]=person&groupby[field]=persons.id&without-relationships`);
+    const searchScopePersons = await http.get(`/search?query=${query}&published=${published}&groupby[doc-type]=person&groupby[field]=persons.id&without-relationships`);
     let uniqueSearchScopePersons = searchScopePersons.data.data.map(({
                                                                          id,
                                                                          type,
@@ -412,10 +415,12 @@ const actions = {
       //commit('SET_LOADING_STATUS', true);
 
       /* =========== filters =========== */
+      let published = false;
       let query =  state.searchTerm  || '***' //`collections.id:${state.selectedCollectionId}`
 
       if (!rootState.user.current_user){
-        query = `${query} AND (is-published:true)`
+        published = true
+        //query = `${query} AND (is-published:true)`
       }
 
       /* =========== sorts ===========*/
@@ -488,7 +493,7 @@ const actions = {
         const includes = toInclude.length ? `&include=${[toInclude].join(',')}` : ''; 
         
         const http = http_with_auth(rootState.user.jwt);
-        const response = await http.get(`/search?query=${query}${filters}${includes}&index=lettres__${process.env.NODE_ENV}__persons&sort=${sorts}&page[size]=${state.pageSize}&page[number]=${state.numPage}`);
+        const response = await http.get(`/search?query=${query}&published=${published}${filters}${includes}&index=lettres__${process.env.NODE_ENV}__persons&sort=${sorts}&page[size]=${state.pageSize}&page[number]=${state.numPage}`);
         const {data, links, meta, included} = response.data
 
         // TODO :  par exemple

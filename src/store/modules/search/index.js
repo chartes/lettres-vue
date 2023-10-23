@@ -422,7 +422,10 @@ const actions = {
     /* =========== filters =========== */
     let query ='';
     let highlights = false;
+    let published = '';
     let searchType = 'paratext';
+
+
     if (state.selectedCollections && state.selectedCollections.length > 1) {
       let selectedCollectionsIds = state.selectedCollections.map((coll) => coll.id);
       console.log("selectedCollectionsIds", selectedCollectionsIds)
@@ -465,82 +468,172 @@ const actions = {
     if (!query || query.length === 0) {
       query = '*'
     }
-
+    //old
     let place_query_from='';
+    //new
+    let placesFromSelectedFacets = [];
+
     if (state.selectedPlaceFrom.length > 0) {
-        console.log('selectedPlaceFrom', state.selectedPlaceFrom);
-        place_query_from = 'location-date-from.id:(' + state.selectedPlaceFrom.map(c => `${c.placename_id}`).join(' || ') + ')';
-        //query = '(' + query + ' AND (location-date-from.id:(' + state.selectedPlaceFrom.map(c => `${c.placename_id}`).join(' || ') + ')))';
-        console.log('query with selectedPlaceFrom', place_query_from)
+      console.log('selectedPlaceFrom', state.selectedPlaceFrom);
+      /*old
+      place_query_from = 'location_dates_from.label:(' + state.selectedPlaceFrom.map(c => `${c.label}`).join(' || ') + ')';
+      //query = '(' + query + ' AND (location-date-from.id:(' + state.selectedPlaceFrom.map(c => `${c.placename_id}`).join(' || ') + ')))';
+      console.log('query with selectedPlaceFrom', place_query_from)
+      */
+
+      //new
+      state.selectedPlaceFrom.forEach((origin) => {
+      let selectedLabel = origin.label
+      placesFromSelectedFacets.push(selectedLabel)
+      })
+      console.log('query with placesFromSelectedFacets', placesFromSelectedFacets);
     } else {
       console.log('query without selectedPlaceFrom')
     }
+    //old
     let place_query_to = '';
+    //new
+    let placesToSelectedFacets = [];
+
     if (state.selectedPlaceTo.length > 0) {
-        console.log('selectedPlaceTo', state.selectedPlaceTo);
-        place_query_to = 'location-date-to.id:(' + state.selectedPlaceTo.map(c => `${c.placename_id}`).join(' || ') + ')';
-        //query = '(' + query + ' AND (' + state.selectedPlaceTo.map(c => `location-date-to.id:${c.placename_id}`).join(' OR ') + '))';
-        console.log('query with selectedPlaceTo', place_query_to)
+      console.log('selectedPlaceTo', state.selectedPlaceTo);
+      /*old
+      place_query_to = 'location_dates_to.label:(' + state.selectedPlaceTo.map(c => `${c.label}`).join(' || ') + ')';
+      //query = '(' + query + ' AND (' + state.selectedPlaceTo.map(c => `location-date-to.id:${c.placename_id}`).join(' OR ') + '))';
+      console.log('query with selectedPlaceTo', place_query_to)
+      */
+
+      //new
+      state.selectedPlaceTo.forEach((destination) => {
+      let selectedLabel = destination.label
+      placesToSelectedFacets.push(selectedLabel)
+      })
+      console.log('query with placesToSelectedFacets', placesToSelectedFacets);
     } else {
       console.log('query without selectedPlaceTo')
     }
+    //old
     let place_query_cited = '';
+    //new
+    let placesCitedSelectedFacets = [];
+
     if (state.selectedPlaceCited.length > 0) {
-        console.log('selectedPlaceCited', state.selectedPlaceCited);
-        place_query_cited =  'location-inlined.id:(' + state.selectedPlaceCited.map(c => `${c.placename_id}`).join(' || ') + ')';
-        //query = '(' + query + ' AND (' + state.selectedPlaceCited.map(c => `location-inlined.id:${c.placename_id}`).join(' OR ') + '))';
-        console.log('query with selectedPlaceCited', place_query_cited)
+      console.log('selectedPlaceCited', state.selectedPlaceCited);
+      /*old
+      place_query_cited =  'locations_inlined.label:(' + state.selectedPlaceCited.map(c => `${c.label}`).join(' || ') + ')';
+      //query = '(' + query + ' AND (' + state.selectedPlaceCited.map(c => `location-inlined.id:${c.placename_id}`).join(' OR ') + '))';
+      console.log('query with selectedPlaceCited', place_query_cited)
+      */
+
+      //new
+      state.selectedPlaceCited.forEach((cited) => {
+        let selectedLabel = cited.label
+        placesCitedSelectedFacets.push(selectedLabel)
+      })
+      console.log('query with placesCitedSelectedFacets', placesCitedSelectedFacets);
     } else {
       console.log('query without selectedPlaceCited')
     }
     // combine places criteriae :
+    /*old
     let place_query = ''
     if (place_query_from.length > 0 || place_query_to.length > 0 || place_query_cited.length > 0) {
       place_query = [place_query_from, place_query_to, place_query_cited].filter(Boolean).join(' AND ');
     }
+    */
+    //new
+    let placesFacets = {location_dates_from: placesFromSelectedFacets.length > 0 ? placesFromSelectedFacets : '',
+                            location_dates_to: placesToSelectedFacets.length > 0 ? placesToSelectedFacets : '',
+                            locations_inlined: placesCitedSelectedFacets.length > 0 ? placesCitedSelectedFacets : ''}
 
-    let person_query_from = ''
+    //old
+    let person_query_from = '';
+    //new
+    let personsFromSelectedFacets = [];
+    console.log('check selectedPersonFrom', state.selectedPersonFrom);
     if (state.selectedPersonFrom.length > 0) {
       console.log('selectedPersonFrom', state.selectedPersonFrom);
-      person_query_from = 'senders.id:(' + state.selectedPersonFrom.map(c => `${c.person_id}`).join(' || ') + ')';
+      /*old
+      person_query_from = 'senders.label:(' + state.selectedPersonFrom.map(sender => `${sender.label}`).join(' || ') + ')';
       //query = '(' + query + ' AND (senders.id:(' + state.selectedPersonFrom.map(c => `${c.person_id}`).join(' || ') + '))';
       console.log('query with selectedPersonFrom', person_query_from);
+      */
+
+      //new
+      state.selectedPersonFrom.forEach((sender) => {
+      let selectedLabel = sender.label
+      personsFromSelectedFacets.push(selectedLabel)
+      })
+      console.log('query with personsFromSelectedFacets', personsFromSelectedFacets);
     } else {
       console.log('query without selectedPersonFrom')
     }
-
-    let person_query_to= ''
-      if (state.selectedPersonTo.length > 0) {
+    //old
+    let person_query_to= '';
+    //new
+    let personsToSelectedFacets = [];
+    if (state.selectedPersonTo.length > 0) {
       console.log('selectedPersonTo', state.selectedPersonTo);
-      person_query_to = 'recipients.id:(' + state.selectedPersonTo.map(c => `${c.person_id}`).join(' || ') + ')';
+      /*old
+      person_query_to = 'recipients.label:(' + state.selectedPersonTo.map(recipient => `${recipient.label}`).join(' || ') + ')';
       //query = '(' + query + ' AND (' + state.selectedPersonTo.map(c => `recipients.id:${c.person_id}`).join(' OR ') + '))';
       console.log('query with selectedPersonTo', person_query_to);
+      */
+
+      //new
+      state.selectedPersonTo.forEach((recipient) => {
+      let selectedLabel = recipient.label
+      personsToSelectedFacets.push(selectedLabel)
+      })
+      console.log('query with personsToSelectedFacets', personsToSelectedFacets);
     } else {
       console.log('query without selectedPersonTo')
     }
-
-    let person_query_cited = ''
+    //old
+    let person_query_cited = '';
+    //new
+    let personsCitedSelectedFacets = [];
     if (state.selectedPersonCited.length > 0) {
       console.log('selectedPersonCited', state.selectedPersonCited);
-      person_query_cited = 'person-inlined.id:(' + state.selectedPersonCited.map(c => `${c.person_id}`).join(' || ') + ')';
+      /*old
+      person_query_cited = 'persons_inlined.label:(' + state.selectedPersonCited.map(c => `${c.label}`).join(' || ') + ')';
       //query = '(' + query + ' AND (' + state.selectedPersonCited.map(c => `person-inlined.id:${c.person_id}`).join(' OR ') + '))';
       console.log('query with selectedPersonCited', person_query_cited);
+      */
+
+      //new
+      state.selectedPersonCited.forEach((cited) => {
+        let selectedLabel = cited.label
+        personsCitedSelectedFacets.push(selectedLabel)
+      })
+      console.log('query with personsCitedSelectedFacets', personsCitedSelectedFacets);
     } else {
       console.log('query without selectedPersonCited')
     }
     // combine persons criteriae :
-    let person_query = ''
+
+    /* old
+    let person_query = '';
     if (person_query_from.length > 0 || person_query_to.length > 0 || person_query_cited.length > 0) {
       person_query = [person_query_from, person_query_to, person_query_cited].filter(Boolean).join(' AND ');
-    }
+    }*/
+
+    //new
+    let personsFacets = {senders: personsFromSelectedFacets.length > 0 ? personsFromSelectedFacets : '',
+                            recipients: personsToSelectedFacets.length > 0 ? personsToSelectedFacets : '',
+                            persons_inlined: personsCitedSelectedFacets.length > 0 ? personsCitedSelectedFacets : ''}
+
 
     // combine query, places and persons criteriae :
+    /*old
     if (place_query.length > 0 || person_query.length > 0) {
           query = query + ' AND (' + [place_query, person_query].filter(Boolean).join(' AND ')+ ')';
     }
+    */
 
     if (!rootState.user.current_user){
-      query = `${query} AND (is-published:true)`
+      published = true
+      //query = `${query} AND (is-published:true)`
     }
 
     /* =========== sorts ===========*/
@@ -641,18 +734,46 @@ const actions = {
 
     /* =========== execution =========== */
     try {
-      const toInclude = ['persons-having-roles', 'persons', 'placenames-having-roles', 'placenames']; //['collections', 'persons', 'persons-having-roles', 'roles', 'witnesses', 'languages'];
+      const toInclude = []; //2023-10-10 ['persons-having-roles', 'persons', 'placenames-having-roles', 'placenames'] //['collections', 'persons', 'persons-having-roles', 'roles', 'witnesses', 'languages'];
       const includes = toInclude.length ? `&include=${[toInclude].join(',')}` : '';
       
       const http = http_with_auth(rootState.user.jwt);
-      const response = await http.get(`/search?query=${query}&searchtype=${searchType}${filters}${includes}&sort=${sorts}&highlight=${highlights}&page[size]=${state.pageSize}&page[number]=${state.numPage}`);
+      const response = await http.get(`/search?query=${query}&published=${published}&personsfacets=${JSON.stringify(personsFacets)}&placesfacets=${JSON.stringify(placesFacets)}&searchtype=${searchType}${filters}${includes}&sort=${sorts}&highlight=${highlights}&page[size]=${state.pageSize}&page[number]=${state.numPage}&without-relationships`);
       //const response = await http.get(`/search?query=${query}${filters}${includes}&sort=${sorts}&page[size]=${state.pageSize}&page[number]=${state.numPage}`);
       const {data, links, meta, included} = response.data
-      const hyphensToUnderscore = (key) => key.replace("-", "_");
+      /*const hyphensToUnderscore = (key) => key.replace("-", "_");
       console.log('hyphensToUnderscore : ', replaceAllObjKeys(cloneDeep(data), hyphensToUnderscore))
-      const phr = [];
+      const phr = [];*/
+      const datawithPersons = data.map(({
+        id,
+        attributes: {title, argument, creation, creation_not_after, creation_label, is_published, transcription, senders, recipients, location_dates_from, location_dates_to},
+        relationships
+      }) => ({
+        id,
+        title,
+        argument,
+        creation,
+        creation_not_after,
+        creation_label,
+        is_published,
+        transcription,
+        sender: senders.map(sender => {
+          return {...sender, role: 1};
+          }),
+        recipients: recipients.map(recipient => {
+          return {...recipient, role: 2};
+          }),
+        origin: location_dates_from.map(origin => {
+          return {...origin, role: 1};
+          }),
+        destinations: location_dates_to.map(destination => {
+          return {...destination, role: 2};
+          })
+      }));
 
-      const datawithPersons = replaceAllObjKeys(cloneDeep(data), hyphensToUnderscore).map(({
+
+
+      /*const datawithPersons = replaceAllObjKeys(cloneDeep(data), hyphensToUnderscore).map(({
         id,
         attributes: {title, argument, creation, creation_not_after, creation_label, is_published, transcription},
         relationships: {person_roles, persons, placename_roles, placenames}
@@ -680,14 +801,50 @@ const actions = {
         /*admin: {
           username: included.find(({type, id: adminId}) => type === "user" && adminId === admin.data.id).attributes.username
         }*/
-      }));
+      /*}));*/
       console.log('datawithPersons', datawithPersons)
       console.log('included', included)
 
       if (type !== 'simple' && (query !== state.currentQuery || filters !== state.currentFilters))
       {
         // fetch collections associated with search criteriae :
+        if (Object.keys(rootState.collections.collectionsById).length === 0) {
+          console.log("loading collectionsById")
+          await store.dispatch("collections/fetchAll").then(
+              (response) => {
+              }
+          )
+        }
+        if (Object.keys(rootState.collections.collectionsById).length === 0) {
+          console.log("loading collectionsById check")
+          await store.dispatch("collections/fetchAll").then(
+              (response) => {
+              }
+          )
+        }
 
+        let CollectionsFacets = []
+        response.data.buckets.collections.forEach((facet_coll) => {
+          console.log("Object.values(rootState.collections.collectionsById).filter(coll => (coll.title === facet_coll.key))", Object.values(rootState.collections.collectionsById).filter(coll => (coll.title === facet_coll.key)))
+          let CollectionFacet = Object.values(rootState.collections.collectionsById).filter(coll => (coll.title === facet_coll.key))[0]
+          CollectionsFacets.push(CollectionFacet)
+        })
+        console.log("CollectionsFacets", CollectionsFacets);
+
+        let CollectionsFacetsParents = []
+        CollectionsFacets.forEach((facet_coll) => {
+          console.log("CollectionFacetParents", facet_coll)
+          if (facet_coll.parent) {
+            let CollectionFacetParent = Object.values(rootState.collections.collectionsById).filter(coll => (coll.id === facet_coll.parent))[0]
+            CollectionsFacetsParents.push(CollectionFacetParent)
+          }
+        })
+        console.log("CollectionsFacetsParents", CollectionsFacetsParents);
+
+        let collectionsTags = [...new Set([...CollectionsFacets ,...CollectionsFacetsParents])];
+        console.log('collectionsTags', collectionsTags);
+
+        /*
         const searchScopeCollections = await http.get(`/search?query=${query}&searchtype=${searchType}&facade=hierarchy&${filters}&groupby[doc-type]=collection&groupby[field]=collections.id`);
         let searchScopeCollectionsIds = searchScopeCollections.data.data.reduce((c, v) => c.concat(v), []).map(o => o.id);
         console.log("searchScopeCollectionsIds", searchScopeCollectionsIds);
@@ -697,6 +854,7 @@ const actions = {
         console.log('uniqueSearchScopeCollectionsParentsId', uniqueSearchScopeCollectionsParentsId);
         let uniqueSearchScopeCollectionsIds = [...new Set([...searchScopeCollectionsIds ,...uniqueSearchScopeCollectionsParentsId])];
         console.log('uniqueSearchScopeCollectionsIds', uniqueSearchScopeCollectionsIds);
+        */
 
         /* fetch upward tree Ids for collections from attributes if included in response (modified facade) :
         const uniqueSearchScopeCollectionsParentsId = searchScopeCollections.data.data.flatMap(({attributes}) => attributes.parents.map((id) => id));
@@ -705,14 +863,48 @@ const actions = {
         console.log('uniqueSearchScopeCollectionsIds', uniqueSearchScopeCollectionsIds);*/
 
         // fetch actual collections :
-        let collectionsTags = Object.values(store.state.collections.collectionsById).filter(({id}) => uniqueSearchScopeCollectionsIds.includes(id));
+        /*let collectionsTags = Object.values(store.state.collections.collectionsById).filter(({id}) => uniqueSearchScopeCollectionsIds.includes(id));
         console.log('collectionsTags', collectionsTags);
+        */
 
         // update state collections
         commit('collections/SET_COLLECTIONS_TAGS', collectionsTags, {root: true})
 
         // fetch persons associated with search criteriae :
-        const searchScopePersonsFrom = await http.get(`/search?query=${query}&searchtype=${searchType}${filters}&groupby[doc-type]=person&groupby[field]=senders.id&without-relationships`);
+        let PersonsFromFacets = response.data.buckets.senders.map((
+            {key, doc_count}) =>
+            ({
+              role_id: 1,
+              //person_id: id,
+              count: doc_count,
+              label: key
+            })
+        )
+        console.log("PersonsFromFacets", PersonsFromFacets);
+
+        let PersonsToFacets = response.data.buckets.recipients.map((
+            {key, doc_count}) =>
+            ({
+              role_id: 2,
+              //person_id: id,
+              count: doc_count,
+              label: key
+            })
+        )
+        console.log("PersonsToFacets", PersonsToFacets);
+
+        let PersonsCitFacets = response.data.buckets.persons_inlined.map((
+            {key, doc_count}) =>
+            ({
+              role_id: 3,
+              //person_id: id,
+              count: doc_count,
+              label: key
+            })
+        )
+        console.log("PersonsCitFacets", PersonsCitFacets);
+
+        /*const searchScopePersonsFrom = await http.get(`/search?query=${query}&searchtype=${searchType}${filters}&groupby[doc-type]=person&groupby[field]=senders.id&without-relationships`);
         const searchScopePersonsTo = await http.get(`/search?query=${query}&searchtype=${searchType}${filters}&groupby[doc-type]=person&groupby[field]=recipients.id&without-relationships`);
         const searchScopePersonsCit = await http.get(`/search?query=${query}&searchtype=${searchType}${filters}&groupby[doc-type]=person&groupby[field]=person-inlined.id&without-relationships`);
         console.log('searchScopePersonsFrom', searchScopePersonsFrom)
@@ -759,19 +951,53 @@ const actions = {
               label: attributes.label
             })
         )
-        console.log('uniqueSearchScopePersonsCit', uniqueSearchScopePersonsCit)
+        console.log('uniqueSearchScopePersonsCit', uniqueSearchScopePersonsCit)*/
 
         // update state persons
         const persons_roles = [
-          {role_id: "Expéditeur", persons: uniqueSearchScopePersonsFrom},
-          {role_id: "Destinataire", persons: uniqueSearchScopePersonsTo},
-          {role_id: "Personne citée", persons: uniqueSearchScopePersonsCit}
+          {role_id: "Expéditeur", persons: PersonsFromFacets},
+          {role_id: "Destinataire", persons: PersonsToFacets},
+          {role_id: "Personne citée", persons: PersonsCitFacets}
         ]
         console.log('persons_roles : ', persons_roles)
         commit('persons/SET_PERSONS_ROLES', persons_roles, {root: true})
 
         // fetch placenames associated with search criteriae :
-        const searchScopePlacesFrom = await http.get(`/search?query=${query}&searchtype=${searchType}${filters}&groupby[doc-type]=placename&groupby[field]=location-date-from.id&without-relationships`);
+        let PlacesFromFacets = response.data.buckets.location_dates_from.map((
+            {key, doc_count}) =>
+            ({
+              role_id: 1,
+              //person_id: id,
+              count: doc_count,
+              label: key
+            })
+        )
+        console.log("PlacesFromFacets", PlacesFromFacets);
+
+        let PlacesToFacets = response.data.buckets.location_dates_to.map((
+            {key, doc_count}) =>
+            ({
+              role_id: 2,
+              //person_id: id,
+              count: doc_count,
+              label: key
+            })
+        )
+        console.log("PlacesToFacets", PlacesToFacets);
+
+        let PlacesCitFacets = response.data.buckets.locations_inlined.map((
+            {key, doc_count}) =>
+            ({
+              role_id: 3,
+              //person_id: id,
+              count: doc_count,
+              label: key
+            })
+        )
+        console.log("PlacesCitFacets", PlacesCitFacets);
+
+
+        /*const searchScopePlacesFrom = await http.get(`/search?query=${query}&searchtype=${searchType}${filters}&groupby[doc-type]=placename&groupby[field]=location-date-from.id&without-relationships`);
         const searchScopePlacesTo = await http.get(`/search?query=${query}&searchtype=${searchType}${filters}&groupby[doc-type]=placename&groupby[field]=location-date-to.id&without-relationships`);
         const searchScopePlacesCit = await http.get(`/search?query=${query}&searchtype=${searchType}${filters}&groupby[doc-type]=placename&groupby[field]=location-inlined.id&without-relationships`);
         console.log('searchScopePlacesFrom', searchScopePlacesFrom)
@@ -821,17 +1047,18 @@ const actions = {
               label: attributes.label
             })
         )
-        console.log('uniqueSearchScopePlacesCit', uniqueSearchScopePlacesCit)
+        console.log('uniqueSearchScopePlacesCit', uniqueSearchScopePlacesCit)*/
 
         // update state placenames
         const places = [
-          {role_id: "Lieu d'expédition", places: uniqueSearchScopePlacesFrom},
-          {role_id: "Lieu de destination", places: uniqueSearchScopePlacesTo},
-          {role_id: "Lieu mentionné", places: uniqueSearchScopePlacesCit}
+          {role_id: "Lieu d'expédition", places: PlacesFromFacets},
+          {role_id: "Lieu de destination", places: PlacesToFacets},
+          {role_id: "Lieu mentionné", places: PlacesCitFacets}
         ]
         //console.log('places : ', places)
         commit('placenames/SET_ALL', places, {root: true})
       }
+
       /*if (included) {
         // find persons involved in search filter
         let searchScopePersons = included.filter(p => p.type === "person")
@@ -1005,8 +1232,9 @@ const actions = {
       // let sortedData = datawithPersons.sort(sortMethod);
       // console.log("sortedData", sortedData)
 
+
       commit('CURRENT_SEARCH_FILTERS', filters);
-      commit('CURRENT_SEARCH_QUERY', query);
+      commit('CURRENT_SEARCH_QUERY', query + JSON.stringify(personsFacets) + JSON.stringify(placesFacets));
 
       commit('UPDATE_ALL', {documents: datawithPersons, totalCount: meta['total-count'] , links, included: included || []});
       //commit('UPDATE_ALL', {documents: data, totalCount: meta['total-count'] , links, included: included || []});
