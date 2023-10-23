@@ -8,7 +8,13 @@
         <div class="document-list-header is-flex is-justify-content-space-between is-align-items-center">
           <div class="is-inline-block">
             <div class="results-count">
-              <span class="total-count">{{ totalCount }}</span> résultat(s)
+              <span
+                v-if="loadingStatus"
+                class="total-count fas fa-spinner fa-pulse">
+              </span>
+              <span
+                v-else
+                class="total-count">{{ totalCount }}</span> résultat(s)
             </div>
           </div>
           <div class="is-inline-block px-1">
