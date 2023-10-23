@@ -1,36 +1,37 @@
 <template>
   <div>
     <section>
-      <div class="row is-flex is-justify-content-space-between search-section-header-persons">
-        <span class="advanced_search_header m-2">PERSONNES</span>
-        <router-link
-          :to="{ name: 'persons' }"
-          active-class="is-active"
-          class="advanced_search_router my-2"
-        >
-          Index
-        </router-link>
+      <div>
+        <span class="row is-flex is-justify-content-space-between suggestions-section-header">
+          SUGGESTIONS
+        </span>
+        <div class="row is-flex is-justify-content-space-between suggestions-section-header-persons">
+          <span class="advanced_search_header m-2">CORRESPONDANTS FRÉQUENTS</span>
+        </div>
       </div>
       <div class="row is-flex-direction-column my-5">
-        <b-field>
-          <b-taginput
-            v-model="tags"
-            :data="filteredTags"
-            autocomplete
-            field="label"
-            :placeholder="allPersons.some(cat => cat.persons.length > 0) ? 'Catherine' : 'Elargir les critères'"
-            icon="fas fa-search"
-            clearable
-            group-field="role_id"
-            group-options="persons"
-            @typing="getFilteredTags"
-          ><!-- @typing="getFilteredTags"-->
-            <template #selected="props">
-              {{ props.tags.label }}
-            </template>
-          </b-taginput>
-        </b-field>
-        <div>
+        <div
+          class="row is-flex is-justify-content-space-between suggestions-section-persons"
+          v-for="person in sortSuggestions()"
+          :key="person.label + person.role_id"
+        >
+          <div
+            @click="searchSuggestion(person)"
+          >
+            <span id="tag_flag">
+              {{ person.role_id === 1 ? "EXP" : person.role_id === 2 ? "DEST" : "CIT" }}
+            </span>
+            <span>
+              {{ person.label }}
+            </span>
+          </div>
+          <span>
+            {{ person.count }}
+          </span>
+        </div>
+        <button @click="function() {showMore = !showMore; sortSuggestions()}">{{ showMore ? "Show less" : "Show more" }}</button>
+      </div>
+        <!--<div>
           <span v-if="tags.length >0 ">filtres actifs</span>
           <div
             v-for="tag in tags.filter(pl => (pl.role_id === 1))"
@@ -84,7 +85,7 @@
             </b-tag>
           </div>
         </div>
-      </div>
+      </div>-->
       <!-- Display the Tags array :<pre style="max-height: 400px"><b>Tags:</b>{{ tags }}</pre> -->
     </section>
   </div>
@@ -97,71 +98,17 @@ import {value} from "lodash/seq";
 export default {
   data() {
     return {
-      //selectOutside: false,
-      tempfilteredTags: [],
-      //isSelectOnly: false,
-      //tags: [],
-      facetText: "",
-      selected: null,
-      init: false,
+      showMore: false,
     };
   },
   computed: {
     ...mapState("persons", {allPersons: "persons_roles"}),
-    ...mapState("search", ["selectedPersonFrom","selectedPersonTo","selectedPersonCited"]),
-    tags: {
-      get: function () {
-        return [...this.selectedPersonFrom, ...this.selectedPersonTo, ...this.selectedPersonCited];
-      },
-      set: function (value) {
-        console.log("set tags value", value);
-              console.log('this.tags : ', value)
-      if (value.length > 0) {
-        if (value.filter(pers => (pers.role_id === 1))) {
-          this.setSelectedPersonFrom(value.filter(pers => (pers.role_id === 1)));
-        }
-        if (value.filter(pers => (pers.role_id === 2))) {
-          //console.log('this.tags.filter(pers => (pers.role_id === 2' , this.tags.filter(pers => (pers.role_id === 2)))
-          this.setSelectedPersonTo(value.filter(pers => (pers.role_id === 2)));
-        }
-        if (value.filter(pers => (pers.role_id === 3))) {
-          this.setSelectedPersonCited(value.filter(pers => (pers.role_id === 3)));
-        }
-        console.log("Persons Watch Tags length>0 this.performSearch")
-        this.performSearch();
-
-      } else {
-        if (this.init && !value) {
-          console.log("Persons Watch Tags length=0 but no Selections in Persons & Places : no action")
-          this.init = false;
-        } else {
-          console.log("Persons Watch Tags length=0 this.performSearch")
-          this.performSearch();
-        }
-      }
-        return value
-      },
-    },
-    filteredTags: {
-      get: function (value) {
-        console.log("get filteredTags value", value)
-        return this.tempfilteredTags;
-      },
-      set: function (value) {
-        console.log("set filteredTags value", value)
-        return this.tempfilteredTags
-      }
-    }
+    ...mapState("search", ["selectedPersonFrom","selectedPersonTo","selectedPersonCited", "selectedPlaceFrom", "selectedPlaceTo","selectedPlaceCited"]),
   },
-  watch: {
-    /*selectedPersonFrom() {
-      console.log('watch selectedPersonFrom : ', this.selectedPersonFrom);
-      this.init = true
-      this.tags = [...this.selectedPersonFrom, ...this.selectedPersonTo, ...this.selectedPersonCited];
-    },*/
-    /*async tags(newValue, oldValue) {
+  /*watch: {
+    async tags(newValue, oldValue) {
       console.log('this.tags : ', newValue, oldValue)
-      if (this.tags.length > 0 && !this.init) {
+      if (this.tags.length > 0) {
         if (this.tags.filter(pers => (pers.role_id === 1))) {
           this.setSelectedPersonFrom(this.tags.filter(pers => (pers.role_id === 1)));
         }
@@ -184,46 +131,49 @@ export default {
           this.performSearch();
         }
       }
-    },*/
-  },
+    },
+  },*/
   created() {
     //await this.fetchAll();
     this.init = true;
     //this.tags = [...this.selectedPersonFrom, ...this.selectedPersonTo, ...this.selectedPersonCited];
+    console.log("Suggestions created this.allPersons",this.allPersons)
+    this.sortSuggestions()
   },
   methods: {
     value,
-    ...mapActions("persons", ["fetchAll"]),
-    ...mapActions("search", ["setSelectedPersonFrom", "setSelectedPersonTo","setSelectedPersonCited", "performSearch"]),
-
-    /*async tags(newValue, oldValue) {
-      console.log('this.tags : ', newValue, oldValue)
-      if (this.tags.length > 0 && !this.init) {
-        if (this.tags.filter(pers => (pers.role_id === 1))) {
-          this.setSelectedPersonFrom(this.tags.filter(pers => (pers.role_id === 1)));
-        }
-        if (this.tags.filter(pers => (pers.role_id === 2))) {
-          //console.log('this.tags.filter(pers => (pers.role_id === 2' , this.tags.filter(pers => (pers.role_id === 2)))
-          this.setSelectedPersonTo(this.tags.filter(pers => (pers.role_id === 2)));
-        }
-        if (this.tags.filter(pers => (pers.role_id === 3))) {
-          this.setSelectedPersonCited(this.tags.filter(pers => (pers.role_id === 3)));
-        }
-        console.log("Persons Watch Tags length>0 this.performSearch")
-        this.performSearch();
-
+    //...mapActions("persons", ["fetchAll"]),
+    ...mapState("search", ["currentQuery"]),
+    ...mapActions("search", ["setSelectedPersonFrom", "setSelectedPersonTo","setSelectedPersonCited", "setSelectedPlaceFrom", "setSelectedPlaceTo", "setSelectedPlaceCited", "resetSearchState", "performSearch"]),
+    sortSuggestions() {
+      let personsSuggestions = [...new Set([...this.allPersons[0]['persons'] ,...this.allPersons[1]['persons'], ...this.allPersons[2]['persons']])];
+        console.log("personsSuggestions in SUGGESTIONS compo", personsSuggestions);
+      if (this.showMore) {
+        return personsSuggestions.sort(
+            (person_x, person_y) => (person_x.count > person_y.count) ? -1 : 1).slice(0, 20)
       } else {
-        if (this.init && !newValue && !oldValue) {
-          console.log("Persons Watch Tags length=0 but no Selections in Persons & Places : no action")
-          this.init = false;
-        } else {
-          console.log("Persons Watch Tags length=0 this.performSearch")
-          this.performSearch();
-        }
+        return personsSuggestions.sort(
+            (person_x, person_y) => (person_x.count > person_y.count) ? -1 : 1).slice(0, 5)
       }
-    },*/
-    getFilteredTags(text) {
-      console.log('this.allPersons : ', this.allPersons, text)
+    },
+    searchSuggestion (person) {
+      console.log("searchSuggestion : ", person)
+      if (person.role_id === 1) {
+        this.resetSearchState();
+        this.setSelectedPersonFrom([person]);
+      }
+      if (person.role_id === 2) {
+        this.resetSearchState();
+        this.setSelectedPersonTo([person]);
+      }
+      if (person.role_id === 3) {
+        this.resetSearchState();
+        this.setSelectedPersonCited([person]);
+      }
+      this.performSearch()
+    },
+    /*getFilteredTags(text) {
+      console.log('this.allPersons : ', this.allPersons)
       console.log('Object.values(this.allPersons) : ', Object.values(this.allPersons))
       const personsFromFiltered = this.allPersons[0].persons.filter((option) => {
         return (
@@ -258,13 +208,13 @@ export default {
         return a.label.toLowerCase().localeCompare(b.label.toLowerCase())
       });
 
-      this.tempfilteredTags = [
+      this.filteredTags = [
           {role_id: "Expéditeur", persons : personsFromFiltered},
           {role_id: "Destinataire", persons: personsToFiltered},
           {role_id: "Personne citée", persons: personsCitedFiltered}
       ];
       //console.log('personsFromFiltered : ', personsFromFiltered)
-      console.log('tempfilteredTags : ', this.tempfilteredTags)
+      console.log('filteredTags : ', this.filteredTags)
     },
     removeTag(tag) {
       if (tag) {
@@ -284,7 +234,7 @@ export default {
           this.tags = this.tags.filter(pers => (pers.role_id === 1) || (pers.role_id === 2) || (pers.role_id === 3 && pers.person_id !== tag.person_id))
         }
       }
-    }
+    }*/
   },
 };
 </script>
@@ -334,5 +284,23 @@ div.dropdown-item {
 }
 i {
   color: rgba(140, 140, 140) !important;
+}
+.suggestions-section-header {
+  font-family: $family-primary;
+  font-size: 16px;
+  color: #C00055;
+  font-weight: 600;
+  text-transform: uppercase;
+  border-bottom: solid 1px #FDB3CC;
+}
+#tag_flag {
+  font-size: xx-small;
+  font-weight: bolder;
+  color: white;
+  background-color: rgba(140, 140, 140) !important;
+  border-radius: 3px;
+  padding: 2px;
+  display: inline-flex;
+  align-items: center;
 }
 </style>

@@ -102,6 +102,11 @@
         <collection-search-box />
       </section>
 
+      <section>
+        <suggestions />
+      </section>
+
+
       <!--<div class="divider is-left">Dates de temps</div>
       <section class="date-section">
         <b-field label="Date de rédaction" grouped>
@@ -359,6 +364,7 @@ import { mapState, mapActions } from "vuex";
 import CollectionSearchBox from "@/components/CollectionSearchBox";
 import PersonSearchBox from "@/components/PersonSearchBox.vue";
 import PlaceSearchBox from "@/components/PlaceSearchBox.vue";
+import Suggestions from "@/components/Suggestions.vue";
 //import { templates, labels } from "@/store/modules/search";
 
 export default {
@@ -368,6 +374,7 @@ export default {
     CollectionSearchBox,
     PersonSearchBox,
     PlaceSearchBox,
+    Suggestions
   },
   data() {
     return {
