@@ -770,8 +770,6 @@ export default {
         set: function (newValue, oldValue) {
           newValue = parseInt(newValue)
           if (newValue && newValue !== oldValue) {
-            console.log("set: function (newValue, oldValue)", newValue, oldValue)
-            console.log("if (newValue && newValue !== oldValue) test", newValue && newValue !== oldValue)
             this.setSorts(this.sortingPriority)
             this.p = newValue
             this.setNumPage(newValue)
