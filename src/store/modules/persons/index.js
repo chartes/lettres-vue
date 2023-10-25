@@ -416,7 +416,7 @@ const actions = {
       //commit('SET_LOADING_STATUS', true);
 
       /* =========== filters =========== */
-      let published = false;
+      let published = '';
       let query =  state.searchTerm  || '***' //`collections.id:${state.selectedCollectionId}`
 
       if (!rootState.user.current_user){
