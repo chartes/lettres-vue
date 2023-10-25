@@ -453,7 +453,7 @@ const actions = {
         commit('SET_LOADING_STATUS', true);
     
         /* =========== filters =========== */
-        let published = false;
+        let published = '';
         let query =  state.searchTerm ||  '***' ; //`collections.id:${state.selectedCollectionId}`state.placenamesSearchResults.map(p => `id:${p.id}`).join(' OR ') ||
     
     
