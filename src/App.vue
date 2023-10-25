@@ -17,9 +17,11 @@ export default {
   },
   async created() {
     await this.getDocumentsTotal();
+    await this.fetchAll();
   },
   methods: {
     ...mapActions("search", ["getDocumentsTotal"]),
+    ...mapActions("collections", ["fetchAll"])
   },
 };
 </script>
