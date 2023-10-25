@@ -27,6 +27,9 @@ const getIndex = domNode => {
 let Inline = Quill.import('blots/inline');
 
 class NoteBlot extends Inline {
+  deleteAt() {
+    return false
+  }
   static create(value) {
     console.log ("NoteBlot create init value : ", value)
     let node = super.create();
