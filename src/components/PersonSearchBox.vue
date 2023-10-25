@@ -37,7 +37,7 @@
             :key="tag.label"
             style="cursor: pointer"
             class="is-flex mb-1"
-          >
+          ><!-- check why key is label, id not available ? -->
             <span id="tag_flag">EXP</span>
             <b-tag
               id="tag_label"
@@ -101,7 +101,7 @@ export default {
       tempfilteredTags: [],
       //isSelectOnly: false,
       //tags: [],
-      facetText: "",
+      facetText: "",//check if used
       selected: null,
       init: false,
     };
@@ -154,14 +154,9 @@ export default {
     }
   },
   watch: {
-    /*selectedPersonFrom() {
-      console.log('watch selectedPersonFrom : ', this.selectedPersonFrom);
-      this.init = true
-      this.tags = [...this.selectedPersonFrom, ...this.selectedPersonTo, ...this.selectedPersonCited];
-    },*/
     /*async tags(newValue, oldValue) {
       console.log('this.tags : ', newValue, oldValue)
-      if (this.tags.length > 0 && !this.init) {
+      if (this.tags.length > 0) {
         if (this.tags.filter(pers => (pers.role_id === 1))) {
           this.setSelectedPersonFrom(this.tags.filter(pers => (pers.role_id === 1)));
         }
@@ -196,32 +191,6 @@ export default {
     ...mapActions("persons", ["fetchAll"]),
     ...mapActions("search", ["setSelectedPersonFrom", "setSelectedPersonTo","setSelectedPersonCited", "performSearch"]),
 
-    /*async tags(newValue, oldValue) {
-      console.log('this.tags : ', newValue, oldValue)
-      if (this.tags.length > 0 && !this.init) {
-        if (this.tags.filter(pers => (pers.role_id === 1))) {
-          this.setSelectedPersonFrom(this.tags.filter(pers => (pers.role_id === 1)));
-        }
-        if (this.tags.filter(pers => (pers.role_id === 2))) {
-          //console.log('this.tags.filter(pers => (pers.role_id === 2' , this.tags.filter(pers => (pers.role_id === 2)))
-          this.setSelectedPersonTo(this.tags.filter(pers => (pers.role_id === 2)));
-        }
-        if (this.tags.filter(pers => (pers.role_id === 3))) {
-          this.setSelectedPersonCited(this.tags.filter(pers => (pers.role_id === 3)));
-        }
-        console.log("Persons Watch Tags length>0 this.performSearch")
-        this.performSearch();
-
-      } else {
-        if (this.init && !newValue && !oldValue) {
-          console.log("Persons Watch Tags length=0 but no Selections in Persons & Places : no action")
-          this.init = false;
-        } else {
-          console.log("Persons Watch Tags length=0 this.performSearch")
-          this.performSearch();
-        }
-      }
-    },*/
     getFilteredTags(text) {
       console.log('this.allPersons : ', this.allPersons, text)
       console.log('Object.values(this.allPersons) : ', Object.values(this.allPersons))
@@ -272,7 +241,7 @@ export default {
           //console.log('Removing array_from : ', tag)
           this.setSelectedPersonFrom(this.tags.filter(pers => (pers.role_id === 1 && pers.label !== tag.label)));
           this.tags = this.tags.filter(pers => (pers.role_id === 1 && pers.label !== tag.label) || (pers.role_id === 2) || (pers.role_id === 3))
-        }
+        }//check why label, id not available ?
         if (tag.role_id === 2) {
           //console.log('Removing array_to : ', tag)
           this.setSelectedPersonTo(this.tags.filter(pers => (pers.role_id === 2 && pers.person_id !== tag.person_id)));

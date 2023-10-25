@@ -7,14 +7,29 @@
       >
         <div class="document-list-header is-flex is-justify-content-space-between is-align-items-center">
           <div class="is-inline-block">
-            <div class="results-count">
+            <div
+              v-if="loadingStatus"
+              class="results-count"
+            >
               <span
-                v-if="loadingStatus"
                 class="total-count fas fa-spinner fa-pulse">
-              </span>
-              <span
-                v-else
-                class="total-count">{{ totalCount }}</span> résultat(s)
+              </span> résultat(s)
+            </div>
+            <div
+              v-else-if="loadingTable"
+              class="results-count"
+            >
+              <span class="total-count">
+
+              </span> Veuillez lancer la recherche
+            </div>
+            <div
+              v-else
+              class="results-count"
+            >
+              <span class="total-count">
+                {{ totalCount }}
+              </span> résultat(s)
             </div>
           </div>
           <div class="is-inline-block px-1">
@@ -28,6 +43,7 @@
                   <input
                     class="switch-button-checkbox"
                     type="checkbox"
+                    :disabled="loadingTable"
                   >
                   <label
                     class="switch-button-label"
@@ -357,7 +373,7 @@
         :class="tableCssClass"
         :data="tableData"
 
-        :loading="loadingStatus"
+        :loading="loadingStatus || loadingTable"
         backend-pagination
         :total="totalCount"
         :per-page="pageSize"
@@ -741,7 +757,7 @@ export default {
         console.log('SET value', value);
         if (this.sorts !== value) {
             this.setSorts(value)
-            this.performSearch(this.isFulltext)
+            this.performSearch()
             this.loadAsyncData()
         }
       }
@@ -754,10 +770,10 @@ export default {
         set: function (newValue, oldValue) {
           newValue = parseInt(newValue)
           if (newValue && newValue !== oldValue) {
+            this.setSorts(this.sortingPriority)
             this.p = newValue
             this.setNumPage(newValue)
-            this.setSorts(this.sortingPriority)
-            this.performSearch(this.isFulltext)
+            this.performSearch()
             this.loadAsyncData()
           }
         }
@@ -783,6 +799,16 @@ export default {
     async documents() {
       await this.loadAsyncData()
     },
+    searchType(newValue, oldValue) {
+      if (newValue != oldValue) {
+        this.loadingTable = true
+      }
+    },
+    searchTerm(newValue, oldValue) {
+      if (newValue != oldValue) {
+        this.loadingTable = true
+      }
+    }
   },
   async created() {
     this.setSorts([{field: 'creation', order: 'asc'}]);
@@ -845,7 +871,7 @@ export default {
     cleanHTML(text) {
       // remove notes from Titles in search results table
       if (text && text.length > 0) {
-        return text.replace(/<a.*\/a>/ig,'');
+        return text.replace(/<a[^>]+>[^<]+<\/a>/ig,'');
       }
     },
     highlight(text, type) {
@@ -885,7 +911,7 @@ export default {
       // reset local backend sorting
       if(this.backendSortingEnabled) {
         this.sortingPriority = []
-        this.performSearch(this.isFulltext)
+        this.performSearch()
         this.loadAsyncData()
       }
     },
@@ -901,7 +927,7 @@ export default {
           this.sortingPriority = [{ field: "creation", order: "asc" }];
           console.log("Default sorting new Priority", newPriority, this.sortingPriority);
       }
-      this.performSearch(this.isFulltext)
+      this.performSearch()
       this.loadAsyncData()
     },
 
@@ -937,14 +963,13 @@ export default {
           this.setSorts([])
         }
       
-      this.performSearch(this.isFulltext)
+      this.performSearch()
       this.loadAsyncData()
     },
 
     async loadAsyncData() {
       this.loadingTable = true
       if (this.documents) {
-        console.log('this.included : ', this.included);
         const phr = [];
         this.tableData = await Promise.all(this.documents.map(async d => {
         return {
@@ -987,7 +1012,7 @@ export default {
       }
       if (this.sorts[0].field !== 'creation' || this.sorts[0].order !== 'asc') {
         this.setSorts([{field: 'creation', order: 'asc'}]);
-        this.performSearch(this.isFulltext);
+        this.performSearch();
         this.loadAsyncData();
       }
     },
@@ -996,7 +1021,7 @@ export default {
     },
     toggleScope() {
       if (this.searchTerm) {
-        this.performSearch(this.isFulltext);
+        this.performSearch();
         this.loadAsyncData();
       }
     },

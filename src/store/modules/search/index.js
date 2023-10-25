@@ -426,7 +426,7 @@ const actions = {
     let searchType = 'paratext';
 
 
-    if (state.selectedCollections && state.selectedCollections.length > 1) {
+    /*if (state.selectedCollections && state.selectedCollections.length > 1) {
       let selectedCollectionsIds = state.selectedCollections.map((coll) => coll.id);
       console.log("selectedCollectionsIds", selectedCollectionsIds)
       let selectedCollectionsWithChildren = store.getters["collections/flattenedCollectionsTree"](selectedCollectionsIds);
@@ -445,7 +445,31 @@ const actions = {
         query = '' + selectedCollectionsWithChildren.map(c => `(collections.id:${c.id})`).join(' OR ');
       }
       console.log('collection query', query);
+    }*/
+    //new
+    let collectionsSelectedFacets = [];
+    if (state.selectedCollections.length > 0) {
+      console.log('selectedCollections', state.selectedCollections);
+      let selectedCollectionsIds = state.selectedCollections.map((coll) => coll.id);
+      console.log("selectedCollectionsIds", selectedCollectionsIds);
+      let selectedCollectionsWithChildren = store.getters["collections/flattenedCollectionsTree"](selectedCollectionsIds);
+      console.log("selectedCollectionsWithChildren", selectedCollectionsWithChildren)
+      state.selectedCollections.forEach((coll) => {
+        let selectedLabel = coll.title
+        collectionsSelectedFacets.push(selectedLabel)
+      })
+      selectedCollectionsWithChildren.forEach((coll) => {
+        let selectedLabel = coll.title
+        collectionsSelectedFacets.push(selectedLabel)
+      })
+      collectionsSelectedFacets = [...new Set(collectionsSelectedFacets)]
+      console.log('query with collectionsSelectedFacets', collectionsSelectedFacets);
+    } else {
+      console.log('query without selectedCollections')
     }
+    let collectionsFacets = {"collections": collectionsSelectedFacets.length > 0 ? collectionsSelectedFacets : ''}
+
+
 
     if (state.searchTerm && state.searchTerm.length > 0 && state.searchType === 'isFullTextSearch') {
       highlights = true
@@ -738,7 +762,7 @@ const actions = {
       const includes = toInclude.length ? `&include=${[toInclude].join(',')}` : '';
       
       const http = http_with_auth(rootState.user.jwt);
-      const response = await http.get(`/search?query=${query}&published=${published}&personsfacets=${JSON.stringify(personsFacets)}&placesfacets=${JSON.stringify(placesFacets)}&searchtype=${searchType}${filters}${includes}&sort=${sorts}&highlight=${highlights}&page[size]=${state.pageSize}&page[number]=${state.numPage}&without-relationships`);
+      const response = await http.get(`/search?query=${query}&published=${published}&collectionsfacets=${encodeURIComponent(JSON.stringify(collectionsFacets))}&personsfacets=${JSON.stringify(personsFacets)}&placesfacets=${JSON.stringify(placesFacets)}&searchtype=${searchType}${filters}${includes}&sort=${sorts}&highlight=${highlights}&page[size]=${state.pageSize}&page[number]=${state.numPage}&without-relationships`);
       //const response = await http.get(`/search?query=${query}${filters}${includes}&sort=${sorts}&page[size]=${state.pageSize}&page[number]=${state.numPage}`);
       const {data, links, meta, included} = response.data
       /*const hyphensToUnderscore = (key) => key.replace("-", "_");
@@ -803,7 +827,6 @@ const actions = {
         }*/
       /*}));*/
       console.log('datawithPersons', datawithPersons)
-      console.log('included', included)
 
       if (type !== 'simple' && (query !== state.currentQuery || filters !== state.currentFilters))
       {
@@ -825,7 +848,6 @@ const actions = {
 
         let CollectionsFacets = []
         response.data.buckets.collections.forEach((facet_coll) => {
-          console.log("Object.values(rootState.collections.collectionsById).filter(coll => (coll.title === facet_coll.key))", Object.values(rootState.collections.collectionsById).filter(coll => (coll.title === facet_coll.key)))
           let CollectionFacet = Object.values(rootState.collections.collectionsById).filter(coll => (coll.title === facet_coll.key))[0]
           CollectionsFacets.push(CollectionFacet)
         })
@@ -833,10 +855,11 @@ const actions = {
 
         let CollectionsFacetsParents = []
         CollectionsFacets.forEach((facet_coll) => {
-          console.log("CollectionFacetParents", facet_coll)
-          if (facet_coll.parent) {
-            let CollectionFacetParent = Object.values(rootState.collections.collectionsById).filter(coll => (coll.id === facet_coll.parent))[0]
+          let loop_coll = facet_coll
+          while(loop_coll.parent !== null) {
+            let CollectionFacetParent = Object.values(rootState.collections.collectionsById).filter(coll => (coll.id === loop_coll.parent))[0]
             CollectionsFacetsParents.push(CollectionFacetParent)
+            loop_coll = CollectionFacetParent
           }
         })
         console.log("CollectionsFacetsParents", CollectionsFacetsParents);
@@ -1258,10 +1281,9 @@ const actions = {
 
 const getters = {
   totalPageNum: (state) => {
-      console.log("total", state.documents.length, state.totalCount, state.pageSize,  parseInt(Math.ceil(state.totalCount / state.pageSize)))
+      //console.log("totalPageNum totals", state.documents.length, state.totalCount, state.pageSize,  parseInt(Math.ceil(state.totalCount / state.pageSize)))
       return state.documents.length === 0 ? 1 : parseInt(Math.ceil(state.totalCount / state.pageSize))
   }
-
 };
 
 const searchModule = {
