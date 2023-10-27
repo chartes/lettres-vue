@@ -162,7 +162,8 @@ const state = {
   searchTerm: null,
   searchType: null,
 
-  sorts: [{field: 'creation', order: 'asc'}],
+  //sorts: [{field: 'creation', order: 'asc'}],
+  sorts: [],
 
   creationDateFrom: {
     ...cloneDeep(creationDateTemplate),
@@ -207,7 +208,8 @@ const initial_State = {
   searchTerm: null,
   searchType: null,
 
-  sorts: [{field: 'creation', order: 'asc'}],
+  //sorts: [{field: 'creation', order: 'asc'}],
+  sorts: [],
 
   creationDateFrom: {
     ...cloneDeep(creationDateTemplate),
@@ -472,7 +474,7 @@ const actions = {
 
 
     if (state.searchTerm && state.searchTerm.length > 0 && state.searchType === 'isFullTextSearch') {
-      highlights = true
+      //highlights = true
       searchType = 'fulltext'
       if (query.length === 0) {
         query = `(${state.searchTerm})`
@@ -480,7 +482,7 @@ const actions = {
         query = `(${query} AND (${state.searchTerm})`
       }
     } else if (state.searchTerm && state.searchTerm.length > 0 && state.searchType === 'isParatextSearch') {
-      highlights = false
+      //highlights = false;
       if (query.length === 0) {
         query = `(${state.searchTerm})`
       } else {
@@ -489,9 +491,10 @@ const actions = {
     }
 
 
-    if (!query || query.length === 0) {
+    /*if (!query || query.length === 0) {
       query = '*'
-    }
+    }*/
+
     //old
     let place_query_from='';
     //new
@@ -661,7 +664,8 @@ const actions = {
 
     /* =========== sorts ===========*/
     let sorts = state.sorts.map(s => `${s.order === 'desc' ? '-' : ''}${s.field}`)
-    sorts = sorts.length ? sorts.join(',') : 'creation'
+    //sorts = sorts.length ? sorts.join(',') : 'creation'
+    sorts = sorts.length ? sorts.join(',') : ''
 
     /* =========== date ranges ===========*/
     const cdf = state.creationDateFrom.selection
@@ -704,7 +708,7 @@ const actions = {
           } else {
             upperOp = 'lte'
           }
-          creationDateRange = `&range[creation]=gte:${cdfFormatted},${upperOp}:${upperBound}`
+          creationDateRange = `&range[creation_range]=gte:${cdfFormatted},${upperOp}:${upperBound}`
         } else {
           // single date (from)
           //console.log('single date (from)')
@@ -722,7 +726,7 @@ const actions = {
             upperOp = 'lte'
           }*/
           //creationDateRange = `&range[creation]=gte:${cdfFormatted},${upperOp}:${upperBound}`
-          creationDateRange = `&range[creation]=gte:${cdfFormatted}`
+          creationDateRange = `&range[creation_range]=gte:${cdfFormatted}`
         }
       } else {
         if (cdtFormatted) {
@@ -742,7 +746,7 @@ const actions = {
             upperOp = 'lte'
           }*/
           //creationDateRange = `&range[creation]=gte:${cdfFormatted},${upperOp}:${upperBound}`
-          creationDateRange = `&range[creation]=${upperOp}:${upperBound}`
+          creationDateRange = `&range[creation_range]=${upperOp}:${upperBound}`
         }
       }
     } catch (e) {
@@ -767,33 +771,92 @@ const actions = {
       /*const hyphensToUnderscore = (key) => key.replace("-", "_");
       console.log('hyphensToUnderscore : ', replaceAllObjKeys(cloneDeep(data), hyphensToUnderscore))
       const phr = [];*/
-      const datawithPersons = data.map(({
-        id,
-        attributes: {title, argument, creation, creation_not_after, creation_label, is_published, transcription, senders, recipients, location_dates_from, location_dates_to},
-        relationships
-      }) => ({
-        id,
-        title,
-        argument,
-        creation,
-        creation_not_after,
-        creation_label,
-        is_published,
-        transcription,
-        sender: senders.map(sender => {
-          return {...sender, role: 1};
+      let datawithPersons = []
+      if (data.filter(
+          function (d) {
+            return Object.hasOwn(d, 'score');
+          }
+          ).length > 0) {
+        datawithPersons = data.map(({
+                                            id,
+                                            score,
+                                            attributes: {
+                                              title,
+                                              argument,
+                                              creation,
+                                              creation_not_after,
+                                              creation_label,
+                                              is_published,
+                                              transcription,
+                                              senders,
+                                              recipients,
+                                              location_dates_from,
+                                              location_dates_to
+                                            },
+                                            relationships
+                                          }) => ({
+          id,
+          score: parseFloat(score).toFixed(2),
+          title,
+          argument,
+          creation,
+          creation_not_after,
+          creation_label,
+          is_published,
+          transcription,
+          sender: senders.map(sender => {
+            return {...sender, role: 1};
           }),
-        recipients: recipients.map(recipient => {
-          return {...recipient, role: 2};
+          recipients: recipients.map(recipient => {
+            return {...recipient, role: 2};
           }),
-        origin: location_dates_from.map(origin => {
-          return {...origin, role: 1};
+          origin: location_dates_from.map(origin => {
+            return {...origin, role: 1};
           }),
-        destinations: location_dates_to.map(destination => {
-          return {...destination, role: 2};
+          destinations: location_dates_to.map(destination => {
+            return {...destination, role: 2};
           })
-      }));
-
+        }));
+      } else {
+        datawithPersons = data.map(({
+          id,
+          attributes: {
+            title,
+            argument,
+            creation,
+            creation_not_after,
+            creation_label,
+            is_published,
+            transcription,
+            senders,
+            recipients,
+            location_dates_from,
+            location_dates_to
+          },
+          relationships
+        }) => ({
+          id,
+          title,
+          argument,
+          creation,
+          creation_not_after,
+          creation_label,
+          is_published,
+          transcription,
+          sender: senders.map(sender => {
+            return {...sender, role: 1};
+          }),
+          recipients: recipients.map(recipient => {
+            return {...recipient, role: 2};
+          }),
+          origin: location_dates_from.map(origin => {
+            return {...origin, role: 1};
+          }),
+          destinations: location_dates_to.map(destination => {
+            return {...destination, role: 2};
+          })
+        }));
+      }
 
 
       /*const datawithPersons = replaceAllObjKeys(cloneDeep(data), hyphensToUnderscore).map(({
@@ -832,13 +895,6 @@ const actions = {
         // fetch collections associated with search criteriae :
         if (Object.keys(rootState.collections.collectionsById).length === 0) {
           console.log("loading collectionsById")
-          await store.dispatch("collections/fetchAll").then(
-              (response) => {
-              }
-          )
-        }
-        if (Object.keys(rootState.collections.collectionsById).length === 0) {
-          console.log("loading collectionsById check")
           await store.dispatch("collections/fetchAll").then(
               (response) => {
               }
