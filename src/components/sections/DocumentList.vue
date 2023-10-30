@@ -71,7 +71,8 @@
                   name="tri"
                 >
                   <option
-                      :value="[{field: '', order: 'asc'}]"
+                    v-show="searchTerm && searchTerm.length"
+                    :value="[{field: 'score', order: 'asc'}]"
                   >
                     Score
                   </option>
@@ -137,14 +138,14 @@
                 </select>
               </div>
               <span
-                v-if="sortingPriority.length > 0 && sortingPriority[0].order === 'asc' && sortingPriority[0].field !== ''"
+                v-if="sortingPriority.length > 0 && sortingPriority[0].order === 'asc' && sortingPriority[0].field !== 'score'"
                 class="icon button arrow-up"
                 @click="sortPressed(sortingPriority[0].field, 'desc', 'escape')"
               >
               </span>
               <span
                 v-else
-                v-show="sortingPriority.length > 0 && sortingPriority[0].field !== ''"
+                v-show="sortingPriority.length > 0 && sortingPriority[0].field !== 'score'"
                 class="icon button arrow-down"
                 @click="sortPressed(sortingPriority[0].field, 'asc', 'escape')"
               >
@@ -271,7 +272,7 @@
                     name="tri"
                   >
                     <option
-                      :value="[{field: '', order: 'asc'}]"
+                      :value="[{field: 'score', order: 'asc'}]"
                     >
                       Score
                     </option>
@@ -535,7 +536,7 @@
           </template>
         </b-table-column>
         <b-table-column
-          field="senders.label.keyword"
+          field="senders.label.keyword_sort"
           label="Expéditeur(s)"
           :th-attrs="columnThAttrs"
           :td-attrs="columnTdAttrs"
@@ -609,7 +610,7 @@
         </b-table-column>
 
         <b-table-column
-          field="location_dates_from.label.keyword"
+          field="location_dates_from.label.keyword_sort"
           label="Lieu d'expédition"
           :th-attrs="columnThAttrs"
           :td-attrs="columnTdAttrs"
@@ -646,7 +647,7 @@
         </b-table-column>
 
         <b-table-column
-          field="location_dates_to.label.keyword"
+          field="location_dates_to.label.keyword_sort"
           label="Lieu de destination"
           :th-attrs="columnThAttrs"
           :td-attrs="columnTdAttrs"
@@ -744,7 +745,21 @@ export default {
       get: function() {
         console.log('sortingPriority GET');
         console.log('this.sorts', this.sorts);
-        return this.sorts;
+        if (this.isActive) {
+          if (this.sorts.length <= 1) {
+            return this.sorts
+          } else {
+            console.log('return this.sorts.filter(s => s.field !== \'score\') : ', this.sorts.filter(s => s.field !== 'score'))
+            return this.sorts.filter(s => s.field !== 'score')
+          }
+        } else {
+          if (this.sorts.length <= 1) {
+            return this.sorts
+          } else {
+            console.log('return this.sorts[0] : ', this.sorts[0])
+            return [this.sorts[0]]
+          }
+        }
         /*if (this.sorts) {
             console.log('sortingPriority GET')
             console.log('this.sorts', this.sorts)
@@ -765,8 +780,16 @@ export default {
         console.log('sortingPriority SET');
         console.log('this.sorts', this.sorts);
         console.log('SET value', value);
-        if (this.sorts !== value) {
+        if (value.length && this.sorts !== value) {
             this.setSorts(value)
+            this.performSearch()
+            this.loadAsyncData()
+        } else if (value.length === 0 && this.searchTerm && this.searchTerm.length > 0) {
+            this.setSorts([{field: 'score', order: 'asc'}])
+            this.performSearch()
+            this.loadAsyncData()
+        } else if (value.length === 0 && (!this.searchTerm || this.searchTerm.length === 0)) {
+            this.setSorts([{field: 'creation', order: 'asc'}])
             this.performSearch()
             this.loadAsyncData()
         }
@@ -816,7 +839,12 @@ export default {
     },
     searchTerm(newValue, oldValue) {
       if (newValue != oldValue) {
-        this.loadingTable = true
+        this.loadingTable = true;
+        if (newValue.length > 0) {
+          this.setSorts([{field: 'score', order: 'asc'}]);
+        } else {
+          this.setSorts([{field: 'creation', order: 'asc'}]);
+        }
       }
     }
   },
@@ -935,7 +963,8 @@ export default {
           console.log(newPriority, this.sortingPriority);
       } else {
           // default sorting on ascending creation date
-          this.sortingPriority = [{ field: "creation", order: "asc" }];
+          this.sortingPriority = this.searchTerm && this.searchTerm.length > 0 ? [{ field: "score", order: "asc" }] : [{ field: "creation", order: "asc" }];
+          this.setSorts(this.sortingPriority)
           console.log("Default sorting new Priority", newPriority, this.sortingPriority);
       }
       this.performSearch()
@@ -1040,11 +1069,11 @@ export default {
       } else {
         this.isActive = true;
       }
-      if (this.sorts[0].field !== 'creation' || this.sorts[0].order !== 'asc') {
+      /*if (this.sorts[0].field !== 'creation' || this.sorts[0].order !== 'asc') {
         this.setSorts([{field: 'creation', order: 'asc'}]);
         this.performSearch();
         this.loadAsyncData();
-      }
+      }*/
     },
     switchSearchScope() {
       this.isFulltext = !this.isFulltext

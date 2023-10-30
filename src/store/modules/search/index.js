@@ -162,8 +162,8 @@ const state = {
   searchTerm: null,
   searchType: null,
 
-  //sorts: [{field: 'creation', order: 'asc'}],
-  sorts: [],
+  sorts: [{field: 'creation', order: 'asc'}],
+  //sorts: [{field: '', order: 'asc'}],
 
   creationDateFrom: {
     ...cloneDeep(creationDateTemplate),
@@ -208,8 +208,8 @@ const initial_State = {
   searchTerm: null,
   searchType: null,
 
-  //sorts: [{field: 'creation', order: 'asc'}],
-  sorts: [],
+  sorts: [{field: 'creation', order: 'asc'}],
+  //sorts: [{field: '', order: 'asc'}],
 
   creationDateFrom: {
     ...cloneDeep(creationDateTemplate),
@@ -665,7 +665,14 @@ const actions = {
     /* =========== sorts ===========*/
     let sorts = state.sorts.map(s => `${s.order === 'desc' ? '-' : ''}${s.field}`)
     //sorts = sorts.length ? sorts.join(',') : 'creation'
-    sorts = sorts.length ? sorts.join(',') : ''
+    if (sorts.length === 1 && sorts[0] === 'score') {
+      sorts = ''
+    } else if (sorts.length > 1 && sorts.some(s => s === 'score')) {
+      sorts = sorts.filter(s => s !== 'score')
+      sorts = sorts.join(',')
+    } else {
+      sorts = sorts.length ? sorts.join(',') : ''
+    }
 
     /* =========== date ranges ===========*/
     const cdf = state.creationDateFrom.selection
