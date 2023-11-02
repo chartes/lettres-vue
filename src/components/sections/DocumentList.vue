@@ -673,7 +673,16 @@
         </b-table-column>
 
         <template #empty>
-          <div class="has-text-centered">
+          <div
+            v-if="errorStatus"
+            class="has-text-centered"
+          >
+            Une erreur s'est produite lors de la la recherche. Veuillez réessayer.
+          </div>
+          <div
+            v-else
+            class="has-text-centered"
+          >
             Aucun résultat
           </div>
         </template>
@@ -725,7 +734,7 @@ export default {
     };
   },
   computed: {
-    ...mapState("search", ["searchTerm", "searchType", "included", "documents", "loadingStatus", "numPage", "pageSize", "totalCount", "withStatus", "sorts"]),
+    ...mapState("search", ["searchTerm", "searchType", "included", "documents", "loadingStatus", "errorStatus", "numPage", "pageSize", "totalCount", "withStatus", "sorts"]),
     ...mapState("user", ["current_user"]),
     //...mapGetters("document", ["documentSender", "documentRecipients"]),
 
