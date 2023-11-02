@@ -191,6 +191,7 @@ const state = {
   pageSize: 30,
 
   loadingStatus: false,
+  errorStatus: false,
   documents: [],
   included: [],
   totalCount: 0,
@@ -237,6 +238,7 @@ const initial_State = {
   pageSize: 30,
 
   loadingStatus: false,
+  errorStatus: false,
   documents: [],
   included: [],
   totalCount: 0,
@@ -293,6 +295,9 @@ const mutations = {
   SET_LOADING_STATUS(state, s) {
     state.loadingStatus = s;
   },
+  SET_ERROR_STATUS(state, s) {
+    state.errorStatus = s;
+  },
   SET_SELECTED_COLLECTIONS(state, colls) {
     state.selectedCollections = colls;
   },
@@ -325,6 +330,12 @@ const mutations = {
     state.included = included
     state.links = links;
     state.totalCount = totalCount;
+  },
+  RESET_ALL (state) {
+    state.documents = [];
+    state.included = []
+    state.links = [];
+    state.totalCount = 0;
   },
 
 };
@@ -420,6 +431,7 @@ const actions = {
   },
   performSearch: debounce(async ({commit, state, rootState}, type) => {
     commit('SET_LOADING_STATUS', true);
+    commit('SET_ERROR_STATUS', false);
 
     /* =========== filters =========== */
     let query ='';
@@ -1327,6 +1339,8 @@ const actions = {
     } catch (reason) {
       console.warn('cant search:', reason);
       commit('SET_LOADING_STATUS', false);
+      commit('SET_ERROR_STATUS', true);
+      commit('RESET_ALL');
     }
    
   }, 500)
