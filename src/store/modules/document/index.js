@@ -737,6 +737,7 @@ const actions = {
     return http.get(`collections/${collId}`).then(r => {
       const collection = r.data.data;
       const dummy = makeDummyDocument(defaultData);
+      this.dispatch('document/resetDocumentState');
       commit('UPDATE_DOCUMENT', {data: dummy.data, included: [collection]});
     });
   }
