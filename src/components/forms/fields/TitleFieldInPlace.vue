@@ -15,6 +15,7 @@
           :tabindex="tabulationIndex"
           @change="inputChanged"
           @refresh-title="refreshTitle($event)"
+          @save="saveTitle()"
           @on-keyup-escape="cancelInput"
           @add-note="addNote($event)"
 
@@ -102,7 +103,7 @@ export default {
       type: Function,
     },
   },
-  emits: ["refresh-title"],
+  emits: ["refresh-title", "save-title"],
   computed: {
     saveButtonClass() {
       switch (this.status) {
@@ -163,6 +164,9 @@ export default {
     refreshTitle(evt) {
       console.log("TitleFieldInPlace / refreshTitle(evt)", evt)
       this.$emit("refresh-title",  evt)
+    },
+    saveTitle() {
+      this.$emit("save-title")
     },
   },
 };
