@@ -131,6 +131,7 @@
                         class="column"
                         @add-note="addNote($event)"
                         @refresh-title="refreshTitle($event)"
+                        @save-title="saveField('title', 'titleEditor')"
                       />
                       <document-languages
                         :editable="canEdit"
@@ -279,6 +280,7 @@
                         @add-person="addPerson"
                         @add-note="addNote"
                         @refresh-argument="refreshArgument($event)"
+                        @save-argument="saveField('argument', 'argumentEditor')"
                       />
                     </div>
                   </template>
@@ -321,6 +323,8 @@
                         @add-note="addNote"
                         @refresh-transcription="refreshTranscription($event)"
                         @refresh-address="refreshAddress($event)"
+                        @save-transcription="saveField('transcription', 'transcriptionEditor')"
+                        @save-address="saveField('address', 'addressEditor')"
                       />
                     </div>
                   </template>
@@ -1131,6 +1135,12 @@ export default {
       console.log("DocumentVue / refreshAddress(evt) or addressEditor", evt)
       this.addressEditor = evt
       this.addressContent = evt;
+    },
+    saveField(fieldName, attributeName) {
+        const attributes = {};
+        attributes[fieldName] = this[attributeName];
+        const data = { id: this.docId, type: "document", attributes };
+        this.$store.dispatch('document/save', data);
     },
     updateMiradorTopPosition() {
       const textView = document.getElementById("document-text-view");

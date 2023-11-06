@@ -35,6 +35,7 @@
           @add-note="addNote($event)"
           @refresh-title="refreshTitle($event)"
           @on-keyup-escape="cancelInput($event)"
+          @save-title="saveTitle()"
         />
       </header>
       <!-- // switch TitleFieldInPlace to RichTextEditor :
@@ -126,7 +127,7 @@ export default {
       default: "",
     },
   },
-  emits: ["add-note", "refresh-title"],
+  emits: ["add-note", "refresh-title", "save-title"],
   data() {
     return {
       titleStatus: "normal",
@@ -192,6 +193,9 @@ export default {
       console.log("DocumentTitle / refreshTitle(evt)", evt)
       this.$emit("refresh-title",  evt)
       this.titleContent = evt
+    },
+    saveTitle() {
+      this.$emit("save-title")
     },
     highlight(text) {
       // Split search terms (by space) if multiple

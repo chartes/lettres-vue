@@ -26,6 +26,7 @@
         @add-person="addPerson($event, 'argument')"
         @add-note="addNote($event)"
         @refresh-argument="refreshArgument($event)"
+        @save="saveArgument()"
         @on-keyup-escape="cancelInput($event)"
       >
         <editor-save-button
@@ -81,7 +82,7 @@ export default {
       default: "",
     }
   },
-  emits: ["add-place", "add-person", "add-note", "refresh-argument"],
+  emits: ["add-place", "add-person", "add-note", "refresh-argument", "save-argument"],
   data() {
     return {
       //editorEnabled: true,
@@ -140,6 +141,9 @@ export default {
       console.log("DocumentArgument / refreshArgument(evt)", evt);
       this.form = evt;
       this.$emit("refresh-argument", evt)
+    },
+    saveArgument() {
+      this.$emit('save-argument')
     },
     cleanHTML(text) {
       // remove notes from Titles in search results table

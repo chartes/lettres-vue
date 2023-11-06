@@ -102,7 +102,7 @@ export default {
     },
     options: { type: Object, default: () => {} },
   },
-  emits: ["add-place", "add-person", "add-note", "on-keyup-escape", "refresh-title", "refresh-transcription", "refresh-address", "refresh-argument"],
+  emits: ["add-place", "add-person", "add-note", "on-keyup-escape", "refresh-title", "refresh-transcription", "refresh-address", "refresh-argument", "save"],
   data() {
     return {
       debug: false,
@@ -122,7 +122,8 @@ export default {
       delta: null,
       customSubmitTextfieldForm: null,
       buttons: {},
-      showNoteActionForm: false
+      showNoteActionForm: false,
+      requireSave: false,
     };
   },
 
@@ -168,6 +169,10 @@ export default {
       console.log("watch", val)
       const range = this.editor.getSelection();
       this.editorContentElement.innerHTML = this.sanitize(val);
+      if (this.requireSave) {
+        this.$emit("save");
+        this.requireSave = false;
+      }
       Vue.nextTick(() => {
         if (range) {
           //console.log('setSelection', range.index)
@@ -565,6 +570,7 @@ export default {
       });
     },
     submitNoteActionForm(note) {
+      this.requireSave = true;
       console.log("RTE / submitNoteActionForm : note ", note)
       this.editor.format("note", {note: note});
       let formats = this.editor.getFormat();
@@ -572,6 +578,7 @@ export default {
       this.editor.setSelection(0, 0)
     },
     removeNoteActionForm() {
+      this.requireSave = true;
       this.editor.format("note", false);
       let formats = this.editor.getFormat();
       this.updateButtons(formats);
