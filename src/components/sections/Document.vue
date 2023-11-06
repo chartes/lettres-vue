@@ -529,7 +529,15 @@
             <note-actions
               title="Actions de notes"
               :input-data="noteInputData"
+              :title-editor="titleEditor ? titleEditor : titleContent"
+              :argument-editor="argumentEditor ? argumentEditor : argumentContent"
+              :transcription-editor="transcriptionEditor ? transcriptionEditor : transcriptionContent"
+              :address-editor="addressEditor ? addressEditor : addressContent"
               @add-note="addNote($event)"
+              @refresh-title="refreshTitle($event)"
+              @refresh-argument="refreshArgument($event)"
+              @refresh-transcription="refreshTranscription($event)"
+              @refresh-address="refreshAddress($event)"
               @close="
                 () => {
                   props.close();
