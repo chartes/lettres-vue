@@ -63,13 +63,19 @@
           >
             <!--v-if="!isActive && isFulltextSearch"-->
             <div class="control block is-flex is-align-items-center mb-0 sort-options">
-              <span>Tris</span>
+              <span class="tri">Tris</span>
               <div class="is-inline-block select-parent">
                 <select
                   id="tri-select"
                   v-model="sortingPriority"
                   name="tri"
                 >
+                  <option
+                    v-show="searchTerm && searchTerm.length"
+                    :value="[{field: 'score', order: 'asc'}]"
+                  >
+                    Score
+                  </option>
                   <option
                     :value="sortingPriority[0].field === 'creation' && sortingPriority[0].order === 'asc'
                       ? [{field: 'creation', order: 'asc'}]
@@ -91,55 +97,55 @@
                     Lettre Id
                   </option>
                   <option
-                    :value="sortingPriority[0].field === 'senders.label.keyword' && sortingPriority[0].order === 'asc'
-                      ? [{field: 'senders.label.keyword', order: 'asc'}]
-                      : sortingPriority[0].field === 'senders.label.keyword' && sortingPriority[0].order === 'desc'
-                        ? [{field: 'senders.label.keyword', order: 'desc'}]
-                        : [{field: 'senders.label.keyword', order: 'asc'}]
+                    :value="sortingPriority[0].field === 'senders.label.keyword_sort' && sortingPriority[0].order === 'asc'
+                      ? [{field: 'senders.label.keyword_sort', order: 'asc'}]
+                      : sortingPriority[0].field === 'senders.label.keyword_sort' && sortingPriority[0].order === 'desc'
+                        ? [{field: 'senders.label.keyword_sort', order: 'desc'}]
+                        : [{field: 'senders.label.keyword_sort', order: 'asc'}]
                     "
                   >
                     Expéditeur
                   </option>
                   <option
-                    :value="sortingPriority[0].field === 'recipients.label.keyword' && sortingPriority[0].order === 'asc'
-                      ? [{field: 'recipients.label.keyword', order: 'asc'}]
-                      : sortingPriority[0].field === 'recipients.label.keyword' && sortingPriority[0].order === 'desc'
-                        ? [{field: 'recipients.label.keyword', order: 'desc'}]
-                        : [{field: 'recipients.label.keyword', order: 'asc'}]
+                    :value="sortingPriority[0].field === 'recipients.label.keyword_sort' && sortingPriority[0].order === 'asc'
+                      ? [{field: 'recipients.label.keyword_sort', order: 'asc'}]
+                      : sortingPriority[0].field === 'recipients.label.keyword_sort' && sortingPriority[0].order === 'desc'
+                        ? [{field: 'recipients.label.keyword_sort', order: 'desc'}]
+                        : [{field: 'recipients.label.keyword_sort', order: 'asc'}]
                     "
                   >
                     Destinataire
                   </option>
                   <option
-                    :value="sortingPriority[0].field === 'location-date-from.label.keyword' && sortingPriority[0].order === 'asc'
-                      ? [{field: 'location-date-from.label.keyword', order: 'asc'}]
-                      : sortingPriority[0].field === 'location-date-from.label.keyword' && sortingPriority[0].order === 'desc'
-                        ? [{field: 'location-date-from.label.keyword', order: 'desc'}]
-                        : [{field: 'location-date-from.label.keyword', order: 'asc'}]
+                    :value="sortingPriority[0].field === 'location_dates_from.label.keyword_sort' && sortingPriority[0].order === 'asc'
+                      ? [{field: 'location_dates_from.label.keyword_sort', order: 'asc'}]
+                      : sortingPriority[0].field === 'location_dates_from.label.keyword_sort' && sortingPriority[0].order === 'desc'
+                        ? [{field: 'location_dates_from.label.keyword_sort', order: 'desc'}]
+                        : [{field: 'location_dates_from.label.keyword_sort', order: 'asc'}]
                     "
                   >
                     Lieu d'expédition
                   </option>
                   <option
-                    :value="sortingPriority[0].field === 'location-date-to.label.keyword' && sortingPriority[0].order === 'asc'
-                      ? [{field: 'location-date-to.label.keyword', order: 'asc'}]
-                      : sortingPriority[0].field === 'location-date-to.label.keyword' && sortingPriority[0].order === 'desc'
-                        ? [{field: 'location-date-to.label.keyword', order: 'desc'}]
-                        : [{field: 'location-date-to.label.keyword', order: 'asc'}]
+                    :value="sortingPriority[0].field === 'location_dates_to.label.keyword_sort' && sortingPriority[0].order === 'asc'
+                      ? [{field: 'location_dates_to.label.keyword_sort', order: 'asc'}]
+                      : sortingPriority[0].field === 'location_dates_to.label.keyword_sort' && sortingPriority[0].order === 'desc'
+                        ? [{field: 'location_dates_to.label.keyword_sort', order: 'desc'}]
+                        : [{field: 'location_dates_to.label.keyword_sort', order: 'asc'}]
                     "
                   >Lieu de destination
                   </option>
                 </select>
               </div>
               <span
-                v-if="sortingPriority.length > 0 && sortingPriority[0].order === 'asc'"
+                v-if="sortingPriority.length > 0 && sortingPriority[0].order === 'asc' && sortingPriority[0].field !== 'score'"
                 class="icon button arrow-up"
                 @click="sortPressed(sortingPriority[0].field, 'desc', 'escape')"
               >
               </span>
               <span
                 v-else
-                v-show="sortingPriority.length > 0"
+                v-show="sortingPriority.length > 0 && sortingPriority[0].field !== 'score'"
                 class="icon button arrow-down"
                 @click="sortPressed(sortingPriority[0].field, 'asc', 'escape')"
               >
@@ -258,13 +264,18 @@
             >
               <!--v-if="!isActive && isFulltextSearch"-->
               <div class="control block is-flex is-align-items-center mb-0 sort-options">
-                <span>Tris</span>
+                <span class="tri">Tris</span>
                 <div class="is-inline-block select-parent">
                   <select
                     id="tri-select"
                     v-model="sortingPriority"
                     name="tri"
                   >
+                    <option
+                      :value="[{field: 'score', order: 'asc'}]"
+                    >
+                      Score
+                    </option>
                     <option
                       :value="sortingPriority[0].field === 'creation' && sortingPriority[0].order === 'asc'
                         ? [{field: 'creation', order: 'asc'}]
@@ -286,55 +297,55 @@
                       Lettre Id
                     </option>
                     <option
-                      :value="sortingPriority[0].field === 'senders.label.keyword' && sortingPriority[0].order === 'asc'
-                        ? [{field: 'senders.label.keyword', order: 'asc'}]
-                        : sortingPriority[0].field === 'senders.label.keyword' && sortingPriority[0].order === 'desc'
-                          ? [{field: 'senders.label.keyword', order: 'desc'}]
-                          : [{field: 'senders.label.keyword', order: 'asc'}]
+                      :value="sortingPriority[0].field === 'senders.label.keyword_sort' && sortingPriority[0].order === 'asc'
+                        ? [{field: 'senders.label.keyword_sort', order: 'asc'}]
+                        : sortingPriority[0].field === 'senders.label.keyword_sort' && sortingPriority[0].order === 'desc'
+                          ? [{field: 'senders.label.keyword_sort', order: 'desc'}]
+                          : [{field: 'senders.label.keyword_sort', order: 'asc'}]
                       "
                     >
                       Expéditeur
                     </option>
                     <option
-                      :value="sortingPriority[0].field === 'recipients.label.keyword' && sortingPriority[0].order === 'asc'
-                        ? [{field: 'recipients.label.keyword', order: 'asc'}]
-                        : sortingPriority[0].field === 'recipients.label.keyword' && sortingPriority[0].order === 'desc'
-                          ? [{field: 'recipients.label.keyword', order: 'desc'}]
-                          : [{field: 'recipients.label.keyword', order: 'asc'}]
+                      :value="sortingPriority[0].field === 'recipients.label.keyword_sort' && sortingPriority[0].order === 'asc'
+                        ? [{field: 'recipients.label.keyword_sort', order: 'asc'}]
+                        : sortingPriority[0].field === 'recipients.label.keyword_sort' && sortingPriority[0].order === 'desc'
+                          ? [{field: 'recipients.label.keyword_sort', order: 'desc'}]
+                          : [{field: 'recipients.label.keyword_sort', order: 'asc'}]
                       "
                     >
                       Destinataire
                     </option>
                     <option
-                      :value="sortingPriority[0].field === 'location-date-from.label.keyword' && sortingPriority[0].order === 'asc'
-                        ? [{field: 'location-date-from.label.keyword', order: 'asc'}]
-                        : sortingPriority[0].field === 'location-date-from.label.keyword' && sortingPriority[0].order === 'desc'
-                          ? [{field: 'location-date-from.label.keyword', order: 'desc'}]
-                          : [{field: 'location-date-from.label.keyword', order: 'asc'}]
+                      :value="sortingPriority[0].field === 'location_dates_from.label.keyword_sort' && sortingPriority[0].order === 'asc'
+                        ? [{field: 'location_dates_from.label.keyword_sort', order: 'asc'}]
+                        : sortingPriority[0].field === 'location_dates_from.label.keyword_sort' && sortingPriority[0].order === 'desc'
+                          ? [{field: 'location_dates_from.label.keyword_sort', order: 'desc'}]
+                          : [{field: 'location_dates_from.label.keyword_sort', order: 'asc'}]
                       "
                     >
                       Lieu d'expédition
                     </option>
                     <option
-                      :value="sortingPriority[0].field === 'location-date-to.label.keyword' && sortingPriority[0].order === 'asc'
-                        ? [{field: 'location-date-to.label.keyword', order: 'asc'}]
-                        : sortingPriority[0].field === 'location-date-to.label.keyword' && sortingPriority[0].order === 'desc'
-                          ? [{field: 'location-date-to.label.keyword', order: 'desc'}]
-                          : [{field: 'location-date-to.label.keyword', order: 'asc'}]
+                      :value="sortingPriority[0].field === 'location_dates_to.label.keyword_sort' && sortingPriority[0].order === 'asc'
+                        ? [{field: 'location_dates_to.label.keyword_sort', order: 'asc'}]
+                        : sortingPriority[0].field === 'location_dates_to.label.keyword_sort' && sortingPriority[0].order === 'desc'
+                          ? [{field: 'location_dates_to.label.keyword_sort', order: 'desc'}]
+                          : [{field: 'location_dates_to.label.keyword_sort', order: 'asc'}]
                       "
                     >Lieu de destination
                     </option>
                   </select>
                 </div>
                 <span
-                  v-if="sortingPriority.length > 0 && sortingPriority[0].order === 'asc'"
+                  v-if="sortingPriority.length > 0 && sortingPriority[0].order === 'asc' && sortingPriority[0].field !== ''"
                   class="icon button arrow-up"
                   @click="sortPressed(sortingPriority[0].field, 'desc', 'escape')"
                 >
                 </span>
                 <span
                   v-else
-                  v-show="sortingPriority.length > 0"
+                  v-show="sortingPriority.length > 0 && sortingPriority[0].field !== '' "
                   class="icon button arrow-down"
                   @click="sortPressed(sortingPriority[0].field, 'asc', 'escape')"
                 >
@@ -525,7 +536,7 @@
           </template>
         </b-table-column>
         <b-table-column
-          field="senders.label.keyword"
+          field="senders.label.keyword_sort"
           label="Expéditeur(s)"
           :th-attrs="columnThAttrs"
           :td-attrs="columnTdAttrs"
@@ -562,7 +573,7 @@
         </b-table-column>
 
         <b-table-column
-          field="recipients.label.keyword"
+          field="recipients.label.keyword_sort"
           label="Destinataire(s)"
           :th-attrs="columnThAttrs"
           :td-attrs="columnTdAttrs"
@@ -599,7 +610,7 @@
         </b-table-column>
 
         <b-table-column
-          field="location-date-from.label.keyword"
+          field="location_dates_from.label.keyword_sort"
           label="Lieu d'expédition"
           :th-attrs="columnThAttrs"
           :td-attrs="columnTdAttrs"
@@ -636,7 +647,7 @@
         </b-table-column>
 
         <b-table-column
-          field="location-date-to.label.keyword"
+          field="location_dates_to.label.keyword_sort"
           label="Lieu de destination"
           :th-attrs="columnThAttrs"
           :td-attrs="columnTdAttrs"
@@ -734,7 +745,21 @@ export default {
       get: function() {
         console.log('sortingPriority GET');
         console.log('this.sorts', this.sorts);
-        return this.sorts;
+        if (this.isActive) {
+          if (this.sorts.length <= 1) {
+            return this.sorts
+          } else {
+            console.log('return this.sorts.filter(s => s.field !== \'score\') : ', this.sorts.filter(s => s.field !== 'score'))
+            return this.sorts.filter(s => s.field !== 'score')
+          }
+        } else {
+          if (this.sorts.length <= 1) {
+            return this.sorts
+          } else {
+            console.log('return this.sorts[0] : ', this.sorts[0])
+            return [this.sorts[0]]
+          }
+        }
         /*if (this.sorts) {
             console.log('sortingPriority GET')
             console.log('this.sorts', this.sorts)
@@ -755,8 +780,16 @@ export default {
         console.log('sortingPriority SET');
         console.log('this.sorts', this.sorts);
         console.log('SET value', value);
-        if (this.sorts !== value) {
+        if (value.length && this.sorts !== value) {
             this.setSorts(value)
+            this.performSearch()
+            this.loadAsyncData()
+        } else if (value.length === 0 && this.searchTerm && this.searchTerm.length > 0) {
+            this.setSorts([{field: 'score', order: 'asc'}])
+            this.performSearch()
+            this.loadAsyncData()
+        } else if (value.length === 0 && (!this.searchTerm || this.searchTerm.length === 0)) {
+            this.setSorts([{field: 'creation', order: 'asc'}])
             this.performSearch()
             this.loadAsyncData()
         }
@@ -806,12 +839,17 @@ export default {
     },
     searchTerm(newValue, oldValue) {
       if (newValue != oldValue) {
-        this.loadingTable = true
+        this.loadingTable = true;
+        if (newValue.length > 0) {
+          this.setSorts([{field: 'score', order: 'asc'}]);
+        } else {
+          this.setSorts([{field: 'creation', order: 'asc'}]);
+        }
       }
     }
   },
   async created() {
-    this.setSorts([{field: 'creation', order: 'asc'}]);
+    //this.setSorts([{field: 'creation', order: 'asc'}]);
     await this.loadAsyncData();
   },
   methods: {
@@ -889,6 +927,7 @@ export default {
           return text.replace(new RegExp(re, 'gi'), (match => `<mark>${match}</mark>`))
         } else {
           // if argument, parse pseudo HTML if required
+          console.log("text.includes test :", text)
           if (text.includes('<p>')) {
             // if source is pseudo HTML (has tags)
             let div = document.createElement("div");
@@ -924,7 +963,8 @@ export default {
           console.log(newPriority, this.sortingPriority);
       } else {
           // default sorting on ascending creation date
-          this.sortingPriority = [{ field: "creation", order: "asc" }];
+          this.sortingPriority = this.searchTerm && this.searchTerm.length > 0 ? [{ field: "score", order: "asc" }] : [{ field: "creation", order: "asc" }];
+          this.setSorts(this.sortingPriority)
           console.log("Default sorting new Priority", newPriority, this.sortingPriority);
       }
       this.performSearch()
@@ -969,11 +1009,16 @@ export default {
 
     async loadAsyncData() {
       this.loadingTable = true
-      if (this.documents) {
+      if (this.documents && this.documents.filter(
+          function (d) {
+            return Object.hasOwn(d, 'score');
+          }
+          ).length > 0) {
         const phr = [];
         this.tableData = await Promise.all(this.documents.map(async d => {
         return {
           id: d.id,
+          score: d.score,
           title:  d.title,
           creation:  d.creation,
           senders: d.sender.length > 0 ? d.sender.map(p => p.label).filter(Boolean).join(", ") : '',
@@ -1002,7 +1047,21 @@ export default {
           destinations: d.destinations.map(destinations => (this.$store.state.placenames.places[1].places.find(p => p.placename_id === destinations.id) || {}).label).filter(Boolean).join(", ")*/
         /*}*/
         }));
-      } this.loadingTable = false
+      } else {
+        this.tableData = await Promise.all(this.documents.map(async d => {
+          return {
+            id: d.id,
+            title:  d.title,
+            creation:  d.creation,
+            senders: d.sender.length > 0 ? d.sender.map(p => p.label).filter(Boolean).join(", ") : '',
+            recipients: d.recipients.length > 0 ? d.recipients.map(p => p.label).filter(Boolean).join(", ") : '',
+            origins: d.origin.length > 0 ? d.origin.map(o => o.label).filter(Boolean).join(", ") : '',
+            destinations: d.destinations.length > 0 ? d.destinations.map(d => d.label).filter(Boolean).join(", ") : '',
+          }
+        }));
+      }
+      console.log("this.tableData : ", this.tableData)
+      this.loadingTable = false
     },
     toggle() {
       if (this.isActive === true) {
@@ -1010,11 +1069,11 @@ export default {
       } else {
         this.isActive = true;
       }
-      if (this.sorts[0].field !== 'creation' || this.sorts[0].order !== 'asc') {
+      /*if (this.sorts[0].field !== 'creation' || this.sorts[0].order !== 'asc') {
         this.setSorts([{field: 'creation', order: 'asc'}]);
         this.performSearch();
         this.loadAsyncData();
-      }
+      }*/
     },
     switchSearchScope() {
       this.isFulltext = !this.isFulltext
@@ -1418,12 +1477,24 @@ progress {
       margin: 10px 0;
     }
   }
+  .tri {
+      height: 38px !important;
+      padding: 0 !important;
 
+      font-family: $family-primary;
+      font-size: 18px;
+      color: #CB2158;
+      font-weight: 800;
+      line-height: 38px !important;
+      text-align: center;
+      text-transform: uppercase;
+
+  }
   .icon.button {
     width: 25px;
     height: 25px;
     border-radius: 4px;
-    margin: 0 4px 10px 0 !important;
+    //margin: 0 4px 10px 0 !important;
     padding: 0 !important;
 
     &.arrow-down::after,

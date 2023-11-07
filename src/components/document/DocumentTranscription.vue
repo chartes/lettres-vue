@@ -25,6 +25,7 @@
             @add-note="addNote($event)"
             @refresh-address="refreshAddress($event)"
             @on-keyup-escape="cancelAddressInput($event)"
+            @save="saveAddress()"
           >
             <editor-save-button
               :doc-id="document.id"
@@ -75,6 +76,7 @@
             @add-note="addNote($event)"
             @refresh-transcription="refreshTranscription($event)"
             @on-keyup-escape="cancelTranscriptionInput($event)"
+            @save="saveTranscription()"
           >
             <editor-save-button
               :doc-id="document.id"
@@ -168,7 +170,7 @@ export default {
       default: null,
     },
   },
-  emits: ["add-place", "add-person", "add-note", "refresh-transcription", "refresh-address"],//"refresh-title",
+  emits: ["add-place", "add-person", "add-note", "refresh-transcription", "refresh-address", "save-transcription", "save-address"],//"refresh-title",
   data() {
     return {
       transcriptionContent: "",
@@ -243,10 +245,16 @@ export default {
       this.transcriptionContent = evt;
       this.$emit("refresh-transcription", evt)
     },
+    saveTranscription() {
+      this.$emit("save-transcription")
+    },
     refreshAddress(evt) {
       console.log("DocumentTranscription / refreshAddress(evt)", evt);
       this.addressContent = evt;
       this.$emit("refresh-address", evt)
+    },
+    saveAddress() {
+      this.$emit("save-address")
     },
     truncate(str, n, useWordBoundary) {
       if (str && str.length > 0) {

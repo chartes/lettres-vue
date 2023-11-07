@@ -6,13 +6,12 @@
         label="Témoin *"
         :formats="[
           ['italic', 'superscript'],
-          ['note', 'link'],
+          ['link'],
         ]"
         :options="{ placeholder: 'Ex. Bibl. nat. Fr., Français 3512, fol. 53r' }"
         :multiline="false"
-        @add-note="addNote"
       />
-    </div>
+    </div><!-- removed 'note' from second list of formats and @add-note="addNote" -->
     <div class="editor">
       <rich-text-editor
         v-model="classificationMark"
