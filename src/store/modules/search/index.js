@@ -469,11 +469,11 @@ const actions = {
       let selectedCollectionsWithChildren = store.getters["collections/flattenedCollectionsTree"](selectedCollectionsIds);
       console.log("selectedCollectionsWithChildren", selectedCollectionsWithChildren)
       state.selectedCollections.forEach((coll) => {
-        let selectedLabel = coll.title
+        let selectedLabel = coll.title // replace by id
         collectionsSelectedFacets.push(selectedLabel)
       })
       selectedCollectionsWithChildren.forEach((coll) => {
-        let selectedLabel = coll.title
+        let selectedLabel = coll.title // replace by id
         collectionsSelectedFacets.push(selectedLabel)
       })
       collectionsSelectedFacets = [...new Set(collectionsSelectedFacets)]
@@ -481,6 +481,7 @@ const actions = {
     } else {
       console.log('query without selectedCollections')
     }
+    // remove and use directly collectionsSelectedFacets in url build below as for other facets
     let collectionsFacets = {"collections": collectionsSelectedFacets.length > 0 ? collectionsSelectedFacets : ''}
 
 
@@ -580,10 +581,10 @@ const actions = {
       place_query = [place_query_from, place_query_to, place_query_cited].filter(Boolean).join(' AND ');
     }
     */
-    //new
+    /*new 2023 11 09: replaced directly in URL construct further below
     let placesFacets = {location_dates_from: placesFromSelectedFacets.length > 0 ? placesFromSelectedFacets : '',
                             location_dates_to: placesToSelectedFacets.length > 0 ? placesToSelectedFacets : '',
-                            locations_inlined: placesCitedSelectedFacets.length > 0 ? placesCitedSelectedFacets : ''}
+                            locations_inlined: placesCitedSelectedFacets.length > 0 ? placesCitedSelectedFacets : ''}*/
 
     //old
     let person_query_from = '';
@@ -656,11 +657,10 @@ const actions = {
       person_query = [person_query_from, person_query_to, person_query_cited].filter(Boolean).join(' AND ');
     }*/
 
-    //new
+    /*new 2023 11 09: replaced directly in URL construct further below
     let personsFacets = {senders: personsFromSelectedFacets.length > 0 ? personsFromSelectedFacets : '',
                             recipients: personsToSelectedFacets.length > 0 ? personsToSelectedFacets : '',
-                            persons_inlined: personsCitedSelectedFacets.length > 0 ? personsCitedSelectedFacets : ''}
-
+                            persons_inlined: personsCitedSelectedFacets.length > 0 ? personsCitedSelectedFacets : ''}*/
 
     // combine query, places and persons criteriae :
     /*old
@@ -784,7 +784,43 @@ const actions = {
       const includes = toInclude.length ? `&include=${[toInclude].join(',')}` : '';
       
       const http = http_with_auth(rootState.user.jwt);
-      const response = await http.get(`/search?query=${query}&published=${published}&collectionsfacets=${encodeURIComponent(JSON.stringify(collectionsFacets))}&personsfacets=${JSON.stringify(personsFacets)}&placesfacets=${JSON.stringify(placesFacets)}&searchtype=${searchType}${filters}${includes}&sort=${sorts}&highlight=${highlights}&page[size]=${state.pageSize}&page[number]=${state.numPage}&without-relationships`);
+
+      let url = `/search?query=${query}&searchtype=${searchType}&highlight=${highlights}&page[size]=${state.pageSize}&page[number]=${state.numPage}&without-relationships`;
+      if (published) {
+        url += `&published=${published}`
+      }
+      if (collectionsFacets.collections.length > 0) { //(collectionsSelectedFacets.length > 0)
+        url += `&collectionsfacets=${encodeURIComponent(JSON.stringify(collectionsFacets))}` // url += `&collectionsfacets=${JSON.stringify(collectionsSelectedFacets)}`
+      }
+      if (personsFromSelectedFacets.length > 0) {
+        url += `&senders=${personsFromSelectedFacets}`
+      }
+      if (personsToSelectedFacets.length > 0) {
+        url += `&recipients=${personsToSelectedFacets}` // probably needs url += `&recipients=${JSON.stringify(personsToSelectedFacets)}` to enable lists
+      }
+      if (personsCitedSelectedFacets.length > 0) {
+        url += `&persons_inlined=${personsCitedSelectedFacets}`
+      }
+      if (placesFromSelectedFacets.length > 0) {
+        url += `&location_dates_from=${placesFromSelectedFacets}`
+      }
+      if (placesToSelectedFacets.length > 0) {
+        url += `&location_dates_to=${placesToSelectedFacets}`
+      }
+      if (placesCitedSelectedFacets.length > 0) {
+        url += `&locations_inlined=${placesCitedSelectedFacets}`
+      }
+      if (filters.length > 0) {
+        url += `${filters}`
+      }
+      if (includes.length > 0) {
+        url += `${includes}`
+      }
+      if (sorts.length > 0) {
+        url += `&sort=${sorts}`
+      }
+      const response = await http.get(url);
+      //2023 11 09 const response = await http.get(`/search?query=${query}&published=${published}&collectionsfacets=${encodeURIComponent(JSON.stringify(collectionsFacets))}&placesfacets=${JSON.stringify(placesFacets)}&searchtype=${searchType}${filters}${includes}&sort=${sorts}&highlight=${highlights}&page[size]=${state.pageSize}&page[number]=${state.numPage}&without-relationships`);
       //const response = await http.get(`/search?query=${query}${filters}${includes}&sort=${sorts}&page[size]=${state.pageSize}&page[number]=${state.numPage}`);
       const {data, links, meta, included} = response.data
       /*const hyphensToUnderscore = (key) => key.replace("-", "_");
@@ -1340,7 +1376,14 @@ const actions = {
 
 
       commit('CURRENT_SEARCH_FILTERS', filters);
-      commit('CURRENT_SEARCH_QUERY', query + JSON.stringify(personsFacets) + JSON.stringify(placesFacets));
+      commit('CURRENT_SEARCH_QUERY', query +
+          JSON.stringify(personsFromSelectedFacets) +
+          JSON.stringify(personsToSelectedFacets) +
+          JSON.stringify(personsCitedSelectedFacets) +
+          JSON.stringify(placesFromSelectedFacets) +
+          JSON.stringify(placesToSelectedFacets) +
+          JSON.stringify(placesCitedSelectedFacets)
+      ); // add JSON.stringify(collectionsSelectedFacets)?
 
       commit('UPDATE_ALL', {documents: datawithPersons, totalCount: meta['total-count'] , links, included: included || []});
       //commit('UPDATE_ALL', {documents: data, totalCount: meta['total-count'] , links, included: included || []});
