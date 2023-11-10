@@ -469,11 +469,11 @@ const actions = {
       let selectedCollectionsWithChildren = store.getters["collections/flattenedCollectionsTree"](selectedCollectionsIds);
       console.log("selectedCollectionsWithChildren", selectedCollectionsWithChildren)
       state.selectedCollections.forEach((coll) => {
-        let selectedLabel = coll.title
+        let selectedLabel = coll.title // replace by id
         collectionsSelectedFacets.push(selectedLabel)
       })
       selectedCollectionsWithChildren.forEach((coll) => {
-        let selectedLabel = coll.title
+        let selectedLabel = coll.title // replace by id
         collectionsSelectedFacets.push(selectedLabel)
       })
       collectionsSelectedFacets = [...new Set(collectionsSelectedFacets)]
@@ -481,6 +481,7 @@ const actions = {
     } else {
       console.log('query without selectedCollections')
     }
+    // remove and use directly collectionsSelectedFacets in url build below as for other facets
     let collectionsFacets = {"collections": collectionsSelectedFacets.length > 0 ? collectionsSelectedFacets : ''}
 
 
@@ -788,8 +789,8 @@ const actions = {
       if (published) {
         url += `&published=${published}`
       }
-      if (collectionsSelectedFacets.length > 0) {
-        url += `&collectionsfacets=${encodeURIComponent(JSON.stringify(collectionsFacets))}` // JSON.stringify(collectionsSelectedFacets)
+      if (collectionsFacets.collections.length > 0) { //(collectionsSelectedFacets.length > 0)
+        url += `&collectionsfacets=${encodeURIComponent(JSON.stringify(collectionsFacets))}` // url += `&collectionsfacets=${JSON.stringify(collectionsSelectedFacets)}`
       }
       if (personsFromSelectedFacets.length > 0) {
         url += `&senders=${personsFromSelectedFacets}`
