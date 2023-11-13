@@ -412,36 +412,18 @@ export default {
     await this.resetSearchState();
     this.$store.state.layout.showLeftSideBar = false;
     await this.fetchCollections();
+    await this.counts();
     await this.collectionsCountWithStatus();
-    await this.personsCountWithStatus();
-    await this.placesCountWithStatus();
-    await this.documentsCountWithStatus();
-    //await this.fetchPersons();
-    //await this.fetchPlaces();
   },
   methods: {
     ...mapActions("search", ["performSearch", "resetSearchState"]),
     ...mapActions("collections", { fetchCollections: "fetchAll", allPublishedCollections: "fetchAllPublished" }),
-    //...mapState("collections", ["collectionsById"]),
-    //...mapActions("persons", { fetchPersons: "fetchAllPersons", totalSearchPersons: "getPersonsTotal" }),
-    ...mapActions("persons", ["getPersonsTotal"]),
-    //...mapActions("placenames", { fetchPlaces: "fetchAllPlacenames"}),
-    ...mapActions("placenames", ["getPlacesTotal"]),
-    ...mapActions("search", ["getDocumentsTotal"]),
-    documentsCountWithStatus: async function () {
-        let response = await this.getDocumentsTotal();
-        this.documentsTotal = response.documentsTotal
-        console.log("response", response)
-    },
-    personsCountWithStatus: async function () {
-        let response = await this.getPersonsTotal();
-        this.personsCount = response
-        console.log("personsCount", response)
-    },
-    placesCountWithStatus: async function () {
-        let response = await this.getPlacesTotal();
-        this.placesCount = response
-        console.log("placesCount", response)
+    ...mapActions("search", ["getCounts"]),
+    counts: async function () {
+      let response = await this.getCounts();
+      this.documentsTotal = response["documents"];
+      this.personsCount = response["persons"];
+      this.placesCount = response["placenames"];
     },
     collectionsCountWithStatus: async function() {
       if (this.current_user) {

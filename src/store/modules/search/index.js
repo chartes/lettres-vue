@@ -416,6 +416,15 @@ const actions = {
     commit('SET_NUM_PAGE', 1)
     console.log('SET_SELECTED_PERSON_CITED', personCited)
   },
+  async getCounts({rootState}){
+    const http = http_with_auth(rootState.user.jwt);
+    let url = '/count';
+    if (!rootState.user.current_user){
+      url += "?published=1";
+    }
+    const response = await http.get(url);
+    return response["data"];
+  },
   async getDocumentsTotal ({commit, rootState}) {
     const http = http_with_auth(rootState.user.jwt);
     const response = await http.get(`/all-documents`);
