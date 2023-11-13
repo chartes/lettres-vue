@@ -796,7 +796,7 @@ const actions = {
         url += `&senders=${personsFromSelectedFacets}`
       }
       if (personsToSelectedFacets.length > 0) {
-        url += `&recipients=${personsToSelectedFacets}` // probably needs url += `&recipients=${JSON.stringify(personsToSelectedFacets)}` to enable lists
+        url += `&recipients=${JSON.stringify(personsToSelectedFacets)}`
       }
       if (personsCitedSelectedFacets.length > 0) {
         url += `&persons_inlined=${personsCitedSelectedFacets}`
