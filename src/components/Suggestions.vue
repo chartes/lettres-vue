@@ -5,7 +5,14 @@
         <span class="row is-flex is-justify-content-space-between suggestions-section-header my-3">
           SUGGESTIONS
         </span>
-        <suggestions-box type="persons" />
+        <suggestions-box 
+          type="persons"
+          title="CORRESPONDANTS FRÉQUENTS" 
+        />
+        <suggestions-box
+          type="places"
+          title="LIEUX FRÉQUENTS"
+        />
       </div>
     </section>
   </div>

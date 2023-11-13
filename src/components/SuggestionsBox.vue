@@ -1,26 +1,34 @@
 <template>
   <div class="suggestions-box-header-container">
-    <div class="row is-flex is-justify-content-space-between suggestions-box-header-header my-1">
-      <span class="advanced_search_header m-2">CORRESPONDANTS FRÉQUENTS</span>
+    <div 
+      class="row is-flex is-justify-content-space-between suggestions-box-header-header my-1"
+      :class="`suggestions-box-header-header-${type}`"
+    >
+      <span class="advanced_search_header m-2">
+        {{ title }}
+      </span>
     </div>
     <div class="row is-flex-direction-column">
       <div
-        v-for="person in sortSuggestions()"
-        :key="person.label + person.role_id"
+        v-for="suggestion in sortSuggestions()"
+        :key="suggestion.label + suggestion.tag"
         class="row is-flex is-justify-content-space-between suggestions-box-header-persons my-2"
       >
         <div
           class="tag-container"
-          @click="searchSuggestion(person)"
+          @click="searchSuggestion(suggestion)"
         >
-          <span class="tag-flag">
-            {{ person.role_id === 1 ? "EXP" : person.role_id === 2 ? "DEST" : "CIT" }}
+          <span
+            v-if="type !== 'collections'"
+            class="tag-flag"
+          >
+            {{ suggestion.tag }}
           </span>
           <span class="tag-label">
-            {{ person.label }}
+            {{ suggestion.label }}
           </span>
           <span class="tag-count">
-            {{ person.count }}
+            {{ suggestion.count }}
           </span>
         </div>
       </div>
@@ -46,9 +54,13 @@ export default {
       type: String,
       required: true,
       validator: function (value) {
-        return ['persons'].includes(value)
+        return ['persons', 'places'].includes(value)
       }
-    }
+    },
+    title: {
+      type: String,
+      required: true,
+    },
   },
   data() {
     return {
@@ -57,14 +69,7 @@ export default {
   },
   computed: {
     ...mapState("persons", {allPersons: "persons_roles"}),
-    ...mapState("search", [
-      "selectedPersonFrom",
-      "selectedPersonTo",
-      "selectedPersonCited",
-      "selectedPlaceFrom",
-      "selectedPlaceTo",
-      "selectedPlaceCited"
-    ]),
+    ...mapState("placenames", {allPlaces: "places"}),
   },
   methods: {
     value,
@@ -80,36 +85,79 @@ export default {
       "performSearch"
     ]),
     sortSuggestions() {
-      if (this.allPersons.length >= 3) {
-        const personsSuggestions = [...new Set([...this.allPersons[0]['persons'] ,...this.allPersons[1]['persons'], ...this.allPersons[2]['persons']])];
-        const sortedPersonsSuggestions = personsSuggestions.sort((person_x, person_y) => (person_x.count > person_y.count) ? -1 : 1)
-        console.log("personsSuggestions in SUGGESTIONS compo", personsSuggestions);
-        if (this.showMore) {
-          return sortedPersonsSuggestions.slice(0, 20)
-        } else {
-          return sortedPersonsSuggestions.slice(0, 5)
-        }
+      const maxElements = this.showMore ? 20 :5
+      const suggestions = this.type === "persons" ? this.getPersonsToSuggest() : this.getPlacesToSuggest()
+      const sortedSuggestions = suggestions
+          .sort((person_x, person_y) => (person_x.count > person_y.count) ? -1 : 1)
+          .slice(0, maxElements)
+        return sortedSuggestions.map((p) => ({
+          label: p.label, 
+          count: p.count, 
+          tag: p.role_id === 1 ? "EXP" : p.role_id === 2 ? "DES" : "CIT",
+          originalObject: p
+        }))
+    },
+    getPersonsToSuggest() {
+      if (this.allPersons.length){
+        return [
+          ...new Set([
+            ...this.allPersons[0]['persons'],
+            ...this.allPersons[1]['persons'],
+            ...this.allPersons[2]['persons']
+          ])
+        ];
       } else {
         return []
       }
-
     },
-    searchSuggestion (person) {
-      console.log("searchSuggestion : ", person)
-      if (person.role_id === 1) {
-        this.resetSearchState();
-        this.setSelectedPersonFrom([person]);
+    getPlacesToSuggest() {
+      if (this.allPlaces.length){
+        return [
+          ...new Set([
+            ...this.allPlaces[0]['places'],
+            ...this.allPlaces[1]['places'],
+            ...this.allPlaces[2]['places']
+          ])
+        ];
+      } else {
+        return []
       }
-      if (person.role_id === 2) {
-        this.resetSearchState();
-        this.setSelectedPersonTo([person]);
-      }
-      if (person.role_id === 3) {
-        this.resetSearchState();
-        this.setSelectedPersonCited([person]);
+    },
+    searchSuggestion(suggestion) {
+      this.resetSearchState();
+      if (this.type === "persons") {
+        this.selectPerson(suggestion.originalObject)
+      } else {
+        this.selectPlace(suggestion.originalObject)
       }
       this.performSearch()
     },
+    selectPerson(person) {
+      switch(person.role_id) {
+        case 1:
+          this.setSelectedPersonFrom([person]);
+          break;
+        case 2:
+          this.setSelectedPersonTo([person]);
+          break;
+        case 3:
+          this.setSelectedPersonCited([person]);
+          break;
+      }
+    },
+    selectPlace(place) {
+      switch(place.role_id) {
+        case 1:
+          this.setSelectedPlaceFrom([place]);
+          break;
+        case 2:
+          this.setSelectedPlaceTo([place]);
+          break;
+        case 3:
+          this.setSelectedPlaceCited([place]);
+          break;
+      }
+    }
   },
 };
 </script>
@@ -118,7 +166,12 @@ export default {
 @import "@/assets/sass/main.scss";
 .suggestions-box-header-header {
   padding-left: 30px;
+}
+.suggestions-box-header-header-persons {
   background: url('../assets/images/icons/picto-personnes.svg') center left no-repeat;
+}
+.suggestions-box-header-header-places {
+  background: url('../assets/images/icons/picto-lieux.svg') center left no-repeat;
 }
 .tag-container {
   display: flex;
