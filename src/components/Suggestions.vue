@@ -30,7 +30,14 @@
             </span>
           </div>
         </div>
-        <button @click="function() {showMore = !showMore; sortSuggestions()}">{{ showMore ? "Show less" : "Show more" }}</button>
+        <div class="is-flex is-justify-content-flex-end">
+          <button
+            class="suggestions-show-more"
+            @click="function() {showMore = !showMore; sortSuggestions()}"
+          >
+            {{ showMore ? "VOIR PLUS" : "VOIR MOINS" }}
+          </button>
+        </div>
       </div>
         <!--<div>
           <span v-if="tags.length >0 ">filtres actifs</span>
@@ -281,6 +288,15 @@ div.dropdown-item {
 }
 .tag-count {
   font-weight: bold;
+}
+.suggestions-show-more {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: inherit;
+  font-weight: bold;
+  font-size: small;
+  padding: 0;
 }
 .search-section-header-persons {
   padding-left: 30px;
