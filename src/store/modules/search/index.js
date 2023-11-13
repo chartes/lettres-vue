@@ -799,16 +799,16 @@ const actions = {
         url += `&recipients=${JSON.stringify(personsToSelectedFacets)}`
       }
       if (personsCitedSelectedFacets.length > 0) {
-        url += `&persons_inlined=${personsCitedSelectedFacets}`
+        url += `&persons_inlined=${JSON.stringify(personsCitedSelectedFacets)}`
       }
       if (placesFromSelectedFacets.length > 0) {
         url += `&location_dates_from=${placesFromSelectedFacets}`
       }
       if (placesToSelectedFacets.length > 0) {
-        url += `&location_dates_to=${placesToSelectedFacets}`
+        url += `&location_dates_to=${JSON.stringify(placesToSelectedFacets)}`
       }
       if (placesCitedSelectedFacets.length > 0) {
-        url += `&locations_inlined=${placesCitedSelectedFacets}`
+        url += `&locations_inlined=${JSON.stringify(placesCitedSelectedFacets)}`
       }
       if (filters.length > 0) {
         url += `${filters}`
