@@ -18,7 +18,7 @@
           <div
             @click="searchSuggestion(person)"
           >
-            <span id="tag_flag">
+            <span class="tag-flag">
               {{ person.role_id === 1 ? "EXP" : person.role_id === 2 ? "DEST" : "CIT" }}
             </span>
             <span>
@@ -264,15 +264,12 @@ div.dropdown-item {
   background-color: white;
   color: black;
 }
-#tag_flag {
-  font-size: xx-small;
+.tag-flag {
+  font-size: small;
   font-weight: bolder;
-  color: white;
-  background-color: rgba(140, 140, 140) !important;
-  border-radius: 3px;
   padding: 2px;
   display: inline-flex;
-  align-items: center;
+  width: 40px
 }
 
 .search-section-header-persons {
@@ -296,15 +293,5 @@ i {
   font-weight: 600;
   text-transform: uppercase;
   border-bottom: solid 1px #FDB3CC;
-}
-#tag_flag {
-  font-size: xx-small;
-  font-weight: bolder;
-  color: white;
-  background-color: rgba(140, 140, 140) !important;
-  border-radius: 3px;
-  padding: 2px;
-  display: inline-flex;
-  align-items: center;
 }
 </style>
