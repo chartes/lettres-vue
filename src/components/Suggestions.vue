@@ -241,6 +241,10 @@ export default {
 
 <style lang="scss">
 @import "@/assets/sass/main.scss";
+.suggestions-section-header-persons {
+  padding-left: 30px;
+  background: url('../assets/images/icons/picto-personnes.svg') center left no-repeat;
+}
 div.dropdown-item {
   background-color: rgba(180, 0, 80);
   color: white;
