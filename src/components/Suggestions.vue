@@ -16,18 +16,19 @@
           :key="person.label + person.role_id"
         >
           <div
+            class="tag-container"
             @click="searchSuggestion(person)"
           >
             <span class="tag-flag">
               {{ person.role_id === 1 ? "EXP" : person.role_id === 2 ? "DEST" : "CIT" }}
             </span>
-            <span>
+            <span class="tag-label">
               {{ person.label }}
             </span>
+            <span class="tag-count">
+              {{ person.count }}
+            </span>
           </div>
-          <span>
-            {{ person.count }}
-          </span>
         </div>
         <button @click="function() {showMore = !showMore; sortSuggestions()}">{{ showMore ? "Show less" : "Show more" }}</button>
       </div>
@@ -264,14 +265,23 @@ div.dropdown-item {
   background-color: white;
   color: black;
 }
+.tag-container {
+  display: flex;
+  width: 100%;
+  cursor: pointer;
+}
 .tag-flag {
   font-size: small;
   font-weight: bolder;
   padding: 2px;
-  display: inline-flex;
-  width: 40px
+  width: 40px;
 }
-
+.tag-label {
+  flex: 1;
+}
+.tag-count {
+  font-weight: bold;
+}
 .search-section-header-persons {
   padding-left: 30px;
   background: url('../assets/images/icons/picto-personnes.svg') center left no-repeat;
