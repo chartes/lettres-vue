@@ -1,17 +1,17 @@
 <template>
   <div>
-    <section>
+    <section class="suggestions-section-persons-container">
       <div>
-        <span class="row is-flex is-justify-content-space-between suggestions-section-header">
+        <span class="row is-flex is-justify-content-space-between suggestions-section-header my-3">
           SUGGESTIONS
         </span>
-        <div class="row is-flex is-justify-content-space-between suggestions-section-header-persons">
+        <div class="row is-flex is-justify-content-space-between suggestions-section-header-persons my-1">
           <span class="advanced_search_header m-2">CORRESPONDANTS FRÉQUENTS</span>
         </div>
       </div>
-      <div class="row is-flex-direction-column my-5">
+      <div class="row is-flex-direction-column">
         <div
-          class="row is-flex is-justify-content-space-between suggestions-section-persons"
+          class="row is-flex is-justify-content-space-between suggestions-section-persons my-2"
           v-for="person in sortSuggestions()"
           :key="person.label + person.role_id"
         >
@@ -30,7 +30,7 @@
             </span>
           </div>
         </div>
-        <div class="is-flex is-justify-content-flex-end">
+        <div class="is-flex is-justify-content-flex-end my-2">
           <button
             class="suggestions-show-more"
             @click="function() {showMore = !showMore; sortSuggestions()}"
@@ -281,7 +281,7 @@ div.dropdown-item {
   font-size: small;
   font-weight: bolder;
   padding: 2px;
-  width: 40px;
+  width: 50px;
 }
 .tag-label {
   flex: 1;
@@ -294,9 +294,10 @@ div.dropdown-item {
   border: none;
   cursor: pointer;
   color: inherit;
-  font-weight: bold;
+  font-weight: 600;
   font-size: small;
   padding: 0;
+  margin-top: 6px;
 }
 .search-section-header-persons {
   padding-left: 30px;
@@ -304,6 +305,7 @@ div.dropdown-item {
 }
 .advanced_search_header {
   align-self: center;
+  font-weight: 600;
 }
 .advanced_search_router {
   align-self: center;
@@ -319,5 +321,9 @@ i {
   font-weight: 600;
   text-transform: uppercase;
   border-bottom: solid 1px #FDB3CC;
+  padding-bottom: 5px;
+}
+.suggestions-section-persons-container {
+  border-bottom: solid 1px #C7C7C7;
 }
 </style>
