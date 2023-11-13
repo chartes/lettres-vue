@@ -523,8 +523,7 @@ const actions = {
 
       //new
       state.selectedPlaceFrom.forEach((origin) => {
-      let selectedLabel = origin.label
-      placesFromSelectedFacets.push(selectedLabel)
+        placesFromSelectedFacets.push(`${origin.placename_id}###${origin.label}`)
       })
       console.log('query with placesFromSelectedFacets', placesFromSelectedFacets);
     } else {
@@ -545,8 +544,7 @@ const actions = {
 
       //new
       state.selectedPlaceTo.forEach((destination) => {
-      let selectedLabel = destination.label
-      placesToSelectedFacets.push(selectedLabel)
+        placesToSelectedFacets.push(`${destination.placename_id}###${destination.label}`)
       })
       console.log('query with placesToSelectedFacets', placesToSelectedFacets);
     } else {
@@ -567,8 +565,7 @@ const actions = {
 
       //new
       state.selectedPlaceCited.forEach((cited) => {
-        let selectedLabel = cited.label
-        placesCitedSelectedFacets.push(selectedLabel)
+        placesCitedSelectedFacets.push(`${cited.placename_id}###${cited.label}`)
       })
       console.log('query with placesCitedSelectedFacets', placesCitedSelectedFacets);
     } else {
@@ -600,8 +597,7 @@ const actions = {
 
       //new
       state.selectedPersonFrom.forEach((sender) => {
-      let selectedLabel = sender.label
-      personsFromSelectedFacets.push(selectedLabel)
+        personsFromSelectedFacets.push(`${sender.person_id}###${sender.label}`)
       })
       console.log('query with personsFromSelectedFacets', personsFromSelectedFacets);
     } else {
@@ -621,8 +617,7 @@ const actions = {
 
       //new
       state.selectedPersonTo.forEach((recipient) => {
-      let selectedLabel = recipient.label
-      personsToSelectedFacets.push(selectedLabel)
+      personsToSelectedFacets.push(`${recipient.person_id}###${recipient.label}`)
       })
       console.log('query with personsToSelectedFacets', personsToSelectedFacets);
     } else {
@@ -642,8 +637,7 @@ const actions = {
 
       //new
       state.selectedPersonCited.forEach((cited) => {
-        let selectedLabel = cited.label
-        personsCitedSelectedFacets.push(selectedLabel)
+        personsCitedSelectedFacets.push(`${cited.person_id}###${cited.label}`)
       })
       console.log('query with personsCitedSelectedFacets', personsCitedSelectedFacets);
     } else {
@@ -793,22 +787,22 @@ const actions = {
         url += `&collectionsfacets=${encodeURIComponent(JSON.stringify(collectionsFacets))}` // url += `&collectionsfacets=${JSON.stringify(collectionsSelectedFacets)}`
       }
       if (personsFromSelectedFacets.length > 0) {
-        url += `&senders=${personsFromSelectedFacets}`
+        url += `&senders=${encodeURIComponent(personsFromSelectedFacets)}`
       }
       if (personsToSelectedFacets.length > 0) {
-        url += `&recipients=${personsToSelectedFacets}` // probably needs url += `&recipients=${JSON.stringify(personsToSelectedFacets)}` to enable lists
+        url += `&recipients=${encodeURIComponent(JSON.stringify(personsToSelectedFacets))}`
       }
       if (personsCitedSelectedFacets.length > 0) {
-        url += `&persons_inlined=${personsCitedSelectedFacets}`
+        url += `&persons_inlined=${encodeURIComponent(JSON.stringify(personsCitedSelectedFacets))}`
       }
       if (placesFromSelectedFacets.length > 0) {
-        url += `&location_dates_from=${placesFromSelectedFacets}`
+        url += `&location_dates_from=${encodeURIComponent(placesFromSelectedFacets)}`
       }
       if (placesToSelectedFacets.length > 0) {
-        url += `&location_dates_to=${placesToSelectedFacets}`
+        url += `&location_dates_to=${encodeURIComponent(JSON.stringify(placesToSelectedFacets))}`
       }
       if (placesCitedSelectedFacets.length > 0) {
-        url += `&locations_inlined=${placesCitedSelectedFacets}`
+        url += `&locations_inlined=${encodeURIComponent(JSON.stringify(placesCitedSelectedFacets))}`
       }
       if (filters.length > 0) {
         url += `${filters}`
@@ -1008,9 +1002,9 @@ const actions = {
             {key, doc_count}) =>
             ({
               role_id: 1,
-              //person_id: id,
+              person_id: key.split("###")[0],
               count: doc_count,
-              label: key
+              label: key.split("###")[1]
             })
         )
         console.log("PersonsFromFacets", PersonsFromFacets);
@@ -1019,9 +1013,9 @@ const actions = {
             {key, doc_count}) =>
             ({
               role_id: 2,
-              //person_id: id,
+              person_id: key.split("###")[0],
               count: doc_count,
-              label: key
+              label: key.split("###")[1]
             })
         )
         console.log("PersonsToFacets", PersonsToFacets);
@@ -1030,9 +1024,9 @@ const actions = {
             {key, doc_count}) =>
             ({
               role_id: 3,
-              //person_id: id,
+              person_id: key.split("###")[0],
               count: doc_count,
-              label: key
+              label: key.split("###")[1]
             })
         )
         console.log("PersonsCitFacets", PersonsCitFacets);
@@ -1100,9 +1094,9 @@ const actions = {
             {key, doc_count}) =>
             ({
               role_id: 1,
-              //person_id: id,
+              placename_id: key.split("###")[0],
               count: doc_count,
-              label: key
+              label: key.split("###")[1]
             })
         )
         console.log("PlacesFromFacets", PlacesFromFacets);
@@ -1111,9 +1105,9 @@ const actions = {
             {key, doc_count}) =>
             ({
               role_id: 2,
-              //person_id: id,
+              placename_id: key.split("###")[0],
               count: doc_count,
-              label: key
+              label: key.split("###")[1]
             })
         )
         console.log("PlacesToFacets", PlacesToFacets);
@@ -1122,9 +1116,9 @@ const actions = {
             {key, doc_count}) =>
             ({
               role_id: 3,
-              //person_id: id,
+              placename_id: key.split("###")[0],
               count: doc_count,
-              label: key
+              label: key.split("###")[1]
             })
         )
         console.log("PlacesCitFacets", PlacesCitFacets);
