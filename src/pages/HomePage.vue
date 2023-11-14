@@ -1,75 +1,5 @@
 <template>
   <article>
-    <!--<section>
-      <div class="container">
-        <div
-          id="intro"
-          class="bg-image content"
-        >
-          <div class="row">
-            <p class="homepage_title">
-              Lettres
-            </p>
-          </div>
-          <div class="row">
-            <p class="homepage_subtitle">
-              de la Première Modernité
-            </p>
-          </div>
-          <div class="row is-flex is-justify-content-center mt-5">
-            <b-button
-              tag="router-link"
-              to="/about"
-              class="portail_button"
-            >
-              Le portail
-            </b-button>
-          </div>
-          <div class="row">
-            <p class="title has-text-centered">
-              Lettres
-            </p>
-            <p class="subtitle has-text-centered">
-              de la Première Modernité
-            </p>
-            <div class="columns is-centered mx-5">
-              <div class="column is-4">
-                <b-button
-                  tag="router-link"
-                  to="/about"
-                  type="is-primary is-fullwidth"
-                >
-                  Le portail
-                </b-button>
-              </div>
-              <div class="column is-4">
-                <b-button
-                  tag="router-link"
-                  to="/search"
-                  type="is-primary is-fullwidth"
-                >
-                  Faire une recherche
-                </b-button>
-              </div>
-              <div class="column is-4">
-                <b-button
-                  tag="router-link"
-                  to="/collections"
-                  type="is-primary is-fullwidth"
-                >
-                  Découvrir les collections
-                </b-button>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="row search_row">
-          <search-box
-            class="m-5"
-          />
-        </div>
-      </div>
-    </section>-->
     <section>
       <div class="narrow-container">
         <!--<div class="row">
@@ -325,14 +255,8 @@
 
 <script>
 import { mapState, mapActions } from "vuex";
-//import SearchBox from "@/components/SearchBox";
-
-
 export default {
   name: "HomePage",
-  components: {
-    /*SearchBox,*/
-  },
   data: function () {
       return {
           collectionsCount: 0,
@@ -365,8 +289,7 @@ export default {
     this.$store.state.layout.showLeftSideBar = false;
   },
   methods: {
-    ...mapActions("search", ["performSearch", "resetSearchState"]),
-    ...mapActions("search", ["getCounts"]),
+    ...mapActions("search", ["resetSearchState", "getCounts"]),
     counts: async function () {
       let response = await this.getCounts();
       this.documentsTotal = response["documents"];
@@ -378,7 +301,7 @@ export default {
       try {
         return require('@/assets/images/collections/collection' + img + '.jpg')
       } catch (e) {
-        //console.log('mon erreur : ',e)
+        //console.log('erreur image de collection : ',e)
         try {
           return require('@/assets/images/collections/collection' + this.findRoot(img).id + '.jpg')
         } catch (e) {
