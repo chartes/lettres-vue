@@ -310,7 +310,7 @@ export default {
     },
     //TODO Victor remove once [note] have been replaced in database
     getNoteIndex(content, type) {
-      const pattern = /<a class="note" href="#(\d+)">\[note]<\/a>/gmi
+      const pattern = /<a class="note" href="#(\d+)">(?:<span>)*\[note](?:<\/span>)*<\/a>/gmi
       console.log("DocumentTranscription / getNoteIndex", content, type)
       if (content) {
         this.contentPrep = content
@@ -334,11 +334,12 @@ export default {
           })
           contentMatcheswithIndex.forEach(m => {
             //console.log("m[0], m[1]", m[0], m[1], typeof (m[1]))
-            //console.log("m[0].replace('[note]', '['+ m[2] +']')", m[0].replace('[note]', '[' + m[2] + ']'))
+            const toReplace = new RegExp("(<span>)*\\[note](<\\/span>)*","gi");
+            //console.log("m[0].replace(toReplace, '['+ m[2] +']')", m[0].replace(toReplace, '[' + m[2] + ']'))
             if (type === "transcription") {
-              this.transcriptionContent = this.transcriptionContent.replace(m[0], m[0].replace('[note]', '[' + m[2] + ']'));
+              this.transcriptionContent = this.transcriptionContent.replace(m[0], m[0].replace(toReplace, '[' + m[2] + ']'));
             } else {
-              this.addressContent = this.addressContent.replace(m[0], m[0].replace('[note]', '[' + m[2] + ']'));
+              this.addressContent = this.addressContent.replace(m[0], m[0].replace(toReplace, '[' + m[2] + ']'));
             }
           })
           console.log(`in${type} replaced`, type === "transcription" ? this.transcriptionContent : this.addressContent)
