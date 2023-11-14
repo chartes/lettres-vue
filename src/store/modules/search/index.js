@@ -420,7 +420,7 @@ const actions = {
     const http = http_with_auth(rootState.user.jwt);
     let url = '/count';
     if (!rootState.user.current_user){
-      url += "?published=1";
+      url += "?published=true";
     }
     const response = await http.get(url);
     return response["data"];
