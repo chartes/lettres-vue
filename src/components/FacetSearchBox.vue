@@ -38,7 +38,18 @@
           </b-taginput>
         </b-field>
         <div>
-          <span v-if="tags.length >0 ">filtres actifs</span>
+          <span
+            v-if="tags.length >0 " 
+            class="suggestions-filter-list-title my-2"
+          >
+            <button
+              class="suggestions-remove-all"
+              @click="removeAllTags()"
+            >
+              <img src="../assets/images/icons/close-filter.svg">
+            </button>
+            filtres actifs
+          </span>
           <div
             v-for="tag in tags.filter(pl => (pl.role_id === 1))"
             :key="tag.label"
@@ -224,6 +235,9 @@ export default {
         item.role_id === tag.role_id && item.label !== tag.label)
         || (item.role_id !== tag.role_id)
         )
+    },
+    removeAllTags() {
+      this.tags = [];
     }
   },
 };
@@ -272,5 +286,18 @@ div.dropdown-item {
 }
 i {
   color: rgba(140, 140, 140) !important;
+}
+.suggestions-filter-list-title {
+  display: flex;
+  align-items: center;
+  gap: 5px
+}
+.suggestions-remove-all {
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+.suggestions-remove-all > img {
+  height: 18px
 }
 </style>
