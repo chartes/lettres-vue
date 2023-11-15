@@ -54,7 +54,7 @@ export default {
       type: String,
       required: true,
       validator: function (value) {
-        return ['persons', 'places'].includes(value)
+        return ['persons', 'places', 'collections'].includes(value)
       }
     },
     title: {
@@ -70,7 +70,8 @@ export default {
   computed: {
     ...mapState("persons", {allPersons: "persons_roles"}),
     ...mapState("placenames", {allPlaces: "places"}),
-  },
+    ...mapState("collections", {collectionsTags: "collectionsTags"}),
+},
   methods: {
     value,
     ...mapState("search", ["currentQuery"]),
@@ -82,20 +83,22 @@ export default {
       "setSelectedPlaceTo",
       "setSelectedPlaceCited",
       "resetSearchState",
-      "performSearch"
+      "performSearch",
+      "setSelectedCollections",
     ]),
     sortSuggestions() {
       const maxElements = this.showMore ? 20 :5
-      const suggestions = this.type === "persons" ? this.getPersonsToSuggest() : this.getPlacesToSuggest()
-      const sortedSuggestions = suggestions
-          .sort((person_x, person_y) => (person_x.count > person_y.count) ? -1 : 1)
+      let suggestions = []
+      if (this.type === "persons") {
+        suggestions = this.getPersonsToSuggest()
+      } else if (this.type === "places") {
+        suggestions = this.getPlacesToSuggest()
+      } else if (this.type === "collections") {
+        suggestions = this.getCollectionsToSuggest()
+      }
+      return suggestions
+          .sort((a, b) => (a.count > b.count) ? -1 : 1)
           .slice(0, maxElements)
-        return sortedSuggestions.map((p) => ({
-          label: p.label, 
-          count: p.count, 
-          tag: p.role_id === 1 ? "EXP" : p.role_id === 2 ? "DES" : "CIT",
-          originalObject: p
-        }))
     },
     getPersonsToSuggest() {
       if (this.allPersons.length){
@@ -105,7 +108,12 @@ export default {
             ...this.allPersons[1]['persons'],
             ...this.allPersons[2]['persons']
           ])
-        ];
+        ].map((item) => ({
+          label: item.label, 
+          count: item.count, 
+          tag: item.role_id === 1 ? "EXP" : item.role_id === 2 ? "DES" : "CIT",
+          originalObject: item
+        }));
       } else {
         return []
       }
@@ -118,17 +126,32 @@ export default {
             ...this.allPlaces[1]['places'],
             ...this.allPlaces[2]['places']
           ])
-        ];
+        ].map((item) => ({
+          label: item.label, 
+          count: item.count, 
+          tag: item.role_id === 1 ? "EXP" : item.role_id === 2 ? "DES" : "CIT",
+          originalObject: item
+        }));
       } else {
         return []
       }
+    },
+    getCollectionsToSuggest() {
+      return Object.values(this.collectionsTags).map((item) => ({
+          label: item.title, 
+          count: item.publishedCount, 
+          tag: null,
+          originalObject: item
+        }));
     },
     searchSuggestion(suggestion) {
       this.resetSearchState();
       if (this.type === "persons") {
         this.selectPerson(suggestion.originalObject)
-      } else {
+      } else if (this.type === "places") {
         this.selectPlace(suggestion.originalObject)
+      } else if (this.type === "collections") {
+        this.selectCollection(suggestion.originalObject)
       }
       this.performSearch()
     },
@@ -157,6 +180,9 @@ export default {
           this.setSelectedPlaceCited([place]);
           break;
       }
+    },
+    selectCollection(collection) {
+      this.setSelectedCollections([collection])
     }
   },
 };
@@ -172,6 +198,9 @@ export default {
 }
 .suggestions-box-header-header-places {
   background: url('../assets/images/icons/picto-lieux.svg') center left no-repeat;
+}
+.suggestions-box-header-header-collections {
+  background: url('../assets/images/icons/picto-collections.svg') center left no-repeat;
 }
 .tag-container {
   display: flex;

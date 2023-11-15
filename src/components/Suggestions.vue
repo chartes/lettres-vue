@@ -13,6 +13,10 @@
           type="places"
           title="LIEUX FRÉQUENTS"
         />
+        <suggestions-box
+          type="collections"
+          title="COLLECTIONS"
+        />
       </div>
     </section>
   </div>
