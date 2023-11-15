@@ -73,7 +73,16 @@ export default {
     ...mapState("persons", {allPersons: "persons_roles"}),
     ...mapState("placenames", {allPlaces: "places"}),
     ...mapState("collections", {collectionsTags: "collectionsTags"}),
-},
+    ...mapState("search", [
+      "selectedPersonFrom",
+      "selectedPersonTo",
+      "selectedPersonCited",
+      "selectedPlaceFrom",
+      "selectedPlaceTo",
+      "selectedPlaceCited",
+      "selectedCollections",
+    ]),
+  },
   methods: {
     value,
     ...mapState("search", ["currentQuery"]),
@@ -84,9 +93,9 @@ export default {
       "setSelectedPlaceFrom",
       "setSelectedPlaceTo",
       "setSelectedPlaceCited",
+      "setSelectedCollections",
       "resetSearchState",
       "performSearch",
-      "setSelectedCollections",
     ]),
     sortSuggestions() {
       const expandLimit = 5
@@ -149,7 +158,6 @@ export default {
         }));
     },
     searchSuggestion(suggestion) {
-      this.resetSearchState();
       if (this.type === "persons") {
         this.selectPerson(suggestion.originalObject)
       } else if (this.type === "places") {
@@ -162,31 +170,31 @@ export default {
     selectPerson(person) {
       switch(person.role_id) {
         case 1:
-          this.setSelectedPersonFrom([person]);
+          this.setSelectedPersonFrom([...this.selectedPersonFrom, person]);
           break;
         case 2:
-          this.setSelectedPersonTo([person]);
+          this.setSelectedPersonTo([...this.selectedPersonTo, person]);
           break;
         case 3:
-          this.setSelectedPersonCited([person]);
+          this.setSelectedPersonCited([...this.selectedPersonCited, person]);
           break;
       }
     },
     selectPlace(place) {
       switch(place.role_id) {
         case 1:
-          this.setSelectedPlaceFrom([place]);
+          this.setSelectedPlaceFrom([...this.selectedPlaceFrom, place]);
           break;
         case 2:
-          this.setSelectedPlaceTo([place]);
+          this.setSelectedPlaceTo([...this.selectedPlaceTo, place]);
           break;
         case 3:
-          this.setSelectedPlaceCited([place]);
+          this.setSelectedPlaceCited([...this.selectedPlaceCited, place]);
           break;
       }
     },
     selectCollection(collection) {
-      this.setSelectedCollections([collection])
+      this.setSelectedCollections([...this.selectedCollections, collection])
     }
   },
 };
