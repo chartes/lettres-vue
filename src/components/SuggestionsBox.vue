@@ -150,7 +150,9 @@ export default {
       }
     },
     getCollectionsToSuggest() {
-      return Object.values(this.collectionsTags).map((item) => ({
+      return Object.values(this.collectionsTags)
+      .filter((c) => !this.selectedCollections.some((sc) => sc.id === c.id))
+      .map((item) => ({
           label: item.title, 
           count: item.publishedCount, 
           tag: null,
