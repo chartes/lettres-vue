@@ -34,10 +34,11 @@
       </div>
       <div class="is-flex is-justify-content-flex-end my-2">
         <button
+          v-if="showExpandButton"
           class="suggestions-show-more"
-          @click="function() {showMore = !showMore; sortSuggestions()}"
+          @click="function() {expanded = !expanded; sortSuggestions()}"
         >
-          {{ showMore ? "VOIR PLUS" : "VOIR MOINS" }}
+          {{ expanded ? "VOIR MOINS" :"VOIR PLUS" }}
         </button>
       </div>
     </div>
@@ -64,7 +65,8 @@ export default {
   },
   data() {
     return {
-      showMore: false,
+      expanded: false,
+      showExpandButton: false,
     };
   },
   computed: {
@@ -87,7 +89,8 @@ export default {
       "setSelectedCollections",
     ]),
     sortSuggestions() {
-      const maxElements = this.showMore ? 20 :5
+      const expandLimit = 5
+      const maxElements = this.expanded ? 20 : expandLimit
       let suggestions = []
       if (this.type === "persons") {
         suggestions = this.getPersonsToSuggest()
@@ -96,6 +99,7 @@ export default {
       } else if (this.type === "collections") {
         suggestions = this.getCollectionsToSuggest()
       }
+      this.showExpandButton = suggestions.length > expandLimit
       return suggestions
           .sort((a, b) => (a.count > b.count) ? -1 : 1)
           .slice(0, maxElements)

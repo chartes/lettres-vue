@@ -1,7 +1,7 @@
 <template>
   <div>
     <section>
-      <div>
+      <div class="my-3">
         <span class="row is-flex is-justify-content-space-between suggestions-section-header my-3">
           SUGGESTIONS
         </span>
