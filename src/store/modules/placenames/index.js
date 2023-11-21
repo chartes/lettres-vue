@@ -64,9 +64,9 @@ const actions = {
         let query ='';
         let published = false;
 
-        if (!query || query.length === 0) {
+        /*if (!query || query.length === 0) {
           query = '*'
-        }
+        }*/
         if (!rootState.user.current_user) {
             published = true
             //query = `${query} AND (is-published:true)`;
@@ -454,8 +454,8 @@ const actions = {
     
         /* =========== filters =========== */
         let published = '';
-        let query =  state.searchTerm ||  '***' ; //`collections.id:${state.selectedCollectionId}`state.placenamesSearchResults.map(p => `id:${p.id}`).join(' OR ') ||
-    
+        //let query =  state.searchTerm ||  '***' ; //`collections.id:${state.selectedCollectionId}`state.placenamesSearchResults.map(p => `id:${p.id}`).join(' OR ') ||
+        let query =  state.searchTerm ||  '' ;
     
         if (!rootState.user.current_user){
           published = true
