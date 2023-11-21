@@ -554,7 +554,9 @@ const actions = {
       async getPlacenameById({rootState}, id) {
         const http = http_with_auth(rootState.user.jwt);
         const resp = await http.get(`/placenames/${id}?without-relationships`)
-        return resp.data.data;
+        if (resp.data.data) {
+            return resp.data.data;
+        } else return resp.data.error
       },
 
       async getInlinedPlacenameWithRoleById({rootState, state}, {docId, placeId}) {

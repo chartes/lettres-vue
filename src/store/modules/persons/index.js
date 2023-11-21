@@ -398,7 +398,9 @@ const actions = {
   async getPersonById({rootState}, id) {
     const http = http_with_auth(rootState.user.jwt);
     const resp = await http.get(`/persons/${id}?without-relationships`)
+    if (resp.data.data) {
     return resp.data.data;
+    } else return resp.data.error
   },
 
   /* ======================
