@@ -980,6 +980,10 @@ const actions = {
         let collectionsTags = [...new Set([...CollectionsFacets ,...CollectionsFacetsParents])];
         console.log('collectionsTags', collectionsTags);
 
+        let CollectionsSuggestions = response.data.buckets.collections.sort(
+            (coll_x, coll_y) => (coll_x.doc_count > coll_y.doc_count) ? -1 : 1)
+        console.log("CollectionsSuggestions", CollectionsSuggestions);
+
         /*
         const searchScopeCollections = await http.get(`/search?query=${query}&searchtype=${searchType}&facade=hierarchy&${filters}&groupby[doc-type]=collection&groupby[field]=collections.id`);
         let searchScopeCollectionsIds = searchScopeCollections.data.data.reduce((c, v) => c.concat(v), []).map(o => o.id);
@@ -1097,6 +1101,11 @@ const actions = {
         ]
         console.log('persons_roles : ', persons_roles)
         commit('persons/SET_PERSONS_ROLES', persons_roles, {root: true})
+
+        let personsSuggestions = [...new Set([...PersonsFromFacets ,...PersonsToFacets, ...PersonsCitFacets])];
+        personsSuggestions = personsSuggestions.sort(
+            (person_x, person_y) => (person_x.count > person_y.count) ? -1 : 1)
+        console.log("personsSuggestions", personsSuggestions);
 
         // fetch placenames associated with search criteriae :
         let PlacesFromFacets = response.data.buckets.location_dates_from.map((

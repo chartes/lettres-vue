@@ -91,16 +91,29 @@
       </section>
 
       <section class="search-section">
-        <person-search-box />
+        <facet-search-box
+          type="persons"
+          title="PERSONNES"
+          placeholder="Catherine"
+        />
       </section>
 
       <section class="search-section">
-        <place-search-box />
+        <facet-search-box
+          type="places"
+          title="LIEUX"
+          placeholder="Paris"
+        />
       </section>
 
       <section class="search-section">
         <collection-search-box />
       </section>
+
+      <section>
+        <suggestions />
+      </section>
+
 
       <!--<div class="divider is-left">Dates de temps</div>
       <section class="date-section">
@@ -357,8 +370,8 @@ import 'vue-slider-component/theme/antd.css'
 
 import { mapState, mapActions } from "vuex";
 import CollectionSearchBox from "@/components/CollectionSearchBox";
-import PersonSearchBox from "@/components/PersonSearchBox.vue";
-import PlaceSearchBox from "@/components/PlaceSearchBox.vue";
+import FacetSearchBox from "@/components/FacetSearchBox.vue";
+import Suggestions from "@/components/Suggestions.vue";
 //import { templates, labels } from "@/store/modules/search";
 
 export default {
@@ -366,8 +379,8 @@ export default {
   components: {
     VueSlider,
     CollectionSearchBox,
-    PersonSearchBox,
-    PlaceSearchBox,
+    FacetSearchBox,
+    Suggestions
   },
   data() {
     return {
