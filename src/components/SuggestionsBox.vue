@@ -110,6 +110,8 @@ export default {
       }
       this.showExpandButton = suggestions.length > expandLimit
       return suggestions
+          .sort((a, b) => {return  a.label.localeCompare(b.label)})
+          .sort((a, b) => (a.originalObject.role_id > b.originalObject.role_id) ? -1 : 1)
           .sort((a, b) => (a.count > b.count) ? -1 : 1)
           .slice(0, maxElements)
     },
@@ -151,10 +153,11 @@ export default {
     },
     getCollectionsToSuggest() {
       return Object.values(this.collectionsTags)
+      .filter((c) => c.resultsCount)
       .filter((c) => !this.selectedCollections.some((sc) => sc.id === c.id))
       .map((item) => ({
           label: item.title, 
-          count: item.publishedCount, 
+          count: item.resultsCount,
           tag: null,
           originalObject: item
         }));
@@ -218,6 +221,7 @@ export default {
 }
 .tag-container {
   display: flex;
+  align-items: center;
   width: 100%;
   cursor: pointer;
 }
