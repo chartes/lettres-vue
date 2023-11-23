@@ -962,6 +962,7 @@ const actions = {
         let CollectionsFacets = []
         response.data.buckets.collections.forEach((facet_coll) => {
           let CollectionFacet = Object.values(rootState.collections.collectionsById).filter(coll => (coll.title === facet_coll.key))[0]
+          CollectionFacet.resultsCount = facet_coll.doc_count
           CollectionsFacets.push(CollectionFacet)
         })
         console.log("CollectionsFacets", CollectionsFacets);
@@ -979,10 +980,6 @@ const actions = {
 
         let collectionsTags = [...new Set([...CollectionsFacets ,...CollectionsFacetsParents])];
         console.log('collectionsTags', collectionsTags);
-
-        let CollectionsSuggestions = response.data.buckets.collections.sort(
-            (coll_x, coll_y) => (coll_x.doc_count > coll_y.doc_count) ? -1 : 1)
-        console.log("CollectionsSuggestions", CollectionsSuggestions);
 
         /*
         const searchScopeCollections = await http.get(`/search?query=${query}&searchtype=${searchType}&facade=hierarchy&${filters}&groupby[doc-type]=collection&groupby[field]=collections.id`);
