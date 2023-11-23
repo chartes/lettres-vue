@@ -304,11 +304,11 @@ const actions = {
     IdsInAddress = attrs.address ? [...attrs.address.matchAll(personRegexp)].map(m => parseInt(m[1])) : []
     IdsInArgument = attrs.argument ? [...attrs.argument.matchAll(personRegexp)].map(m => parseInt(m[1])) : []
     IdsInTranscription = attrs.transcription ? [...attrs.transcription.matchAll(personRegexp)].map(m => parseInt(m[1])) : []
-    console.log("IdsInAddress match : ", [...attrs.address.matchAll(personRegexp)])
-    console.log("IdsInAddress map : ", [...attrs.address.matchAll(personRegexp)].map(m => parseInt(m[1])))
+    console.log("IdsInAddress match : ", attrs.address ? [...attrs.address.matchAll(personRegexp)] : "None")
+    console.log("IdsInAddress map : ", IdsInAddress)
 
-    console.log("IdsInTranscription match : ", [...attrs.transcription.matchAll(personRegexp)])
-    console.log("IdsInTranscription map : ", [...attrs.transcription.matchAll(personRegexp)].map(m => parseInt(m[1])))
+    console.log("IdsInTranscription match : ", attrs.transcription ? [...attrs.transcription.matchAll(personRegexp)] : "None" )
+    console.log("IdsInTranscription map : ", IdsInTranscription)
 
     IdsInNotes = []
     noteContents.forEach(n => {
