@@ -1,6 +1,6 @@
 import {debounce} from 'lodash';
 import {http_with_auth} from "@/modules/http-common";
-import {cloneDeep} from 'lodash';
+import {cloneDeep, uniq} from 'lodash';
 import store from "@/store";
 
 
@@ -470,22 +470,10 @@ const actions = {
       console.log('collection query', query);
     }*/
     //new
-    let collectionsSelectedFacets = [];
-    if (state.selectedCollections.length > 0) {
-      console.log('selectedCollections', state.selectedCollections);
-      let selectedCollectionsIds = state.selectedCollections.map((coll) => coll.id);
-      console.log("selectedCollectionsIds", selectedCollectionsIds);
-      let selectedCollectionsWithChildren = store.getters["collections/flattenedCollectionsTree"](selectedCollectionsIds);
-      console.log("selectedCollectionsWithChildren", selectedCollectionsWithChildren)
-      state.selectedCollections.forEach((coll) => {
-        let selectedLabel = coll.title // replace by id
-        collectionsSelectedFacets.push(selectedLabel)
-      })
-      selectedCollectionsWithChildren.forEach((coll) => {
-        let selectedLabel = coll.title // replace by id
-        collectionsSelectedFacets.push(selectedLabel)
-      })
-      collectionsSelectedFacets = [...new Set(collectionsSelectedFacets)]
+    let selectedCollectionsIds = state.selectedCollections.map((coll) => coll.id);
+    let selectedCollectionsWithChildren = store.getters["collections/flattenedCollectionsTree"](selectedCollectionsIds);
+    let collectionsSelectedFacets = uniq(selectedCollectionsWithChildren.map((coll) => coll.id))
+    if (collectionsSelectedFacets.length > 0) {
       console.log('query with collectionsSelectedFacets', collectionsSelectedFacets);
     } else {
       console.log('query without selectedCollections')
@@ -961,7 +949,7 @@ const actions = {
 
         let CollectionsFacets = []
         response.data.buckets.collections.forEach((facet_coll) => {
-          let CollectionFacet = Object.values(rootState.collections.collectionsById).filter(coll => (coll.title === facet_coll.key))[0]
+          let CollectionFacet = Object.values(rootState.collections.collectionsById).filter(coll => (coll.id.toString() === facet_coll.key))[0]
           CollectionFacet.resultsCount = facet_coll.doc_count
           CollectionsFacets.push(CollectionFacet)
         })
