@@ -8,7 +8,7 @@
     class="has-text-danger"
   >
     <p>Voulez-vous supprimer la (sous) collection : </p>
-    <p> {{ collectionTitle }} </p>
+    <p> {{ collectionTitle }} (<i class="fas fa-exclamation-triangle" /> supprime également ses sous-collections)</p>
   </modal-confirm>
 </template>
 
