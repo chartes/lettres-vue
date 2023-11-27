@@ -152,12 +152,21 @@ export default {
       box-shadow: none !important;
     }
   }
+  ::v-deep select {
+    border-color: #FFFFFF !important;
+    border-bottom-right-radius: 0px !important;
+    border-top-right-radius: 0px !important;
+
+    &:hover,
+    &:focus {
+      border-color: #FFFFFF !important;
+      box-shadow: none !important;
+    }
+  }
+  ::v-deep .select::after {
+      border-color: rgba(127, 0, 56) !important;
+  }
 }
-
-/* align close button ?
-span.icon {
-
-}*/
 
 .advanced-search {
   width: 100%;
@@ -191,7 +200,5 @@ span.icon {
       height: 20px;
     }
   }
-
  }
-
 </style>
