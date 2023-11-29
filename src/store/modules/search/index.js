@@ -934,260 +934,257 @@ const actions = {
           username: included.find(({type, id: adminId}) => type === "user" && adminId === admin.data.id).attributes.username
         }*/
       /*}));*/
-      console.log('datawithPersons', datawithPersons)
 
-      if (type !== 'simple' && (query !== state.currentQuery || filters !== state.currentFilters))
-      {
-        // fetch collections associated with search criteriae :
-        if (Object.keys(rootState.collections.collectionsById).length === 0) {
-          console.log("loading collectionsById")
-          await store.dispatch("collections/fetchAll").then(
-              (response) => {
-              }
-          )
-        }
-
-        let CollectionsFacets = []
-        response.data.buckets.collections.forEach((facet_coll) => {
-          let CollectionFacet = Object.values(rootState.collections.collectionsById).filter(coll => (coll.id.toString() === facet_coll.key))[0]
-          CollectionFacet.resultsCount = facet_coll.doc_count
-          CollectionsFacets.push(CollectionFacet)
-        })
-        console.log("CollectionsFacets", CollectionsFacets);
-
-        let CollectionsFacetsParents = []
-        CollectionsFacets.forEach((facet_coll) => {
-          let loop_coll = facet_coll
-          while(loop_coll.parent !== null) {
-            let CollectionFacetParent = Object.values(rootState.collections.collectionsById).filter(coll => (coll.id === loop_coll.parent))[0]
-            CollectionsFacetsParents.push(CollectionFacetParent)
-            loop_coll = CollectionFacetParent
-          }
-        })
-        console.log("CollectionsFacetsParents", CollectionsFacetsParents);
-
-        let collectionsTags = [...new Set([...CollectionsFacets ,...CollectionsFacetsParents])];
-        console.log('collectionsTags', collectionsTags);
-
-        /*
-        const searchScopeCollections = await http.get(`/search?query=${query}&searchtype=${searchType}&facade=hierarchy&${filters}&groupby[doc-type]=collection&groupby[field]=collections.id`);
-        let searchScopeCollectionsIds = searchScopeCollections.data.data.reduce((c, v) => c.concat(v), []).map(o => o.id);
-        console.log("searchScopeCollectionsIds", searchScopeCollectionsIds);
-
-        // fetch upward tree Ids for collections from relationships:
-        const uniqueSearchScopeCollectionsParentsId = searchScopeCollections.data.data.flatMap(({relationships}) => relationships.parents.data.map(({id}) => id));
-        console.log('uniqueSearchScopeCollectionsParentsId', uniqueSearchScopeCollectionsParentsId);
-        let uniqueSearchScopeCollectionsIds = [...new Set([...searchScopeCollectionsIds ,...uniqueSearchScopeCollectionsParentsId])];
-        console.log('uniqueSearchScopeCollectionsIds', uniqueSearchScopeCollectionsIds);
-        */
-
-        /* fetch upward tree Ids for collections from attributes if included in response (modified facade) :
-        const uniqueSearchScopeCollectionsParentsId = searchScopeCollections.data.data.flatMap(({attributes}) => attributes.parents.map((id) => id));
-        console.log('uniqueSearchScopeCollectionsParentsId', uniqueSearchScopeCollectionsParentsId);
-        let uniqueSearchScopeCollectionsIds = [...new Set([...searchScopeCollectionsIds ,...uniqueSearchScopeCollectionsParentsId])];
-        console.log('uniqueSearchScopeCollectionsIds', uniqueSearchScopeCollectionsIds);*/
-
-        // fetch actual collections :
-        /*let collectionsTags = Object.values(store.state.collections.collectionsById).filter(({id}) => uniqueSearchScopeCollectionsIds.includes(id));
-        console.log('collectionsTags', collectionsTags);
-        */
-
-        // update state collections
-        commit('collections/SET_COLLECTIONS_TAGS', collectionsTags, {root: true})
-
-        // fetch persons associated with search criteriae :
-        let PersonsFromFacets = response.data.buckets.senders.map((
-            {key, doc_count}) =>
-            ({
-              role_id: 1,
-              person_id: key.split("###")[0],
-              count: doc_count,
-              label: key.split("###")[1]
-            })
+      // fetch collections associated with search criteriae :
+      if (Object.keys(rootState.collections.collectionsById).length === 0) {
+        console.log("loading collectionsById")
+        await store.dispatch("collections/fetchAll").then(
+            (response) => {
+            }
         )
-        console.log("PersonsFromFacets", PersonsFromFacets);
-
-        let PersonsToFacets = response.data.buckets.recipients.map((
-            {key, doc_count}) =>
-            ({
-              role_id: 2,
-              person_id: key.split("###")[0],
-              count: doc_count,
-              label: key.split("###")[1]
-            })
-        )
-        console.log("PersonsToFacets", PersonsToFacets);
-
-        let PersonsCitFacets = response.data.buckets.persons_inlined.map((
-            {key, doc_count}) =>
-            ({
-              role_id: 3,
-              person_id: key.split("###")[0],
-              count: doc_count,
-              label: key.split("###")[1]
-            })
-        )
-        console.log("PersonsCitFacets", PersonsCitFacets);
-
-        /*const searchScopePersonsFrom = await http.get(`/search?query=${query}&searchtype=${searchType}${filters}&groupby[doc-type]=person&groupby[field]=senders.id&without-relationships`);
-        const searchScopePersonsTo = await http.get(`/search?query=${query}&searchtype=${searchType}${filters}&groupby[doc-type]=person&groupby[field]=recipients.id&without-relationships`);
-        const searchScopePersonsCit = await http.get(`/search?query=${query}&searchtype=${searchType}${filters}&groupby[doc-type]=person&groupby[field]=person-inlined.id&without-relationships`);
-        console.log('searchScopePersonsFrom', searchScopePersonsFrom)
-        let uniqueSearchScopePersonsFrom = searchScopePersonsFrom.data.data.map(({
-                                                                                   id,
-                                                                                   type,
-                                                                                   attributes,
-                                                                                   meta,
-                                                                                   links
-                                                                                 }) =>
-            ({
-              role_id: 1,
-              person_id: id,
-              label: attributes.label
-            })
-        )
-        console.log('uniqueSearchScopePersonsFrom', uniqueSearchScopePersonsFrom)
-
-        let uniqueSearchScopePersonsTo = searchScopePersonsTo.data.data.map(({
-                                                                               id,
-                                                                               type,
-                                                                               attributes,
-                                                                               meta,
-                                                                               links
-                                                                             }) =>
-            ({
-              role_id: 2,
-              person_id: id,
-              label: attributes.label
-            })
-        )
-        console.log('uniqueSearchScopePersonsTo', uniqueSearchScopePersonsTo)
-
-        let uniqueSearchScopePersonsCit = searchScopePersonsCit.data.data.map(({
-                                                                                 id,
-                                                                                 type,
-                                                                                 attributes,
-                                                                                 meta,
-                                                                                 links
-                                                                               }) =>
-            ({
-              role_id: 3,
-              person_id: id,
-              label: attributes.label
-            })
-        )
-        console.log('uniqueSearchScopePersonsCit', uniqueSearchScopePersonsCit)*/
-
-        // update state persons
-        const persons_roles = [
-          {role_id: "Expéditeur", persons: PersonsFromFacets},
-          {role_id: "Destinataire", persons: PersonsToFacets},
-          {role_id: "Personne citée", persons: PersonsCitFacets}
-        ]
-        console.log('persons_roles : ', persons_roles)
-        commit('persons/SET_PERSONS_ROLES', persons_roles, {root: true})
-
-        let personsSuggestions = [...new Set([...PersonsFromFacets ,...PersonsToFacets, ...PersonsCitFacets])];
-        personsSuggestions = personsSuggestions.sort(
-            (person_x, person_y) => (person_x.count > person_y.count) ? -1 : 1)
-        console.log("personsSuggestions", personsSuggestions);
-
-        // fetch placenames associated with search criteriae :
-        let PlacesFromFacets = response.data.buckets.location_dates_from.map((
-            {key, doc_count}) =>
-            ({
-              role_id: 1,
-              placename_id: key.split("###")[0],
-              count: doc_count,
-              label: key.split("###")[1]
-            })
-        )
-        console.log("PlacesFromFacets", PlacesFromFacets);
-
-        let PlacesToFacets = response.data.buckets.location_dates_to.map((
-            {key, doc_count}) =>
-            ({
-              role_id: 2,
-              placename_id: key.split("###")[0],
-              count: doc_count,
-              label: key.split("###")[1]
-            })
-        )
-        console.log("PlacesToFacets", PlacesToFacets);
-
-        let PlacesCitFacets = response.data.buckets.locations_inlined.map((
-            {key, doc_count}) =>
-            ({
-              role_id: 3,
-              placename_id: key.split("###")[0],
-              count: doc_count,
-              label: key.split("###")[1]
-            })
-        )
-        console.log("PlacesCitFacets", PlacesCitFacets);
-
-
-        /*const searchScopePlacesFrom = await http.get(`/search?query=${query}&searchtype=${searchType}${filters}&groupby[doc-type]=placename&groupby[field]=location-date-from.id&without-relationships`);
-        const searchScopePlacesTo = await http.get(`/search?query=${query}&searchtype=${searchType}${filters}&groupby[doc-type]=placename&groupby[field]=location-date-to.id&without-relationships`);
-        const searchScopePlacesCit = await http.get(`/search?query=${query}&searchtype=${searchType}${filters}&groupby[doc-type]=placename&groupby[field]=location-inlined.id&without-relationships`);
-        console.log('searchScopePlacesFrom', searchScopePlacesFrom)
-        let uniqueSearchScopePlacesFrom = searchScopePlacesFrom.data.data.map(({
-                                                                                 id,
-                                                                                 type,
-                                                                                 label,
-                                                                                 attributes,
-                                                                                 meta,
-                                                                                 links
-                                                                               }) =>
-            ({
-              role_id: 1,
-              placename_id: id,
-              label: attributes.label
-            })
-        )
-        console.log('uniqueSearchScopePlacesFrom', uniqueSearchScopePlacesFrom)
-
-        let uniqueSearchScopePlacesTo = searchScopePlacesTo.data.data.map(({
-                                                                             id,
-                                                                             type,
-                                                                             label,
-                                                                             attributes,
-                                                                             meta,
-                                                                             links
-                                                                           }) =>
-            ({
-              role_id: 2,
-              placename_id: id,
-              label: attributes.label
-            })
-        )
-        console.log('uniqueSearchScopePlacesTo', uniqueSearchScopePlacesTo)
-
-        let uniqueSearchScopePlacesCit = searchScopePlacesCit.data.data.map(({
-                                                                               id,
-                                                                               type,
-                                                                               label,
-                                                                               attributes,
-                                                                               meta,
-                                                                               links
-                                                                             }) =>
-            ({
-              role_id: 3,
-              placename_id: id,
-              label: attributes.label
-            })
-        )
-        console.log('uniqueSearchScopePlacesCit', uniqueSearchScopePlacesCit)*/
-
-        // update state placenames
-        const places = [
-          {role_id: "Lieu d'expédition", places: PlacesFromFacets},
-          {role_id: "Lieu de destination", places: PlacesToFacets},
-          {role_id: "Lieu mentionné", places: PlacesCitFacets}
-        ]
-        //console.log('places : ', places)
-        commit('placenames/SET_ALL', places, {root: true})
       }
+
+      let CollectionsFacets = []
+      response.data.buckets.collections.forEach((facet_coll) => {
+        let CollectionFacet = Object.values(rootState.collections.collectionsById).filter(coll => (coll.id.toString() === facet_coll.key))[0]
+        CollectionFacet.resultsCount = facet_coll.doc_count
+        CollectionsFacets.push(CollectionFacet)
+      })
+      console.log("CollectionsFacets", CollectionsFacets);
+
+      let CollectionsFacetsParents = []
+      CollectionsFacets.forEach((facet_coll) => {
+        let loop_coll = facet_coll
+        while(loop_coll.parent !== null) {
+          let CollectionFacetParent = Object.values(rootState.collections.collectionsById).filter(coll => (coll.id === loop_coll.parent))[0]
+          CollectionsFacetsParents.push(CollectionFacetParent)
+          loop_coll = CollectionFacetParent
+        }
+      })
+      console.log("CollectionsFacetsParents", CollectionsFacetsParents);
+
+      let collectionsTags = [...new Set([...CollectionsFacets ,...CollectionsFacetsParents])];
+      console.log('collectionsTags', collectionsTags);
+
+      /*
+      const searchScopeCollections = await http.get(`/search?query=${query}&searchtype=${searchType}&facade=hierarchy&${filters}&groupby[doc-type]=collection&groupby[field]=collections.id`);
+      let searchScopeCollectionsIds = searchScopeCollections.data.data.reduce((c, v) => c.concat(v), []).map(o => o.id);
+      console.log("searchScopeCollectionsIds", searchScopeCollectionsIds);
+
+      // fetch upward tree Ids for collections from relationships:
+      const uniqueSearchScopeCollectionsParentsId = searchScopeCollections.data.data.flatMap(({relationships}) => relationships.parents.data.map(({id}) => id));
+      console.log('uniqueSearchScopeCollectionsParentsId', uniqueSearchScopeCollectionsParentsId);
+      let uniqueSearchScopeCollectionsIds = [...new Set([...searchScopeCollectionsIds ,...uniqueSearchScopeCollectionsParentsId])];
+      console.log('uniqueSearchScopeCollectionsIds', uniqueSearchScopeCollectionsIds);
+      */
+
+      /* fetch upward tree Ids for collections from attributes if included in response (modified facade) :
+      const uniqueSearchScopeCollectionsParentsId = searchScopeCollections.data.data.flatMap(({attributes}) => attributes.parents.map((id) => id));
+      console.log('uniqueSearchScopeCollectionsParentsId', uniqueSearchScopeCollectionsParentsId);
+      let uniqueSearchScopeCollectionsIds = [...new Set([...searchScopeCollectionsIds ,...uniqueSearchScopeCollectionsParentsId])];
+      console.log('uniqueSearchScopeCollectionsIds', uniqueSearchScopeCollectionsIds);*/
+
+      // fetch actual collections :
+      /*let collectionsTags = Object.values(store.state.collections.collectionsById).filter(({id}) => uniqueSearchScopeCollectionsIds.includes(id));
+      console.log('collectionsTags', collectionsTags);
+      */
+
+      // update state collections
+      commit('collections/SET_COLLECTIONS_TAGS', collectionsTags, {root: true})
+
+      // fetch persons associated with search criteriae :
+      let PersonsFromFacets = response.data.buckets.senders.map((
+          {key, doc_count}) =>
+          ({
+            role_id: 1,
+            person_id: key.split("###")[0],
+            count: doc_count,
+            label: key.split("###")[1]
+          })
+      )
+      console.log("PersonsFromFacets", PersonsFromFacets);
+
+      let PersonsToFacets = response.data.buckets.recipients.map((
+          {key, doc_count}) =>
+          ({
+            role_id: 2,
+            person_id: key.split("###")[0],
+            count: doc_count,
+            label: key.split("###")[1]
+          })
+      )
+      console.log("PersonsToFacets", PersonsToFacets);
+
+      let PersonsCitFacets = response.data.buckets.persons_inlined.map((
+          {key, doc_count}) =>
+          ({
+            role_id: 3,
+            person_id: key.split("###")[0],
+            count: doc_count,
+            label: key.split("###")[1]
+          })
+      )
+      console.log("PersonsCitFacets", PersonsCitFacets);
+
+      /*const searchScopePersonsFrom = await http.get(`/search?query=${query}&searchtype=${searchType}${filters}&groupby[doc-type]=person&groupby[field]=senders.id&without-relationships`);
+      const searchScopePersonsTo = await http.get(`/search?query=${query}&searchtype=${searchType}${filters}&groupby[doc-type]=person&groupby[field]=recipients.id&without-relationships`);
+      const searchScopePersonsCit = await http.get(`/search?query=${query}&searchtype=${searchType}${filters}&groupby[doc-type]=person&groupby[field]=person-inlined.id&without-relationships`);
+      console.log('searchScopePersonsFrom', searchScopePersonsFrom)
+      let uniqueSearchScopePersonsFrom = searchScopePersonsFrom.data.data.map(({
+                                                                                  id,
+                                                                                  type,
+                                                                                  attributes,
+                                                                                  meta,
+                                                                                  links
+                                                                                }) =>
+          ({
+            role_id: 1,
+            person_id: id,
+            label: attributes.label
+          })
+      )
+      console.log('uniqueSearchScopePersonsFrom', uniqueSearchScopePersonsFrom)
+
+      let uniqueSearchScopePersonsTo = searchScopePersonsTo.data.data.map(({
+                                                                              id,
+                                                                              type,
+                                                                              attributes,
+                                                                              meta,
+                                                                              links
+                                                                            }) =>
+          ({
+            role_id: 2,
+            person_id: id,
+            label: attributes.label
+          })
+      )
+      console.log('uniqueSearchScopePersonsTo', uniqueSearchScopePersonsTo)
+
+      let uniqueSearchScopePersonsCit = searchScopePersonsCit.data.data.map(({
+                                                                                id,
+                                                                                type,
+                                                                                attributes,
+                                                                                meta,
+                                                                                links
+                                                                              }) =>
+          ({
+            role_id: 3,
+            person_id: id,
+            label: attributes.label
+          })
+      )
+      console.log('uniqueSearchScopePersonsCit', uniqueSearchScopePersonsCit)*/
+
+      // update state persons
+      const persons_roles = [
+        {role_id: "Expéditeur", persons: PersonsFromFacets},
+        {role_id: "Destinataire", persons: PersonsToFacets},
+        {role_id: "Personne citée", persons: PersonsCitFacets}
+      ]
+      console.log('persons_roles : ', persons_roles)
+      commit('persons/SET_PERSONS_ROLES', persons_roles, {root: true})
+
+      let personsSuggestions = [...new Set([...PersonsFromFacets ,...PersonsToFacets, ...PersonsCitFacets])];
+      personsSuggestions = personsSuggestions.sort(
+          (person_x, person_y) => (person_x.count > person_y.count) ? -1 : 1)
+      console.log("personsSuggestions", personsSuggestions);
+
+      // fetch placenames associated with search criteriae :
+      let PlacesFromFacets = response.data.buckets.location_dates_from.map((
+          {key, doc_count}) =>
+          ({
+            role_id: 1,
+            placename_id: key.split("###")[0],
+            count: doc_count,
+            label: key.split("###")[1]
+          })
+      )
+      console.log("PlacesFromFacets", PlacesFromFacets);
+
+      let PlacesToFacets = response.data.buckets.location_dates_to.map((
+          {key, doc_count}) =>
+          ({
+            role_id: 2,
+            placename_id: key.split("###")[0],
+            count: doc_count,
+            label: key.split("###")[1]
+          })
+      )
+      console.log("PlacesToFacets", PlacesToFacets);
+
+      let PlacesCitFacets = response.data.buckets.locations_inlined.map((
+          {key, doc_count}) =>
+          ({
+            role_id: 3,
+            placename_id: key.split("###")[0],
+            count: doc_count,
+            label: key.split("###")[1]
+          })
+      )
+      console.log("PlacesCitFacets", PlacesCitFacets);
+
+
+      /*const searchScopePlacesFrom = await http.get(`/search?query=${query}&searchtype=${searchType}${filters}&groupby[doc-type]=placename&groupby[field]=location-date-from.id&without-relationships`);
+      const searchScopePlacesTo = await http.get(`/search?query=${query}&searchtype=${searchType}${filters}&groupby[doc-type]=placename&groupby[field]=location-date-to.id&without-relationships`);
+      const searchScopePlacesCit = await http.get(`/search?query=${query}&searchtype=${searchType}${filters}&groupby[doc-type]=placename&groupby[field]=location-inlined.id&without-relationships`);
+      console.log('searchScopePlacesFrom', searchScopePlacesFrom)
+      let uniqueSearchScopePlacesFrom = searchScopePlacesFrom.data.data.map(({
+                                                                                id,
+                                                                                type,
+                                                                                label,
+                                                                                attributes,
+                                                                                meta,
+                                                                                links
+                                                                              }) =>
+          ({
+            role_id: 1,
+            placename_id: id,
+            label: attributes.label
+          })
+      )
+      console.log('uniqueSearchScopePlacesFrom', uniqueSearchScopePlacesFrom)
+
+      let uniqueSearchScopePlacesTo = searchScopePlacesTo.data.data.map(({
+                                                                            id,
+                                                                            type,
+                                                                            label,
+                                                                            attributes,
+                                                                            meta,
+                                                                            links
+                                                                          }) =>
+          ({
+            role_id: 2,
+            placename_id: id,
+            label: attributes.label
+          })
+      )
+      console.log('uniqueSearchScopePlacesTo', uniqueSearchScopePlacesTo)
+
+      let uniqueSearchScopePlacesCit = searchScopePlacesCit.data.data.map(({
+                                                                              id,
+                                                                              type,
+                                                                              label,
+                                                                              attributes,
+                                                                              meta,
+                                                                              links
+                                                                            }) =>
+          ({
+            role_id: 3,
+            placename_id: id,
+            label: attributes.label
+          })
+      )
+      console.log('uniqueSearchScopePlacesCit', uniqueSearchScopePlacesCit)*/
+
+      // update state placenames
+      const places = [
+        {role_id: "Lieu d'expédition", places: PlacesFromFacets},
+        {role_id: "Lieu de destination", places: PlacesToFacets},
+        {role_id: "Lieu mentionné", places: PlacesCitFacets}
+      ]
+      //console.log('places : ', places)
+      commit('placenames/SET_ALL', places, {root: true})
+    
 
       /*if (included) {
         // find persons involved in search filter
