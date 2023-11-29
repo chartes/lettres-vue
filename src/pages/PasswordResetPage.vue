@@ -1,70 +1,70 @@
 <template>
-  <div 
+  <form
     class="container login-form"
+    @submit.prevent="resetPassword"
   >
     <article class="message m-t-xxl">
       <div class="message-header">
-        Réinitialisation de votre mot de passe.
+        <p>Réinitialisation de votre mot de passe.</p>
       </div>
       <div class="message-body">
-        <form
-          v-if="!success"
-          class="container login-form"
-          @submit.prevent="resetPassword"
-        >
-          <p
-            v-show="error"
-            class="control has-text-danger m-b-sm"
-          >
-            {{ error }}
-          </p>
-          <div class="field">
-            <p class="control has-icons-left has-icons-right">
-              <input
-                v-model="password"
-                autocomplete="off"
-                class="input"
-                type="text"
-                required
-                minlength="5"
-                placeholder="Nouveau mot de passe"
-              >
-              <span class="icon is-small is-left">
-                <i class="fas fa-lock" />
-              </span>
-            </p>
-          </div>
-          <div class="field">
-            <p class="control has-icons-left">
-              <input
-                v-model="password2"
-                class="input"
-                type="password"
-                required
-                minlength="5"
-                placeholder="Confirmation du mot de passe"
-              >
-              <span class="icon is-small is-left">
-                <i class="fas fa-lock" />
-              </span>
-            </p>
-          </div>
-          <div class="field">
-            <span class="control">
-              <button
-                class="button  is-success"
-              >
-                Valider
-              </button>
+        <div class="field">
+          <p class="control has-icons-left has-icons-right">
+            <input
+              v-model="password"
+              autocomplete="off"
+              class="input"
+              type="text"
+              required
+              minlength="5"
+              placeholder="Nouveau mot de passe"
+            >
+            <span class="icon is-small is-left">
+              <i class="fas fa-lock" />
             </span>
-          </div>
-        </form>
-        <p v-show="success">
+          </p>
+        </div>
+        <div class="field">
+          <p class="control has-icons-left">
+            <input
+              v-model="password2"
+              class="input"
+              type="password"
+              required
+              minlength="5"
+              placeholder="Confirmation du mot de passe"
+            >
+            <span class="icon is-small is-left">
+              <i class="fas fa-lock" />
+            </span>
+          </p>
+        </div>
+      </div>
+      <div class="message-footer">
+        <div class="field">
+          <span class="control">
+            <button
+              class="button is-success"
+            >
+              Valider
+            </button>
+            <p
+              v-show="error"
+              class="control has-text-danger is-pulled-right p-t-sm"
+            >
+              {{ error }}
+            </p>
+          </span>
+        </div>
+        <p
+          v-show="success"
+          class="control has-text-success p-t-sm"
+        >
           Le changement de votre mot de passe a été effectué.
         </p>
       </div>
     </article>
-  </div>
+  </form>
 </template>
 
 <script>
@@ -111,6 +111,8 @@ export default {
 }
 </script>
 
-<style>
+<style scoped lang="scss">
+@import "@/assets/sass/main.scss";
+@import "@/assets/sass/components/_form.scss";
 
 </style>
