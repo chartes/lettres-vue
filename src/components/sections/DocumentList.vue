@@ -12,16 +12,15 @@
               class="results-count"
             >
               <span
-                class="total-count fas fa-spinner fa-pulse">
-              </span> résultat(s)
+                class="total-count fas fa-spinner fa-pulse"
+              /> résultat(s)
             </div>
+            
             <div
               v-else-if="loadingTable"
               class="results-count"
             >
-              <span class="total-count">
-
-              </span> Veuillez lancer la recherche
+              <span class="total-count" /> Veuillez lancer la recherche
             </div>
             <div
               v-else
@@ -133,7 +132,8 @@
                         ? [{field: 'location_dates_to.label.keyword_sort', order: 'desc'}]
                         : [{field: 'location_dates_to.label.keyword_sort', order: 'asc'}]
                     "
-                  >Lieu de destination
+                  >
+                    Lieu de destination
                   </option>
                 </select>
               </div>
@@ -141,15 +141,13 @@
                 v-if="sortingPriority.length > 0 && sortingPriority[0].order === 'asc' && sortingPriority[0].field !== 'score'"
                 class="icon button arrow-up"
                 @click="sortPressed(sortingPriority[0].field, 'desc', 'escape')"
-              >
-              </span>
+              />
               <span
                 v-else
                 v-show="sortingPriority.length > 0 && sortingPriority[0].field !== 'score'"
                 class="icon button arrow-down"
                 @click="sortPressed(sortingPriority[0].field, 'asc', 'escape')"
-              >
-              </span>
+              />
             </div>
           </div>
           <div
@@ -159,13 +157,11 @@
             <a
               :class="currentPage <= 1 ? 'button first-page disabled' : 'button first-page'"
               @click="currentPage <= 1 ? null : currentPage = 1"
-            >
-            </a>
+            />
             <a
               :class="currentPage <= 1 ? 'button previous-page disabled' : 'button previous-page'"
               @click="currentPage <= 1 ? null : --currentPage"
-            >
-            </a>
+            />
             <input
               v-model="currentPage"
               name="page"
@@ -181,13 +177,11 @@
             <a
               :class="currentPage < totalPages ? 'button next-page' : 'button next-page disabled'"
               @click="currentPage < totalPages ? ++currentPage : null"
-            >
-            </a>
+            />
             <a
               :class="currentPage < totalPages ? 'button last-page' : 'button last-page disabled'"
               @click="currentPage < totalPages ? currentPage = totalPages : null"
-            >
-            </a>
+            />
           </div>
         </div>
       </div>
@@ -333,7 +327,8 @@
                           ? [{field: 'location_dates_to.label.keyword_sort', order: 'desc'}]
                           : [{field: 'location_dates_to.label.keyword_sort', order: 'asc'}]
                       "
-                    >Lieu de destination
+                    >
+                      Lieu de destination
                     </option>
                   </select>
                 </div>
@@ -341,15 +336,13 @@
                   v-if="sortingPriority.length > 0 && sortingPriority[0].order === 'asc' && sortingPriority[0].field !== ''"
                   class="icon button arrow-up"
                   @click="sortPressed(sortingPriority[0].field, 'desc', 'escape')"
-                >
-                </span>
+                />
                 <span
                   v-else
                   v-show="sortingPriority.length > 0 && sortingPriority[0].field !== '' "
                   class="icon button arrow-down"
                   @click="sortPressed(sortingPriority[0].field, 'asc', 'escape')"
-                >
-                </span>
+                />
               </div>
             </div>
             <div class="is-inline-block px-1 switch-button-parent">
@@ -418,7 +411,7 @@
           :td-attrs="columnTdAttrs"
           sortable
         >
-          <template v-slot:header="{ column }">
+          <template #header="{ column }">
             <div v-if="column.sortable">
               <div v-if="sortingPriority.filter(obj => obj.field === column.field).length === 0">
                 <span class="icon button arrows-alt-v" />
@@ -443,7 +436,7 @@
               {{ column.label }}
             </div>
           </template>
-          <template v-slot="props">
+          <template #default="props">
             <document-tag-bar
               :doc-id="props.row.id"
               :with-status="withStatus"
@@ -459,7 +452,7 @@
           :td-attrs="columnTdAttrs"
           sortable
         >
-          <template v-slot:header="{ column }">
+          <template #header="{ column }">
             <div v-if="column.sortable">
               <div v-if="sortingPriority.filter(obj => obj.field === column.field).length === 0">
                 <span class="icon button arrows-alt-v" />
@@ -484,7 +477,7 @@
               {{ column.label }}
             </div>
           </template>
-          <template v-slot="props">
+          <template #default="props">
             {{ props.row.creation }}
           </template>
         </b-table-column>
@@ -495,7 +488,7 @@
           :th-attrs="columnThAttrs"
           :td-attrs="columnTdAttrs"
         >
-          <template v-slot:header="{ column }">
+          <template #header="{ column }">
             <div v-if="column.sortable">
               <div v-if="sortingPriority.filter(obj => obj.field === column.field).length === 0">
                 <span class="icon button arrows-alt-v" />
@@ -520,7 +513,7 @@
               {{ column.label }}
             </div>
           </template>
-          <template v-slot="props">
+          <template #default="props">
             <router-link :to="{ name: 'document', params: { docId: props.row.id } }">
               <h2
                 v-if="searchTerm && searchTerm.length > 0"
@@ -542,7 +535,7 @@
           :td-attrs="columnTdAttrs"
           sortable
         >
-          <template v-slot:header="{ column }">
+          <template #header="{ column }">
             <div v-if="column.sortable">
               <div v-if="sortingPriority.filter(obj => obj.field === column.field).length === 0">
                 <span class="icon button arrows-alt-v" />
@@ -567,7 +560,7 @@
               {{ column.label }}
             </div>
           </template>
-          <template v-slot="props">
+          <template #default="props">
             {{ props.row.senders }}
           </template>
         </b-table-column>
@@ -579,7 +572,7 @@
           :td-attrs="columnTdAttrs"
           sortable
         >
-          <template v-slot:header="{ column }">
+          <template #header="{ column }">
             <div v-if="column.sortable">
               <div v-if="sortingPriority.filter(obj => obj.field === column.field).length === 0">
                 <span class="icon button arrows-alt-v" />
@@ -604,7 +597,7 @@
               {{ column.label }}
             </div>
           </template>
-          <template v-slot="props">
+          <template #default="props">
             {{ props.row.recipients }}
           </template>
         </b-table-column>
@@ -616,7 +609,7 @@
           :td-attrs="columnTdAttrs"
           sortable
         >
-          <template v-slot:header="{ column }">
+          <template #header="{ column }">
             <div v-if="column.sortable">
               <div v-if="sortingPriority.filter(obj => obj.field === column.field).length === 0">
                 <span class="icon button arrows-alt-v" />
@@ -641,7 +634,7 @@
               {{ column.label }}
             </div>
           </template>
-          <template v-slot="props">
+          <template #default="props">
             <p>{{ props.row.origins }}</p>
           </template>
         </b-table-column>
@@ -653,7 +646,7 @@
           :td-attrs="columnTdAttrs"
           sortable
         >
-          <template v-slot:header="{ column }">
+          <template #header="{ column }">
             <div v-if="column.sortable">
               <div v-if="sortingPriority.filter(obj => obj.field === column.field).length === 0">
                 <span class="icon button arrows-alt-v" />
@@ -678,7 +671,7 @@
               {{ column.label }}
             </div>
           </template>
-          <template v-slot="props">
+          <template #default="props">
             {{ props.row.destinations }}
           </template>
         </b-table-column>
