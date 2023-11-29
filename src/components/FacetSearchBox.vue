@@ -29,7 +29,6 @@
             group-field="role_id"
             group-options="items"
             ellipsis
-            append-to-body
             @typing="updateFilteredTags"
           >
             <template #selected="props">
