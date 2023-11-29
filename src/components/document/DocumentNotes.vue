@@ -6,6 +6,7 @@
     >
       <li
         v-for="note in notes"
+        :id="note.id"
         :key="note.id"
       >
         <div

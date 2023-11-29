@@ -207,8 +207,9 @@ export default {
           })
           contentMatcheswithIndex.forEach(m => {
             //console.log("m[0], m[1]", m[0], m[1], typeof (m[1]))
-            //console.log("m[0].replace('[note]', '['+ m[2] +']')", m[0].replace('[note]', '[' + m[2] + ']'))
-            this.form = this.form.replace(m[0], m[0].replace('[note]', '[' + m[2] + ']'));
+            const toReplace = new RegExp("(<span>)*\\[note](<\\/span>)*","gi");
+            //console.log("m[0].replace(toReplace, '['+ m[2] +']')", m[0].replace(toReplace, '[' + m[2] + ']'))
+            this.form = this.form.replace(m[0], m[0].replace(toReplace, '[' + m[2] + ']'));
           })
           console.log(`DocumentArgument / getNoteIndex / in${type} replaced`, this.form)
         }

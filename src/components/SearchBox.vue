@@ -17,18 +17,18 @@
       <b-input
         v-model="inputTerm"
         class="search_input"
-        placeholder="Catherine de Medicis"
+        :placeholder="searchType === 'isFullTextSearch' ? 'Veuillez renseigner une recherche' : 'Catherine de Médicis'"
         icon-right="close-circle"
         icon-right-clickable
         type="search"
-        :lazy="true"
         @icon-right-click="inputTerm = ''"
         @focus="$event.target.select()"
         @keyup.native.enter="search"
-      />
+      /><!-- :lazy="true" -->
       <div>
         <a
           class="button pl-5 pr-5 search_button"
+          :disabled="searchType === 'isFullTextSearch' && !inputTerm"
           @click="search"
         >
           <span class="icon">
@@ -68,23 +68,25 @@ export default {
     ...mapState("search", ["searchTerm", "loadingStatus"]),
   },
   watch: {
-    inputTerm() {
-      if (!this.inputTerm || this.inputTerm.length >0) {
+    inputTerm(newValue, oldValue) {
+      if (!this.inputTerm || this.inputTerm.length === 0) {
         if (this.$route.name === "document") {
-          this.searchType = 'isParatextSearch';
-          this.search()
-        } else
-          this.searchType = 'isParatextSearch';
           this.setSearchTerm(this.inputTerm);
-          this.setSearchType(this.searchType);
-          this.performSearch();
+          //this.searchType = 'isParatextSearch';
+          //this.search()
+        } else
+          //this.searchType = 'isParatextSearch';
+          this.setSearchTerm(this.inputTerm);
+          //this.setSearchType(this.searchType);
+          //this.performSearch();
       } else {
         if (this.$route.name === "document") {
-          this.search()
-          } else {
           this.setSearchTerm(this.inputTerm);
-          this.setSearchType(this.searchType);
-          this.performSearch();
+          //this.search()
+        } else {
+          this.setSearchTerm(this.inputTerm);
+          //this.setSearchType(this.searchType);
+          //this.performSearch();
         }
       }
     },

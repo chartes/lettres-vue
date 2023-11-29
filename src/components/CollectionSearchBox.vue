@@ -18,7 +18,7 @@
             :data="filteredTags"
             autocomplete
             field="title"
-            placeholder="Henri IV"
+            :placeholder="collectionsTags && collectionsTags.length > 0 ? 'Henri IV' : 'Elargir les critères'"
             icon="fas fa-search"
             @typing="getFilteredTags"
           >
