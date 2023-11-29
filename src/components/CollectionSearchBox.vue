@@ -84,7 +84,6 @@ export default {
   data() {
     return {
       filteredTags: [],
-      init: false,
     };
   },
   computed: {
@@ -110,13 +109,7 @@ export default {
       }
     }
   },
-  async created() {
-    this.init = true;
-    await this.fetchAll();
-    this.tags = this.selectedCollections;
-  },
   methods: {
-    ...mapActions("collections", ["fetchAll"]),
     ...mapActions("search", ["setSelectedCollections", "performSearch"]),
     updateFilteredTags(text) {
       this.filteredTags = this.allData.filter(
