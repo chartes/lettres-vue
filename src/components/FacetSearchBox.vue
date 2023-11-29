@@ -171,9 +171,6 @@ export default {
       },
     }
   },
-  created() {
-    this.tags = [...this.selectedPersonFrom, ...this.selectedPersonTo, ...this.selectedPersonCited];
-  },
   methods: {
     value,
     ...mapActions("persons", ["fetchAll"]),
@@ -224,7 +221,6 @@ export default {
             {role_id: "Lieu mentionné", items: itemsCitedFiltered}
         ];
       }
-      console.log(this.filteredTags)
     },
     removeTag(tag) {
       if (!tag) {
