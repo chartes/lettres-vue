@@ -86,7 +86,8 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style scoped  lang="scss">
+@import "@/assets/sass/main.scss";
 
 .delete-collection-btn.button.is-primary {
   display: inline-block;
@@ -100,6 +101,33 @@ export default {
 
   .icon {
     display: none;
+  }
+}
+
+::v-deep {
+
+  .modal-card {
+
+    @include on-small-tablet {
+      width: 80% !important;
+      min-width: auto !important;
+      margin: 0;
+    }
+
+    @include on-small-mobile {
+      width: 90% !important;
+    }
+
+    .modal-card-head {
+      margin-bottom: 0;
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+
+    .modal-card-body {
+      border-top-left-radius: 0;
+      border-top-right-radius: 0;
+    }
   }
 }
 
