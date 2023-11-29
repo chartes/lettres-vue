@@ -15,23 +15,25 @@
           @click="cancel"
         />
       </header>
-      <section class="modal-card-body">
-        <slot />
-      </section>
-      <footer class="modal-card-foot">
-        <button
-          class="button"
-          @click="cancel"
-        >
-          {{ cancelText }}
-        </button>
-        <button
-          class="button is-danger"
-          @click="submit"
-        >
-          {{ submitText }}
-        </button>
-      </footer>
+      <div class="modal-content">
+        <section class="modal-card-body">
+          <slot />
+        </section>
+        <footer class="modal-card-foot">
+          <button
+            class="button"
+            @click="cancel"
+          >
+            {{ cancelText }}
+          </button>
+          <button
+            class="button is-danger"
+            @click="submit"
+          >
+            {{ submitText }}
+          </button>
+        </footer>
+      </div>
     </div>
   </div>
 </template>
@@ -58,15 +60,16 @@ export default {
 }
 
 .modal-card {
-  box-shadow: -6px 6px 30px 0 #00000050;
-  min-width: 750px !important;
+  overflow: visible;
 
   .modal-card-head {
+    box-shadow: -6px 6px 30px 0 #00000050;
     background-color: #CB2158;
     border: none;
     border-radius: 5px;
     padding: 12px 20px;
     margin-bottom: 10px;
+    display: flex;
 
     p {
       font-family: $family-apptitle;
@@ -74,12 +77,15 @@ export default {
       color: #FFFFFF;
       font-weight: 200;
       letter-spacing: 0;
+      flex: 1;
+      overflow-wrap: break-word;
     }
 
     button.delete {
       width: 28px;
       height: 28px;
       background: url(../../assets/images/icons/close-modal.svg) center / cover no-repeat;
+      margin-left: 10px;
 
       &::before,
       &::after {
@@ -88,6 +94,10 @@ export default {
     }
   }
 
+  .modal-content {
+    box-shadow: -6px 6px 30px 0 #00000050;
+    margin: 0;
+  }
   .modal-card-body {
     padding-top: 40px;
     padding-bottom: 0;
@@ -115,6 +125,8 @@ export default {
     border-top: none;
     padding-top: 20px;
     padding-bottom: 20px;
+    display: flex;
+    flex-wrap: wrap;
 
     button {
       width: auto;
