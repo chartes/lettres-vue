@@ -17,7 +17,7 @@
     </div>
     <div v-if="$attrs.place.coords">
       <my-awesome-map
-        :key="$attrs.place.label"
+        :key="$attrs.place.label+$attrs.place.activeTab"
         :lat-lng="$attrs.place.coords"
       />
     </div>

@@ -331,6 +331,7 @@ export default {
       const nextStepIndex = this.stepItems.findIndex((s) => s.name === stepName);
       if (nextStepIndex > -1) {
         this.activeTab = nextStepIndex;
+        this.place.activeTab = nextStepIndex;
       }
     },
     gotoNextStep() {
