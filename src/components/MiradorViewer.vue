@@ -1,7 +1,8 @@
 <template>
   <div
     v-show="viewer"
-    id="vue-mirador-container"
+    :id="`vue-mirador-container-${windowId}`"
+    class="vue-mirador-container"
     @refresh-viewer="updateCurrentWindow"
   />
 </template>
@@ -15,11 +16,12 @@ export default {
   props: {
     manifestUrl: { type: String, required: true },
     canvasIndex: { type: Number, default: 0 },
+    windowId: {type: String, default: "document"}
   },
   data() {
     return {
       viewer: null,
-      windowId: "document",
+      //windowId: "document",
     };
   },
   computed: {},
@@ -53,7 +55,7 @@ export default {
       // instantiate the viewer with a single manifest & window for simplicity
       try {
         this.viewer = Mirador.viewer({
-          id: "vue-mirador-container",
+          id: `vue-mirador-container-${this.windowId}`,
           manifests: manifests,
           windows: [
             {
@@ -114,7 +116,7 @@ export default {
 <style lang="scss">
 @import "@/assets/sass/main.scss";
 
-#vue-mirador-container {
+.vue-mirador-container {
   position: relative;
   width: 100%;
   height: 100vh;

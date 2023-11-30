@@ -560,7 +560,7 @@ const actions = {
     const institutionId = witness.institution ? witness.institution.id : null;
     delete (attributes.id)
     delete (attributes.institution)
-    delete (attributes['manifest-url'])
+    delete (attributes['manifest_url'])
 
     if (attributes['classification-mark']) {
       attributes.classification_mark = attributes['classification-mark']

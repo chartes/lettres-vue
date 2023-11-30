@@ -667,21 +667,23 @@
         </section>
         <!-- témoins en mode preview -->
         <section
-          v-if="witnesses.length > 0 && searchType === 'isParatextSearch'"
+          v-if="witnessTmpList.filter(doc => doc.id === docId)[0].witnesses.length > 0 && searchType === 'isParatextSearch'"
           class="document-section">
           <div class="heading is-uppercase">
             <span class="heading-content ">Témoins</span>
           </div>
           <div class="document-section-content">
             <witness-list
+              :row-doc-id="docId"
               :editable="canEdit"
             />
           </div>
         </section>
         <mirador-viewer
-            v-if="document && displayedManifestUrl"
+            v-if="displayedManifestUrl"
             class="mirador-container"
-            :manifest-url="displayedManifestUrl"
+            :manifest-url="witnessTmpList.filter(doc => doc.id === docId)[0].witnesses[0]['manifest_url']"
+            :window-id="docId.toString()"
         />
 
         <!-- collections
@@ -773,6 +775,7 @@ export default {
       nextDocId: 0,
       currentIndex: 0,
       docIdList: [],
+      witnessTmpList: [],
 
       miradorViewBoundingTop: 0,
 
@@ -814,7 +817,7 @@ export default {
       return 'margin-top:' +  this.miradorViewBoundingTop + 'px';
     },
     ...mapState("document", ["document", "documentLoading", "collections", "witnesses", "currentLock"]),
-    ...mapState("search", ["searchTerm", "searchType"]),
+    ...mapState("search", ["documents", "searchTerm", "searchType"]),
     ...mapState("user", ["current_user", "jwt"]),
     ...mapState("locks", ["lockOwner"]),
     ...mapState("layout", ["displayedManifestUrl", "viewerMode"]),
@@ -1009,7 +1012,9 @@ export default {
         this.addressContent = this.$store.state.document.document.address;
         this.argumentContent = this.$store.state.document.document.argument;
       }
-      this.witnessTmpList = this.witnesses;
+      this.witnessTmpList = this.documents.map(({id, witnesses}) => ({id: id, witnesses: witnesses}))
+      console.log("created search witnessTmpList", this.witnessTmpList)
+
       console.log("created type", this.type)
 
       this.isLoading = false

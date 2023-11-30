@@ -169,6 +169,7 @@ export default {
   props: {
     openModal: { type: Boolean, default: false },
     editable: { type: Boolean, default: false },
+    rowDocId : { type: Number }
   },
   emits: ["close-witness-modal", "add-note"],
   data() {
@@ -182,6 +183,7 @@ export default {
   },
   computed: {
     ...mapState("document", ["witnesses", "document"]),
+    ...mapState("search", ["documents"]),
 
     dragOptions() {
       return {
@@ -204,15 +206,19 @@ export default {
         this.$emit("close-witness-modal");
       }
     },
-    witnesses() {
-      this.witnessTmpList = this.witnesses;
-      //this.displayedWitness = this.witnessTmpList ? this.witnessTmpList[0] : null;
-    },
+    /*witnesses() {
+      //this.witnessTmpList = this.witnesses;
+      this.displayedWitness = this.witnessTmpList ? this.witnessTmpList[0] : null;
+    },*/
   },
   created() {
-    this.witnessTmpList = this.witnesses;
-    if (this.witnessTmpList.length > 0) {
-      // this.showWitness(this.witnessTmpList[0], false);
+    if (this.$route.name === 'search') {
+      this.witnessTmpList = this.documents.filter((d) => d.id === this.rowDocId)[0].witnesses
+    } else {
+      this.witnessTmpList = this.witnesses;
+      if (this.witnessTmpList.length > 0) {
+        // this.showWitness(this.witnessTmpList[0], false);
+      }
     }
   },
   methods: {
@@ -232,16 +238,24 @@ export default {
         await this.recomputeOrder();
       }
     },
+    toggleMirador: function(newUrl) {
+      if (this.displayedManifestUrl === newUrl) {
+        this.displayedManifestUrl = undefined
+      } else {
+        this.displayedManifestUrl = newUrl
+      }
+    },
     showWitness(witness) {
-      //console.log("this.displayedWitness / witness", this.displayedWitness, witness)
+      console.log("this.displayedWitness / witness / this.rowDocId", this.displayedWitness, witness, this.rowDocId)
       if (this.displayedWitness && witness.id === this.displayedWitness.id) {
         this.displayedWitness = null;
         this.setDisplayedManifestUrl(undefined)
         this.setViewerMode(undefined)
       } else {
+        console.log("new witness or manisfest : ", witness, witness["manifest_url"])
         this.displayedWitness = witness;
         this.setViewerMode("text-and-images-mode")
-        this.setDisplayedManifestUrl(witness["manifest-url"]);
+        this.setDisplayedManifestUrl(witness["manifest_url"]);
       }
     },
     dragEnd() {
