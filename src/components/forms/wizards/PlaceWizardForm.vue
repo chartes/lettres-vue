@@ -735,6 +735,49 @@ export default {
           padding: 6px;
         }
 
+        .create-place-form {
+          max-height: 560px;
+          overflow: auto;
+          padding-right: 10px;
+          width: calc( 100% + 15px );
+
+          /* Firefox */
+          scrollbar-width: thin;
+          scrollbar-color: rgba(155, 155, 155, 0.2) transparent;
+
+          /* Webkit */
+          ::-webkit-scrollbar {
+            width: 9px;
+          }
+          ::-webkit-scrollbar-track {
+            background: transparent;
+          }
+          ::-webkit-scrollbar-thumb {
+            background-color: rgba(155, 155, 155, 0.2);
+            border-radius: 20px;
+            border: transparent;
+          }
+
+          .place-table {
+            border-top: #CB2158 8px solid;
+          }
+
+          .table-wrapper {
+            border-top: none !important;
+            padding-right: 5px;
+
+            table.table {
+              overflow: hidden;
+            }
+          }
+
+          .expanded-select {
+            border: 1px #c5c5c5 solid;
+            border-radius: 5px;
+            margin-bottom: 20px;
+          }
+        }
+
         @include on-mobile {
 
           .searchbox-container {
