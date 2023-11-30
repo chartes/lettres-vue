@@ -1,75 +1,5 @@
 <template>
   <article>
-    <!--<section>
-      <div class="container">
-        <div
-          id="intro"
-          class="bg-image content"
-        >
-          <div class="row">
-            <p class="homepage_title">
-              Lettres
-            </p>
-          </div>
-          <div class="row">
-            <p class="homepage_subtitle">
-              de la Première Modernité
-            </p>
-          </div>
-          <div class="row is-flex is-justify-content-center mt-5">
-            <b-button
-              tag="router-link"
-              to="/about"
-              class="portail_button"
-            >
-              Le portail
-            </b-button>
-          </div>
-          <div class="row">
-            <p class="title has-text-centered">
-              Lettres
-            </p>
-            <p class="subtitle has-text-centered">
-              de la Première Modernité
-            </p>
-            <div class="columns is-centered mx-5">
-              <div class="column is-4">
-                <b-button
-                  tag="router-link"
-                  to="/about"
-                  type="is-primary is-fullwidth"
-                >
-                  Le portail
-                </b-button>
-              </div>
-              <div class="column is-4">
-                <b-button
-                  tag="router-link"
-                  to="/search"
-                  type="is-primary is-fullwidth"
-                >
-                  Faire une recherche
-                </b-button>
-              </div>
-              <div class="column is-4">
-                <b-button
-                  tag="router-link"
-                  to="/collections"
-                  type="is-primary is-fullwidth"
-                >
-                  Découvrir les collections
-                </b-button>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="row search_row">
-          <search-box
-            class="m-5"
-          />
-        </div>
-      </div>
-    </section>-->
     <section>
       <div class="narrow-container">
         <!--<div class="row">
@@ -324,15 +254,9 @@
 </template>
 
 <script>
-import { mapState, mapActions, mapGetters } from "vuex";
-//import SearchBox from "@/components/SearchBox";
-
-
+import { mapState, mapActions } from "vuex";
 export default {
   name: "HomePage",
-  components: {
-    /*SearchBox,*/
-  },
   data: function () {
       return {
           collectionsCount: 0,
@@ -349,55 +273,6 @@ export default {
       allCollections: "collectionsById",
     }),
     ...mapState("user", ["current_user"]),
-    /*...mapState("persons", {
-      persons: "documents",
-      allPersons : "totalCount"
-    }),*/
-    /*...mapState("persons", [
-      "loadingStatus",
-      "totalCount",
-    ]),*/
-    /*...mapGetters("persons", {
-      personsHavingRoles: "getIncluded",
-      functionsByPerson: "getFunctionsByPerson",
-    }),*/
-    /* moved to created
-    collectionsTotal: function () {
-      this.collectionsCountWithStatus();
-      return this.collectionsCount
-    },
-    */
-    /*previous 17/04/23 lettersCount: function () {
-      return Object.values(this.allCollections).reduce((sum, collection) => sum + collection.documentCount, 0);
-    },*/
-    /* moved to created
-    lettersCount: function () {
-      this.documentsCountWithStatus();
-      return this.documentsTotal
-    },
-    */
-    /* All persons regardless of published status or link with documents
-      personsCount: function () {
-      console.log('All persons : ', this.$store.state.persons.persons);
-      return this.$store.state.persons.persons.length;
-    },*/
-    /* moved to created
-    personsTotal: function () {
-      this.personsCountWithStatus();
-      return this.personsCount
-    },
-    */
-    /* All places regardless of published status or link with documents
-      placesCount: function () {
-      console.log('All places : ', this.$store.state.placenames.placenames);
-      return this.$store.state.placenames.placenames.length;
-    },*/
-    /* moved to created
-    placesTotal: function () {
-      this.placesCountWithStatus();
-      return this.placesCount
-    },
-    */
     featured_collections: function () {
       let featured_collectionIds=[1, 2, 78];
       let featured = Object.values(this.allCollections).filter(item=> {
@@ -410,60 +285,23 @@ export default {
   async created() {
     console.log("clear state on collection navigation")
     await this.resetSearchState();
+    await this.counts();
     this.$store.state.layout.showLeftSideBar = false;
-    await this.fetchCollections();
-    await this.collectionsCountWithStatus();
-    await this.personsCountWithStatus();
-    await this.placesCountWithStatus();
-    await this.documentsCountWithStatus();
-    //await this.fetchPersons();
-    //await this.fetchPlaces();
   },
   methods: {
-    ...mapActions("search", ["performSearch", "resetSearchState"]),
-    ...mapActions("collections", { fetchCollections: "fetchAll", allPublishedCollections: "fetchAllPublished" }),
-    //...mapState("collections", ["collectionsById"]),
-    //...mapActions("persons", { fetchPersons: "fetchAllPersons", totalSearchPersons: "getPersonsTotal" }),
-    ...mapActions("persons", ["getPersonsTotal"]),
-    //...mapActions("placenames", { fetchPlaces: "fetchAllPlacenames"}),
-    ...mapActions("placenames", ["getPlacesTotal"]),
-    ...mapActions("search", ["getDocumentsTotal"]),
-    documentsCountWithStatus: async function () {
-        let response = await this.getDocumentsTotal();
-        this.documentsTotal = response.documentsTotal
-        console.log("response", response)
-    },
-    personsCountWithStatus: async function () {
-        let response = await this.getPersonsTotal();
-        this.personsCount = response
-        console.log("personsCount", response)
-    },
-    placesCountWithStatus: async function () {
-        let response = await this.getPlacesTotal();
-        this.placesCount = response
-        console.log("placesCount", response)
-    },
-    collectionsCountWithStatus: async function() {
-      if (this.current_user) {
-        //console.log('allCollections # keys : ', Object.keys(this.allCollections).length);
-        this.collectionsCount = Object.keys(this.allCollections).length - 1;
-        console.log("collectionsCount", this.collectionsCount);
-        //return Object.keys(this.allCollections).length - 1;
-      } else {
-        //console.log('allCollections # keys (published only): ', Object.values(this.allCollections).filter((item) => item.publishedCount > 0).length - 1);
-        //console.log('allCollections (published only): ', Object.values(this.allCollections).filter((item) => item.publishedCount > 0))
-        let response = await this.allPublishedCollections();
-        this.collectionsCount = response.length;
-        console.log("collectionsCount", this.collectionsCount);
-        //return Object.values(this.allCollections).filter((item) => item.publishedCount > 0).length - 1;
-      }
-
+    ...mapActions("search", ["resetSearchState", "getCounts"]),
+    counts: async function () {
+      let response = await this.getCounts();
+      this.documentsTotal = response["documents"];
+      this.personsCount = response["persons"];
+      this.placesCount = response["placenames"];
+      this.collectionsCount = response["collections"];
     },
     getImgUrl: function (img) {
       try {
         return require('@/assets/images/collections/collection' + img + '.jpg')
       } catch (e) {
-        //console.log('mon erreur : ',e)
+        //console.log('erreur image de collection : ',e)
         try {
           return require('@/assets/images/collections/collection' + this.findRoot(img).id + '.jpg')
         } catch (e) {

@@ -26,6 +26,7 @@
         @add-person="addPerson($event, 'argument')"
         @add-note="addNote($event)"
         @refresh-argument="refreshArgument($event)"
+        @save="saveArgument()"
         @on-keyup-escape="cancelInput($event)"
       >
         <editor-save-button
@@ -81,7 +82,7 @@ export default {
       default: "",
     }
   },
-  emits: ["add-place", "add-person", "add-note", "refresh-argument"],
+  emits: ["add-place", "add-person", "add-note", "refresh-argument", "save-argument"],
   data() {
     return {
       //editorEnabled: true,
@@ -141,6 +142,9 @@ export default {
       this.form = evt;
       this.$emit("refresh-argument", evt)
     },
+    saveArgument() {
+      this.$emit('save-argument')
+    },
     cleanHTML(text) {
       // remove notes from Titles in search results table
       if (text && text.length > 0) {
@@ -183,7 +187,7 @@ export default {
     },
     //TODO Victor remove once [note] have been replaced in database
     getNoteIndex(content, type) {
-      const pattern = /<a class="note" href="#(\d+)">\[note]<\/a>/gmi
+      const pattern = /<a class="note" href="#(\d+)">(?:<span>)*\[note](?:<\/span>)*<\/a>/gmi
       console.log("DocumentArgument / getNoteIndex", content, type)
       if (content) {
         this.contentPrep = content
@@ -217,8 +221,8 @@ export default {
     },
     //TODO Victor remove once attributes title have been added in database
     async getPersonsLabel(content, type) {
-      const persPattern = /<a class="persName" target="_blank" href="[^>]*" id="(\d+)">[^<]*<\/a>/gmi
-      console.log("DocumentArgument / getPersonsLabel", content, type)
+      const persPattern = /<a (?:class="persName"\s*|target="_blank"\s*|href="[^> ]*"\s*|id="(\d+)"\s*)*>[^<]*<\/a>/gmi
+      console.log("DocumentTranscription / getPersonsLabel", content, type)
       if (content) {
         this.contentPrep = content
         //console.log(`DocumentArgument / getPersonsLabel / this.${type}Prep : `, this.contentPrep)
@@ -231,20 +235,23 @@ export default {
           let contentMatches = [...content.matchAll(persPattern)]
           //console.log(`DocumentArgument / getPersonsLabel ${type}Matches`, contentMatches)
           let contentMatcheswithLabel = []
-          await Promise.all(contentMatches.map(async (m) => {
+          await Promise.allSettled(contentMatches.map(async (m) => {
             await this.$store.dispatch("persons/getPersonById", parseInt(m[1])).then(
                 (response) => {
                   //console.log("m[0], m[1], response.attributes.label", m[0], m[1], response.attributes.label)
                   m.push(response.attributes.label)
+                  m.push(response.attributes.ref)
                   contentMatcheswithLabel.push(m)
                 }
             )
             //console.log(`DocumentArgument / getPersonsLabel contentMatcheswithLabel`, contentMatcheswithLabel)
           }))
           contentMatcheswithLabel.forEach(m => {
-            //console.log("m[0], m[1]", m[0], m[1], typeof (m[1]))
-            console.log("m[0].replace('target=\"_blank\"', 'target=\"_blank\"' + ' title=\"' + m[2] + '\"')", m[0].replace('target="_blank"', 'target="_blank"' + ' title="' + m[2] + '"'))
-            this.form = this.form.replace(m[0], m[0].replace('target="_blank"', 'target="_blank"' + ' title="' + m[2] + '"'));
+            console.log("m[0], m[1], typeof (m[1]), m[3], m[4]", m[0], m[1], typeof (m[1]), m[3])
+            const toReplace = new RegExp("<a class=\"persName\"(?: target=\"_blank\" )*(href=\"[^> ]*\")*","gi");
+            //const toReplacecapturedHref = toReplace.exec(m[0])[1];
+            //console.log('toReplacecapturedHref', toReplacecapturedHref)
+            this.form = this.form.replace(m[0], m[0].replace(toReplace, '<a class="persName" target="_blank" href="'+ m[3] + '" title="' + m[2] + '"'));
           })
           console.log(`DocumentArgument / getPersonsLabel in${type} replaced`, this.form)
         }
@@ -252,7 +259,7 @@ export default {
     },
     //TODO Victor remove once attributes title have been added in database
     async getPlacesLabel(content, type) {
-      const placePattern = /<a class="placeName" target="_blank" href="[^>]*" id="(\d+)">[^<]*<\/a>/gmi
+      const placePattern = /<a (?:class="placeName"\s*|target="_blank"\s*|href="[^> ]*"\s*|id="(\d+)"\s*)*>[^<]*<\/a>/gmi
       console.log("DocumentArgument / getPlacesLabel", content, type)
       if (content) {
         this.contentPrep = content
@@ -266,20 +273,23 @@ export default {
           let contentMatches = [...content.matchAll(placePattern)]
           //console.log(`DocumentArgument / getPlacesLabel / ${type}Matches`, contentMatches)
           let contentMatcheswithLabel = []
-          await Promise.all(contentMatches.map(async (m) => {
+          await Promise.allSettled(contentMatches.map(async (m) => {
             await this.$store.dispatch("placenames/getPlacenameById", parseInt(m[1])).then(
                 (response) => {
                   //console.log("m[0], m[1], response.attributes.label", m[0], m[1], response.attributes.label)
                   m.push(response.attributes.label)
+                  m.push(response.attributes.ref)
                   contentMatcheswithLabel.push(m)
                 }
             )
             //console.log(`DocumentArgument / getPlacesLabel / ${type}withTitle`, contentMatcheswithLabel)
           }))
           contentMatcheswithLabel.forEach(m => {
-            //console.log("m[0], m[1]", m[0], m[1], typeof (m[1]))
-            console.log("m[0].replace('target=\"_blank\"', 'target=\"_blank\"' + ' title=\"' + m[2] + '\"')", m[0].replace('target="_blank"', 'target="_blank"' + ' title="' + m[2] + '"'))
-            this.form = this.form.replace(m[0], m[0].replace('target="_blank"', 'target="_blank"' + ' title="' + m[2] + '"'));
+            console.log("m[0], m[1], typeof (m[1]), m[3], m[4]", m[0], m[1], typeof (m[1]), m[3])
+            const toReplace = new RegExp("<a class=\"placeName\"(?: target=\"_blank\" )*(href=\"[^> ]*\")*","gi");
+            //const toReplacecapturedHref = toReplace.exec(m[0])[1];
+            //console.log('toReplacecapturedHref', toReplacecapturedHref)
+            this.form = this.form.replace(m[0], m[0].replace(toReplace, '<a class="placeName" target="_blank" href="'+ m[3] + '" title="' + m[2] + '"'));
           })
           console.log(`DocumentArgument / getPlacesLabel in${type} replaced`, this.form)
         }

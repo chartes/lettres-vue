@@ -346,7 +346,7 @@
                     v-for="item in props.row.sender"
                     :key="item.docId"
                     :doc-id="item.docId"
-                    :title="item.docTitle"
+                    :title="cleanHTML(item.docTitle)"
                     :creation-label="item.docCreationLabel"
                   />
                 </div>
@@ -365,7 +365,7 @@
                     v-for="item in props.row.recipient"
                     :key="item.docId"
                     :doc-id="item.docId"
-                    :title="item.docTitle"
+                    :title="cleanHTML(item.docTitle)"
                     :creation-label="item.docCreationLabel"
                   />
                 </div>
@@ -384,7 +384,7 @@
                     v-for="item in props.row.inAddress"
                     :key="item.docId"
                     :doc-id="item.docId"
-                    :title="item.docTitle"
+                    :title="cleanHTML(item.docTitle)"
                     :creation-label="item.docCreationLabel"
                   />
                 </div>
@@ -404,7 +404,7 @@
                     v-for="item in props.row.inTranscription"
                     :key="item.docId"
                     :doc-id="item.docId"
-                    :title="item.docTitle"
+                    :title="cleanHTML(item.docTitle)"
                     :creation-label="item.docCreationLabel"
                   />
                 </div>
@@ -423,7 +423,7 @@
                     v-for="item in props.row.inArgument"
                     :key="item.docId"
                     :doc-id="item.docId"
-                    :title="item.docTitle"
+                    :title="cleanHTML(item.docTitle)"
                     :creation-label="item.docCreationLabel"
                   />
                 </div>
@@ -440,7 +440,7 @@
                     v-for="item in props.row.inNotes"
                     :key="item.docId"
                     :doc-id="item.docId"
-                    :title="item.docTitle"
+                    :title="cleanHTML(item.docTitle)"
                     :creation-label="item.docCreationLabel"
                   />
                 </div>
@@ -612,7 +612,21 @@ export default {
       "setSearchTerm",
       "getPersonById",
     ]),
+    cleanHTML(text) {
+      // remove notes from Titles in results
+      if (text && text.length > 0) {
+        console.log("text", text)
+        let parser = new DOMParser();
+        let htmlToClean = parser.parseFromString(text, 'text/html').body;
 
+        let links = htmlToClean.getElementsByTagName('a');
+        console.log("links", links)
+        for (let i = links.length - 1; i >= 0; --i) {
+          links[i].remove();
+        }
+        return htmlToClean.innerHTML.toString();
+      }
+    },
     managePersonData(evt) {
       this.$emit("manage-person-data", evt);
     },

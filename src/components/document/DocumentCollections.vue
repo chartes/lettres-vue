@@ -32,10 +32,11 @@
       >
         <b-tag
           attached
-          :closable="editable"
+          :closable="editable && !(collections.length === 1 && collections[0].title === 'Non triées')"
           aria-close-label="Remove from collection"
           size="is-medium"
           class="mb-1"
+          :title="collections.length === 1 && collections[0].title === 'Non triées' ? 'La collection par défaut ne peut être supprimée' : 'Supprimer la collection'"
           @close="removeCollection(collection)"
         >
           <collection-breadcrumb :collection-id="collection.id" />
@@ -104,24 +105,27 @@ export default {
       this.savingCollections = true;
       this.$store
         .dispatch("document/addCollection", collection)
-        .then(() => {
-          this.error = false
+        .then((response) => {
+          if (response) {
+            this.error = false
+            this.$store.dispatch("changelog/trackChanges", {
+              objId: this.document.id,
+              objType: 'document',
+              userId: this.$store.state.user.current_user.id,
+              msg: `Ajout dans la collection ${collection.title}`
+            }).then(() => {
+              console.log("changelog collection updated")
+            }).catch(() => {
+              console.log("changelog collection not updated")
+            })
+          } else {
+            this.error = true
+          }
         })
         .catch(() => {
           this.error = true
         }).finally(() => {
           this.savingCollections = false;
-        });
-        this.$store.dispatch("changelog/trackChanges", {
-          objId: this.document.id,
-          objType: 'document',
-          userId: this.$store.state.user.current_user.id,
-          msg: `Ajout dans la collection ${collection.title}`
-        }).then(() => {
-          console.log("changelog collection updated")
-        })
-        .catch(() => {
-          console.log("changelog collection not updated")
         });
     },
     removeCollection(collection) {
@@ -129,26 +133,29 @@ export default {
       this.savingCollections = true;
       this.$store
         .dispatch("document/removeCollection", collection)
-        .then(() => {
-          this.error = false
+        .then((response) => {
+          if (response) {
+            this.error = false
+            this.$store.dispatch("changelog/trackChanges", {
+              objId: this.document.id,
+              objType: 'document',
+              userId: this.$store.state.user.current_user.id,
+              msg: `Suppression de la collection ${collection.title}`
+            }).then(() => {
+              console.log("changelog collection updated")
+            })
+                .catch(() => {
+                  console.log("changelog collection not updated")
+                });
+          } else {
+            this.error = true
+          }
         })
         .catch(() => {
           this.error = true
         }).finally(() => {
           this.savingCollections = false
         });
-        this.$store.dispatch("changelog/trackChanges", {
-          objId: this.document.id,
-          objType: 'document',
-          userId: this.$store.state.user.current_user.id,
-          msg: `Suppression de la collection ${collection.title}`
-        }).then(() => {
-          console.log("changelog collection updated")
-        })
-        .catch(() => {
-          console.log("changelog collection not updated")
-        });
-
     },
     collectionPathAsText(collectionId) {
         const path = this.collectionPath(collectionId);
@@ -157,5 +164,5 @@ export default {
   },
 };
 </script>
-
-<style lang="scss"></style>
+<style lang="scss">
+</style>

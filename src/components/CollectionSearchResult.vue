@@ -30,9 +30,13 @@
           <span>{{ collection.dateMin || "..." }}</span>
           <span>{{ collection.dateMax || "..." }}</span>
         </div>
-        <div>
+        <div v-if="current_user">
           <span class="documents-count">{{ collection.documentCount }}</span>
-          <span class="documents-count-label"> documents</span>
+          <span class="documents-count-label"> document{{ collection.documentCount > 1 ? "s" : "" }}</span>
+        </div>
+        <div v-else>
+          <span class="documents-count">{{ collection.publishedCount }}</span>
+          <span class="documents-count-label"> document{{ collection.publishedCount > 1 ? "s" : "" }}</span>
         </div>
       </div>
     </div>
@@ -110,6 +114,7 @@ export default {
     }
   },
   computed: {
+    ...mapState("user", ["current_user"]),
     ...mapState("collections", ["collectionsById"]),
     ...mapGetters("collections", ["flattenedCollectionsTree"]),
     collection() {

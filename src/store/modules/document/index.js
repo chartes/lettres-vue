@@ -304,11 +304,11 @@ const actions = {
     IdsInAddress = attrs.address ? [...attrs.address.matchAll(personRegexp)].map(m => parseInt(m[1])) : []
     IdsInArgument = attrs.argument ? [...attrs.argument.matchAll(personRegexp)].map(m => parseInt(m[1])) : []
     IdsInTranscription = attrs.transcription ? [...attrs.transcription.matchAll(personRegexp)].map(m => parseInt(m[1])) : []
-    console.log("IdsInAddress match : ", [...attrs.address.matchAll(personRegexp)])
-    console.log("IdsInAddress map : ", [...attrs.address.matchAll(personRegexp)].map(m => parseInt(m[1])))
+    console.log("IdsInAddress match : ", attrs.address ? [...attrs.address.matchAll(personRegexp)] : "None")
+    console.log("IdsInAddress map : ", IdsInAddress)
 
-    console.log("IdsInTranscription match : ", [...attrs.transcription.matchAll(personRegexp)])
-    console.log("IdsInTranscription map : ", [...attrs.transcription.matchAll(personRegexp)].map(m => parseInt(m[1])))
+    console.log("IdsInTranscription match : ", attrs.transcription ? [...attrs.transcription.matchAll(personRegexp)] : "None" )
+    console.log("IdsInTranscription map : ", IdsInTranscription)
 
     IdsInNotes = []
     noteContents.forEach(n => {
@@ -363,11 +363,14 @@ const actions = {
     console.log("Note IdsInTitle match : ", [...attrs.title.matchAll(noteRegexp)])
     console.log("Note IdsInTitle map : ", [...attrs.title.matchAll(noteRegexp)].map(m => parseInt(m[1])))
 
-    console.log("Note IdsInAddress match : ", [...attrs.address.matchAll(noteRegexp)])
-    console.log("Note IdsInAddress map : ", [...attrs.address.matchAll(noteRegexp)].map(m => parseInt(m[1])))
+    console.log("Note IdsInAddress match : ", attrs.address ? [...attrs.address.matchAll(noteRegexp)] : "none")
+    console.log("Note IdsInAddress map : ", attrs.address ? [...attrs.address.matchAll(noteRegexp)].map(m => parseInt(m[1])) : "none")
 
-    console.log("Note IdsInTranscription match : ", [...attrs.transcription.matchAll(noteRegexp)])
-    console.log("Note IdsInTranscription map : ", [...attrs.transcription.matchAll(noteRegexp)].map(m => parseInt(m[1])))
+    console.log("Note IdsInAddress match : ", attrs.argument ? [...attrs.argument.matchAll(noteRegexp)] : "none")
+    console.log("Note IdsInAddress map : ", attrs.argument ? [...attrs.argument.matchAll(noteRegexp)].map(m => parseInt(m[1])) : "none")
+
+    console.log("Note IdsInTranscription match : ", attrs.transcription ? [...attrs.transcription.matchAll(noteRegexp)] : "none")
+    console.log("Note IdsInTranscription map : ", attrs.transcription ? [...attrs.transcription.matchAll(noteRegexp)].map(m => parseInt(m[1])) : "none")
 
     let notesList = IdsInTitle.concat(IdsInAddress, IdsInArgument, IdsInTranscription)
     let notesDict = {}

@@ -20,7 +20,7 @@
             field="title"
             :placeholder="collectionsTags && collectionsTags.length > 0 ? 'Henri IV' : 'Elargir les critères'"
             icon="fas fa-search"
-            @typing="getFilteredTags"
+            @typing="updateFilteredTags"
           >
             <template #selected="props">
               {{ props.tags.title }}
@@ -28,7 +28,18 @@
           </b-taginput>
         </b-field>
         <div>
-          <span v-if="tags.length >0 ">filtres actifs</span>
+          <span
+            v-if="tags.length >0 " 
+            class="suggestions-filter-list-title my-2"
+          >
+            <button
+              class="suggestions-remove-all"
+              @click="removeAllTags()"
+            >
+              <img src="../assets/images/icons/close-filter.svg">
+            </button>
+            filtres actifs
+          </span>
           <div
             v-for="tag in tags"
             :key="tag.id"
@@ -59,7 +70,7 @@
           :open-on-focus="true"
           field="title"
           placeholder="Henri IV"
-          @typing="getFilteredTags"
+          @typing="updateFilteredTags"
         />
       </b-field>
     </section>
@@ -72,60 +83,46 @@ import { mapState, mapActions } from "vuex";
 export default {
   data() {
     return {
-      filteredTags: null,
-      isSelectOnly: false,
-      tags: [],
-
-      init: false,
+      filteredTags: [],
     };
   },
   computed: {
     ...mapState("collections", {allCollections: "collectionsById", collectionsTags: "collectionsTags"}),
     ...mapState("search", ["selectedCollections"]),
-  },
-  watch: {
-    tags() {
-      this.setSelectedCollections(this.tags);
-      if (this.init) {
-        console.log("Collection Watch tags this.performSearch NO ACTION");
-        this.init = false;
-      } else {
-        console.log("Collection Watch tags this.performSearch");
-        this.performSearch();
+    allData: {
+      get: function () {
+        if (this.$route.name === "search") {
+          return Object.values(this.collectionsTags);
+        } else {
+          return Object.values(this.allCollections);
+        }
       }
     },
-  },
-  async created() {
-    this.init = true;
-    await this.fetchAll();
-    this.tags = this.selectedCollections;
+    tags: {
+      get: function () {
+        return this.selectedCollections
+      },
+      set: function (value) {
+        this.setSelectedCollections(value)
+        this.performSearch();
+        return value
+      }
+    }
   },
   methods: {
-    ...mapActions("collections", ["fetchAll"]),
     ...mapActions("search", ["setSelectedCollections", "performSearch"]),
-    getFilteredTags(text) {
-      if (this.$route.name === "search") {
-        this.filteredTags = this.collectionsTags.filter((option) => {
-          return (
-              option.title.toString().toLowerCase().indexOf(text.toLowerCase()) >=
-              0
-          );
-        });
-      } else {
-                this.filteredTags = Object.values(this.allCollections).filter((option) => {
-          return (
-              option.title.toString().toLowerCase().indexOf(text.toLowerCase()) >=
-              0
-          );
-        });
-      }
+    updateFilteredTags(text) {
+      this.filteredTags = this.allData.filter(
+        (option) => option.title.toString().toLowerCase().indexOf(text.toLowerCase()) >= 0
+      );
     },
     removeTag(tag) {
       if (tag) {
-        //console.log('Removing array_from : ', tag)
-        this.setSelectedCollections(this.tags.filter(coll => (coll.id !== tag.id)));
         this.tags = this.tags.filter(coll => (coll.id !== tag.id));
       }
+    },
+    removeAllTags() {
+      this.tags = [];
     }
   },
 };
@@ -155,5 +152,18 @@ export default {
 }
 i {
   color: rgba(140, 140, 140) !important;
+}
+.suggestions-filter-list-title {
+  display: flex;
+  align-items: center;
+  gap: 5px
+}
+.suggestions-remove-all {
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+.suggestions-remove-all > img {
+  height: 18px
 }
 </style>

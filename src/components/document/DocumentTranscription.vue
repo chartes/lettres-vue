@@ -25,6 +25,7 @@
             @add-note="addNote($event)"
             @refresh-address="refreshAddress($event)"
             @on-keyup-escape="cancelAddressInput($event)"
+            @save="saveAddress()"
           >
             <editor-save-button
               :doc-id="document.id"
@@ -75,6 +76,7 @@
             @add-note="addNote($event)"
             @refresh-transcription="refreshTranscription($event)"
             @on-keyup-escape="cancelTranscriptionInput($event)"
+            @save="saveTranscription()"
           >
             <editor-save-button
               :doc-id="document.id"
@@ -168,7 +170,7 @@ export default {
       default: null,
     },
   },
-  emits: ["add-place", "add-person", "add-note", "refresh-transcription", "refresh-address"],//"refresh-title",
+  emits: ["add-place", "add-person", "add-note", "refresh-transcription", "refresh-address", "save-transcription", "save-address"],//"refresh-title",
   data() {
     return {
       transcriptionContent: "",
@@ -204,9 +206,14 @@ export default {
           this.transcriptionContent = this.document.transcription;
           console.log('default this.document.transcription')
         }
+        this.addressContent = this.document.address || "";
+        console.log('default this.document.address', this.document.address)
     } else {
       this.transcriptionContent = this.document.transcription || "";
       console.log('default this.document.transcription', this.document.transcription)
+
+      this.addressContent = this.document.address || "";
+      console.log('default this.document.address', this.document.address)
 
       //TODO Victor remove once [note] have been replaced in database
       this.getNoteIndex(this.transcriptionContent, "transcription")
@@ -220,8 +227,6 @@ export default {
       this.getPlacesLabel(this.transcriptionContent, "transcription");
       this.getPlacesLabel(this.addressContent, "address");
     }
-    console.log('default this.document.address', this.document.address)
-    this.addressContent = this.document.address || "";
   },
   methods: {
     addPlace(evt, source) {
@@ -243,10 +248,16 @@ export default {
       this.transcriptionContent = evt;
       this.$emit("refresh-transcription", evt)
     },
+    saveTranscription() {
+      this.$emit("save-transcription")
+    },
     refreshAddress(evt) {
       console.log("DocumentTranscription / refreshAddress(evt)", evt);
       this.addressContent = evt;
       this.$emit("refresh-address", evt)
+    },
+    saveAddress() {
+      this.$emit("save-address")
     },
     truncate(str, n, useWordBoundary) {
       if (str && str.length > 0) {
@@ -348,7 +359,7 @@ export default {
     },
     //TODO Victor remove once attributes title have been added in database
     async getPersonsLabel(content, type) {
-      const persPattern = /<a class="persName" target="_blank" href="[^>]*" id="(\d+)">[^<]*<\/a>/gmi
+      const persPattern = /<a (?:class="persName"\s*|target="_blank"\s*|href="[^> ]*"\s*|id="(\d+)"\s*)*>[^<]*<\/a>/gmi
       console.log("DocumentTranscription / getPersonsLabel", content, type)
       if (content) {
         this.contentPrep = content
@@ -362,23 +373,27 @@ export default {
           let contentMatches = [...content.matchAll(persPattern)]
           console.log(`getPersonsLabel ${type}Matches`, contentMatches)
           let contentMatcheswithLabel = []
-          await Promise.all(contentMatches.map(async (m) => {
+          await Promise.allSettled(contentMatches.map(async (m) => {
             await this.$store.dispatch("persons/getPersonById", parseInt(m[1])).then(
                 (response) => {
                   console.log("m[0], m[1], response.attributes.label", m[0], m[1], response.attributes.label)
                   m.push(response.attributes.label)
+                  m.push(response.attributes.ref)
                   contentMatcheswithLabel.push(m)
                 }
             )
             console.log(`${type}withTitle`, contentMatcheswithLabel)
-          }))
+          }));
           contentMatcheswithLabel.forEach(m => {
-            //console.log("m[0], m[1]", m[0], m[1], typeof (m[1]))
-            console.log("m[0].replace('target=\"_blank\"', 'target=\"_blank\"' + ' title=\"' + m[2] + '\"')", m[0].replace('target="_blank"', 'target="_blank"' + ' title="' + m[2] + '"'))
+            console.log("m[0], m[1], typeof (m[1]), m[3], m[4]", m[0], m[1], typeof (m[1]), m[3])
+            const toReplace = new RegExp("<a class=\"persName\"(?: target=\"_blank\" )*(href=\"[^> ]*\")*","gi");
+            //const toReplacecapturedHref = toReplace.exec(m[0])[1];
+            //console.log('toReplacecapturedHref', toReplacecapturedHref)
+            console.log(`m[0].replace(toReplace, '<a class="persName" target="_blank" href="'+ m[3] + '" title="' + m[2] + '"')`, m[0].replace(toReplace, '<a class="persName" target="_blank" href="'+ m[3] + '" title="' + m[2] + '"'))
             if (type === "transcription") {
-              this.transcriptionContent = this.transcriptionContent.replace(m[0], m[0].replace('target="_blank"', 'target="_blank"' + ' title="' + m[2] + '"'));
+              this.transcriptionContent = this.transcriptionContent.replace(m[0], m[0].replace(toReplace, '<a class="persName" target="_blank" href="'+ m[3] + '" title="' + m[2] + '"'));
             } else {
-              this.addressContent = this.addressContent.replace(m[0], m[0].replace('target="_blank"', 'target="_blank"' + ' title="' + m[2] + '"'));
+              this.addressContent = this.addressContent.replace(m[0], m[0].replace(toReplace, '<a class="persName" target="_blank" href="'+ m[3] +'" title="' + m[2] + '"'));
             }
           })
           console.log(`getPersonsLabel in${type} replaced`, type === "transcription" ? this.transcriptionContent : this.addressContent)
@@ -387,7 +402,7 @@ export default {
     },
     //TODO Victor remove once attributes title have been added in database
     async getPlacesLabel(content, type) {
-      const placePattern = /<a class="placeName" target="_blank" href="[^>]*" id="(\d+)">[^<]*<\/a>/gmi
+      const placePattern = /<a (?:class="placeName"\s*|target="_blank"\s*|href="[^> ]*"\s*|id="(\d+)"\s*)*>[^<]*<\/a>/gmi
       console.log("DocumentTranscription / getPlacesLabel", content, type)
       if (content) {
         this.contentPrep = content
@@ -401,23 +416,26 @@ export default {
           let contentMatches = [...content.matchAll(placePattern)]
           console.log(`getPlacesLabel ${type}Matches`, contentMatches)
           let contentMatcheswithLabel = []
-          await Promise.all(contentMatches.map(async (m) => {
+          await Promise.allSettled(contentMatches.map(async (m) => {
             await this.$store.dispatch("placenames/getPlacenameById", parseInt(m[1])).then(
                 (response) => {
                   console.log("m[0], m[1], response.attributes.label", m[0], m[1], response.attributes.label)
                   m.push(response.attributes.label)
+                  m.push(response.attributes.ref)
                   contentMatcheswithLabel.push(m)
                 }
             )
             console.log(`${type}withTitle`, contentMatcheswithLabel)
           }))
           contentMatcheswithLabel.forEach(m => {
-            //console.log("m[0], m[1]", m[0], m[1], typeof (m[1]))
-            console.log("m[0].replace('target=\"_blank\"', 'target=\"_blank\"' + ' title=\"' + m[2] + '\"')", m[0].replace('target="_blank"', 'target="_blank"' + ' title="' + m[2] + '"'))
+            console.log("m[0], m[1], typeof (m[1]), m[3], m[4]", m[0], m[1], typeof (m[1]), m[3])
+            const toReplace = new RegExp("<a class=\"placeName\"(?: target=\"_blank\" )*(href=\"[^> ]*\")*","gi");
+            //const toReplacecapturedHref = toReplace.exec(m[0])[1];
+            //console.log('toReplacecapturedHref', toReplacecapturedHref)
             if (type === "transcription") {
-              this.transcriptionContent = this.transcriptionContent.replace(m[0], m[0].replace('target="_blank"', 'target="_blank"' + ' title="' + m[2] + '"'));
+              this.transcriptionContent = this.transcriptionContent.replace(m[0], m[0].replace(toReplace, '<a class="placeName" target="_blank" href="'+ m[3] + '" title="' + m[2] + '"'));
             } else {
-              this.addressContent = this.addressContent.replace(m[0], m[0].replace('target="_blank"', 'target="_blank"' + ' title="' + m[2] + '"'));
+              this.addressContent = this.addressContent.replace(m[0], m[0].replace(toReplace, '<a class="placeName" target="_blank" href="'+ m[3] + '" title="' + m[2] + '"'));
             }
           })
           console.log(`getPlacesLabel in${type} replaced`, type === "transcription" ? this.transcriptionContent : this.addressContent)
