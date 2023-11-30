@@ -268,7 +268,7 @@ export default {
         "classification-mark": w["classification-mark"],
         content: w.content,
       };
-      this.manifestUrl = w["manifest-url"];
+      this.manifestUrl = w["manifest_url"];
 
       if (this.witnessInput.id) {
         this.witness.id = this.witnessInput.id;

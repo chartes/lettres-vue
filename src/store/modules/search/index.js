@@ -837,7 +837,8 @@ const actions = {
                                               senders,
                                               recipients,
                                               location_dates_from,
-                                              location_dates_to
+                                              location_dates_to,
+                                              witnesses
                                             },
                                             relationships
                                           }) => ({
@@ -861,7 +862,8 @@ const actions = {
           }),
           destinations: location_dates_to.map(destination => {
             return {...destination, role: 2};
-          })
+          }),
+          witnesses
         }));
       } else {
         datawithPersons = data.map(({
@@ -877,7 +879,8 @@ const actions = {
             senders,
             recipients,
             location_dates_from,
-            location_dates_to
+            location_dates_to,
+            witnesses
           },
           relationships
         }) => ({
@@ -900,7 +903,8 @@ const actions = {
           }),
           destinations: location_dates_to.map(destination => {
             return {...destination, role: 2};
-          })
+          }),
+          witnesses
         }));
       }
 

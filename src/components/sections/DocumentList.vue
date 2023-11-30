@@ -871,8 +871,8 @@ export default {
       let showIcon = false
       if (!this.loadingTable) {
         if (!this.loadingStatus && this.searchType === "isParatextSearch"){
-          showIcon = true
-          /*let searchDocuments = this.$store.state.search.documents
+          //showIcon = true
+          let searchDocuments = this.$store.state.search.documents
           if (searchDocuments.length > 0) {
             let currRowDocument = searchDocuments.filter(d => d.id === rowDocId)
             if (currRowDocument && currRowDocument.length > 0) {
@@ -881,7 +881,7 @@ export default {
                 showIcon = true
               }
             }
-          }*/
+          }
         } else {
           if (!this.loadingStatus && this.searchTerm && this.searchTerm.length > 0) {
             let searchDocuments = this.$store.state.search.documents
@@ -1553,8 +1553,8 @@ input[type=number] {
 }
 
 
+/*
 .is-active {
-
   ::v-deep {
 
     .b-table.collection-results.no-search-term,
@@ -1562,13 +1562,13 @@ input[type=number] {
 
       thead {
         tr {
-          /* Flèche */
+          // Flèche
           th:nth-child(1) {
             width: 0 !important;
             display: none !important;
           }
 
-          /* Lettre */
+          // Lettre
           th:nth-child(2) .th-wrap {
             transform: none !important;
           }
@@ -1576,7 +1576,7 @@ input[type=number] {
       }
 
       tbody {
-        /* Flèche */
+        // Flèche
         td.chevron-cell {
           width: 0 !important;
           display: none !important;
@@ -1591,6 +1591,6 @@ input[type=number] {
 
     }
   }
-}
+}*/
 
 </style>
