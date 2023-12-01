@@ -105,12 +105,6 @@ const mutations = {
     state.documentLoading = payload;
   },
 
-  ADD_COLLECTION (state, payload) {
-    const exists = state.collections.find(coll => coll.id === payload.id)
-    if (exists) return;
-    state.collections = [ ...state.collections, payload ]
-  },
-
   UPDATE_NOTE (state, payload) {
     let no = state.notes.find(n => n.id === payload.id)
     const index = state.notes.indexOf(no)
@@ -156,11 +150,6 @@ const mutations = {
   },
   REORDER_WITNESSES (state, payload) {
     Vue.set(state, 'witnesses', [ ...payload ])
-  },
-  REMOVE_COLLECTION (state, payload) {
-    if (state.collections) {
-      state.collections = state.collections.filter(coll => coll.id !== payload.id)
-    }
   },
   REMOVE_DOCUMENT (state, payload) {
     if (state.documents) {
@@ -658,26 +647,22 @@ const actions = {
   unsetIsLoading({commit}) {
     commit('LOADING_STATUS', false);
   },
-  addCollection ({commit, rootState, state}, collection) {
+  async addCollection ({rootState, state, dispatch}, collection) {
 
     const data = { data: [ { id : collection.id, type: "collection" }, ] }
 
     const http = http_with_auth(rootState.user.jwt);
-    return http.post(`/documents/${state.document.id}/relationships/collections?without-relationships`, data)
-      .then(response => {
-        commit('ADD_COLLECTION', collection);
-        return true
-      })
+    await http.post(`/documents/${state.document.id}/relationships/collections?without-relationships`, data)
+    await dispatch("fetch", state.document.id)
+    return true
   },
-  removeCollection ({commit, state, rootState}, collection) {
+  async removeCollection ({state, rootState, dispatch}, collection) {
     const data = { data: { id : collection.id, type: "collection" } };
 
     const http = http_with_auth(rootState.user.jwt);
-    return http.delete(`/documents/${state.document.id}/relationships/collections?without-relationships`, {data})
-      .then(response => {
-        commit('REMOVE_COLLECTION', collection);
-        return true
-      })
+    await http.delete(`/documents/${state.document.id}/relationships/collections?without-relationships`, {data})
+    await dispatch("fetch", state.document.id)
+    return true
   },
 
   addNote ({commit, state, rootState}, note) {
