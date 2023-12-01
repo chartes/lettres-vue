@@ -891,14 +891,7 @@ export default {
                 console.log("currRowDocument :", currRowDocument)
                 if (currRowDocument[0].transcription && currRowDocument[0].transcription.highlight) {
                   showIcon = true
-                } else if (currRowDocument[0].argument && this.highlight(currRowDocument[0].argument).includes('mark')) {
-                  console.log("list currRowDocument[0].id, argument", currRowDocument[0].id, currRowDocument[0].argument)
-                  console.log("this.highlight(currRowDocument[0].argument)", this.highlight(currRowDocument[0].argument))
-                  showIcon = true;
-                }/* else {
-                  return showIcon
                 }
-                return showIcon*/
               }/* else {
                 return showIcon
               }*/

@@ -179,7 +179,9 @@ export default {
       }
     },
     "document.id"() {
-      this.setDisplayedManifestUrl(null);
+      if (this.$route.name ==! 'search') {
+        this.setDisplayedManifestUrl(null);
+      }
     },
     witnesses() {
       this.$emit("refresh-viewer");
