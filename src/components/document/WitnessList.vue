@@ -103,6 +103,7 @@
                         <p class="control">
                           <button
                             rounded
+                            :disabled="!witness.manifest_url"
                             class="button is-small display-manifest-button eye-btn"
                             :class="
                               displayedWitness && displayedWitness.id === witness.id
@@ -111,9 +112,7 @@
                             "
                             @click="showWitness(witness)"
                           >
-                            <span class="icon is-small">
-                              <i class="far fa-eye" />
-                            </span>
+                            <span class="icon is-small"/>
                           </button>
                         </p>
                       </b-field>
