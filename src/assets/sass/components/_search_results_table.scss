@@ -172,6 +172,15 @@
             .tag {
               color: #FFF !important;
               padding: 0;
+
+              &:hover {
+                color: #FFF !important;
+                text-decoration: underline !important;
+              }
+            }
+
+            .tag:not(body).is-light {
+              background: transparent !important;
             }
           }
 
@@ -331,6 +340,10 @@
                 }
               }
             }
+          }
+
+          &.is-selected:not(.detail) td a:hover {
+            color: #FFF !important;
           }
 
           &.detail {

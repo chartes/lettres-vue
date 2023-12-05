@@ -80,7 +80,22 @@ export default {
   max-width: 100%;
   width: 460px;
   height: 320px;
-
   background-color: lightgrey;
+
+  ::v-deep {
+
+    .leaflet-pane,
+    .leaflet-container > div {
+      width: 100%;
+      height: 100%;
+    }
+
+    .leaflet-control-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+  }
 }
 </style>
