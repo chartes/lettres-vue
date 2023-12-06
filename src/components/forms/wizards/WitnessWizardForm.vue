@@ -172,6 +172,7 @@ export default {
       manifestUrl: null,
       manifest: null,
       collectedPages: [],
+      error: false
     };
   },
   computed: {
@@ -376,13 +377,41 @@ export default {
         if (this.witness.id) {
           await this.$store.dispatch("document/updateWitness", this.witness);
         } else {
-          await this.$store.dispatch("document/addWitness", this.witness);
+          await this.$store.dispatch("document/addWitness", this.witness).then((response) => {
+          if (response) {
+            this.error = false
+            this.$store.dispatch("changelog/trackChanges", {
+              objId: this.$store.state.document.document.id,
+              objType: 'document',
+              userId: this.$store.state.user.current_user.id,
+              msg: `Ajout du témoin ${this.cleanHTML(this.witness.content)}`
+            }).then(() => {
+              console.log("changelog witness updated")
+            }).catch(() => {
+              console.log("changelog witness not updated")
+            })
+          } else {
+            this.error = true
+          }
+        })
+        .catch(() => {
+          this.error = true
+        }).finally(async () => {
+          await this.$store.dispatch("document/fetch", this.$store.state.document.document.id);
+        });
         }
       }
       this.closeWizard();
     },
     addNote(event) {
       this.$emit('add-note', event)
+    },
+    cleanHTML(text) {
+      // remove HTML from witness content
+      if (text && text.length > 0) {
+        let doc = new DOMParser().parseFromString(text, 'text/html');
+        return doc.body.textContent || "";
+      }
     }
   },
 };

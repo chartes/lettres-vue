@@ -205,10 +205,12 @@ export default {
         this.$emit("close-witness-modal");
       }
     },
-    /*witnesses() {
-      //this.witnessTmpList = this.witnesses;
-      this.displayedWitness = this.witnessTmpList ? this.witnessTmpList[0] : null;
-    },*/
+    witnesses() {
+      if (this.$route.name !== 'search') {
+        this.witnessTmpList = this.witnesses;
+      }
+      //this.displayedWitness = this.witnessTmpList ? this.witnessTmpList[0] : null;
+    },
   },
   created() {
     if (this.$route.name === 'search') {
@@ -233,7 +235,31 @@ export default {
     },
     async deleteWitness(witness) {
       if (witness && witness.id) {
-        await this.$store.dispatch("document/removeWitness", witness);
+        let witnessToDelete = witness
+        await this.$store.dispatch("document/removeWitness", witness).then((response) => {
+          console.log("document/removeWitness response", response)
+          if (response) {
+            console.log("changelog/trackChanges init", witness, witness.id)
+            this.error = false
+            this.$store.dispatch("changelog/trackChanges", {
+              objId: this.$store.state.document.document.id,
+              objType: 'document',
+              userId: this.$store.state.user.current_user.id,
+              msg: `Suppression du témoin ${this.cleanHTML(witness.content)}`
+            }).then(() => {
+              console.log("changelog witness deleted")
+            }).catch(() => {
+              console.log("changelog witness not deleted")
+            })
+          } else {
+            this.error = true
+          }
+        })
+        .catch(() => {
+          this.error = true
+        }).finally(async () => {
+          //await this.$store.dispatch("document/fetch", this.$store.state.document.document.id);
+        });
         await this.recomputeOrder();
       }
     },
@@ -264,6 +290,13 @@ export default {
     addNote(event) {
       console.log('witness list')
       this.$emit('add-note', event)
+    },
+    cleanHTML(text) {
+      // remove HTML from witness content
+      if (text && text.length > 0) {
+        let doc = new DOMParser().parseFromString(text, 'text/html');
+        return doc.body.textContent || "";
+      }
     }
   },
 };

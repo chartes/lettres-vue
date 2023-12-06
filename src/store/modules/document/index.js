@@ -133,10 +133,6 @@ const mutations = {
     const index = state.notes.indexOf(note)
     state.notes.splice(index, 1)
   },
-
-  ADD_WITNESS (state, payload) {
-    state.witnesses = [ ...state.witnesses, payload ]
-  },
   UPDATE_WITNESS (state, payload) {
     let wit = state.witnesses.find(w => w.id === payload.id)
     const index = state.witnesses.indexOf(wit)
@@ -148,11 +144,6 @@ const mutations = {
     const index = state.witnesses.indexOf(wit)
     wit = { ...wit, institution }
     state.witnesses.splice(index, 1, wit)
-  },
-  REMOVE_WITNESS (state, id) {
-    let wit = state.witnesses.find(w => w.id === id)
-    const index = state.witnesses.indexOf(wit)
-    state.witnesses.splice(index, 1)
   },
   REORDER_WITNESSES (state, payload) {
     Vue.set(state, 'witnesses', [ ...payload ])
@@ -485,7 +476,7 @@ const actions = {
 
     return http.patch(`/witnesses/${witnessId}/relationships/institution`, {data: null});
   },
-  async addWitness ({commit, rootState, state}, witness) {
+  async addWitness ({rootState, state, dispatch}, witness) {
     const http = http_with_auth(rootState.user.jwt);
 
     witness.num = Math.max.apply(null, state.witnesses.map(w => w.num)) + 1; //TODO server side
@@ -543,13 +534,12 @@ const actions = {
         relationships
     };
 
-
-    return http.post(`/witnesses?without-relationships`, {data})
-      .then(response => {
-        witness.id = response.data.data.id;
-        commit('ADD_WITNESS', witness);
-      })
+    await http.post(`/witnesses?without-relationships`, {data})
+    await dispatch("fetch", state.document.id)
+    return true
   },
+
+
   async updateWitness ({commit, rootState, state}, witness) {
 
     console.log("update witness", witness)
@@ -614,17 +604,15 @@ const actions = {
         commit('UPDATE_WITNESS', witness);
       })
   },
-  removeWitness ({commit, rootState, state}, witness) {
+  async removeWitness ({state, rootState, dispatch}, witness) {
     const http = http_with_auth(rootState.user.jwt);
 
     const data = { data: { id : witness.id, type: "witness" } }
     console.log('document store removeWitness', data, state.document.id)
 
-    return http.delete(`/witnesses/${witness.id}`, {data})
-      .then(response => {
-        console.log('response', response)
-        commit('REMOVE_WITNESS', witness.id);
-      })
+    await http.delete(`/witnesses/${witness.id}`, {data})
+    //await dispatch("fetch", state.document.id)
+    return true
   },
   reorderWitnesses ({commit, rootState}, { witnesses }) {
     const http = http_with_auth(rootState.user.jwt);
@@ -670,7 +658,7 @@ const actions = {
       })
   },
   removeCollection ({commit, state, rootState}, collection) {
-    const data = { data: { id : collection.id, type: "collection" } };
+    const data = {data: {id: collection.id, type: "collection"}};
 
     const http = http_with_auth(rootState.user.jwt);
     return http.delete(`/documents/${state.document.id}/relationships/collections?without-relationships`, {data})
