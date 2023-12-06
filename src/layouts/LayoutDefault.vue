@@ -50,18 +50,31 @@
         </div>
       </div>
       <div
-        v-else-if="$route.name === 'search' || $route.name === 'document'"
+        v-else-if="$route.name === 'search' || $route.name === 'document' || $route.name === 'documentation'"
       >
         <div
           id="intro_search"
           class="bg-image content is-align-items-center"
         >
-          <div class="row search_page_search_row">
+          <div
+            v-if="$route.name === 'search' || $route.name === 'document'"
+            class="row search_page_search_row"
+          >
             <div class="col is-2 search_page_search_span">
               <span>Chercher dans les</span>
             </div>
             <div class="column">
               <search-box />
+            </div>
+          </div>
+          <div
+            v-else-if="$route.name === 'documentation'"
+            class="row search_page_search_row"
+          >
+            <div class="column">
+              <p class="documentation_title">
+                Documentation de l'API
+              </p>
             </div>
           </div>
         </div>
@@ -164,8 +177,8 @@ export default {
     columnsCssClass() {
       if (this.$route.name === 'search' && this.showLeftSideBar) {
         return 'with-side-bar';
-      } else if (this.$store.state.layout.viewerMode === "text-and-images-mode") {
-        return 'with-viewer';
+      } else if (this.$store.state.layout.viewerMode === "text-and-images-mode" || this.$route.name === 'documentation') {
+        return 'large-screen';
       }
       return "";
     }
@@ -179,9 +192,7 @@ export default {
       }
     },
     "document.id"() {
-      if (this.$route.name ==! 'search') {
-        this.setDisplayedManifestUrl(null);
-      }
+      this.setDisplayedManifestUrl(null);
     },
     witnesses() {
       this.$emit("refresh-viewer");
@@ -450,6 +461,23 @@ footer {
     font-size: 16px;
   }
 }
+.documentation_title {
+  font-family: $family-apptitle;
+  font-weight: 600;
+  font-size: 40px;
+  line-height: 1.1;
+  color: white;
+  text-align: center;
+
+  @include on-tablet {
+    font-size: 30px;
+  }
+
+  @include on-mobile {
+    font-size: 20px;
+  }
+}
+
 .metadata {
   font-size: xx-large;
   font-weight: bolder;
@@ -516,7 +544,7 @@ a.portail_button:hover {
   }
 }
 
-.advanced-search_row.with-viewer {
+.advanced-search_row.large-screen {
   padding-left: $container-tablet-margin;
   padding-right: $container-tablet-margin;
 
