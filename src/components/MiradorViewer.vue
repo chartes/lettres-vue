@@ -21,7 +21,6 @@ export default {
   data() {
     return {
       viewer: null,
-      //windowId: "document",
     };
   },
   computed: {},
@@ -52,7 +51,6 @@ export default {
         // metadata:
         // 'provider': ''
       };
-      // instantiate the viewer with a single manifest & window for simplicity
       try {
         this.viewer = Mirador.viewer({
           id: `vue-mirador-container-${this.windowId}`,
