@@ -133,6 +133,11 @@ const mutations = {
     wit = { ...payload }
     state.witnesses.splice(index, 1, wit)
   },
+  REMOVE_WITNESS (state, id) {
+    let wit = state.witnesses.find(w => w.id === id)
+    const index = state.witnesses.indexOf(wit)
+    state.witnesses.splice(index, 1)
+  },
   UPDATE_WITNESS_INSTITUTION (state, { witnessId, institution }) {
     let wit = state.witnesses.find(w => w.id === witnessId)
     const index = state.witnesses.indexOf(wit)
@@ -593,17 +598,21 @@ const actions = {
         commit('UPDATE_WITNESS', witness);
       })
   },
-  async removeWitness ({state, rootState, dispatch}, witness) {
+  async removeWitness ({commit, state, rootState}, witness) {
     const http = http_with_auth(rootState.user.jwt);
 
-    const data = { data: { id : witness.id, type: "witness" } }
-    console.log('document store removeWitness', data, state.document.id)
+    const data = { data: { id : witness.id, type: "witness" } };
+    console.log('document store removeWitness', data, state.document.id);
 
-    await http.delete(`/witnesses/${witness.id}`, {data})
-    //await dispatch("fetch", state.document.id)
-    return true
+    let response = await http.delete(`/witnesses/${witness.id}`, {data});
+    if (response.status === 204) {
+      commit('REMOVE_WITNESS', witness.id);
+      return true;
+    } else {
+      return false;
+    }
   },
-  reorderWitnesses ({commit, rootState}, { witnesses }) {
+  async reorderWitnesses ({commit, rootState, dispatch}, { witnesses }) {
     const http = http_with_auth(rootState.user.jwt);
     Promise.all(witnesses.map(w => {
       return http.patch(`/witnesses/${w.id}`, { data: {
@@ -613,6 +622,7 @@ const actions = {
       }})
     })).then(() => {
       commit('REORDER_WITNESSES', witnesses)
+      dispatch("fetch", state.document.id)
     })
   },
 

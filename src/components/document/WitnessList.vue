@@ -231,43 +231,41 @@ export default {
       await this.$store.dispatch("document/reorderWitnesses", {
         witnesses: this.witnessTmpList,
       });
-      await this.$store.dispatch("document/fetch", this.document.id);
+      //await this.$store.dispatch("document/fetch", this.document.id);
     },
     async deleteWitness(witness) {
       if (witness && witness.id) {
-        let witnessToDelete = witness
-        await this.$store.dispatch("document/removeWitness", witness).then((response) => {
-          console.log("document/removeWitness response", response)
-          if (response) {
-            console.log("changelog/trackChanges init", witness, witness.id)
-            this.error = false
-            this.$store.dispatch("changelog/trackChanges", {
-              objId: this.$store.state.document.document.id,
-              objType: 'document',
-              userId: this.$store.state.user.current_user.id,
-              msg: `Suppression du témoin ${this.cleanHTML(witness.content)}`
-            }).then(() => {
-              console.log("changelog witness deleted")
-            }).catch(() => {
-              console.log("changelog witness not deleted")
+        await this.$store.dispatch("document/removeWitness", witness)
+            .then((response) => {
+                console.log("document/removeWitness response", response)
+                if (response) {
+                  this.recomputeOrder()
+                      .then(() => {
+                          console.log("changelog/trackChanges init", witness, witness.id)
+                          this.error = false;
+
+                          this.$store.dispatch("changelog/trackChanges",
+                              {objId: this.$store.state.document.document.id,
+                                      objType: 'document',
+                                      userId: this.$store.state.user.current_user.id,
+                                      msg: `Suppression du témoin ${this.cleanHTML(witness.content)}`
+                                      }
+                          ).then(() => {
+                            console.log("changelog witness deleted")
+                          }).catch(() => {
+                            console.log("changelog witness not deleted")
+                          })
+                        })
+                  } else {
+                this.error = true
+                }
             })
-          } else {
-            this.error = true
-          }
-        })
-        .catch(() => {
-          this.error = true
-        }).finally(async () => {
-          //await this.$store.dispatch("document/fetch", this.$store.state.document.document.id);
-        });
-        await this.recomputeOrder();
-      }
-    },
-    toggleMirador: function(newUrl) {
-      if (this.displayedManifestUrl === newUrl) {
-        this.displayedManifestUrl = undefined
-      } else {
-        this.displayedManifestUrl = newUrl
+            .catch(() => {
+              this.error = true
+            }).finally(() => {
+              console.log("this.witnessTmpList / this.witnesses : ", this.witnessTmpList, this.witnesses)
+            });
+        //await this.recomputeOrder();
       }
     },
     showWitness(witness) {

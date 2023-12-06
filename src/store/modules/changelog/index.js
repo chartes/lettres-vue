@@ -53,7 +53,7 @@ const actions = {
       this.dispatch('changelog/fetchFullChangelog', {
         filters: `filter[object-id]=${objId}&filter[object-type]=${objType}`
       }, {root: true});
-    });
+    }).catch((error) => {console.log("trackChanges error", error)});
   },
   fetchFullChangelog ({ rootState, commit }, {numPage = 1, pageSize = 30, sortingPriority, filters}) {
     commit('SET_LOADING', true)
