@@ -692,11 +692,11 @@
         </template>
 
         <template #detail="props">
-          <document
-            class="document-page"
-            :doc-id="props.row.id"
-            :can-edit="canEdit"
-            :preview="true"
+          <document-list-details
+            :transcription-hightlight="props.row.transcriptionHightlight"
+            :argument="props.row.argument"
+            :witnesses="props.row.witnesses"
+            :document-id="props.row.id"
           />
         </template>
       </b-table>
@@ -705,14 +705,16 @@
 </template>
 
 <script>
-import { mapState, mapActions, mapGetters } from "vuex";
+import { mapState, mapActions } from "vuex";
 import escapeRegExp from "lodash/escapeRegExp";
+import DocumentTagBar from "../document/DocumentTagBar"
+import DocumentListDetails from "./DocumentListDetails"
 
 export default {
   name: "DocumentList",
   components: {
-    DocumentTagBar: () => import("@/components/document/DocumentTagBar"),
-    Document: () => import("@/components/sections/Document")
+    DocumentTagBar,
+    DocumentListDetails,
   },
   props: {
       "collectionId": {
@@ -1012,38 +1014,21 @@ export default {
             return Object.hasOwn(d, 'score');
           }
           ).length > 0) {
-        const phr = [];
+        console.log("this.documents", this.documents)
         this.tableData = await Promise.all(this.documents.map(async d => {
-        return {
-          id: d.id,
-          score: d.score,
-          title:  d.title,
-          creation:  d.creation,
-          senders: d.sender.length > 0 ? d.sender.map(p => p.label).filter(Boolean).join(", ") : '',
-          recipients: d.recipients.length > 0 ? d.recipients.map(p => p.label).filter(Boolean).join(", ") : '',
-          origins: d.origin.length > 0 ? d.origin.map(o => o.label).filter(Boolean).join(", ") : '',
-          destinations: d.destinations.length > 0 ? d.destinations.map(d => d.label).filter(Boolean).join(", ") : '',
-          /* previous logic fails on collection page if this.$store.state.persons.persons_roles/placenames.places have not been loaded
-          previous senders: d.sender.map(sender => (this.$store.state.persons.persons_roles[1].persons.find(p => p.person_id === sender.id) || {}).label).filter(Boolean).join(", "),
-          recipients: d.recipients.map(recipient => (this.$store.state.persons.persons_roles[1].persons.find(p => p.person_id === recipient.id) || {}).label).filter(Boolean).join(", "),
-          origins: d.origin.map(origin => (this.$store.state.placenames.places[0].places.find(p => p.placename_id === origin.id) || {}).label).filter(Boolean).join(", "),
-          destinations: d.destinations.map(destinations => (this.$store.state.placenames.places[1].places.find(p => p.placename_id === destinations.id) || {}).label).filter(Boolean).join(", ")*/
-        }
-
-        /*return {
-          id: d.id,
-          title:  d.title,
-          creation:  d.creation,
-          senders: this.included.length > 0 ? d.sender.map(sender => (this.included.find(item => item.id === sender.id & item.type === 'person')).attributes.label).filter(Boolean).join(", ") : '',
-          recipients: this.included.length > 0 ? d.recipients.map(recipient => (this.included.find(item => item.id === recipient.id & item.type === 'person')).attributes.label).filter(Boolean).join(", ") : '',
-          origins: this.included.length > 0 ? d.origin.map(origin => (this.included.find(item => item.id === origin.id & item.type === 'placename')).attributes.label).filter(Boolean).join(", ") : '',
-          destinations: this.included.length > 0 ? d.destinations.map(destination => (this.included.find(item => item.id === destination.id & item.type === 'placename')).attributes.label).filter(Boolean).join(", ") : '',
-          /* previous logic fails on collection page if this.$store.state.persons.persons_roles/placenames.places have not been loaded
-          previous senders: d.sender.map(sender => (this.$store.state.persons.persons_roles[1].persons.find(p => p.person_id === sender.id) || {}).label).filter(Boolean).join(", "),
-          recipients: d.recipients.map(recipient => (this.$store.state.persons.persons_roles[1].persons.find(p => p.person_id === recipient.id) || {}).label).filter(Boolean).join(", "),
-          origins: d.origin.map(origin => (this.$store.state.placenames.places[0].places.find(p => p.placename_id === origin.id) || {}).label).filter(Boolean).join(", "),
-          destinations: d.destinations.map(destinations => (this.$store.state.placenames.places[1].places.find(p => p.placename_id === destinations.id) || {}).label).filter(Boolean).join(", ")*/
-        /*}*/
+          return {
+            id: d.id,
+            score: d.score,
+            title:  d.title,
+            creation:  d.creation,
+            senders: d.sender.length > 0 ? d.sender.map(p => p.label).filter(Boolean).join(", ") : '',
+            recipients: d.recipients.length > 0 ? d.recipients.map(p => p.label).filter(Boolean).join(", ") : '',
+            origins: d.origin.length > 0 ? d.origin.map(o => o.label).filter(Boolean).join(", ") : '',
+            destinations: d.destinations.length > 0 ? d.destinations.map(d => d.label).filter(Boolean).join(", ") : '',
+            argument: d.argument,
+            transcriptionHightlight: d.transcription ? d.transcription.highlight : undefined,
+            witnesses: d.witnesses,
+          }
         }));
       } else {
         this.tableData = await Promise.all(this.documents.map(async d => {
