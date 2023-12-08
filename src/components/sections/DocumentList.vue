@@ -1518,6 +1518,32 @@ input::-webkit-inner-spin-button {
 input[type=number] {
   -moz-appearance: textfield;
 }
+::v-deep .b-table tr {
+    &:not(.hide-arrow-icon-detail) {
+      td.chevron-cell a {
+        width: 15px;
+        height: 15px;
+        span.icon {
+          &:after {
+            display: none !important;
+          }
+           &:not(.is-expanded) {
+             background: url(../../assets/images/icons/open_text.svg) center / 15px auto no-repeat;
+           }
+           &.is-expanded {
+             background: url(../../assets/images/icons/close_text.svg) center / 10px auto no-repeat;
+           }
+        }
+      }
+      &.hide-arrow-icon-detail {
+        width: 15px;
+        height: 15px;
+        span.icon:after {
+          display: none !important;
+        }
+      }
+    }
+}
 ::v-deep .b-table .hide-arrow-icon-detail td.chevron-cell a {
   pointer-events: none;
   span.icon:after {
