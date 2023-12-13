@@ -707,13 +707,13 @@ div.toc-parent.opened {
     font-size: 18px;
     line-height: 24px;
   }
-  ::v-deep(.method) {
+  ::v-deep .method {
     width: 45px;
     font-size: 10px !important;
     margin-right: 10px !important;
     padding: 0 !important;
   }
-  ::v-deep(.grid-container) {
+  ::v-deep .grid-container {
     grid-template-columns: 70px auto 35px;
     font-size: 12px;
     line-height: 21px;
