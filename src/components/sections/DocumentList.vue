@@ -1024,7 +1024,7 @@ export default {
             recipients: d.recipients.length > 0 ? d.recipients.map(p => p.label).filter(Boolean).join(", ") : '',
             origins: d.origin.length > 0 ? d.origin.map(o => o.label).filter(Boolean).join(", ") : '',
             destinations: d.destinations.length > 0 ? d.destinations.map(d => d.label).filter(Boolean).join(", ") : '',
-            argument: d.argument,
+            argument: d.argument && d.argument.raw ? d.argument.raw : d.argument,
             transcriptionHightlight: d.transcription ? d.transcription.highlight : undefined,
             witnesses: d.witnesses,
           }
