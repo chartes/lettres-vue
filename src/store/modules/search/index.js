@@ -444,7 +444,7 @@ const actions = {
 
     /* =========== filters =========== */
     let query ='';
-    let highlights = false;
+    let highlights = '';
     let published = '';
     let searchType = 'paratext';
 
