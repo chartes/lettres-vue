@@ -121,6 +121,7 @@ export default {
   },
   computed: {
     ...mapState("user", ["current_user", "users", "usersSearchResults", "jwt"]),
+
     nextLock() {
       if (this.nextLockOwner) {
         return {
@@ -191,6 +192,13 @@ export default {
     console.log('this.nextLockOwner (mounted) : ', this.nextLockOwner)
     this.description = this.defaultDescription;
   },
+  async created() {
+    if (this.current_user) {
+      if (this.current_user.isAdmin) {
+        await this.fetchUsers();
+      }
+    }
+  },
   methods: {
     ...mapActions("user", ["fetchUsers"]),
     ...mapActions("locks", ["saveLock", "updateLock"/*,"removeLock"*/]),
@@ -231,6 +239,7 @@ export default {
       }
     },
     searchUser(search) {
+      console.log("LockForm / searchUser", this.$store.dispatch("user/search", search))
       return this.$store.dispatch("user/search", search);
     },
     resetDescription() {

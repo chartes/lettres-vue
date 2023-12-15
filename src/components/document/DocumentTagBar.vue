@@ -190,14 +190,23 @@ export default {
         return Promise.resolve(false);
       });
     },
-    startLockEditor() {
+    async startLockEditor() {
       this.lockEditMode = true;
-      //await this.fetchStatus().then( (resp) => {
-        return Promise.resolve(this.status.currentLock['is-active']);
-      //})
+      await this.fetchStatus()
+      if (this.status.currentLock.id) {
+        this.lockUser = await this.fetchLockOwner({
+          docId: this.docId,
+          lockId: this.status.currentLock.id
+        })
+      }
+      await this.$store.dispatch("document/fetch", this.docId);
+
+
+      return Promise.resolve(this.status.currentLock['is-active']);
     },
     async stopLockEditor() {
       this.lockEditMode = false;
+      await this.$store.dispatch("document/fetch", this.docId);
       await this.fetchStatus().then( (resp) => {
         return Promise.resolve(this.status.currentLock['is-active']);
       })

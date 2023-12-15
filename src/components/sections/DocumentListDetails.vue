@@ -31,7 +31,7 @@
       </div>
     </div>
     <div
-      v-if="searchType === 'isParatextSearch' && witnesses && witnesses.length > 0"
+      v-if="(searchType === 'isParatextSearch' || !searchType) && witnesses && witnesses.length > 0"
     >
       <div class="heading">
         Témoins
@@ -55,7 +55,7 @@
       </div>
     </div>
     <mirador-viewer
-      v-if="searchType === 'isParatextSearch' && displayedManifestUrl"
+      v-if="(searchType === 'isParatextSearch' || !searchType) && displayedManifestUrl"
       class="mirador-container"
       :manifest-url="displayedManifestUrl"
       :window-id="documentId.toString()"
@@ -100,11 +100,15 @@ export default {
       displayedManifestUrl: undefined
     }
   },
+  created() {
+    console.log("this.witnesses ", this.$props.witnesses)
+  },
   computed: {
     ...mapState("search", ["searchTerm", "searchType"])
   },
   methods: {
     toggleMirador: function(newUrl) {
+      console.log("toggleMirador newUrl", newUrl)
       if (this.displayedManifestUrl === newUrl) {
         this.displayedManifestUrl = undefined
       } else {
