@@ -48,33 +48,39 @@
         ref="multiSortTable"
         class="locks-table"
         :data="data"
-        detailed
-        detail-key="object-id"
-        show-detail-icon
 
-        striped
         :loading="isLoading"
         backend-pagination
-        :current-page.sync="currentPage"
-        :per-page="pageSize"
         :total="totalCount"
+        :per-page="pageSize"
+        :current-page.sync="currentPage"
 
+
+        aria-next-label="Page suivante"
+        aria-previous-label="Page précédente"
+        aria-page-label="Page"
+        aria-current-label="Page courante"
+
+        :opened-detailed="[]"
+        detailed
         :backend-sorting="true"
         :sort-multiple="true"
         :sort-multiple-data="sortingPriority"
+        detail-key="id"
+        show-detail-icon
 
-        backend-filtering
+        :row-class="(row, index) => showDetailIcon(row.id) === true ? '': 'hide-arrow-icon-detail'"
+
         :debounce-search="1000"
 
         checkable
         checkbox-position="right"
         :checked-rows.sync="checkedRows"
-        :custom-is-checked="(a, b) => { return a['object-id'] === b['object-id'] }"
+        :custom-is-checked="(a, b) => { return a.id === b.id }"
 
         @sort="sortPressed"
+        backend-filtering
         @filters-change="onFilter"
-
-        @details-open="(row, index) => $buefy.toast.open(`Expanded ${row['object-id']}`)"
       >
         <template #bottom-left>
           <b>Total checked</b>: {{ checkedRows.length }}
@@ -87,19 +93,42 @@
           </section>
         </template>
         <template #detail="props">
-          <document
+          <document-list-details
+            :transcription-hightlight="props.row.transcriptionHightlight"
+            :argument="props.row.argument"
+            :witnesses="props.row.witnesses"
+            :document-id="props.row.id"
+          />
+          <!--<document
             class="document-page"
             :doc-id="props.row['object-id']"
             :preview="true"
-          />
+          />-->
         </template>
         <b-table-column
-          field="object-id"
+          field="id"
           label="Lettre"
           sortable
           numeric
           searchable
         >
+          <!--<template #searchable>
+            <b-taginput
+              v-model="tags"
+              :data="filteredTags"
+              autocomplete
+              icon="fas fa-search"
+              clearable
+              ellipsis
+              @typing="updateFilteredTags"
+              @icon-right-click="tags = ''"
+            >
+              <template #selected="props">
+                {{ props.tags }}
+              </template>
+            </b-taginput>
+         </template>-->
+
           <template v-slot:header="{ column }">
             <div v-if="column.sortable">
               <div v-if="sortingPriority.filter(obj => obj.field === column.field).length === 0">
@@ -127,8 +156,8 @@
           </template>
           <template #default="props">
             <document-tag-bar
-              :key="props.row['object-id']"
-              :doc-id="props.row['object-id']"
+              :key="props.row.id"
+              :doc-id="props.row.id"
               :with-status="true"
               :preview="true"
             />
@@ -136,7 +165,7 @@
         </b-table-column>
         <b-table-column
           field="collections"
-          label="Collection"
+          label="Collection(s)"
           sortable
           searchable
         >
@@ -245,7 +274,7 @@
           </template>
         </b-table-column>
         <b-table-column
-          field="event-date"
+          field="event_date"
           label="Date"
           sortable
           searchable
@@ -278,12 +307,12 @@
           <template #default="props">
             <span
               class="tag"
-              v-html="new Date(props.row['event-date']).toLocaleDateString()"
+              v-html="new Date(props.row.event_date).toLocaleDateString()"
             />
           </template>
         </b-table-column>
         <b-table-column
-          field="expiration-date"
+          field="expiration_date"
           label="Expire"
           sortable
           searchable
@@ -315,14 +344,14 @@
           </template>
           <template #default="props">
             <span
-              v-if="props.row['is-active']"
+              v-if="props.row.is_active"
               class="tag is-success"
-              v-html="new Date(props.row['expiration-date']).toLocaleDateString()"
+              v-html="new Date(props.row.expiration_date).toLocaleDateString()"
             />
             <span
               v-else
               class="tag is-warning"
-              v-html="new Date(props.row['expiration-date']).toLocaleDateString()"
+              v-html="new Date(props.row.expiration_date).toLocaleDateString()"
             />
           </template>
         </b-table-column>
@@ -344,14 +373,16 @@ import { mapState, mapActions, mapGetters } from "vuex";
 import DocumentTagBar from "@/components/document/DocumentTagBar";
 import LockForm from "@/components/forms/LockForm";
 import Document from "@/components/sections/Document.vue";
+import DocumentListDetails from "@/components/sections/DocumentListDetails.vue";
 
 export default {
   name: "LocksPage",
   components: {
-    Document,
+    DocumentListDetails,
+
     DocumentTagBar,
     LockForm
-  },
+  },//Document,
   data() {
     return {
       lockEditMode: false,
@@ -359,9 +390,10 @@ export default {
       status: null,
       fetchedData: [],
       data: [],
+      filteredTags: [],
       documentsCollections: [],
       checkedRows:[],
-      sortingPriority: [{ field: "expiration-date", order: "desc" }],
+      sortingPriority: [{ field: "expiration_date", order: "desc" }],
       filters: [],
       numPage: 1,
       p: 1,
@@ -370,7 +402,12 @@ export default {
       isLoading: false,
     };
   },
+
   computed: {
+    ...mapState("user", ["current_user", "jwt"]),
+    ...mapState("locks", ["fullLocks", "currentLock"]),
+    ...mapGetters("document", ["getDocumentStatus"]),
+
     totalPages: function() {
       return Math.ceil(this.totalCount / this.pageSize)
     },
@@ -387,9 +424,15 @@ export default {
         }
       },
     },
-    ...mapState("user", ["current_user", "jwt"]),
-    ...mapState("locks", ["fullLocks"]),
-    ...mapGetters("document", ["getDocumentStatus"])
+    tags: {
+      get: function () {
+          return [this.data.map(item => item.id)][0];
+      },
+      set: function (value) {
+        console.log("tags :", [this.data.filter(item => item.id.toString().includes(value)).map(item => item.id)])
+       return value;
+      }
+    }
   },
   watch: {
     checkedRows: async function() {
@@ -401,11 +444,20 @@ export default {
         this.withStatus = true;
       }
     },
+    currentLock: async function (newVal, oldVal) {
+      console.log("currentLock updated ? :", oldVal, newVal)
+      if (!oldVal || !newVal || oldVal.attributes.expiration_date ==! newVal.attributes.expiration_date ) {
+        await this.fetchData();
+        this.loadAsyncData()
+      }
+    }
     /*fetchData() {
       this.loadAsyncData();
     }*/
   },
   async created() {
+    // set type search default in order to display witnesses in DocumentListDetails
+    this.setSearchType('isParatextSearch');
     if (this.current_user) {
       if (this.current_user.isAdmin) {
         await this.fetchUsers();
@@ -420,6 +472,28 @@ export default {
   methods: {
     ...mapActions("locks", ["fetchFullLocks"]),
     ...mapActions("user", ["fetchUsers"]),
+    ...mapActions("search", ["setSearchType"]),
+
+    showDetailIcon(rowDocId) {
+      let showIcon = false
+      if (!this.loadingTable) {
+        if (this.fullLocks && this.fullLocks.length <= 1 ) {
+          if (this.fullLocks[0].witnesses.length > 0 ) {
+            showIcon = true
+          }
+          return showIcon
+        } else {
+          if (this.fullLocks && this.fullLocks.filter(l => l.id === rowDocId)[0].witnesses.length > 0 ) {
+            showIcon = true
+          }
+          return showIcon
+        }
+      }
+    },
+    updateFilteredTags(text) {
+      this.filteredTags = [this.data.filter(item => item.id.toString().includes(text)).map(item => item.id)][0]
+      console.log("this.filteredTags :", this.filteredTags)
+    },
     async fetchStatus(docId) {
       this.status = await this.getDocumentStatus(docId);
       console.log("status", docId, this.status);
@@ -433,11 +507,11 @@ export default {
           // If username filter, get user_ids
           if (Object.keys(this.filters)[i] === 'username') {
             if (this.current_user.isAdmin) {
-              filtered_users = this.$store.state.user.users.map(u => u.username.toLowerCase().includes(Object.values(this.filters)[i].toLowerCase()) ? u.id : false).filter(Boolean);
+              filtered_users = this.$store.state.user.users.map(u => u.username.toLowerCase().normalize("NFD").replace(/\p{Diacritic}/gu, "").includes(Object.values(this.filters)[i].toLowerCase().normalize("NFD").replace(/\p{Diacritic}/gu, "")) ? u.id : false).filter(Boolean);
               console.log('filtered_users for admins: ', filtered_users)
               if (filtered_users.length > 0) {
                   // assign array of users as list (backend expects list)
-                  filters_list.push('filter[user_id]=[' + filtered_users + ']');
+                  filters_list.push({'user_id': filtered_users});
               } else {
                   this.fetchedData = [];
                   this.data = [];
@@ -446,14 +520,18 @@ export default {
               }
             }
           }
-          else filters_list.push('filter[' + Object.keys(this.filters)[i] + ']=' + Object.values(this.filters)[i]);
+          else {
+            let filters_payload = {};
+            filters_payload[Object.keys(this.filters)[i]] = Object.values(this.filters)[i]
+            filters_list.push(filters_payload);
+          }
         }
       }
       if (!this.current_user.isAdmin){
         console.log("For non-admin users, only fetch their own locks");
         filtered_users = [this.current_user.id]
         if (filtered_users.length > 0){
-          filters_list.push('filter[user_id]=[' + filtered_users + ']');
+          filters_list.push({'user_id': filtered_users});
         } else {
           this.data = [];
           this.isLoading = false;
@@ -502,7 +580,7 @@ export default {
           console.log(newPriority, this.sortingPriority);
       } else {
           // default sorting on descending locks expiration date
-          this.sortingPriority = [{ field: "expiration-date", order: "desc" }];
+          this.sortingPriority = [{ field: "expiration_date", order: "desc" }];
           console.log("Default sorting new Priority", newPriority, this.sortingPriority);
       }
       await this.fetchData();
@@ -590,7 +668,7 @@ export default {
         this.data = this.fetchedData.locksWithCollections
           // local pagination
           .slice(
-            (this.numPage- 1) * this.pageSize,
+            (this.numPage - 1) * this.pageSize,
             this.numPage * this.pageSize,
           )
         //console.log('this.rootCollections : ', this.getCollectionAdmin());
@@ -810,6 +888,39 @@ export default {
   ::v-deep {
     input[type=number] {
       -moz-appearance: textfield;
+    }
+  }
+
+  ::v-deep .b-table tr {
+      &:not(.hide-arrow-icon-detail) {
+        td.chevron-cell a {
+          width: 15px;
+          height: 15px;
+          span.icon {
+            &:after {
+              display: none !important;
+            }
+             &:not(.is-expanded) {
+               background: url(../assets/images/icons/open_text.svg) center / 15px auto no-repeat;
+             }
+             &.is-expanded {
+               background: url(../assets/images/icons/close_text.svg) center / 10px auto no-repeat;
+             }
+          }
+        }
+        &.hide-arrow-icon-detail {
+          width: 15px;
+          height: 15px;
+          span.icon:after {
+            display: none !important;
+          }
+        }
+      }
+  }
+  ::v-deep .b-table .hide-arrow-icon-detail td.chevron-cell a {
+    pointer-events: none;
+    span.icon:after {
+      display: none !important;
     }
   }
 </style>

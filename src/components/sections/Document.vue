@@ -930,6 +930,12 @@ export default {
     canEdit: function () {
       console.log("watch canEdit", this.canEdit)
     },
+    currentLock: async function (oldVal, newVal) {
+      console.log("currentLock updated ? :", oldVal, newVal)
+      if (!oldVal.id || !newVal.id || oldVal.attributes && oldVal.attributes.expiration_date == !newVal.attributes.expiration_date) {
+        //await this.load(this.docId);
+      }
+    }
   },
   beforeDestroy() {
     this.setViewerMode(undefined);
