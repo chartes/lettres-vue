@@ -12,16 +12,15 @@
               class="results-count"
             >
               <span
-                class="total-count fas fa-spinner fa-pulse">
-              </span> résultat(s)
+                class="total-count fas fa-spinner fa-pulse"
+              /> résultat(s)
             </div>
+            
             <div
               v-else-if="loadingTable"
               class="results-count"
             >
-              <span class="total-count">
-
-              </span> Veuillez lancer la recherche
+              <span class="total-count" /> Veuillez lancer la recherche
             </div>
             <div
               v-else
@@ -133,7 +132,8 @@
                         ? [{field: 'location_dates_to.label.keyword_sort', order: 'desc'}]
                         : [{field: 'location_dates_to.label.keyword_sort', order: 'asc'}]
                     "
-                  >Lieu de destination
+                  >
+                    Lieu de destination
                   </option>
                 </select>
               </div>
@@ -141,15 +141,13 @@
                 v-if="sortingPriority.length > 0 && sortingPriority[0].order === 'asc' && sortingPriority[0].field !== 'score'"
                 class="icon button arrow-up"
                 @click="sortPressed(sortingPriority[0].field, 'desc', 'escape')"
-              >
-              </span>
+              />
               <span
                 v-else
                 v-show="sortingPriority.length > 0 && sortingPriority[0].field !== 'score'"
                 class="icon button arrow-down"
                 @click="sortPressed(sortingPriority[0].field, 'asc', 'escape')"
-              >
-              </span>
+              />
             </div>
           </div>
           <div
@@ -159,13 +157,11 @@
             <a
               :class="currentPage <= 1 ? 'button first-page disabled' : 'button first-page'"
               @click="currentPage <= 1 ? null : currentPage = 1"
-            >
-            </a>
+            />
             <a
               :class="currentPage <= 1 ? 'button previous-page disabled' : 'button previous-page'"
               @click="currentPage <= 1 ? null : --currentPage"
-            >
-            </a>
+            />
             <input
               v-model="currentPage"
               name="page"
@@ -181,13 +177,11 @@
             <a
               :class="currentPage < totalPages ? 'button next-page' : 'button next-page disabled'"
               @click="currentPage < totalPages ? ++currentPage : null"
-            >
-            </a>
+            />
             <a
               :class="currentPage < totalPages ? 'button last-page' : 'button last-page disabled'"
               @click="currentPage < totalPages ? currentPage = totalPages : null"
-            >
-            </a>
+            />
           </div>
         </div>
       </div>
@@ -333,7 +327,8 @@
                           ? [{field: 'location_dates_to.label.keyword_sort', order: 'desc'}]
                           : [{field: 'location_dates_to.label.keyword_sort', order: 'asc'}]
                       "
-                    >Lieu de destination
+                    >
+                      Lieu de destination
                     </option>
                   </select>
                 </div>
@@ -341,15 +336,13 @@
                   v-if="sortingPriority.length > 0 && sortingPriority[0].order === 'asc' && sortingPriority[0].field !== ''"
                   class="icon button arrow-up"
                   @click="sortPressed(sortingPriority[0].field, 'desc', 'escape')"
-                >
-                </span>
+                />
                 <span
                   v-else
                   v-show="sortingPriority.length > 0 && sortingPriority[0].field !== '' "
                   class="icon button arrow-down"
                   @click="sortPressed(sortingPriority[0].field, 'asc', 'escape')"
-                >
-                </span>
+                />
               </div>
             </div>
             <div class="is-inline-block px-1 switch-button-parent">
@@ -418,7 +411,7 @@
           :td-attrs="columnTdAttrs"
           sortable
         >
-          <template v-slot:header="{ column }">
+          <template #header="{ column }">
             <div v-if="column.sortable">
               <div v-if="sortingPriority.filter(obj => obj.field === column.field).length === 0">
                 <span class="icon button arrows-alt-v" />
@@ -443,7 +436,7 @@
               {{ column.label }}
             </div>
           </template>
-          <template v-slot="props">
+          <template #default="props">
             <document-tag-bar
               :doc-id="props.row.id"
               :with-status="withStatus"
@@ -459,7 +452,7 @@
           :td-attrs="columnTdAttrs"
           sortable
         >
-          <template v-slot:header="{ column }">
+          <template #header="{ column }">
             <div v-if="column.sortable">
               <div v-if="sortingPriority.filter(obj => obj.field === column.field).length === 0">
                 <span class="icon button arrows-alt-v" />
@@ -484,7 +477,7 @@
               {{ column.label }}
             </div>
           </template>
-          <template v-slot="props">
+          <template #default="props">
             {{ props.row.creation }}
           </template>
         </b-table-column>
@@ -495,7 +488,7 @@
           :th-attrs="columnThAttrs"
           :td-attrs="columnTdAttrs"
         >
-          <template v-slot:header="{ column }">
+          <template #header="{ column }">
             <div v-if="column.sortable">
               <div v-if="sortingPriority.filter(obj => obj.field === column.field).length === 0">
                 <span class="icon button arrows-alt-v" />
@@ -520,7 +513,7 @@
               {{ column.label }}
             </div>
           </template>
-          <template v-slot="props">
+          <template #default="props">
             <router-link :to="{ name: 'document', params: { docId: props.row.id } }">
               <h2
                 v-if="searchTerm && searchTerm.length > 0"
@@ -542,7 +535,7 @@
           :td-attrs="columnTdAttrs"
           sortable
         >
-          <template v-slot:header="{ column }">
+          <template #header="{ column }">
             <div v-if="column.sortable">
               <div v-if="sortingPriority.filter(obj => obj.field === column.field).length === 0">
                 <span class="icon button arrows-alt-v" />
@@ -567,7 +560,7 @@
               {{ column.label }}
             </div>
           </template>
-          <template v-slot="props">
+          <template #default="props">
             {{ props.row.senders }}
           </template>
         </b-table-column>
@@ -579,7 +572,7 @@
           :td-attrs="columnTdAttrs"
           sortable
         >
-          <template v-slot:header="{ column }">
+          <template #header="{ column }">
             <div v-if="column.sortable">
               <div v-if="sortingPriority.filter(obj => obj.field === column.field).length === 0">
                 <span class="icon button arrows-alt-v" />
@@ -604,7 +597,7 @@
               {{ column.label }}
             </div>
           </template>
-          <template v-slot="props">
+          <template #default="props">
             {{ props.row.recipients }}
           </template>
         </b-table-column>
@@ -616,7 +609,7 @@
           :td-attrs="columnTdAttrs"
           sortable
         >
-          <template v-slot:header="{ column }">
+          <template #header="{ column }">
             <div v-if="column.sortable">
               <div v-if="sortingPriority.filter(obj => obj.field === column.field).length === 0">
                 <span class="icon button arrows-alt-v" />
@@ -641,7 +634,7 @@
               {{ column.label }}
             </div>
           </template>
-          <template v-slot="props">
+          <template #default="props">
             <p>{{ props.row.origins }}</p>
           </template>
         </b-table-column>
@@ -653,7 +646,7 @@
           :td-attrs="columnTdAttrs"
           sortable
         >
-          <template v-slot:header="{ column }">
+          <template #header="{ column }">
             <div v-if="column.sortable">
               <div v-if="sortingPriority.filter(obj => obj.field === column.field).length === 0">
                 <span class="icon button arrows-alt-v" />
@@ -678,7 +671,7 @@
               {{ column.label }}
             </div>
           </template>
-          <template v-slot="props">
+          <template #default="props">
             {{ props.row.destinations }}
           </template>
         </b-table-column>
@@ -699,11 +692,11 @@
         </template>
 
         <template #detail="props">
-          <document
-            class="document-page"
-            :doc-id="props.row.id"
-            :can-edit="canEdit"
-            :preview="true"
+          <document-list-details
+            :transcription-hightlight="props.row.transcriptionHightlight"
+            :argument="props.row.argument"
+            :witnesses="props.row.witnesses"
+            :document-id="props.row.id"
           />
         </template>
       </b-table>
@@ -712,14 +705,16 @@
 </template>
 
 <script>
-import { mapState, mapActions, mapGetters } from "vuex";
+import { mapState, mapActions } from "vuex";
 import escapeRegExp from "lodash/escapeRegExp";
+import DocumentTagBar from "../document/DocumentTagBar"
+import DocumentListDetails from "./DocumentListDetails"
 
 export default {
   name: "DocumentList",
   components: {
-    DocumentTagBar: () => import("@/components/document/DocumentTagBar"),
-    Document: () => import("@/components/sections/Document")
+    DocumentTagBar,
+    DocumentListDetails,
   },
   props: {
       "collectionId": {
@@ -1019,38 +1014,20 @@ export default {
             return Object.hasOwn(d, 'score');
           }
           ).length > 0) {
-        const phr = [];
         this.tableData = await Promise.all(this.documents.map(async d => {
-        return {
-          id: d.id,
-          score: d.score,
-          title:  d.title,
-          creation:  d.creation,
-          senders: d.sender.length > 0 ? d.sender.map(p => p.label).filter(Boolean).join(", ") : '',
-          recipients: d.recipients.length > 0 ? d.recipients.map(p => p.label).filter(Boolean).join(", ") : '',
-          origins: d.origin.length > 0 ? d.origin.map(o => o.label).filter(Boolean).join(", ") : '',
-          destinations: d.destinations.length > 0 ? d.destinations.map(d => d.label).filter(Boolean).join(", ") : '',
-          /* previous logic fails on collection page if this.$store.state.persons.persons_roles/placenames.places have not been loaded
-          previous senders: d.sender.map(sender => (this.$store.state.persons.persons_roles[1].persons.find(p => p.person_id === sender.id) || {}).label).filter(Boolean).join(", "),
-          recipients: d.recipients.map(recipient => (this.$store.state.persons.persons_roles[1].persons.find(p => p.person_id === recipient.id) || {}).label).filter(Boolean).join(", "),
-          origins: d.origin.map(origin => (this.$store.state.placenames.places[0].places.find(p => p.placename_id === origin.id) || {}).label).filter(Boolean).join(", "),
-          destinations: d.destinations.map(destinations => (this.$store.state.placenames.places[1].places.find(p => p.placename_id === destinations.id) || {}).label).filter(Boolean).join(", ")*/
-        }
-
-        /*return {
-          id: d.id,
-          title:  d.title,
-          creation:  d.creation,
-          senders: this.included.length > 0 ? d.sender.map(sender => (this.included.find(item => item.id === sender.id & item.type === 'person')).attributes.label).filter(Boolean).join(", ") : '',
-          recipients: this.included.length > 0 ? d.recipients.map(recipient => (this.included.find(item => item.id === recipient.id & item.type === 'person')).attributes.label).filter(Boolean).join(", ") : '',
-          origins: this.included.length > 0 ? d.origin.map(origin => (this.included.find(item => item.id === origin.id & item.type === 'placename')).attributes.label).filter(Boolean).join(", ") : '',
-          destinations: this.included.length > 0 ? d.destinations.map(destination => (this.included.find(item => item.id === destination.id & item.type === 'placename')).attributes.label).filter(Boolean).join(", ") : '',
-          /* previous logic fails on collection page if this.$store.state.persons.persons_roles/placenames.places have not been loaded
-          previous senders: d.sender.map(sender => (this.$store.state.persons.persons_roles[1].persons.find(p => p.person_id === sender.id) || {}).label).filter(Boolean).join(", "),
-          recipients: d.recipients.map(recipient => (this.$store.state.persons.persons_roles[1].persons.find(p => p.person_id === recipient.id) || {}).label).filter(Boolean).join(", "),
-          origins: d.origin.map(origin => (this.$store.state.placenames.places[0].places.find(p => p.placename_id === origin.id) || {}).label).filter(Boolean).join(", "),
-          destinations: d.destinations.map(destinations => (this.$store.state.placenames.places[1].places.find(p => p.placename_id === destinations.id) || {}).label).filter(Boolean).join(", ")*/
-        /*}*/
+          return {
+            id: d.id,
+            score: d.score,
+            title:  d.title,
+            creation:  d.creation,
+            senders: d.sender.length > 0 ? d.sender.map(p => p.label).filter(Boolean).join(", ") : '',
+            recipients: d.recipients.length > 0 ? d.recipients.map(p => p.label).filter(Boolean).join(", ") : '',
+            origins: d.origin.length > 0 ? d.origin.map(o => o.label).filter(Boolean).join(", ") : '',
+            destinations: d.destinations.length > 0 ? d.destinations.map(d => d.label).filter(Boolean).join(", ") : '',
+            argument: d.argument && d.argument.raw ? d.argument.raw : d.argument,
+            transcriptionHightlight: d.transcription ? d.transcription.highlight : undefined,
+            witnesses: d.witnesses,
+          }
         }));
       } else {
         this.tableData = await Promise.all(this.documents.map(async d => {
@@ -1062,6 +1039,9 @@ export default {
             recipients: d.recipients.length > 0 ? d.recipients.map(p => p.label).filter(Boolean).join(", ") : '',
             origins: d.origin.length > 0 ? d.origin.map(o => o.label).filter(Boolean).join(", ") : '',
             destinations: d.destinations.length > 0 ? d.destinations.map(d => d.label).filter(Boolean).join(", ") : '',
+            argument: d.argument,
+            transcriptionHightlight: d.transcription ? d.transcription.highlight : undefined,
+            witnesses: d.witnesses,
           }
         }));
       }
@@ -1537,6 +1517,32 @@ input::-webkit-inner-spin-button {
 /* Firefox */
 input[type=number] {
   -moz-appearance: textfield;
+}
+::v-deep .b-table tr {
+    &:not(.hide-arrow-icon-detail) {
+      td.chevron-cell a {
+        width: 15px;
+        height: 15px;
+        span.icon {
+          &:after {
+            display: none !important;
+          }
+           &:not(.is-expanded) {
+             background: url(../../assets/images/icons/open_text.svg) center / 15px auto no-repeat;
+           }
+           &.is-expanded {
+             background: url(../../assets/images/icons/close_text.svg) center / 10px auto no-repeat;
+           }
+        }
+      }
+      &.hide-arrow-icon-detail {
+        width: 15px;
+        height: 15px;
+        span.icon:after {
+          display: none !important;
+        }
+      }
+    }
 }
 ::v-deep .b-table .hide-arrow-icon-detail td.chevron-cell a {
   pointer-events: none;

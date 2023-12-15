@@ -348,4 +348,10 @@ export default {
     display: none;
   }
 }
+::v-deep mark {
+  background-color: #ffec00;
+  border-radius: 3px;
+  font-style: normal;
+  padding: 0px 5px 4px 5px;
+}
 </style>

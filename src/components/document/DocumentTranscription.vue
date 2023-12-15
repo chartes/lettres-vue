@@ -450,8 +450,11 @@ export default {
 @import "@/assets/sass/main.scss";
 @import "@/assets/sass/components/_document.transcription.scss";
 
-::v-deep em {
-   background-color: yellow !important;
+::v-deep mark {
+  background-color: #ffec00;
+  border-radius: 3px;
+  font-style: normal;
+  padding: 0px 5px 4px 5px;
 }
 ::v-deep .highlighted:after {
   content: " [...] ";
