@@ -30,48 +30,17 @@ export default {
     DocumentList,
   },
   computed: {
-    ...mapState("user", ["current_user"]),
     ...mapState("layout", ["showLeftSideBar"]),
-    ...mapState("search", ["documents", "loadingStatus"]),
-    ...mapState("search", ["selectedPlaceFrom","selectedPlaceTo","selectedPlaceCited"]),
-    ...mapActions("placenames", ["fetchAll"]),
-  },
-  watch: {
   },
   async created() {
-    if (!this.loadingStatus) {
-        //await this.fetchAll;
-        /*console.log("SearchPage created this.fetchAllPersons")
-        await this.fetchAllPersons();
-        console.log("SearchPage created this.fetchAllPlaces")
-        await this.fetchAllPlaces();*/
-        console.log("SearchPage created this.performSearch")
-        await this.performSearch();
-    }
+    await this.performSearch();
   },
-  /*mounted() {
-    this.$store.dispatch("placenames/fetchAllPlacenames");
-    this.$store.dispatch("placenames/fetchRoles");
-    this.$store.dispatch("placenames/getPlacenameById");
-    this.thistest()
-
-  },*/
   beforeDestroy() {
-    /*console.log("clear state on leave")
-    this.resetSearchState();*/
     this.$store.state.layout.showLeftSideBar = false;
   },
   methods: {
-    ...mapActions("search", ["performSearch", "resetSearchState"]),
+    ...mapActions("search", ["performSearch"]),
     ...mapActions("layout", ["toggleLeftSideBar"]),
-    ...mapActions("persons", {fetchAllPersons: "fetchAll"}),
-    ...mapActions("placenames", {fetchAllPlaces: "fetchAll"}),
-    /*...mapActions("placenames", [
-      "getPlacenameById",
-      "performSearch",
-      "fetchPlacenamesHavingRoles",
-      "fetchAllPlacenames"
-    ]),*/
   },
 };
 </script>

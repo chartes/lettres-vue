@@ -72,32 +72,30 @@ export default {
       if (!this.inputTerm || this.inputTerm.length === 0) {
         if (this.$route.name === "document") {
           this.setSearchTerm(this.inputTerm);
-          //this.searchType = 'isParatextSearch';
-          //this.search()
         } else
-          //this.searchType = 'isParatextSearch';
           this.setSearchTerm(this.inputTerm);
-          //this.setSearchType(this.searchType);
-          //this.performSearch();
       } else {
         if (this.$route.name === "document") {
           this.setSearchTerm(this.inputTerm);
-          //this.search()
         } else {
           this.setSearchTerm(this.inputTerm);
-          //this.setSearchType(this.searchType);
-          //this.performSearch();
         }
       }
     },
     searchType() {
       this.setSearchType(this.searchType);
-      //this.performSearch();
     }
   },
   created() {
-    this.inputTerm = this.searchTerm;
-    this.setSearchType(this.searchType);
+    // clear search term on nav towards homepage
+    if (this.$route.name === "home") {
+      this.setSearchTerm('');
+      this.inputTerm = this.searchTerm;
+      this.setSearchType(this.searchType);
+    } else {
+      this.inputTerm = this.searchTerm;
+      this.setSearchType(this.searchType);
+    }
   },
   methods: {
     ...mapActions("search", ["performSearch", "setSearchType", "setSearchTerm", "setNumPage"]),
@@ -113,10 +111,6 @@ export default {
         }
       }
     },
-    /*selectSearchType(selectedSearchType) {
-      console.log("setSearchType : ", selectedSearchType)
-      this.setSearchType(selectedSearchType);
-    }*/
   },
 };
 </script>
