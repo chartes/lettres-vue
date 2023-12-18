@@ -30,8 +30,8 @@
           <li class="navbar-start-item">
             <router-link
               :to="{ name: 'search' }"
-              @click.native="clearState()"
-            >
+
+            ><!--@click.native="clearState()"-->
               Recherche
             </router-link>
           </li>
@@ -187,11 +187,6 @@
               />
             </router-link>
           </div>
-        <!--<div class="navbar-end is-align-items-center">
-          <router-link :to="{ name: 'documentation' }" class="navbar-start-item">
-            Documentation
-          </router-link>
-        </div>-->
         </div>
       </div>
     </div>
@@ -200,13 +195,9 @@
 
 <script>
 import {mapState, mapGetters, mapActions} from "vuex";
-//import SearchBox from "@/components/SearchBox";
 
 export default {
   name: "NavBar",
-  components: {
-    /*SearchBox,*/
-  },
   computed: {
     ...mapState("user", ["current_user"]),
     ...mapState("layout", ["showLeftSideBar"]),
@@ -227,7 +218,6 @@ export default {
       this.$store.state.collections.selectedCollection = {};
       this.resetDocumentState();
       this.resetSearchState();
-      //this.$store.state.layout.showLeftSideBar = false;
     },
     async logout() {
       this.$store.dispatch("user/logout").then(() => {
