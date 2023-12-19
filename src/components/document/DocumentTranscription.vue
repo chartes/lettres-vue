@@ -203,16 +203,16 @@ export default {
         this.transcriptionContent = this.documents.filter((doc) => doc.id == this.document.id)[0].transcription.highlight/*.map(function (cc) {	return '<strong>' + cc + '</strong>';}).join('')*/ || "";
         console.log('type(this.transcriptionContent) : ', typeof(this.transcriptionContent))
         } else {
-          this.transcriptionContent = this.document.transcription;
+          this.transcriptionContent = this.document.transcription.replace(/\uFEFF/gmi, '').replace(/<\/?span>/gmi, '');
           console.log('default this.document.transcription')
         }
-        this.addressContent = this.document.address || "";
+        this.addressContent = this.document.address.replace(/\uFEFF/gmi, '').replace(/<\/?span>/gmi, '') || "";
         console.log('default this.document.address', this.document.address)
     } else {
-      this.transcriptionContent = this.document.transcription || "";
+      this.transcriptionContent = this.document.transcription.replace(/\uFEFF/gmi, '').replace(/<\/?span>/gmi, '') || "";
       console.log('default this.document.transcription', this.document.transcription)
 
-      this.addressContent = this.document.address || "";
+      this.addressContent = this.document.address.replace(/\uFEFF/gmi, '').replace(/<\/?span>/gmi, '') || "";
       console.log('default this.document.address', this.document.address)
 
       //TODO Victor remove once [note] have been replaced in database
@@ -321,19 +321,20 @@ export default {
     },
     //TODO Victor remove once [note] have been replaced in database
     getNoteIndex(content, type) {
-      const pattern = /<a class="note" href="#(\d+)">(?:<span>)*\[note](?:<\/span>)*<\/a>/gmi
+      const pattern = /<a class="note" href="#(\d+)">\[note]<\/a>/gmi
       console.log("DocumentTranscription / getNoteIndex", content, type)
       if (content) {
-        this.contentPrep = content
-        //console.log(`DocumentTranscription / getNoteIndex / this.${type}Prep : `, this.contentPrep)
-        let inContent = pattern.test(this.contentPrep);
+        let contentPrep = content
+        //console.log(`DocumentTranscription / getNoteIndex / this.${type}Prep : `, contentPrep)
+        let inContent = pattern.test(contentPrep);
         console.log(`in${type}`, inContent)
+        console.log("DocumentTranscription / getNoteIndex inContent", inContent)
         if (inContent) {
-          console.log(`in${type}`, this.contentPrep)
+          console.log(`in${type}`, contentPrep)
           let contentMatch = content.match(pattern)
           //console.log(`${type}Match`, contentMatch)
           let contentMatches = [...content.matchAll(pattern)]
-          //console.log(`${type}Matches`, contentMatches)
+          console.log(`getNoteIndex ${type}Matches`, contentMatches)
           let DocumentsNotes = this.$store.state.document.notes
           let contentMatcheswithIndex = []
           //console.log("DocumentsNotes", DocumentsNotes)
@@ -344,9 +345,9 @@ export default {
             //console.log(`${type}withIndex`, contentMatcheswithIndex)
           })
           contentMatcheswithIndex.forEach(m => {
-            //console.log("m[0], m[1]", m[0], m[1], typeof (m[1]))
-            const toReplace = new RegExp("(<span>)*\\[note](<\\/span>)*","gi");
-            //console.log("m[0].replace(toReplace, '['+ m[2] +']')", m[0].replace(toReplace, '[' + m[2] + ']'))
+            console.log("getNoteIndex m[0], m[1]", m[0], m[1], typeof (m[1]), m[2])
+            const toReplace = new RegExp("\\[note]","gi");
+            console.log("getNoteIndex m[0].replace(toReplace, '['+ m[2] +']')", m[0].replace(toReplace, '[' + m[2] + ']'))
             if (type === "transcription") {
               this.transcriptionContent = this.transcriptionContent.replace(m[0], m[0].replace(toReplace, '[' + m[2] + ']'));
             } else {
@@ -362,12 +363,12 @@ export default {
       const persPattern = /<a (?:class="persName"\s*|target="_blank"\s*|href="[^> ]*"\s*|id="(\d+)"\s*)*>[^<]*<\/a>/gmi
       console.log("DocumentTranscription / getPersonsLabel", content, type)
       if (content) {
-        this.contentPrep = content
-        //console.log(`DocumentTranscription / getNoteIndex / this.${type}Prep : `, this.contentPrep)
-        let inContent = persPattern.test(this.contentPrep);
+        let contentPrep = content
+        //console.log(`DocumentTranscription / getNoteIndex / this.${type}Prep : `, contentPrep)
+        let inContent = persPattern.test(contentPrep);
         console.log(`getPersonsLabel in${type}`, inContent)
         if (inContent) {
-          console.log(`getPersonsLabel in${type}`, this.contentPrep)
+          console.log(`getPersonsLabel in${type}`, contentPrep)
           let contentMatch = content.match(persPattern)
           console.log(`getPersonsLabel ${type}Match`, contentMatch)
           let contentMatches = [...content.matchAll(persPattern)]
@@ -405,12 +406,12 @@ export default {
       const placePattern = /<a (?:class="placeName"\s*|target="_blank"\s*|href="[^> ]*"\s*|id="(\d+)"\s*)*>[^<]*<\/a>/gmi
       console.log("DocumentTranscription / getPlacesLabel", content, type)
       if (content) {
-        this.contentPrep = content
-        //console.log(`DocumentTranscription / getNoteIndex / this.${type}Prep : `, this.contentPrep)
-        let inContent = placePattern.test(this.contentPrep);
+        let contentPrep = content
+        //console.log(`DocumentTranscription / getNoteIndex / this.${type}Prep : `, contentPrep)
+        let inContent = placePattern.test(contentPrep);
         console.log(`getPlacesLabel in${type}`, inContent)
         if (inContent) {
-          console.log(`getPlacesLabel in${type}`, this.contentPrep)
+          console.log(`getPlacesLabel in${type}`, contentPrep)
           let contentMatch = content.match(placePattern)
           console.log(`getPlacesLabel ${type}Match`, contentMatch)
           let contentMatches = [...content.matchAll(placePattern)]

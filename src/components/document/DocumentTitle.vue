@@ -146,7 +146,9 @@ export default {
   },
   mounted() {
     console.log("this.searchTerm : ", this.searchTerm)
-    this.titleContent = this.$props.titleEditor ? this.$props.titleEditor: this.document.title;
+    this.titleContent = this.$props.titleEditor
+        ? this.$props.titleEditor.replace(/\uFEFF/gmi, '').replace(/<\/?span>/gmi, '').replace(/href="#+/gmi, 'href="#')
+        : this.document.title.replace(/\uFEFF/gmi, '').replace(/<\/?span>/gmi, '').replace(/href="#+/gmi, 'href="#');
     console.log("DocumentTitle / Created / this.titleContent : ", this.titleContent)
     //TODO Victor remove once [note] have been replaced in database
     this.getNoteIndex(this.titleContent, "title")

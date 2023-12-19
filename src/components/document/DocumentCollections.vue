@@ -92,7 +92,9 @@ export default {
     },
   },
   created() {
-    this.fetchCollections();
+    if (!this.allCollectionsById || this.allCollectionsById.length === 0) {
+      this.fetchCollections();
+    }
   },
   methods: {
     ...mapActions("collections", {fetchCollections: "fetchAll"}),
@@ -106,6 +108,7 @@ export default {
       this.$store
         .dispatch("document/addCollection", collection)
         .then((response) => {
+          this.fetchCollections();
           if (response) {
             this.error = false
             this.$store.dispatch("changelog/trackChanges", {
@@ -134,6 +137,7 @@ export default {
       this.$store
         .dispatch("document/removeCollection", collection)
         .then((response) => {
+          this.fetchCollections();
           if (response) {
             this.error = false
             this.$store.dispatch("changelog/trackChanges", {

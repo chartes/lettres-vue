@@ -88,13 +88,13 @@ const mutations = {
   UPDATE_DOCUMENT (state, {data, included}) {
     console.log('UPDATE_DOCUMENT', data, included);
     state.document = Object.assign({}, state.document, { ...data.attributes, id: data.id});
-    state.persons = getPersons(included);
-    state.placenames = getPlacenames(included);
-    state.collections = getCollections(included);
-    state.languages = getLanguages(included);
-    state.witnesses = getWitnesses(included);
-    state.notes = getNotes(included);
-    state.currentLock = getCurrentLock(included);
+    state.persons = included.persons;
+    state.placenames = included.placenames;
+    state.collections = included.collections;
+    state.languages = included.languages;
+    state.witnesses = included.witnesses;
+    state.notes = included.notes;
+    state.currentLock = included.currentLock;
   },
   UPDATE_DOCUMENT_DATA (state, data) {
     console.log('UPDATE_DOCUMENT_DATA', data);
@@ -178,23 +178,18 @@ const actions = {
   fetch ({ rootState, commit }, id) {
     commit('LOADING_STATUS', true);
 
-    let incs = [
-      'collections', 'notes',
-      'persons-having-roles', 'persons', 'person-roles',
-      'placenames-having-roles', 'placenames', 'placename-roles',
-      'witnesses', 'languages', 'current-lock'
-    ];
-
-    this.dispatch('languages/fetch');
-
     const http = http_with_auth(rootState.user.jwt);
-    return http.get(`documents/${id}?include=${incs.join(',')}`).then( response => {
+    return http.get(`documents/${id}?facade=front&without-relationships`).then( response => {
+      const {languages, witnesses, collections, currentLock, persons, placenames, notes, ...attributes} = response.data.data.attributes;
+      //console.log("document index fetch filtered attributes", attributes)
+      const data = { attributes, id: response.data.data.id};
+      const included = {languages, witnesses, collections, currentLock, persons, placenames, notes}
       commit('UPDATE_DOCUMENT', {
-        data: response.data.data,
-        included: response.data.included
+        data: data,
+        included: included
       });
       commit('LOADING_STATUS', false)
-    })
+      });
   },
 
   async save ({ commit, state, rootState, dispatch }, data) {
