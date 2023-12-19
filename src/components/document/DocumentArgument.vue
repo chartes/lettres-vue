@@ -102,7 +102,7 @@ export default {
     },
   },
   mounted() {
-    this.form = this.document.argument || "";
+    this.form = this.document.argument ? this.document.argument.replace(/\uFEFF/gmi, '').replace(/<\/?span>/gmi, '') : "";
     if (!this.preview) {
       //TODO Victor remove once [note] have been replaced in database
       this.getNoteIndex(this.form, "argument");
