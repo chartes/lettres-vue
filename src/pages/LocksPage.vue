@@ -61,7 +61,7 @@
         aria-page-label="Page"
         aria-current-label="Page courante"
 
-        :opened-detailed="[]"
+        :opened-detailed="detailedRows"
         detailed
         :backend-sorting="true"
         :sort-multiple="true"
@@ -69,7 +69,7 @@
         detail-key="id"
         show-detail-icon
 
-        :row-class="(row, index) => showDetailIcon(row.id) === true ? '': 'hide-arrow-icon-detail'"
+        :row-class="rowClass"
 
         :debounce-search="1000"
 
@@ -390,6 +390,7 @@ export default {
       status: null,
       fetchedData: [],
       data: [],
+      detailedRows: [],
       filteredTags: [],
       documentsCollections: [],
       checkedRows:[],
@@ -474,6 +475,16 @@ export default {
     ...mapActions("user", ["fetchUsers"]),
     ...mapActions("search", ["setSearchType"]),
 
+    rowClass(row) {
+      let classNames = []
+      if (!this.showDetailIcon(row.id)) {
+        classNames.push('hide-arrow-icon-detail')
+      }
+      if (this.detailedRows.includes(row.id)) {
+        classNames.push("details-opened")
+      }
+      return classNames.join(" ")
+    },
     showDetailIcon(rowDocId) {
       let showIcon = false
       if (!this.loadingTable) {
@@ -671,6 +682,7 @@ export default {
             (this.numPage - 1) * this.pageSize,
             this.numPage * this.pageSize,
           )
+        this.detailedRows = [];
         //console.log('this.rootCollections : ', this.getCollectionAdmin());
         console.log('loadAsyncData() / this.data : ', this.data);
         this.isLoading = false;

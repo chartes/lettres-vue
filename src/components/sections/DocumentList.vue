@@ -388,19 +388,17 @@
         aria-previous-label="Page précédente"
         aria-page-label="Page"
         aria-current-label="Page courante"
-        :opened-detailed="[]"
         detailed
+        :opened-detailed="detailedRows"
         :backend-sorting="true"
         :sort-multiple="true"
         :sort-multiple-data="sortingPriority"
         detail-key="id"
         show-detail-icon
-
-
-        :row-class="(row, index) => showDetailIcon(row.id) === true ? '': 'hide-arrow-icon-detail'"
+        :row-class="rowClass"
 
         :narrowed="true"
-        :mobile-cards="true"
+        :mobile-cards="false"
         @sort="sortPressed"
         @sorting-priority-removed="sortingPriorityRemoved"
       >
@@ -733,6 +731,7 @@ export default {
       canEdit: false,
       //sortingPriority: [{field: 'creation', order: 'asc'}],
       tableData: [],
+      detailedRows: [],
       p: 1,
       isActive: true,
       isFulltext: true,
@@ -862,6 +861,16 @@ export default {
   methods: {
     //...mapState("search", ["documents"]),
     ...mapActions("search", ["setSearchTerm","setNumPage", "performSearch", "setSorts", "setSelectedCollections"]),
+    rowClass(row) {
+      let classNames = []
+      if (!this.showDetailIcon(row.id)) {
+        classNames.push('hide-arrow-icon-detail')
+      }
+      if (this.detailedRows.includes(row.id)) {
+        classNames.push("details-opened")
+      }
+      return classNames.join(" ")
+    },
     showDetailIcon(rowDocId) {
       let showIcon = false
       if (!this.loadingTable) {
@@ -1029,6 +1038,7 @@ export default {
             witnesses: d.witnesses,
           }
         }));
+        this.detailedRows = [];
       } else {
         this.tableData = await Promise.all(this.documents.map(async d => {
           return {
@@ -1044,6 +1054,7 @@ export default {
             witnesses: d.witnesses,
           }
         }));
+        this.detailedRows = [];
       }
       console.log("this.tableData : ", this.tableData)
       this.loadingTable = false
