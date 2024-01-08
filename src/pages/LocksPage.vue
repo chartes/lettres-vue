@@ -70,6 +70,8 @@
         show-detail-icon
 
         :row-class="rowClass"
+        :narrowed="true"
+        :mobile-cards="false"
 
         :debounce-search="1000"
 
