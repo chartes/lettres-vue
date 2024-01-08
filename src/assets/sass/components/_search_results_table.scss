@@ -9,16 +9,6 @@
     padding-top: 15px;
     overflow-x: inherit;
 
-    &.has-mobile-cards {
-      tr {
-        display: table-row !important;
-
-        &:not([class*="is-"]) {
-          background: transparent;
-        }
-      }
-    }
-
     table {
       width: 100% !important;
       border: none !important;
@@ -185,13 +175,11 @@
           }
 
           &:not(.detail) {
-            border-bottom: 1px solid #fdb3cc !important;
             box-shadow: none !important;
 
             td {
               display: table-cell !important;
               vertical-align: middle;
-              border-color: #fdb3cc !important;
               padding: 15px 15px 15px 0;
 
               font-family: $family-secondary;
@@ -576,6 +564,14 @@
   .locks-table .table-wrapper,
   .with-status .table-wrapper {
     table tbody {
+      tr {
+        &:not(.details-opened) {
+          border-bottom: 1px solid #fdb3cc;
+        }
+        td {
+          border: none;
+        }
+      }
       tr:not(.detail) {
 
         /* ID Lettre */
@@ -667,7 +663,11 @@
 
     tbody {
       tr {
+        &:not(.details-opened) {
+          border-bottom: 1px solid #fdb3cc;
+        }
         td {
+          border: none;
 
           /* Les colonnes des Lieux sont masquées en mode tableau */
           &:nth-child(7),
@@ -726,14 +726,9 @@
           "document-detail-toggle document-id document-date document-location-origin"
           "document-detail-toggle document-id document-date document-location-destination ";
 
-          border-bottom: 1px solid #fdb3cc;
           box-shadow: none !important;
           padding: 10px 0;
           margin: 0 !important;
-
-          &:last-child {
-            border: none;
-          }
 
           td {
             padding: 0 !important;
@@ -771,7 +766,6 @@
         tr.detail {
           width: 100%;
           box-shadow: none !important;
-          border-bottom: 1px solid #fdb3cc;
         }
       }
     }
@@ -795,14 +789,18 @@
   /* Version déplié */
   .is-inactive .table-wrapper {
 
-    table, tbody {
-      display: block;
-    }
-
     thead {
       display: none;
     }
     tbody {
+      tr {
+        &:not(.details-opened) {
+          border-bottom: 1px solid #fdb3cc;
+        }
+        td {
+          border: none;
+        }
+      }
 
       tr:not(.detail) {
         display: grid !important;
@@ -815,7 +813,6 @@
           "document-id document-recipients document-location-destination  document-detail-toggle";
 
         padding-top: 15px;
-        border-bottom: #CB2158 2px solid;
         border-top: none !important;
         box-shadow: none !important;
 
@@ -837,7 +834,6 @@
           display: block !important;
           width: 100%;
           min-width: 0;
-          border: none !important;
           padding: 0;
           text-align: left;
 
@@ -869,7 +865,6 @@
           &:nth-child(5),
           &:nth-child(7) {
             margin-top: 20px;
-            border-top: 1px solid #dbdbdb;
 
             @include on-small-tablet {
               margin-top: 0;
@@ -971,7 +966,6 @@
 
           /* Titre */
           &:nth-child(4) {
-            border-left: solid 6px #000000;
             max-width: 100% !important;
             padding-left: 20px;
 
@@ -1043,7 +1037,6 @@
       tr.detail {
         width: 100%;
         box-shadow: none !important;
-        border-bottom: 1px solid #fdb3cc;
       }
     }
   }
