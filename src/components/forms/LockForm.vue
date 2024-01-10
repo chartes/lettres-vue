@@ -215,6 +215,10 @@ export default {
       this.$props.cancel();
     },
     removeAction() {
+      let lockToRemove = this.selectedLock
+      lockToRemove.attributes.description = lockToRemove.attributes.description
+          ? `Le document a été déverrouillé par ${this.current_user.username}.\nDescription précédente du verrou : ${lockToRemove.attributes.description}`
+          : `Le document a été déverrouillé par ${this.current_user.username}.`
       this.updateLock(this.selectedLock).then((resp) => {
         console.log('submitAction() RESP : ', resp)
         console.log('this.$props : ', this.$props)
