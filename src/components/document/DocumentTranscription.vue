@@ -209,10 +209,18 @@ export default {
         this.addressContent = this.document.address.replace(/\uFEFF/gmi, '').replace(/<\/?span>/gmi, '') || "";
         console.log('default this.document.address', this.document.address)
     } else {
-      this.transcriptionContent = this.document.transcription.replace(/\uFEFF/gmi, '').replace(/<\/?span>/gmi, '') || "";
+      if (this.document.transcription) {
+        this.transcriptionContent = this.document.transcription.replace(/\uFEFF/gmi, '').replace(/<\/?span>/gmi, '');
+      } else {
+        this.transcriptionContent = "";
+      }
       console.log('default this.document.transcription', this.document.transcription)
 
-      this.addressContent = this.document.address.replace(/\uFEFF/gmi, '').replace(/<\/?span>/gmi, '') || "";
+      if (this.document.address) {
+        this.addressContent = this.document.address.replace(/\uFEFF/gmi, '').replace(/<\/?span>/gmi, '');
+      } else {
+        this.addressContent = "";
+      }
       console.log('default this.document.address', this.document.address)
 
       //TODO Victor remove once [note] have been replaced in database
