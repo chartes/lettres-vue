@@ -410,7 +410,7 @@ const actions = {
         },
         relationships: {
           collections: {
-            data: state.collections.map(c => {return {id: c.id, type: 'collection'}})
+            data: state.collections ? state.collections.map(c => {return {id: c.id, type: 'collection'}}) : [{id: 86, type: 'collection'}]
           }
         }
       }
@@ -717,8 +717,8 @@ const actions = {
     const http = http_with_auth(rootState.user.jwt);
     return http.get(`collections/${collId}`).then(r => {
       const collection = r.data.data;
-      const dummy = makeDummyDocument(defaultData);
       this.dispatch('document/resetDocumentState');
+      const dummy = makeDummyDocument(defaultData);
       commit('UPDATE_DOCUMENT', {data: dummy.data, included: [collection]});
     });
   }
