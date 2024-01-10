@@ -147,7 +147,7 @@ export default {
           type: "lock",
           id: this.lock.id,
           attributes: {
-            description: this.description ? this.description : this.defaultDescription,
+            description: this.lock.description ? this.lock.description : this.defaultDescription,
             "object-type": "document",
             "object-id": this.docId,
           },
@@ -215,11 +215,12 @@ export default {
       this.$props.cancel();
     },
     removeAction() {
-      let lockToRemove = this.selectedLock
-      lockToRemove.attributes.description = lockToRemove.attributes.description
+      let lockToRemove = {};
+      lockToRemove = this.selectedLock;
+      lockToRemove.attributes.description = (lockToRemove.attributes.description && lockToRemove.attributes.description !== this.defaultDescription)
           ? `Le document a été déverrouillé par ${this.current_user.username}.\nDescription précédente du verrou : ${lockToRemove.attributes.description}`
           : `Le document a été déverrouillé par ${this.current_user.username}.`
-      this.updateLock(this.selectedLock).then((resp) => {
+      this.updateLock(lockToRemove).then((resp) => {
         console.log('submitAction() RESP : ', resp)
         console.log('this.$props : ', this.$props)
         this.$props.submit();
