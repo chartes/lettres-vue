@@ -1,59 +1,57 @@
 <template>
-  <div
-    class="modal is-active"
-    style="text-align: left"
-  >
+  <div class="modal is-active">
     <div
       class="modal-background"
       @click="cancel"
     />
     <div class="modal-card">
       <header class="modal-card-head">
-        <p
-          class="modal-card-title"
-          v-html="title"
-        />
+        <p class="modal-card-title">
+          {{ title }}
+        </p>
         <button
           class="delete"
           aria-label="close"
           @click="cancel"
         />
       </header>
-      <section class="modal-card-body">
-        <slot />
-      </section>
-      <footer class="modal-card-foot">
-        <button
-          v-if="submit"
-          class="button is-success"
-          :class="{'modalbutton_disabled' : !submitValid}"
-          :disabled="!submitValid || submitting"
-          @click="submit"
-        >
-          {{ submitText }}
-        </button>
-        <button
-          v-if="cancel"
-          class="button"
-          :disabled="submitting"
-          @click="cancel"
-        >
-          Annuler
-        </button>
-        <div
-          v-if="remove"
-          style="float: right; width: 100%; text-align: right"
-        >
+      <div class="modal-content">
+        <section class="modal-card-body">
+          <slot />
+        </section>
+        <footer class="modal-card-foot">
           <button
-            class="button is-danger"
-            :class="{'modalbutton_disabled' : !previousValue || submitting}"
-            :disabled="!previousValue || submitting"
-            @click="remove"
+            v-if="submit"
+            class="button is-success"
+            :class="{'modalbutton_disabled' : !submitValid}"
+            :disabled="!submitValid || submitting"
+            @click="submit"
           >
-            {{ removeText }}
+            {{ submitText }}
           </button>
-        </div>
-      </footer>
+          <button
+            v-if="cancel"
+            class="button"
+            :disabled="submitting"
+            @click="cancel"
+          >
+            Annuler
+          </button>
+          <div
+            v-if="remove"
+            style="float: right; width: 100%; text-align: right"
+          >
+            <button
+              class="button is-danger"
+              :class="{'modalbutton_disabled' : !previousValue || submitting}"
+              :disabled="!previousValue || submitting"
+              @click="remove"
+            >
+              {{ removeText }}
+            </button>
+          </div>
+        </footer>
+      </div>
     </div>
   </div>
 </template>
@@ -89,23 +87,6 @@ export default {
 </script>
 <style scoped lang="scss">
 @import "@/assets/sass/main.scss";
-
-.modal-background {
-  background-color: #D8D8D8CC;
-}
-
-.modalbutton_disabled {
-  background-color: #f6f6f6 !important;
-  border-color: #f6f6f6 !important;
-  color: gray !important;
-  cursor: not-allowed !important;
-}
-
-.modalbutton_enabled {
-  type: button;
-  background-color: #48c774;
-  border-color: transparent;
-  color: #fff;
-}
+@import "@/assets/sass/components/_modal.scss";
 
 </style>
