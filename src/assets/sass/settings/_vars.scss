@@ -1,7 +1,7 @@
 $nav-max-width: 1180px;
 $container-max-width: $nav-max-width;
 $container-narrow-width: 930px;
-$container-narrow-margin: ( $nav-max-width - 930px ) / 2;
+$container-narrow-margin: calc(( $nav-max-width - 930px ) / 2);
 
 $container-small-desktop-margin: 40px;
 $container-tablet-margin: 30px;
