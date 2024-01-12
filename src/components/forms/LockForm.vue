@@ -31,6 +31,16 @@
             </p>
           </div>
         </article>
+        <div v-if="lockOwner.attributes.username === current_user.username || current_user.isAdmin">
+          <div class="lock-form__textarea">
+            <label for="description"><u>Modification de la raison du verrouillage :</u></label>
+            <textarea
+              id="description"
+              v-model="description"
+              class="textarea"
+            />
+          </div>
+        </div>
       </div>
       <div v-else>
         <p>
