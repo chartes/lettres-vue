@@ -28,7 +28,7 @@
             >
               <span class="total-count">
                 {{ totalCount }}
-              </span> résultat(s)
+              </span> résultat{{ totalCount > 1 ? "s" : "" }}
             </div>
           </div>
           <div class="is-inline-block px-1">
@@ -194,7 +194,7 @@
         <section class="mb-5">
           <div class="is-flex">
             <span class="collection-documents">
-              <span class="documents-count">{{ totalCount }}</span> DOCUMENTS
+              <span class="documents-count">{{ totalCount }}</span> DOCUMENT{{ totalCount > 1 ? "S" : "" }}
             </span>
           </div>
           <div class="search-collection-parent is-flex is-justify-content-flex-end">
@@ -873,8 +873,8 @@ export default {
     },
     showDetailIcon(rowDocId) {
       let showIcon = false
-      if (!this.loadingTable) {
-        if (!this.loadingStatus && this.searchType === "isParatextSearch"){
+      if (!this.loadingTable && !this.loadingStatus) {
+        if (this.searchType === "isParatextSearch" || !this.searchType){
           //showIcon = true
           let searchDocuments = this.$store.state.search.documents
           if (searchDocuments.length > 0) {
@@ -887,7 +887,7 @@ export default {
             }
           }
         } else {
-          if (!this.loadingStatus && this.searchTerm && this.searchTerm.length > 0) {
+          if (this.searchTerm && this.searchTerm.length > 0) {
             let searchDocuments = this.$store.state.search.documents
             if (searchDocuments.length > 0) {
               let currRowDocument = searchDocuments.filter(d => d.id === rowDocId)

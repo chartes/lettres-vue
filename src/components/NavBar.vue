@@ -31,7 +31,7 @@
             <router-link
               :to="{ name: 'search' }"
 
-            ><!--@click.native="clearState()"-->
+            ><!--@click.native="clearState()"  @click.native.prevent="clearState($route.name)"-->
               Recherche
             </router-link>
           </li>
@@ -214,10 +214,14 @@ export default {
   methods: {
     ...mapActions("document", ["resetDocumentState"]),
     ...mapActions("search", ["resetSearchState"]),
-    clearState() {
-      this.$store.state.collections.selectedCollection = {};
-      this.resetDocumentState();
-      this.resetSearchState();
+    clearState(from) {
+      console.log("this.$route.name : ", from)
+      if (from === "collection") {
+        console.log("from === 'collection' :", from === "collection")
+        this.$store.state.collections.selectedCollection = {};
+        this.resetDocumentState();
+        this.resetSearchState();
+      }
     },
     async logout() {
       this.$store.dispatch("user/logout").then(() => {
@@ -231,6 +235,13 @@ export default {
   },
   watch:{
     $route (to, from){
+      if (from.name === "collection") {
+        console.log("from === 'collection' :", from.name === "collection")
+        this.$store.state.layout.showLeftSideBar = false;
+        this.$store.state.collections.selectedCollection = {};
+        this.resetDocumentState();
+        this.resetSearchState();
+      }
       this.menuOpened = false;
     }
   }

@@ -18,7 +18,7 @@
       </div>
     </div>
     <div
-      v-if="searchType === 'isParatextSearch' && argument && argument.length > 0"
+      v-if="(searchType === 'isParatextSearch' || !searchType) && argument && argument.length > 0"
     >
       <div class="heading">
         Analyse
