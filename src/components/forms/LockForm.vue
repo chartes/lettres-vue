@@ -1,6 +1,6 @@
 <template>
   <modal-form
-    v-if="nextLockOwner && !loading"
+    v-if="!loading"
     class="lock-form"
     :title="title"
     :cancel="cancelAction"
@@ -15,31 +15,34 @@
     <!-- Non-admin features -->
     <div>
       <div v-if="lock.id && !loading">
-        <p>
-          Le <b>document {{ docId }}</b> est actuellement verrouillé par
-          <b>{{ lockOwner.attributes.username }}</b>.
-        </p>
-        <article class="message lock-form__description">
-          <div class="message-body">
-            <p class="lock-form__description__lock-dates">
-              Verrouillé du <b>{{ lock["event-date"] }}</b> au
-              <b>{{ lock["expiration-date"] }}</b>
-            </p>
-            <p>
-              <u>Raison invoquée :</u>
-              {{ lock.description }}
-            </p>
-          </div>
-        </article>
-        <div v-if="lockOwner.attributes.username === current_user.username || current_user.isAdmin">
-          <div class="lock-form__textarea">
-            <label for="description"><u>Modification de la raison du verrouillage :</u></label>
-            <textarea
-              id="description"
+        <div>
+          <p>
+            Le <b>document {{ docId }}</b> est actuellement verrouillé par
+            <b>{{ lockOwner.attributes.username }}</b> du <b>{{ lock["event-date"] }}</b> au
+            <b>{{ lock["expiration-date"] }}</b>.
+          </p>
+          <article
+            v-if="!canEditLock"
+            class="message lock-form__description"
+          >
+            <div class="message-body">
+              <p>
+                <u>Raison invoquée :</u>
+                {{ lock.description }}
+              </p>
+            </div>
+          </article>
+        </div>
+        <div v-if="canEditLock">
+          <b-field label="Raison du verrouillage">
+            <b-input 
+              id="description" 
               v-model="description"
-              class="textarea"
+              maxlength="200"
+              type="textarea"
+              rows="2"
             />
-          </div>
+          </b-field>
         </div>
       </div>
       <div v-else>
@@ -47,14 +50,15 @@
           Vous pouvez verrouiller le <b>document {{ docId }}</b> pour une période
           renouvelable de sept jours.
         </p>
-        <div class="lock-form__textarea">
-          <label for="description"><u>Raison du verrouillage :</u></label>
-          <textarea
-            id="description"
+        <b-field label="Raison du verrouillage">
+          <b-input 
+            id="description" 
             v-model="description"
-            class="textarea"
+            maxlength="200"
+            type="textarea"
+            rows="2"
           />
-        </div>
+        </b-field>
       </div>
     </div>
     <!-- Admin features -->
@@ -65,29 +69,21 @@
         class=""
       >
         <form @submit.prevent="">
-          <b-autocomplete
-            v-model="nextLockOwner.id"
-            label="Choisir le propriétaire du verrou"
-            :items="usersSearchResults"
-            :is-async="true"
-            label-key="username"
-            @search="searchUser"
-          />
-        </form>
-        <form @submit.prevent="">
-          <b-field label="Choisir le propriétaire du verrou">
-            <select @change="updateNextLockOwner">
-              <option :value="current_user.id">
-                {{ current_user.username }}
-              </option>
-              <option
-                v-for="option in users"
-                :key="option.id"
-                :value="option.id"
-              >
-                {{ option.username }}
-              </option>
-            </select>
+          <b-field 
+            label="Propriétaire du verrou"
+          >
+            <b-autocomplete
+              v-model="formLockOwnerName"
+              :data="filteredUserList"
+              field="username"
+              :placeholder="'Chercher l\'utilisateur'"
+              dropdown-position="top"
+              @select="updateNextLockOwner"
+            >
+              <template #empty>
+                Aucun résultat
+              </template>
+            </b-autocomplete>
           </b-field>
         </form>
       </div>
@@ -125,12 +121,14 @@ export default {
       defaultDescription:
         "Ce document est verrouillé afin de me permettre de compléter la transcription et de corriger les metadonnées.",
       description: null,
-
+      formLockOwnerName: "",
       loading: true,
+      filteredUsers: [],
+      canEditLock: false
     };
   },
   computed: {
-    ...mapState("user", ["current_user", "users", "usersSearchResults", "jwt"]),
+    ...mapState("user", ["current_user", "users", "jwt"]),
 
     nextLock() {
       if (this.nextLockOwner) {
@@ -190,6 +188,9 @@ export default {
           : this.lockOwner && this.lockOwner.id === this.current_user.id
         : false;
     },
+    filteredUserList() {
+      return this.users.filter((u) => u.username.toLowerCase().includes(this.formLockOwnerName.toLowerCase()))
+    }
   },
   watch: {
     currentLock() {
@@ -198,9 +199,6 @@ export default {
   },
   mounted() {
     this.fetchLock();
-    this.nextLockOwner = this.current_user;
-    console.log('this.nextLockOwner (mounted) : ', this.nextLockOwner)
-    this.description = this.defaultDescription;
   },
   async created() {
     if (this.current_user) {
@@ -213,10 +211,9 @@ export default {
     ...mapActions("user", ["fetchUsers"]),
     ...mapActions("locks", ["saveLock", "updateLock"/*,"removeLock"*/]),
     submitAction() {
+      console.log(this.nextLock)
       if (this.nextLock) {
         this.saveLock(this.nextLock).then((resp) => {
-          console.log('submitAction() RESP : ', resp)
-          console.log('this.$props : ', this.$props)
           this.$props.submit();
         });
       }
@@ -231,13 +228,10 @@ export default {
           ? `Le document a été déverrouillé par ${this.current_user.username}.\nDescription précédente du verrou : ${lockToRemove.attributes.description}`
           : `Le document a été déverrouillé par ${this.current_user.username}.`
       this.updateLock(lockToRemove).then((resp) => {
-        console.log('submitAction() RESP : ', resp)
-        console.log('this.$props : ', this.$props)
         this.$props.submit();
       });
     },
     async fetchLock() {
-      console.log('fetchLock() launched')
       this.loading = true;
       this.lock = this.$props.currentLock;
       /* fetch lock user info*/
@@ -245,25 +239,21 @@ export default {
         const http = http_with_auth(this.jwt);
         await http.get(`/locks/${this.lock.id}/user`).then((response) => {
           this.lockOwner = response.data.data;
-          console.log('fetchLock() / this.lockOwner', this.lockOwner)
+          this.description = this.lock.description
+          this.formLockOwnerName = this.lockOwner.attributes.username
+          this.nextLockOwner = this.lockOwner
+          this.canEditLock = this.lockOwner.attributes.username === this.current_user.username || this.current_user.isAdmin
           this.loading = false;
         });
       } else {
-        console.log('fetchLock() / this.lock && this.lock.id', this.lock && this.lock.id)
+        this.formLockOwnerName = this.current_user.username
+        this.nextLockOwner = this.current_user
+        this.description = this.defaultDescription;
         this.loading = false;
       }
     },
-    searchUser(search) {
-      console.log("LockForm / searchUser", this.$store.dispatch("user/search", search))
-      return this.$store.dispatch("user/search", search);
-    },
-    resetDescription() {
-      this.description = this.defaultDescription;
-    },
-    updateNextLockOwner(evt) {
-      this.nextLockOwner = this.users.filter((u) => u.id === parseInt(evt.target.value))[0];
-      console.log('evt.target.value : ', evt.target.value)
-      console.log('this.nextLockOwner (update) : ', this.nextLockOwner)
+    updateNextLockOwner(selectedNextLock) {
+      this.nextLockOwner = selectedNextLock;
     }
   },
 };
