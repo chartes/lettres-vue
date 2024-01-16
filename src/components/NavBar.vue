@@ -44,6 +44,7 @@
           </li>
           <li class="navbar-start-item">
             <router-link
+              :event="''"
               :to="{ name: 'documentation' }"
             >
               Documentation
@@ -144,7 +145,7 @@
                     Gestion des Personnes
                   </router-link>
                 </li>
-                <li>
+                <!-- <li>
                   <router-link
                     :to="{ name: 'witnesses' }"
                     active-class="is-active"
@@ -159,7 +160,7 @@
                   >
                     Gestion des Utilisateurs
                   </router-link>
-                </li>
+                </li>-->
                 <li>
                   <router-link
                     :to="{ name: 'document-creation' }"
