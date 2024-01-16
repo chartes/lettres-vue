@@ -136,7 +136,7 @@
                   </div>
                   <div class="card-body">
                     <h5 class="card-title">
-                      collection {{ featured.id }}
+                      {{ featured.title }}
                     </h5>
                     <p
                       v-if="current_user"
