@@ -16,8 +16,9 @@
                     class="input"
                     type="text"
                     placeholder="Catherine de Médicis"
+                    @focus="$event.target.select()"
                     @keyup.enter="search"
-                  >
+                  />
                 </div>
                 <div class="control">
                   <a

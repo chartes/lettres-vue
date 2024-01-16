@@ -25,8 +25,9 @@
                   class="input"
                   type="text"
                   placeholder="Paris"
+                  @focus="$event.target.select()"
                   @keyup.enter="search"
-                >
+                />
               </div>
               <div class="control">
                 <a
