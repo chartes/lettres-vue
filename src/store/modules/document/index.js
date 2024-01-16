@@ -397,11 +397,15 @@ const actions = {
   },
 
   add({commit, rootState, state}) {
+    const http = http_with_auth(rootState.user.jwt);
     const attributes = JSON.parse(JSON.stringify(state.document));
     delete(attributes.id);
     delete(attributes['iiif-collection-url']);
     delete(attributes['iiif-base-witness-manifest-url']);
     delete(attributes['iiif-thumbnail-url']);
+    if (!state.collections || state.collections.length == 0) {
+      this.dispatch('collections/fetchAll')
+    }
     const newDocument = {
       data: {
         type : 'document',
@@ -410,14 +414,13 @@ const actions = {
         },
         relationships: {
           collections: {
-            data: state.collections ? state.collections.map(c => {return {id: c.id, type: 'collection'}}) : [{id: 86, type: 'collection'}]
+            data: state.collections ? state.collections.map(c => {return {id: c.id, type: 'collection'}}) : [{id: 4, type: 'collection'}]
           }
         }
       }
     };
 
     console.warn('posting', newDocument);
-    const http = http_with_auth(rootState.user.jwt);
 
     return http.post(`/documents`, newDocument)
         .then(response => {
