@@ -51,7 +51,7 @@ export default {
               {
                 type: "collection",
                 //from envir variables id: Object.values(this.collectionsById).filter((col) => col.title === process.env.VUE_APP_UNSORTED_DOCUMENTS_COLLECTION_TITLE)[0].id,
-                id: Object.values(this.collectionsById).filter((col) => col.title === "Non triées")[0].id,
+                id: Object.values(this.collectionsById).filter((col) => col.title === "Hors collections")[0].id,
               },
             ],
           },

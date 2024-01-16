@@ -190,19 +190,19 @@ export default {
     activeRootCollections(){
       if (this.current_user) {
           return this.rootCollections.filter(function(coll){
-            if (coll.title !== "Non triées") {
+            if (coll.title !== "Hors collections") {
               return coll
             }
           })
       } else {
-        return this.rootCollections.filter((coll) => coll.title !== "Non triées" && coll.publishedCount > 0);
+        return this.rootCollections.filter((coll) => coll.title !== "Hors collections" && coll.publishedCount > 0);
       }
     },
     activesearchResults(){
       if (this.current_user) {
-        return this.searchResults.filter((coll) => coll.title !== "Non triées");
+        return this.searchResults.filter((coll) => coll.title !== "Hors collections");
       } else {
-        return this.searchResults.filter((coll) => coll.title !== "Non triées" && coll.publishedCount > 0);
+        return this.searchResults.filter((coll) => coll.title !== "Hors collections" && coll.publishedCount > 0);
       }
     }
   },

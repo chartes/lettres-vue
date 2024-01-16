@@ -324,12 +324,12 @@
           </div>
           <!-- Responsables scientifiques de la collection (collection racine seulement) -->
           <collection-responsables
-            v-if="collection.title !== 'Non triées' && !collection.parent"
+            v-if="collection.title !== 'Hors collections' && !collection.parent"
             :collection-id="collection.id"
           />
           <!-- Curateur de la collection -->
           <div
-            v-if="!editModeEnabled || !editMode || collection.title === 'Non triées'"
+            v-if="!editModeEnabled || !editMode || collection.title === 'Hors collections'"
             class="collection-user-roles"
           >
             <p>

@@ -274,8 +274,8 @@ export default {
     }),
     ...mapState("user", ["current_user"]),
     featured_collections: function () {
-      let featured_collectionIds=[1, 2, 78];
-      let featured = Object.values(this.allCollections).filter(item=> {
+      let featured_collectionIds=[1, 2, 3];
+      let featured = Object.values(this.allCollections).filter(item => item.publishedCount > 0).filter(item=> {
         return featured_collectionIds.includes(item.id)
       });
       console.log('featured : ', featured)

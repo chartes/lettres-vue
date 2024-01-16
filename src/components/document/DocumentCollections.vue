@@ -32,11 +32,11 @@
       >
         <b-tag
           attached
-          :closable="editable && !(collections.length === 1 && collections[0].title === 'Non triées')"
+          :closable="editable && !(collections.length === 1 && collections[0].title === 'Hors collections')"
           aria-close-label="Remove from collection"
           size="is-medium"
           class="mb-1"
-          :title="collections.length === 1 && collections[0].title === 'Non triées' ? 'La collection par défaut ne peut être supprimée' : 'Supprimer la collection'"
+          :title="collections.length === 1 && collections[0].title === 'Hors collections' ? 'La collection par défaut ne peut être supprimée' : 'Supprimer la collection'"
           @close="removeCollection(collection)"
         >
           <collection-breadcrumb :collection-id="collection.id" />

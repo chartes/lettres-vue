@@ -15,7 +15,7 @@
     </div>
 
     <section
-      v-if="selectedCollection && !selectedCollection.parent && $props.collectionId && selectedCollection.title !== 'Non triées'"
+      v-if="selectedCollection && !selectedCollection.parent && $props.collectionId && selectedCollection.title !== 'Hors collections'"
       class="collection-section mb-5"
     >
       <collection-presentation
