@@ -18,10 +18,12 @@ export default {
   async created() {
     await this.getDocumentsTotal();
     await this.fetchAll();
+    await this.fetch();
   },
   methods: {
     ...mapActions("search", ["getDocumentsTotal"]),
-    ...mapActions("collections", ["fetchAll"])
+    ...mapActions("collections", ["fetchAll"]),
+    ...mapActions("languages", ["fetch"])
   },
 };
 </script>
