@@ -51,6 +51,9 @@
       <b-field
         label="Rédigée avant le"
         label-position="inside"
+        :type="!notAfterTmpIsValid ? 'is-danger' : null"
+        :message="!notAfterTmpIsValid ? 'Format incorrect (AAAA-MM-JJ)' : null"
+
       >
         <b-input
           v-model="creationNotAfter"
@@ -113,6 +116,8 @@ export default {
       creationNotAfterTmp: null,
 
       creationTmpIsValid: true,
+      notAfterTmpIsValid: true,
+
       editMode: false,
       buttonFormat: 'close-btn'
     };
@@ -126,7 +131,7 @@ export default {
       },
       set(value) {
         this.creationTmp = value;
-        this.maskCheck();
+        this.maskCheckCreation();
         if (this.creationTmpIsValid) {
           //this.fieldChanged({ name: "creation", value });
           if (this.creationTmp !== this.document["creation"] || this.creationLabelTmp !== this.document["creation-label"] || this.creationNotAfterTmp !== this.document["creation-not-after"]) {
@@ -156,13 +161,16 @@ export default {
         return this.creationNotAfterTmp;
       },
       set(value) {
-        this.creationNotAfterTmp = value;
+        this.creationNotAfterTmp = value
+        this.maskCheckNotAfter();
         //this.fieldChanged({ name: "creation-not-after", value });
-        if (this.creationTmp !== this.document["creation"] || this.creationLabelTmp !== this.document["creation-label"] || this.creationNotAfterTmp !== this.document["creation-not-after"]) {
+        if (this.notAfterTmpIsValid) {
+          if (this.creationTmp !== this.document["creation"] || this.creationLabelTmp !== this.document["creation-label"] || this.creationNotAfterTmp !== this.document["creation-not-after"]) {
             this.buttonFormat = 'save-btn';
           } else {
             this.buttonFormat = 'close-btn';
           }
+        }
       },
     },
 
@@ -196,10 +204,39 @@ export default {
     }, 500);*/
   },
   methods: {
-    maskCheck: function () {
-      const isValidDate = !!Date.parse(this.creation);
-      this.creationTmpIsValid = isValidDate;
-      console.log("mask check", this.creationTmp, isValidDate);
+    maskCheckCreation: function () {
+      this.creationTmpIsValid = false;
+      let dateRegEx = /^\d{4}(?:-\d{2}){0,2}$/;
+      let fullDateRegEx = /^\d{4}-\d{2}-\d{2}$/;
+      if (this.creationTmp === '') {
+        this.creationTmpIsValid = true;
+      } else if (this.creationTmp.length < 10) {
+          if (this.creationTmp.match(dateRegEx)) {
+            this.creationTmpIsValid = true; // Valid incomplete date format
+          }
+      } else if (this.creationTmp.length === 10 && this.creationTmp.match(fullDateRegEx)) {
+        let d = new Date(this.creationTmp);
+        let dNum = d.getTime();
+        if(!dNum && dNum !== 0); // NaN value, Invalid date
+        this.creationTmpIsValid = d.toISOString().slice(0,10) === this.creationTmp;
+      }
+    },
+    maskCheckNotAfter: function () {
+      this.notAfterTmpIsValid = false;
+      let dateRegEx = /^\d{4}(?:-\d{2}){0,2}$/;
+      let fullDateRegEx = /^\d{4}-\d{2}-\d{2}$/;
+      if (this.creationNotAfterTmp === '') {
+        this.notAfterTmpIsValid = true;
+      } else if (this.creationNotAfterTmp.length < 10) {
+          if (this.creationNotAfterTmp.match(dateRegEx)) {
+            this.notAfterTmpIsValid = true; // Valid incomplete date format
+          }
+      } else if (this.creationNotAfterTmp.length === 10 && this.creationNotAfterTmp.match(fullDateRegEx)) {
+        let d = new Date(this.creationNotAfterTmp);
+        let dNum = d.getTime();
+        if(!dNum && dNum !== 0); // NaN value, Invalid date
+        this.notAfterTmpIsValid = d.toISOString().slice(0,10) === this.creationNotAfterTmp;
+      }
     },
     cancelInput(evt) {
       console.log("Date event ", { ...evt });
@@ -210,7 +247,14 @@ export default {
       this.editMode = !this.editMode
       if (this.buttonFormat === 'save-btn') {
         let saveData = (
-            { id: this.document.id, attributes: {'creation': this.creationTmp, 'creation-label': this.creationLabelTmp, 'creation-not-after': this.creationNotAfterTmp}}
+            { id: this.document.id,
+              attributes:
+                  {
+                    'creation': this.creationTmp === '' ? null : this.creationTmp,
+                    'creation-label': this.creationLabelTmp === '' ? null : this.creationLabelTmp,
+                    'creation-not-after': this.creationNotAfterTmp === '' ? null : this.creationNotAfterTmp
+                  }
+            }
         );
         console.log("saveData : ", saveData);
         let resp = await this.$store.dispatch("document/save", saveData);
