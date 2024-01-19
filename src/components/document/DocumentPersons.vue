@@ -43,7 +43,7 @@
         </div>
         <div v-if="documentSender.length === 0">
           <p class="person-item">
-            <em>Aucun expéditeur renseigné</em>
+            <em>Expéditeur non renseigné</em>
           </p>
         </div>
       </div>
@@ -89,7 +89,7 @@
         </div>
         <div v-if="documentRecipients.length === 0">
           <p class="person-item">
-            <em>Aucun destinataire renseigné</em>
+            <em>Destinataire non renseigné</em>
           </p>
         </div>
       </div>
