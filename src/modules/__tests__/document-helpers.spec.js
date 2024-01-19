@@ -12,13 +12,13 @@ const includedIn = [
     },
     "meta": {},
     "links": {
-      "self": "http://0.0.0.0:5004/lettres/api/1.0/persons/10"
+      "self": "http://0.0.0.0:5004/ecco/api/1.0/persons/10"
     },
     "relationships": {
       "roles-within-documents": {
         "links": {
-          "self": "http://0.0.0.0:5004/lettres/api/1.0/persons/10/relationships/roles-within-documents",
-          "related": "http://0.0.0.0:5004/lettres/api/1.0/persons/10/roles-within-documents"
+          "self": "http://0.0.0.0:5004/ecco/api/1.0/persons/10/relationships/roles-within-documents",
+          "related": "http://0.0.0.0:5004/ecco/api/1.0/persons/10/roles-within-documents"
         },
         "data": [
           {
@@ -29,8 +29,8 @@ const includedIn = [
       },
       "documents": {
         "links": {
-          "self": "http://0.0.0.0:5004/lettres/api/1.0/persons/10/relationships/documents",
-          "related": "http://0.0.0.0:5004/lettres/api/1.0/persons/10/documents"
+          "self": "http://0.0.0.0:5004/ecco/api/1.0/persons/10/relationships/documents",
+          "related": "http://0.0.0.0:5004/ecco/api/1.0/persons/10/documents"
         },
         "data": [
           {
@@ -52,13 +52,13 @@ const includedIn = [
     },
     "meta": {},
     "links": {
-      "self": "http://0.0.0.0:5004/lettres/api/1.0/persons/5"
+      "self": "http://0.0.0.0:5004/ecco/api/1.0/persons/5"
     },
     "relationships": {
       "roles-within-documents": {
         "links": {
-          "self": "http://0.0.0.0:5004/lettres/api/1.0/persons/5/relationships/roles-within-documents",
-          "related": "http://0.0.0.0:5004/lettres/api/1.0/persons/5/roles-within-documents"
+          "self": "http://0.0.0.0:5004/ecco/api/1.0/persons/5/relationships/roles-within-documents",
+          "related": "http://0.0.0.0:5004/ecco/api/1.0/persons/5/roles-within-documents"
         },
         "data": [
           {
@@ -81,8 +81,8 @@ const includedIn = [
       },
       "documents": {
         "links": {
-          "self": "http://0.0.0.0:5004/lettres/api/1.0/persons/5/relationships/documents",
-          "related": "http://0.0.0.0:5004/lettres/api/1.0/persons/5/documents"
+          "self": "http://0.0.0.0:5004/ecco/api/1.0/persons/5/relationships/documents",
+          "related": "http://0.0.0.0:5004/ecco/api/1.0/persons/5/documents"
         },
         "data": [
           {
@@ -116,13 +116,13 @@ const includedIn = [
     },
     "meta": {},
     "links": {
-      "self": "http://0.0.0.0:5004/lettres/api/1.0/persons/4"
+      "self": "http://0.0.0.0:5004/ecco/api/1.0/persons/4"
     },
     "relationships": {
       "roles-within-documents": {
         "links": {
-          "self": "http://0.0.0.0:5004/lettres/api/1.0/persons/4/relationships/roles-within-documents",
-          "related": "http://0.0.0.0:5004/lettres/api/1.0/persons/4/roles-within-documents"
+          "self": "http://0.0.0.0:5004/ecco/api/1.0/persons/4/relationships/roles-within-documents",
+          "related": "http://0.0.0.0:5004/ecco/api/1.0/persons/4/roles-within-documents"
         },
         "data": [
           {
@@ -133,8 +133,8 @@ const includedIn = [
       },
       "documents": {
         "links": {
-          "self": "http://0.0.0.0:5004/lettres/api/1.0/persons/4/relationships/documents",
-          "related": "http://0.0.0.0:5004/lettres/api/1.0/persons/4/documents"
+          "self": "http://0.0.0.0:5004/ecco/api/1.0/persons/4/relationships/documents",
+          "related": "http://0.0.0.0:5004/ecco/api/1.0/persons/4/documents"
         },
         "data": [
           {
@@ -155,7 +155,7 @@ const includedIn = [
     },
     "meta": {},
     "links": {
-      "self": "http://0.0.0.0:5004/lettres/api/1.0/person-roles/12"
+      "self": "http://0.0.0.0:5004/ecco/api/1.0/person-roles/12"
     },
     "relationships": {}
   },
@@ -169,7 +169,7 @@ const includedIn = [
     },
     "meta": {},
     "links": {
-      "self": "http://0.0.0.0:5004/lettres/api/1.0/person-roles/8"
+      "self": "http://0.0.0.0:5004/ecco/api/1.0/person-roles/8"
     },
     "relationships": {}
   },
@@ -183,7 +183,7 @@ const includedIn = [
     },
     "meta": {},
     "links": {
-      "self": "http://0.0.0.0:5004/lettres/api/1.0/person-roles/9"
+      "self": "http://0.0.0.0:5004/ecco/api/1.0/person-roles/9"
     },
     "relationships": {}
   },
@@ -193,13 +193,13 @@ const includedIn = [
     "attributes": {},
     "meta": {},
     "links": {
-      "self": "http://0.0.0.0:5004/lettres/api/1.0/persons-having-roles/6"
+      "self": "http://0.0.0.0:5004/ecco/api/1.0/persons-having-roles/6"
     },
     "relationships": {
       "person-role": {
         "links": {
-          "self": "http://0.0.0.0:5004/lettres/api/1.0/persons-having-roles/6/relationships/person-role",
-          "related": "http://0.0.0.0:5004/lettres/api/1.0/persons-having-roles/6/person-role"
+          "self": "http://0.0.0.0:5004/ecco/api/1.0/persons-having-roles/6/relationships/person-role",
+          "related": "http://0.0.0.0:5004/ecco/api/1.0/persons-having-roles/6/person-role"
         },
         "data": {
           "id": 12,
@@ -208,8 +208,8 @@ const includedIn = [
       },
       "document": {
         "links": {
-          "self": "http://0.0.0.0:5004/lettres/api/1.0/persons-having-roles/6/relationships/document",
-          "related": "http://0.0.0.0:5004/lettres/api/1.0/persons-having-roles/6/document"
+          "self": "http://0.0.0.0:5004/ecco/api/1.0/persons-having-roles/6/relationships/document",
+          "related": "http://0.0.0.0:5004/ecco/api/1.0/persons-having-roles/6/document"
         },
         "data": {
           "id": 9,
@@ -218,8 +218,8 @@ const includedIn = [
       },
       "person": {
         "links": {
-          "self": "http://0.0.0.0:5004/lettres/api/1.0/persons-having-roles/6/relationships/person",
-          "related": "http://0.0.0.0:5004/lettres/api/1.0/persons-having-roles/6/person"
+          "self": "http://0.0.0.0:5004/ecco/api/1.0/persons-having-roles/6/relationships/person",
+          "related": "http://0.0.0.0:5004/ecco/api/1.0/persons-having-roles/6/person"
         },
         "data": {
           "id": 10,
@@ -234,13 +234,13 @@ const includedIn = [
     "attributes": {},
     "meta": {},
     "links": {
-      "self": "http://0.0.0.0:5004/lettres/api/1.0/persons-having-roles/7"
+      "self": "http://0.0.0.0:5004/ecco/api/1.0/persons-having-roles/7"
     },
     "relationships": {
       "person-role": {
         "links": {
-          "self": "http://0.0.0.0:5004/lettres/api/1.0/persons-having-roles/7/relationships/person-role",
-          "related": "http://0.0.0.0:5004/lettres/api/1.0/persons-having-roles/7/person-role"
+          "self": "http://0.0.0.0:5004/ecco/api/1.0/persons-having-roles/7/relationships/person-role",
+          "related": "http://0.0.0.0:5004/ecco/api/1.0/persons-having-roles/7/person-role"
         },
         "data": {
           "id": 8,
@@ -249,8 +249,8 @@ const includedIn = [
       },
       "document": {
         "links": {
-          "self": "http://0.0.0.0:5004/lettres/api/1.0/persons-having-roles/7/relationships/document",
-          "related": "http://0.0.0.0:5004/lettres/api/1.0/persons-having-roles/7/document"
+          "self": "http://0.0.0.0:5004/ecco/api/1.0/persons-having-roles/7/relationships/document",
+          "related": "http://0.0.0.0:5004/ecco/api/1.0/persons-having-roles/7/document"
         },
         "data": {
           "id": 9,
@@ -259,8 +259,8 @@ const includedIn = [
       },
       "person": {
         "links": {
-          "self": "http://0.0.0.0:5004/lettres/api/1.0/persons-having-roles/7/relationships/person",
-          "related": "http://0.0.0.0:5004/lettres/api/1.0/persons-having-roles/7/person"
+          "self": "http://0.0.0.0:5004/ecco/api/1.0/persons-having-roles/7/relationships/person",
+          "related": "http://0.0.0.0:5004/ecco/api/1.0/persons-having-roles/7/person"
         },
         "data": {
           "id": 5,
@@ -275,13 +275,13 @@ const includedIn = [
     "attributes": {},
     "meta": {},
     "links": {
-      "self": "http://0.0.0.0:5004/lettres/api/1.0/persons-having-roles/8"
+      "self": "http://0.0.0.0:5004/ecco/api/1.0/persons-having-roles/8"
     },
     "relationships": {
       "person-role": {
         "links": {
-          "self": "http://0.0.0.0:5004/lettres/api/1.0/persons-having-roles/8/relationships/person-role",
-          "related": "http://0.0.0.0:5004/lettres/api/1.0/persons-having-roles/8/person-role"
+          "self": "http://0.0.0.0:5004/ecco/api/1.0/persons-having-roles/8/relationships/person-role",
+          "related": "http://0.0.0.0:5004/ecco/api/1.0/persons-having-roles/8/person-role"
         },
         "data": {
           "id": 9,
@@ -290,8 +290,8 @@ const includedIn = [
       },
       "document": {
         "links": {
-          "self": "http://0.0.0.0:5004/lettres/api/1.0/persons-having-roles/8/relationships/document",
-          "related": "http://0.0.0.0:5004/lettres/api/1.0/persons-having-roles/8/document"
+          "self": "http://0.0.0.0:5004/ecco/api/1.0/persons-having-roles/8/relationships/document",
+          "related": "http://0.0.0.0:5004/ecco/api/1.0/persons-having-roles/8/document"
         },
         "data": {
           "id": 9,
@@ -300,8 +300,8 @@ const includedIn = [
       },
       "person": {
         "links": {
-          "self": "http://0.0.0.0:5004/lettres/api/1.0/persons-having-roles/8/relationships/person",
-          "related": "http://0.0.0.0:5004/lettres/api/1.0/persons-having-roles/8/person"
+          "self": "http://0.0.0.0:5004/ecco/api/1.0/persons-having-roles/8/relationships/person",
+          "related": "http://0.0.0.0:5004/ecco/api/1.0/persons-having-roles/8/person"
         },
         "data": {
           "id": 4,
@@ -381,13 +381,13 @@ describe('Persons helpers', () => {
         },
         "meta": {},
         "links": {
-          "self": "http://0.0.0.0:5004/lettres/api/1.0/institutions/11"
+          "self": "http://0.0.0.0:5004/ecco/api/1.0/institutions/11"
         },
         "relationships": {
           "documents": {
             "links": {
-              "self": "http://0.0.0.0:5004/lettres/api/1.0/institutions/11/relationships/documents",
-              "related": "http://0.0.0.0:5004/lettres/api/1.0/institutions/11/documents"
+              "self": "http://0.0.0.0:5004/ecco/api/1.0/institutions/11/relationships/documents",
+              "related": "http://0.0.0.0:5004/ecco/api/1.0/institutions/11/documents"
             },
             "data": [
               {
@@ -415,13 +415,13 @@ describe('Persons helpers', () => {
         },
         "meta": {},
         "links": {
-          "self": "http://0.0.0.0:5004/lettres/api/1.0/languages/4"
+          "self": "http://0.0.0.0:5004/ecco/api/1.0/languages/4"
         },
         "relationships": {
           "documents": {
             "links": {
-              "self": "http://0.0.0.0:5004/lettres/api/1.0/languages/4/relationships/documents",
-              "related": "http://0.0.0.0:5004/lettres/api/1.0/languages/4/documents"
+              "self": "http://0.0.0.0:5004/ecco/api/1.0/languages/4/relationships/documents",
+              "related": "http://0.0.0.0:5004/ecco/api/1.0/languages/4/documents"
             },
             "data": [
               {
@@ -457,13 +457,13 @@ describe('Persons helpers', () => {
         },
         "meta": {},
         "links": {
-          "self": "http://0.0.0.0:5004/lettres/api/1.0/languages/5"
+          "self": "http://0.0.0.0:5004/ecco/api/1.0/languages/5"
         },
         "relationships": {
           "documents": {
             "links": {
-              "self": "http://0.0.0.0:5004/lettres/api/1.0/languages/5/relationships/documents",
-              "related": "http://0.0.0.0:5004/lettres/api/1.0/languages/5/documents"
+              "self": "http://0.0.0.0:5004/ecco/api/1.0/languages/5/relationships/documents",
+              "related": "http://0.0.0.0:5004/ecco/api/1.0/languages/5/documents"
             },
             "data": [
               {

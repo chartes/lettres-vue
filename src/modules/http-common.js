@@ -3,7 +3,7 @@ import Vue from 'vue'
 import store from '../store'
 
 const _baseApiURL = `${process.env.VUE_APP_API_URL}/api/1.0`;
-const _baseAppURL = `/lettres`;
+const _baseAppURL = `/ecco`;
 
 
 export const baseApiURL = _baseApiURL;
