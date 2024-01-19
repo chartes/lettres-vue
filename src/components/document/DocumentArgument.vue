@@ -221,7 +221,7 @@ export default {
     },
     //TODO Victor remove once attributes title have been added in database
     async getPersonsLabel(content, type) {
-      const persPattern = /<a (?:class="persName"\s*|target="_blank"\s*|href="[^> ]*"\s*|id="(\d+)"\s*)*>[^<]*<\/a>/gmi
+      const persPattern = /<a (?:class="persName"\s*|target="_blank"\s*|href="[^> ]*"\s*|id="(\d+)"\s*)*>.+?<\/a>/gmi
       console.log("DocumentTranscription / getPersonsLabel", content, type)
       if (content) {
         this.contentPrep = content
@@ -259,7 +259,7 @@ export default {
     },
     //TODO Victor remove once attributes title have been added in database
     async getPlacesLabel(content, type) {
-      const placePattern = /<a (?:class="placeName"\s*|target="_blank"\s*|href="[^> ]*"\s*|id="(\d+)"\s*)*>[^<]*<\/a>/gmi
+      const placePattern = /<a (?:class="placeName"\s*|target="_blank"\s*|href="[^> ]*"\s*|id="(\d+)"\s*)*>.+?<\/a>/gmi
       console.log("DocumentArgument / getPlacesLabel", content, type)
       if (content) {
         this.contentPrep = content
