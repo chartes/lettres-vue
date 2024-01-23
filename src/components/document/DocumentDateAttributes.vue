@@ -93,7 +93,6 @@
 </template>
 <script>
 import { mapState } from "vuex";
-import { debounce } from "lodash";
 
 export default {
   name: "DocumentAttributes",
