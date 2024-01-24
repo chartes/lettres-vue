@@ -262,7 +262,7 @@ const actions = {
     },
     async checkIfRefExists({rootState}, ref) {
         const http = http_with_auth(rootState.user.jwt);
-        const response = await http.get(`placenames?page[size]=1&without-relationships&filter[ref]=${ref}`)
+        const response = await http.get(`search?query=ref:"${ref}"&=lettres__${process.env.NODE_ENV}__placenames&without-relationships&page[size]=1`)
         let existingPlace = {place: response.data.data[0], count: response.data.meta['total-count']}
         console.log("existingPlace", existingPlace)
         return existingPlace
