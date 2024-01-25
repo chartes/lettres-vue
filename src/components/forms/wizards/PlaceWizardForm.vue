@@ -305,18 +305,21 @@ export default {
 
         //load existing data
         const item = await this.$store.dispatch(
-          "placenames/getInlinedPlacenameWithRoleById",
-          { docId: this.document.id, placeId: place.id }
+        "placenames/getInlinedPlacenameWithRoleById",
+        { docId: this.document.id, placeId: place.id }
         );
-
-        place = {
-          ...place,
-          ...item.place,
-          ...item.phr,
-          description: item.phr.function,
-          phrId: item.phrId,
-        };
-        console.log("ITEM", place);
+        if (item) {
+          place = {
+            ...place,
+            ...item.place,
+            ...item.phr,
+            description: item.phr.function,
+            phrId: item.phrId,
+          };
+        console.log("Place in Transcription exists in DB : ", place);
+        } else {
+          console.log("Place in Transcription does not exists in DB : ", place);
+        }
       }
     }
 
@@ -429,7 +432,7 @@ export default {
             }
 
             // if not inlined, refresh the places
-            if (!this.place.role !== "inlined") {
+            if (this.place.role !== "inlined") {
               await this.$store.dispatch("document/fetch", this.document.id);
             }
           }

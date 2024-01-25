@@ -304,15 +304,18 @@ export default {
           docId: this.document.id,
           personId: person.id
         });
-        person = {
-          ...person,
-          ...item.person,
-          ...item.phr,
-          description: item.phr.function,
-          phrId: item.phrId,
-        };
-
-        console.log("ITEM", person);
+        if (item) {
+          person = {
+            ...person,
+            ...item.person,
+            ...item.phr,
+            description: item.phr.function,
+            phrId: item.phrId,
+          };
+          console.log("Person in Transcription exists in DB : ", person);
+        } else {
+          console.log("Person in Transcription does not exists in DB : ", person);
+        }
       }
     }
 
@@ -417,7 +420,7 @@ export default {
             }
 
             // if not inlined, refresh the persons
-            if (!this.person.role !== "inlined") {
+            if (this.person.role !== "inlined") {
               await this.$store.dispatch("document/fetch", this.document.id);
             }
           }
