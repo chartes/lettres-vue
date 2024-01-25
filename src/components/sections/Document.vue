@@ -290,7 +290,7 @@
               <!-- transcription -->
               <section class="document-section document-section-for-transcription">
                 <div class="heading is-uppercase is-flex is-justify-content-space-between">
-                  <span class="heading-content">Transcription</span>
+                  <span class="heading-content">Édition</span>
                   <span
                     v-if="canEdit"
                     class="icon"
