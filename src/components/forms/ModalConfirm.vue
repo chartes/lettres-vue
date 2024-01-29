@@ -40,7 +40,7 @@
 
 <script>
 export default {
-  name: "ModalForm",
+  name: "ModalConfirm",
   props: {
     type: { type: String, default: "" },
     title: { type: String, default: "" },
@@ -54,111 +54,6 @@ export default {
 
 <style scoped  lang="scss">
 @import "@/assets/sass/main.scss";
-
-.modal-background {
-  background-color: #D8D8D8CC;
-}
-
-.modal-card {
-  overflow: visible;
-
-  .modal-card-head {
-    box-shadow: -6px 6px 30px 0 #00000050;
-    background-color: #CB2158;
-    border: none;
-    border-radius: 5px;
-    padding: 12px 20px;
-    margin-bottom: 10px;
-    display: flex;
-
-    p {
-      font-family: $family-apptitle;
-      font-size: 30px;
-      color: #FFFFFF;
-      font-weight: 200;
-      letter-spacing: 0;
-      flex: 1;
-      overflow-wrap: break-word;
-    }
-
-    button.delete {
-      width: 28px;
-      height: 28px;
-      background: url(../../assets/images/icons/close-modal.svg) center / cover no-repeat;
-      margin-left: 10px;
-
-      &::before,
-      &::after {
-        display: none;
-      }
-    }
-  }
-
-  .modal-content {
-    box-shadow: -6px 6px 30px 0 #00000050;
-    margin: 0;
-  }
-  .modal-card-body {
-    padding-top: 40px;
-    padding-bottom: 0;
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
-
-    p {
-      font-family: $family-secondary;
-      font-size: 20px;
-      color: #CB2158;
-      font-weight: 500;
-    }
-  }
-
-  .modal-card-body,
-  .modal-card-foot {
-    background-color: #FFFFFF;
-    padding-left: 30px;
-    padding-right: 30px;
-  }
-
-  .modal-card-foot {
-    justify-content: flex-end;
-    gap: 12px;
-    border-top: none;
-    padding-top: 20px;
-    padding-bottom: 20px;
-    display: flex;
-    flex-wrap: wrap;
-
-    button {
-      width: auto;
-      height: auto;
-      background-color: #CB2158;
-      border-radius: 5px;
-      padding: 6px 10px;
-      margin: 0 !important;
-
-      font-family: $family-primary;
-      font-size: 18px;
-      line-height: 1;
-      font-weight: 500;
-      color: #FFFFFF;
-      letter-spacing: 0;
-      text-transform: uppercase;
-
-      &:hover {
-        background-color: #CB2158;
-        color: #FFFFFF;
-      }
-    }
-  }
-
-  .modal-card-body::after {
-    content: "";
-    display: block;
-    width: 100%;
-    margin-top: 80px;
-    height: 1px;
-    border-top: 1px solid #CB2158;
-  }
-}
+@import "@/assets/sass/components/_modal.scss";
 
 </style>
