@@ -157,10 +157,12 @@
             class="pagination-controls"
           >
             <a
+              :disabled="currentPage <= 1"
               :class="currentPage <= 1 ? 'button first-page disabled' : 'button first-page'"
               @click="currentPage <= 1 ? null : currentPage = 1"
             />
             <a
+              :disabled="currentPage <= 1"
               :class="currentPage <= 1 ? 'button previous-page disabled' : 'button previous-page'"
               @click="currentPage <= 1 ? null : --currentPage"
             />
@@ -177,10 +179,12 @@
             <span class="label-sur-page">sur</span>
             <span class="total-pages">{{ totalPages }}</span>
             <a
+              :disabled="currentPage >= totalPages"
               :class="currentPage < totalPages ? 'button next-page' : 'button next-page disabled'"
               @click="currentPage < totalPages ? ++currentPage : null"
             />
             <a
+              :disabled="currentPage >= totalPages"
               :class="currentPage < totalPages ? 'button last-page' : 'button last-page disabled'"
               @click="currentPage < totalPages ? currentPage = totalPages : null"
             />
@@ -225,10 +229,12 @@
               >
                 <div class="pagination-controls">
                   <a
+                    :disabled="currentPage <= 1"
                     :class="currentPage <= 1 ? 'button first-page disabled' : 'button first-page'"
                     @click="currentPage <= 1 ? null : currentPage = 1 "
                   />
                   <a
+                    :disabled="currentPage <= 1"
                     :class="currentPage <= 1 ? 'button previous-page disabled' : 'button previous-page'"
                     @click="currentPage <= 1 ? null : --currentPage"
                   />
@@ -245,10 +251,12 @@
                   <span class="label-sur-page">sur</span>
                   <span class="total-pages">{{ totalPages }}</span>
                   <a
+                    :disabled="currentPage >= totalPages"
                     :class="currentPage < totalPages ? 'button next-page' : 'button next-page disabled'"
                     @click="currentPage < totalPages ? ++currentPage : null"
                   />
                   <a
+                    :disabled="currentPage >= totalPages"
                     :class="currentPage < totalPages ? 'button last-page' : 'button last-page disabled'"
                     @click="currentPage < totalPages ? currentPage = totalPages : null"
                   />
@@ -701,6 +709,41 @@
           />
         </template>
       </b-table>
+    </div>
+    <!-- Bottom pagination, /search and /collections/id routes -->
+    <div class="pagination-controls mt-5">
+      <a
+        :disabled="currentPage <= 1"
+        :class="currentPage <= 1 ? 'button first-page disabled' : 'button first-page'"
+        @click="currentPage <= 1 ? null : currentPage = 1 "
+      />
+      <a
+        :disabled="currentPage <= 1"
+        :class="currentPage <= 1 ? 'button previous-page disabled' : 'button previous-page'"
+        @click="currentPage <= 1 ? null : --currentPage"
+      />
+      <input
+        v-model="currentPage"
+        name="page"
+        type="number"
+        min="1"
+        :max="totalPages"
+        placeholder="Page..."
+        class="current-page"
+        @change.prevent="currentPage = parseInt(p)"
+      >
+      <span class="label-sur-page">sur</span>
+      <span class="total-pages">{{ totalPages }}</span>
+      <a
+        :disabled="currentPage >= totalPages"
+        :class="currentPage < totalPages ? 'button next-page' : 'button next-page disabled'"
+        @click="currentPage < totalPages ? ++currentPage : null"
+      />
+      <a
+        :disabled="currentPage >= totalPages"
+        :class="currentPage < totalPages ? 'button last-page' : 'button last-page disabled'"
+        @click="currentPage < totalPages ? currentPage = totalPages : null"
+      />
     </div>
   </div>
 </template>

@@ -11,10 +11,12 @@
             class="pagination-controls"
           >
             <a
+              :disabled="currentPage <= 1"
               :class="currentPage <= 1 ? 'button first-page disabled' : 'button first-page'"
               @click="currentPage <= 1 ? null : currentPage = 1"
             />
             <a
+              :disabled="currentPage <= 1"
               :class="currentPage <= 1 ? 'button previous-page disabled' : 'button previous-page'"
               @click="currentPage <= 1 ? null : --currentPage"
             />
@@ -31,10 +33,12 @@
             <span class="label-sur-page">sur</span>
             <span class="total-pages">{{ totalPages }}</span>
             <a
+              :disabled="currentPage >= totalPages"
               :class="currentPage < totalPages ? 'button next-page' : 'button next-page disabled'"
               @click="currentPage < totalPages ? ++currentPage : null"
             />
             <a
+              :disabled="currentPage >= totalPages"
               :class="currentPage < totalPages ? 'button last-page' : 'button last-page disabled'"
               @click="currentPage < totalPages ? currentPage = totalPages : null"
             />
@@ -42,7 +46,7 @@
         </div>
       </div>
     </div>
-    <div>
+    <div class="result-container">
       <b-table
         ref="multiSortTable"
         :data="data"
@@ -209,6 +213,51 @@
         </b-table-column>
       </b-table>
     </div>
+    <div class="results-count-and-pagination is-flex is-justify-content-flex-end is-align-items-center mt-5">
+      <div class="is-inline-block">
+        <div
+          v-if="totalPages"
+          class="pagination-controls"
+        >
+          <a
+            :disabled="currentPage <= 1"
+            :class="currentPage <= 1 ? 'button first-page disabled' : 'button first-page'"
+            @click="currentPage <= 1 ? null : currentPage = 1"
+          >
+          </a>
+          <a
+            :disabled="currentPage <= 1"
+            :class="currentPage <= 1 ? 'button previous-page disabled' : 'button previous-page'"
+            @click="currentPage <= 1 ? null : --currentPage"
+          >
+          </a>
+          <input
+            v-model="currentPage"
+            name="page"
+            type="number"
+            min="1"
+            :max="totalPages"
+            placeholder="Page..."
+            class="current-page"
+            @change.prevent="currentPage = parseInt(p)"
+          >
+          <span class="label-sur-page">sur</span>
+          <span class="total-pages">{{ totalPages }}</span>
+          <a
+            :disabled="currentPage >= totalPages"
+            :class="currentPage < totalPages ? 'button next-page' : 'button next-page disabled'"
+            @click="currentPage < totalPages ? ++currentPage : null"
+          >
+          </a>
+          <a
+            :disabled="currentPage >= totalPages"
+            :class="currentPage < totalPages ? 'button last-page' : 'button last-page disabled'"
+            @click="currentPage < totalPages ? currentPage = totalPages : null"
+          >
+          </a>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -357,7 +406,11 @@ export default {
 @import "@/assets/sass/main.scss";
 @import "@/assets/sass/components/_search_results_table.scss";
 @import "@/assets/sass/components/_search_results_pagination.scss";
-
+.result-container {
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+  border-bottom-color: #fdb3cc;
+}
   .pagination-controls {
     display: flex;
     align-items: center;

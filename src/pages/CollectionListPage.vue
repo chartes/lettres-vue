@@ -47,11 +47,13 @@
           >
             <div class="pagination-controls">
               <a
+                :disabled="currentPage <= 1"
                 :class="currentPage <= 1 ? 'button first-page disabled' : 'button first-page'"
                 @click="currentPage <= 1 ? null : currentPage = 1"
               >
               </a>
               <a
+                :disabled="currentPage <= 1"
                 :class="currentPage <= 1 ? 'button previous-page disabled' : 'button previous-page'"
                 @click="currentPage <= 1 ? null : --currentPage"
               >
@@ -69,11 +71,13 @@
               <span class="label-sur-page">sur</span>
               <span class="total-pages">{{ totalPages }}</span>
               <a
+                :disabled="currentPage >= totalPages"
                 :class="currentPage < totalPages ? 'button next-page' : 'button next-page disabled'"
                 @click="currentPage < totalPages ? ++currentPage : null"
               >
               </a>
               <a
+                :disabled="currentPage >= totalPages"
                 :class="currentPage < totalPages ? 'button last-page' : 'button last-page disabled'"
                 @click="currentPage < totalPages ? currentPage = totalPages : null"
               >
