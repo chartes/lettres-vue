@@ -11,13 +11,29 @@
         @click="enterEditMode"
         >
       </span>
-      <span
+      <div
+              v-else-if="isModified"
+              class="control"
+            >
+              <button
+                type="submit"
+                class="button save_button is-primary"
+                :disabled="!creationTmpIsValid || !notAfterTmpIsValid"
+                :class="saving === 'loading' ? 'is-loading' : ''"
+                @click="save"
+              >
+                <save-button-icon
+                  :status="status"
+                />
+              </button>
+            </div>
+      <!--<span
         v-else-if="isModified"
         class="icon is-small save-btn"
         @click="save"
       >
         <i class="fas fa-save" />
-      </span>
+      </span>-->
       <span
         v-else
         class="close-btn"
@@ -52,6 +68,7 @@
       <b-field
         label="Étiquette"
         label-position="inside"
+        @dblclick.native="enterEditMode"
       >
         <b-input
           v-model="creationLabel"
@@ -68,7 +85,7 @@
         label-position="inside"
         :type="!notAfterTmpIsValid ? 'is-danger' : null"
         :message="!notAfterTmpIsValid ? 'Format incorrect (AAAA-MM-JJ)' : null"
-
+        @dblclick.native="enterEditMode"
       >
         <b-input
           v-model="creationNotAfter"
@@ -108,10 +125,12 @@
 </template>
 <script>
 import { mapState } from "vuex";
+import SaveButtonIcon from "@/components/ui/SaveButtonIcon.vue";
+
 
 export default {
   name: "DocumentAttributes",
-  components: {},
+  components: {SaveButtonIcon},
   props: {
     editable: {
       type: Boolean,
@@ -134,6 +153,8 @@ export default {
 
       editMode: false,
       isModified: false,
+      saving: "normal",
+      status: "normal",
     };
   },
   computed: {
@@ -254,31 +275,63 @@ export default {
     },
     cancelInput(evt) {
       console.log("Date event ", { ...evt });
-      this.enterEditMode()
+      this.leaveEditMode()
     },
     async enterEditMode() {
       this.editMode = true;
+      this.saving = "normal";
+      this.status = "normal";
     },
     async leaveEditMode() {
       this.editMode = false;
+      this.saving = "normal";
+      this.status = "normal";
     },
     async save() {
-        let saveData = (
-            { id: this.document.id,
-              attributes:
-                  {
-                    'creation': this.creationTmp === '' ? null : this.creationTmp,
-                    'creation-label': this.creationLabelTmp === '' ? null : this.creationLabelTmp,
-                    'creation-not-after': this.creationNotAfterTmp === '' ? null : this.creationNotAfterTmp
-                  }
-            }
+      let saveData = (
+          { id: this.document.id,
+            attributes:
+                {
+                  'creation': this.creationTmp === '' ? null : this.creationTmp,
+                  'creation-label': this.creationLabelTmp === '' ? null : this.creationLabelTmp,
+                  'creation-not-after': this.creationNotAfterTmp === '' ? null : this.creationNotAfterTmp
+                }
+          }
         );
         console.log("saveData : ", saveData);
-        let resp = await this.$store.dispatch("document/save", saveData);
-        console.log("resp", resp.status);
-        this.isModified = false;
-        this.leaveEditMode()
-    }
+        this.saving = "loading";
+        this.$store.dispatch("document/save", saveData)
+            .then(response => {
+              if (response != 200) {
+                console.log("saving date response not 200 : ", response)
+                this.saving = "normal";
+                this.dateSetStatusError();
+              } else {
+                this.saving = "normal";
+                this.dateSetStatusSuccess();
+                setTimeout(() => {
+                      this.dateSetStatusNormal()
+                      this.isModified = false;
+                      this.leaveEditMode()
+                    },
+                    1500)
+              }
+            })
+            .catch((e) => {
+              console.log("saving date catch error : ", e)
+              this.saving = "normal";
+              this.dateSetStatusError();
+        });
+    },
+    dateSetStatusNormal() {
+      this.status = "normal";
+    },
+    dateSetStatusSuccess() {
+      this.status = "success";
+    },
+    dateSetStatusError() {
+      this.status = "error";
+    },
   },
 };
 </script>
@@ -360,15 +413,14 @@ export default {
     display: none;
   }
 }
-.save-btn {
+.save_button {
   position: unset;
   flex: 40px 0 0;
 
   display: inline-flex;
   align-items:center;
-  color: #cc0f35;
-  width: 25px;
-  height: 25px;
+  width: 38px;
+  height: 38px;
   padding: 0;
   cursor: pointer;
 
