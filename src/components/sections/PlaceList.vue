@@ -129,7 +129,7 @@
       <div class="results-count-and-pagination is-flex is-justify-content-space-between is-align-items-center">
         <div class="popup-list-header is-inline-block">
           <div class="results-count">
-            <span class="total-count">{{ totalCount }}</span> résultat(s)
+            <span class="total-count">{{ totalCount }}</span> résultat{{ totalCount > 1 ? "s" : "" }}
           </div>
         </div>
         <div class="is-inline-block">
