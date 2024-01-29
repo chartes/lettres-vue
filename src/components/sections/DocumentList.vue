@@ -861,7 +861,9 @@ export default {
         }
     },
     totalPages: function() {
-      return Math.ceil(this.totalCount / this.pageSize)
+      //ES SEARCH RESULTS LIMIT 10 000
+      return Math.ceil(Math.min(10000, this.totalCount) / this.pageSize)
+      //return Math.ceil(this.totalCount / this.pageSize)
     },
     toggleCssClass: function() {
       return this.isActive ? 'is-active' : 'is-inactive';
