@@ -4,12 +4,27 @@
     :class="editMode ? 'edit-mode' : 'read-mode'"
     style="width: 100%"
   >
-    <span
-      v-if="editable"
-      :class="editMode ? buttonFormat : 'edit-btn'"
-      @click="enterEditMode"
-    >
-    </span>
+    <template v-if="editable">
+      <span
+        v-if="!editMode"
+        class="edit-btn"
+        @click="enterEditMode"
+        >
+      </span>
+      <span
+        v-else-if="isModified"
+        class="icon is-small save-btn"
+        @click="save"
+      >
+        <i class="fas fa-save" />
+      </span>
+      <span
+        v-else
+        class="close-btn"
+        @click="leaveEditMode"
+        >
+      </span>
+    </template>
     <!--<header class="document-date__attributes--title mb-3">
       <span class="heading">Dates de temps</span>
     </header>-->
@@ -93,7 +108,6 @@
 </template>
 <script>
 import { mapState } from "vuex";
-import { debounce } from "lodash";
 
 export default {
   name: "DocumentAttributes",
@@ -119,7 +133,7 @@ export default {
       notAfterTmpIsValid: true,
 
       editMode: false,
-      buttonFormat: 'close-btn'
+      isModified: false,
     };
   },
   computed: {
@@ -135,9 +149,9 @@ export default {
         if (this.creationTmpIsValid) {
           //this.fieldChanged({ name: "creation", value });
           if (this.creationTmp !== this.document["creation"] || this.creationLabelTmp !== this.document["creation-label"] || this.creationNotAfterTmp !== this.document["creation-not-after"]) {
-            this.buttonFormat = 'save-btn';
+            this.isModified = true;
           } else {
-            this.buttonFormat = 'close-btn';
+            this.isModified = false;
           }
         }
       },
@@ -150,9 +164,9 @@ export default {
         this.creationLabelTmp = value;
         //this.fieldChanged({ name: "creation-label", value });
         if (this.creationTmp !== this.document["creation"] || this.creationLabelTmp !== this.document["creation-label"] || this.creationNotAfterTmp !== this.document["creation-not-after"]) {
-            this.buttonFormat = 'save-btn';
+            this.isModified = true;
           } else {
-            this.buttonFormat = 'close-btn';
+            this.isModified = false;
           }
       },
     },
@@ -166,9 +180,9 @@ export default {
         //this.fieldChanged({ name: "creation-not-after", value });
         if (this.notAfterTmpIsValid) {
           if (this.creationTmp !== this.document["creation"] || this.creationLabelTmp !== this.document["creation-label"] || this.creationNotAfterTmp !== this.document["creation-not-after"]) {
-            this.buttonFormat = 'save-btn';
+            this.isModified = true;
           } else {
-            this.buttonFormat = 'close-btn';
+            this.isModified = false;
           }
         }
       },
@@ -243,9 +257,12 @@ export default {
       this.enterEditMode()
     },
     async enterEditMode() {
-      console.log("this.editMode", this.editMode)
-      this.editMode = !this.editMode
-      if (this.buttonFormat === 'save-btn') {
+      this.editMode = true;
+    },
+    async leaveEditMode() {
+      this.editMode = false;
+    },
+    async save() {
         let saveData = (
             { id: this.document.id,
               attributes:
@@ -259,10 +276,8 @@ export default {
         console.log("saveData : ", saveData);
         let resp = await this.$store.dispatch("document/save", saveData);
         console.log("resp", resp.status);
-        this.buttonFormat = 'edit-btn'
-      } else {
-        this.buttonFormat = 'close-btn'
-      }
+        this.isModified = false;
+        this.leaveEditMode()
     }
   },
 };
@@ -329,7 +344,7 @@ export default {
 }
 .close-btn {
   position: unset;
-  flex: 55px 0 0;
+  flex: 40px 0 0;
 
   display: inline-block;
   width: 25px;
@@ -347,12 +362,14 @@ export default {
 }
 .save-btn {
   position: unset;
-  flex: 55px 0 0;
+  flex: 40px 0 0;
 
-  display: inline-block;
+  display: inline-flex;
+  align-items:center;
+  color: #cc0f35;
   width: 25px;
   height: 25px;
-  background: url(../../assets/images/icons/bouton_bouge.svg) center / 20px auto no-repeat !important;
+  padding: 0;
   cursor: pointer;
 
   @include on-mobile {
