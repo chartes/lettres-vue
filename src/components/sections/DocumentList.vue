@@ -1,5 +1,6 @@
 <template>
   <div>
+    <!-- Document list first header row on /search route-->
     <div v-if="$route.name === 'search'">
       <div
         class="section"
@@ -52,15 +53,16 @@
                   </label>
                 </div>
               </div>
-            </div><!-- v-model="isResultTableMode"-->
+            </div>
           </div>
         </div>
         <div class="is-flex toggle-list-and-pagination is-justify-content-space-between">
+          <!-- Search Page view : Table toggle + pagination -->
           <div
             v-if="!isActive"
             class="field is-inline-block mb-0 px-1"
           >
-            <!--v-if="!isActive && isFulltextSearch"-->
+            <!--  -->
             <div class="control block is-flex is-align-items-center mb-0 sort-options">
               <span class="tri">Tris</span>
               <div class="is-inline-block select-parent">
@@ -186,6 +188,7 @@
         </div>
       </div>
     </div>
+    <!-- Document list first header row on /collections/id route-->
     <div v-else>
       <div
         class="section mb-5"
@@ -210,7 +213,7 @@
           </div>
         </section>
         <section class="mb-5">
-          <!-- Table toggle + pagination -->
+          <!-- Collection Page view : Table toggle + pagination -->
           <div
             v-if="totalCount"
             class="is-flex toggle-list-and-pagination is-justify-content-space-between"
