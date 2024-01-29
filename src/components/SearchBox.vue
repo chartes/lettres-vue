@@ -57,7 +57,7 @@ export default {
   data() {
     return {
       inputTerm: null,
-      searchType: 'isParatextSearch',
+      sType: 'isParatextSearch',
       options: [
           { value: 'isFullTextSearch', text: "lettres"},
           { value: 'isParatextSearch', text: "notices"},
@@ -66,6 +66,21 @@ export default {
   },
   computed: {
     ...mapState("search", ["searchTerm", "loadingStatus"]),
+    searchType: {
+      get: function () {
+        if (this.$route.name === "home") {
+          return this.sType;
+        } else {
+          return this.$store.state.search.searchType ? this.$store.state.search.searchType : this.sType
+        }
+      },
+      set: async function (newValue, oldValue) {
+        if (newValue && newValue !== oldValue) {
+          this.setSearchType(newValue);
+          this.sType = newValue;
+        }
+      },
+    },
   },
   watch: {
     inputTerm(newValue, oldValue) {
@@ -82,26 +97,21 @@ export default {
         }
       }
     },
-    searchType() {
-      this.setSearchType(this.searchType);
-    }
   },
   created() {
     // clear search term on nav towards homepage
     if (this.$route.name === "home") {
       this.setSearchTerm('');
       this.inputTerm = this.searchTerm;
-      this.setSearchType(this.searchType);
     } else {
       this.inputTerm = this.searchTerm;
-      this.setSearchType(this.searchType);
     }
   },
   methods: {
     ...mapActions("search", ["performSearch", "setSearchType", "setSearchTerm", "setNumPage"]),
     search() {
       if (!this.documentLoading) {
-        this.setSearchType(this.searchType);
+        this.setSearchType(this.sType);
         this.setSearchTerm(this.inputTerm);
         this.setNumPage(1);
         this.performSearch();

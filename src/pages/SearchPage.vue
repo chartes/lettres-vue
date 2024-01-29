@@ -6,7 +6,7 @@
           <button
             v-show="!showLeftSideBar"
             class="button advanced-search-btn"
-            @click="toggleLeftSideBar"
+            @click="toggleLeftSideBar()"
           >
             Afficher les filtres
           </button>
@@ -18,11 +18,9 @@
 </template>
 
 <script>
-import { mapState, mapActions, mapGetters } from "vuex";
+import { mapState, mapActions } from "vuex";
 
 import DocumentList from "@/components/sections/DocumentList";
-import SearchBox from "@/components/SearchBox.vue";
-import background_image from "@/assets/images/about.jpg";
 
 export default {
   name: "SearchPage",

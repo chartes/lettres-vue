@@ -215,14 +215,10 @@ export default {
   methods: {
     ...mapActions("document", ["resetDocumentState"]),
     ...mapActions("search", ["resetSearchState"]),
-    clearState(from) {
-      console.log("this.$route.name : ", from)
-      if (from === "collection") {
-        console.log("from === 'collection' :", from === "collection")
-        this.$store.state.collections.selectedCollection = {};
-        this.resetDocumentState();
-        this.resetSearchState();
-      }
+    clearState() {
+      this.$store.state.collections.selectedCollection = [];
+      this.resetDocumentState();
+      this.resetSearchState();
     },
     async logout() {
       this.$store.dispatch("user/logout").then(() => {
@@ -236,14 +232,14 @@ export default {
   },
   watch:{
     $route (to, from){
-      if (from.name === "collection") {
-        console.log("from === 'collection' :", from.name === "collection")
+      if (from.name === "collection" && to.name === "search" && this.$store.state.collections.selectedCollection.length > 0) {
+        this.$store.state.layout.showLeftSideBar = true;
+      } else {
+        this.$store.state.search.selectedCollections = [];
+        this.$store.state.collections.selectedCollection = [];
         this.$store.state.layout.showLeftSideBar = false;
-        this.$store.state.collections.selectedCollection = {};
-        this.resetDocumentState();
-        this.resetSearchState();
+        this.menuOpened = false;
       }
-      this.menuOpened = false;
     }
   }
 };

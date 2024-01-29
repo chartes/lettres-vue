@@ -913,7 +913,8 @@ export default {
     },
     searchCollection() {
       //console.log("searchCollection / this.$store.state.search.selectedCollections", this.$store.state.search.selectedCollections);
-      this.$store.state.layout.showLeftSideBar = true
+      this.$store.state.collections.selectedCollection = this.$store.state.search.selectedCollections;
+      this.$store.state.layout.showLeftSideBar = true;
     },
     cleanHTML(text) {
       // remove notes from Titles in search results table

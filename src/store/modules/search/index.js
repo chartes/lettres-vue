@@ -2,6 +2,7 @@ import {debounce} from 'lodash';
 import {http_with_auth} from "@/modules/http-common";
 import {cloneDeep, uniq} from 'lodash';
 import store from "@/store";
+import Vue from "vue";
 
 
 const creationDateTemplate = {
@@ -166,14 +167,14 @@ const state = {
   //sorts: [{field: '', order: 'asc'}],
 
   creationDateFrom: {
-    ...cloneDeep(creationDateTemplate),
+    ...cloneDeep(creationDateTemplate)
     //year:'1577', 
     //selection: {
     //  ...creationDateTemplate.selection,
       //year: '1577'
     //}
   },
-  creationDateTo: cloneDeep(creationDateTemplate),
+  creationDateTo: {...cloneDeep(creationDateTemplate)},
 
   withStatus: false,
   withDateRange: false,
@@ -188,7 +189,7 @@ const state = {
   currentFilters: '',
   currentQuery: '',
   numPage: 1,
-  pageSize: 30,
+  pageSize: 50,
 
   loadingStatus: false,
   errorStatus: false,
@@ -213,13 +214,14 @@ const initial_State = {
   //sorts: [{field: '', order: 'asc'}],
 
   creationDateFrom: {
-    ...cloneDeep(creationDateTemplate),
+    ...cloneDeep(creationDateTemplate)
+  },
     //year:'1577',
     //selection: {
     //  ...creationDateTemplate.selection,
       //year: '1577'
     //}
-  },
+  //},
   creationDateTo: {...cloneDeep(creationDateTemplate)},
 
   withStatus: false,
@@ -235,7 +237,7 @@ const initial_State = {
   currentFilters: '',
   currentQuery: '',
   numPage: 1,
-  pageSize: 30,
+  pageSize: 50,
 
   loadingStatus: false,
   errorStatus: false,
@@ -252,8 +254,17 @@ const initial_State = {
 
 const mutations = {
   RESET_SEARCH_STATE(state, initial_State) {
-    Object.assign(state, initial_State);
-    console.log('RESET_SEARCH_STATE', initial_State)
+    for (let f in state) {
+        Vue.set(state, f, cloneDeep(initial_State[f]))
+       }
+    /*Object.keys(state).forEach(key => {
+      if (!initial_State[key] || initial_State[key].length === 0) {
+        state[key] = initial_State[key]
+      } else {
+        Object.assign(state[key], initial_State[key])
+      }
+      })*/
+    console.log('RESET_SEARCH_STATE initial_State, state', initial_State, state)
   },
 
   SET_SEARCH_SCOPE(state, scope) {

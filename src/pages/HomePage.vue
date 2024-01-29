@@ -283,7 +283,7 @@ export default {
     }
   },
   async created() {
-    console.log("clear state on collection navigation")
+    console.log("clear search & selected coll state on navigation to HomePage")
     await this.resetSearchState();
     await this.counts();
     this.$store.state.layout.showLeftSideBar = false;
