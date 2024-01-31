@@ -6,40 +6,10 @@
   >
     <template v-if="editable">
       <span
-        v-if="!editMode"
-        class="edit-btn"
-        @click="enterEditMode"
-        >
-      </span>
-      <div
-              v-else-if="isModified"
-              class="control"
-            >
-              <button
-                type="submit"
-                class="button save_button is-primary"
-                :disabled="!creationTmpIsValid || !notAfterTmpIsValid"
-                :class="saving === 'loading' ? 'is-loading' : ''"
-                @click="save"
-              >
-                <save-button-icon
-                  :status="status"
-                />
-              </button>
-            </div>
-      <!--<span
-        v-else-if="isModified"
-        class="icon is-small save-btn"
-        @click="save"
-      >
-        <i class="fas fa-save" />
-      </span>-->
-      <span
-        v-else
-        class="close-btn"
-        @click="leaveEditMode"
-        >
-      </span>
+      v-if="editable"
+      :class="!editMode ? 'edit-btn' : 'close-btn'"
+      @click="!editMode? enterEditMode() : leaveEditMode()"
+    />
     </template>
     <!--<header class="document-date__attributes--title mb-3">
       <span class="heading">Dates de temps</span>
@@ -91,7 +61,7 @@
           v-model="creationNotAfter"
           class="creation-date-input"
           name="creationNotAfter"
-          :placeholder="editMode ? '1575, 1er Janvier' : ''"
+          :placeholder="editMode ? '1575-01-01' : ''"
           expanded
           :disabled="!editMode"
           @keyup.esc.native="cancelInput($event)"
@@ -121,16 +91,39 @@
         <span class="control">{{ creationNotAfter }}</span>
       </b-field>-->
     </div>
+      <div
+        v-if="editMode && isModified"
+        class="control"
+      >
+        <button
+          type="submit"
+          class="button save_button is-primary"
+          :disabled="!creationTmpIsValid || !notAfterTmpIsValid"
+          :class="saving === 'loading' ? 'is-loading' : ''"
+          @click="save"
+        >
+          <save-button-icon
+            :status="status"
+          />
+        </button>
+      </div>
+
   </div>
 </template>
 <script>
 import { mapState } from "vuex";
 import SaveButtonIcon from "@/components/ui/SaveButtonIcon.vue";
+import TextFieldMixins from "@/components/forms/fields/TextFieldMixins";
+import IconSave from "@/components/ui/icons/IconSave.vue";
+import IconSuccess from "@/components/ui/icons/IconSuccess.vue";
+import IconError from "@/components/ui/icons/IconError.vue";
+import IconPenEdit from "@/components/ui/icons/IconPenEdit.vue";
 
 
 export default {
   name: "DocumentAttributes",
   components: {SaveButtonIcon},
+  mixins: [TextFieldMixins],
   props: {
     editable: {
       type: Boolean,
@@ -159,7 +152,35 @@ export default {
   },
   computed: {
     ...mapState("document", ["document"]),
-
+    saveButtonClass() {
+      switch (this.status) {
+        case "normal":
+        case "disabled":
+          return "is-success";
+        case "success":
+          return "is-success";
+        case "error":
+          return "is-danger";
+        case "loading":
+          return "is-loading";
+        default:
+          return "is-danger";
+      }
+    },
+    saveButtonIcon() {
+      switch (this.status) {
+        case "normal":
+        case "loading":
+        case "disabled":
+          return IconSave;
+        case "success":
+          return IconSuccess;
+        case "error":
+          return IconError;
+        default:
+          return IconError;
+      }
+    },
     creation: {
       get() {
         return this.creationTmp;
@@ -261,6 +282,7 @@ export default {
       let dateRegEx = /^\d{4}(?:-\d{2}){0,2}$/;
       let fullDateRegEx = /^\d{4}-\d{2}-\d{2}$/;
       if (this.creationNotAfterTmp === '') {
+        this.creationNotAfterTmp = null
         this.notAfterTmpIsValid = true;
       } else if (this.creationNotAfterTmp.length < 10) {
           if (this.creationNotAfterTmp.match(dateRegEx)) {
@@ -284,6 +306,7 @@ export default {
     },
     async leaveEditMode() {
       this.editMode = false;
+      this.isModified = false;
       this.saving = "normal";
       this.status = "normal";
     },
