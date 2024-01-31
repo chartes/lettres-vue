@@ -3,18 +3,19 @@
     v-if="$attrs.person && $attrs.person.label"
     class="person-info-card"
   >
+    <div class="person-info-card-title">
+      Données pour la sauvegarde :
+    </div>
     <div class="labels">
-      <div
-      
-        class="heading is-size-5"
-      >
+      <div class="heading is-size-5">
         {{ $attrs.person.label }}
       </div>
       <div
         v-if="$attrs.person.description"
-        class="heading is-size-7"
-      />
-      {{ $attrs.person.description }}
+        class="heading is-size-5"
+      >
+        {{ $attrs.person.description }}
+      </div>
     </div>
   </div>
 </template>
@@ -22,7 +23,6 @@
 <script>
 export default {
   name: "PersonInfoCard",
-  components: {},
   data() {
     return {};
   },
@@ -36,11 +36,16 @@ export default {
   color: inherit !important;
 }
 .person-info-card {
-
+    display: flex;
+    flex-direction: column;
+  .person-info-card-title {
+    font-weight: bold;
+  }
   .labels {
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: space-between;
     padding: 8px;
-    border-left: 2px solid $coffee;
-    margin-bottom: 20px;
   }
 }
 .l-map {

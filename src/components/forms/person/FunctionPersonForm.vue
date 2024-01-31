@@ -1,9 +1,32 @@
 <template>
   <div class="wizard-center-form function-person-form">
     <b-field
+      v-if="$attrs.person && !$attrs.person.id"
+      label="Modifier le label"
+      class="mt-5"
+    >
+      <b-input
+        v-model="updatedLabel"
+        required
+        type="text"
+        placeholder="Régente"
+        icon-right="close-circle"
+        icon-right-clickable
+        @icon-right-click="updatedLabel = ''"
+      />
+    </b-field>
+    <b-field
+      v-else
+      label="Personne existante : contacter l'administrateur pour modifier"
+      class="mt-5"
+    >
+      {{ $attrs.person.label }}
+    </b-field>
+
+    <b-field
       label="Sélectionner une description déjà employée pour cette personne"
       class="mb-5"
-      v-if="$attrs.person && $attrs.person.functions"
+      v-if="$attrs.person && $attrs.person.functions && $attrs.person.functions.length > 0"
     >
       <span class="tags">
         <span
@@ -18,14 +41,17 @@
       </span>
     </b-field>
 
-    <b-field label="Ajouter une nouvelle description" class="mt-5">
+    <b-field
+      :label="updatedFunction.length === 0 ? 'Ajouter une description' : 'Modifier la description'"
+      class="mt-5"
+    >
       <b-input
-        v-model="functionInputTerm"
+        v-model="updatedFunction"
         type="text"
         placeholder="Régente"
         icon-right="close-circle"
         icon-right-clickable
-        @icon-right-click="functionInputTerm = ''"
+        @icon-right-click="updatedFunction = ''"
       />
     </b-field>
     <expanded-select
@@ -50,7 +76,8 @@ export default {
   },
   data() {
     return {
-      functionInputTerm: "",
+      updatedLabel: "",
+      updatedFunction: "",
       functionTableData: [],
       selectedTagIndex: null,
       selectedListIndex: null,
@@ -60,24 +87,42 @@ export default {
     filteredFunctions() {
       return this.functionTableData.filter((option) => {
         return (
-          option.toString().toLowerCase().indexOf(this.functionInputTerm.toLowerCase()) >=
+          option.toString().toLowerCase().indexOf(this.updatedFunction.toLowerCase()) >=
           0
         );
       });
     },
   },
   watch: {
-    functionInputTerm() {
-      this.setDescription(this.functionInputTerm);
+    updatedFunction(evt) {
+      this.updatedPerson = {...this.$attrs.person, "description": evt}
+      this.setDescription(evt);
+    },
+    updatedLabel(evt) {
+      this.updatedPerson = {...this.$attrs.person, "label": evt}
+      this.managePersonData({
+        action: { name: "set-person" },
+        data: this.updatedPerson,
+      });
+    },
+    '$attrs.person.label': function(newVal, oldVal) {
+      if (!this.$attrs.person.id && newVal && newVal.length > 0) {
+        this.updatedLabel = newVal
+      }
+    },
+    '$attrs.person.description': function(newVal, oldVal) {
+      if (newVal && newVal.length > 0 && newVal !== oldVal) {
+        this.updatedFunction = newVal
+      } else {
+        this.updatedFunction = ''
+      }
     },
   },
-  created() {},
   async mounted() {
     this.functionTableData = await this.performFunctionSearch();
   },
   methods: {
     ...mapActions("persons", ["performFunctionSearch"]),
-
     managePersonData(evt) {
       this.$emit("manage-person-data", evt);
     },
@@ -96,7 +141,7 @@ export default {
       });
     },
     selectTag(func, index) {
-      this.functionInputTerm = "";
+      this.updatedFunction = '';
       this.selectedListIndex = null;
 
       this.setDescription(func);

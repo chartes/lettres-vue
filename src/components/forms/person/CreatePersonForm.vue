@@ -79,6 +79,7 @@
       </b-field>
 
       <expanded-select
+        v-if="personNameInput.length > 0"
         :items="filteredPersons"
         class="mt-2"
         @changed="selectionChanged"

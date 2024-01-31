@@ -3,15 +3,16 @@
     v-if="$attrs.place && $attrs.place.label"
     class="place-info-card"
   >
+    <div class="place-info-card-title">
+      Données pour la sauvegarde :
+    </div>
     <div class="labels">
-      <div
-        class="heading is-size-5"
-      >
+      <div class="heading is-size-5">
         {{ $attrs.place.label }}
       </div>
       <div
         v-if="$attrs.place.description"
-        class="heading is-size-7"
+        class="heading is-size-5"
       />
       {{ $attrs.place.description }}
     </div>
@@ -46,11 +47,17 @@ export default {
   color: inherit !important;
 }
 .place-info-card {
+  display: flex;
+  flex-direction: column;
 
+  .place-info-card-title {
+    font-weight: bold;
+  }
   .labels {
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: space-between;
     padding: 8px;
-    border-left: 2px solid $coffee;
-    margin-bottom: 20px;
   }
 }
 .l-map {

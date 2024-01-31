@@ -83,6 +83,7 @@
       </b-field>
 
       <expanded-select
+        v-if="placeNameInput.length > 0"
         :items="filteredPlacenames"
         class="mt-2"
         @changed="selectionChanged"

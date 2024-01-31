@@ -1,9 +1,32 @@
 <template>
   <div class="wizard-center-form function-place-form">
     <b-field
+      v-if="$attrs.place && !$attrs.place.id"
+      label="Modifier le label"
+      class="mt-5"
+    >
+      <b-input
+        v-model="updatedLabel"
+        required
+        type="text"
+        placeholder="Sous les remparts"
+        icon-right="close-circle"
+        icon-right-clickable
+        @icon-right-click="updatedLabel = ''"
+      />
+    </b-field>
+    <b-field
+      v-else
+      label="Lieu existant : contacter l'administrateur pour modifier"
+      class="mt-5"
+    >
+      {{ $attrs.place.label }}
+    </b-field>
+
+    <b-field
       label="Sélectionner une description déjà employée pour ce lieu"
       class="mb-5"
-      v-if="$attrs.place && $attrs.place.functions"
+      v-if="$attrs.place && $attrs.place.functions && $attrs.place.functions.length > 0"
     >
       <span class="tags">
         <span
@@ -18,17 +41,19 @@
       </span>
     </b-field>
 
-    <b-field label="Ajouter une nouvelle description" class="mt-5">
+    <b-field
+      :label="updatedFunction.length === 0 ? 'Ajouter une description' : 'Modifier la description'"
+      class="mt-5"
+    >
       <b-input
-        v-model="functionInputTerm"
+        v-model="updatedFunction"
         type="text"
         placeholder="Sous les remparts"
         icon-right="close-circle"
         icon-right-clickable
-        @icon-right-click="functionInputTerm = ''"
+        @icon-right-click="updatedFunction = ''"
       />
     </b-field>
-
     <expanded-select
       :items="filteredFunctions"
       class="mt-2"
@@ -51,7 +76,8 @@ export default {
   },
   data() {
     return {
-      functionInputTerm: "",
+      updatedLabel: "",
+      updatedFunction: "",
       functionTableData: [],
       selectedTagIndex: null,
       selectedListIndex: null,
@@ -61,15 +87,35 @@ export default {
     filteredFunctions() {
       return this.functionTableData.filter((option) => {
         return (
-          option.toString().toLowerCase().indexOf(this.functionInputTerm.toLowerCase()) >=
+          option.toString().toLowerCase().indexOf(this.updatedFunction.toLowerCase()) >=
           0
         );
       });
     },
   },
   watch: {
-    functionInputTerm() {
-      this.setDescription(this.functionInputTerm);
+    updatedFunction(evt) {
+      this.updatedPlace = {...this.$attrs.place, "description": evt}
+      this.setDescription(evt);
+    },
+    updatedLabel(evt) {
+      this.updatedPlace = {...this.$attrs.place, "label": evt}
+      this.managePlaceData({
+        action: { name: "set-place" },
+        data: this.updatedPlace,
+      });
+    },
+    '$attrs.place.label': function(newVal, oldVal) {
+      if (!this.$attrs.place.id && newVal && newVal.length > 0) {
+        this.updatedLabel = newVal
+      }
+    },
+    '$attrs.place.description': function(newVal, oldVal) {
+      if (newVal && newVal.length > 0 && newVal !== oldVal) {
+        this.updatedFunction = newVal
+      } else {
+        this.updatedFunction = ''
+      }
     },
   },
   async mounted() {
@@ -95,7 +141,7 @@ export default {
       });
     },
     selectTag(func, index) {
-      this.functionInputTerm = "";
+      this.updatedFunction = '';
       this.selectedListIndex = null;
 
       this.setDescription(func);
