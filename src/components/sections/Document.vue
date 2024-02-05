@@ -204,7 +204,7 @@
                 >
                   <template #default>
                     <div class="document-section-content">
-                      <document-date-attributes :editable="canEdit" />
+                      <document-date-attributes :editable="canEdit" name="datename" label="datelabel"/>
                     </div>
                   </template>
                 </b-collapse>
