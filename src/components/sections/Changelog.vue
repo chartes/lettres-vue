@@ -406,11 +406,6 @@ export default {
 @import "@/assets/sass/main.scss";
 @import "@/assets/sass/components/_search_results_table.scss";
 @import "@/assets/sass/components/_search_results_pagination.scss";
-.result-container {
-  border-bottom-width: 1px;
-  border-bottom-style: solid;
-  border-bottom-color: #fdb3cc;
-}
   .pagination-controls {
     display: flex;
     align-items: center;
