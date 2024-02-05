@@ -87,6 +87,7 @@ export default {
     return {
       //editorEnabled: true,
       editMode: false,
+      initialValue: "",
       form: "",
     };
   },
@@ -95,8 +96,8 @@ export default {
     ...mapState("search", ["searchTerm", "searchType"])
   },
   watch: {
-    argumentEditor: function (newVal, Oldval) {
-      console.log("DocumentArgument / watch / form old new : ", Oldval, newVal)
+    argumentEditor: function (newVal, oldVal) {
+      console.log("DocumentArgument / watch / form old new : ", oldVal, newVal)
       this.form = newVal;
       this.$emit("refresh-argument", this.form)
     },
@@ -112,6 +113,7 @@ export default {
 
       //TODO Victor remove once attributes title have been added in database
       this.getPlacesLabel(this.form, "argument");
+      this.initialValue = this.form
     }
   },
   created() {
@@ -122,6 +124,7 @@ export default {
   methods: {
     cancelInput(evt) {
       console.log("argument event ", { ...evt });
+      this.form = this.initialValue
       this.enterEditMode()
     },
     enterEditMode() {
