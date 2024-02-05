@@ -1,26 +1,30 @@
 <template>
   <div
-    v-if="$attrs.place && $attrs.place.label"
+    v-if="$attrs.place"
     class="place-info-card"
   >
     <div class="place-info-card-title">
       Données pour la sauvegarde :
     </div>
-    <div class="labels">
+    <div
+      v-if="$attrs.place && $attrs.place.label"
+      class="labels"
+    >
       <div class="heading is-size-5">
         {{ $attrs.place.label }}
       </div>
       <div
         v-if="$attrs.place.description"
         class="heading is-size-5"
-      />
+      >
       {{ $attrs.place.description }}
-    </div>
-    <div v-if="$attrs.place.coords">
-      <my-awesome-map
-        :key="$attrs.place.label+$attrs.place.activeTab"
-        :lat-lng="$attrs.place.coords"
-      />
+      </div>
+      <div v-if="$attrs.place.coords">
+        <my-awesome-map
+          :key="$attrs.place.label+$attrs.place.activeTab"
+          :lat-lng="$attrs.place.coords"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -49,7 +53,6 @@ export default {
 .place-info-card {
   display: flex;
   flex-direction: column;
-
   .place-info-card-title {
     font-weight: bold;
   }

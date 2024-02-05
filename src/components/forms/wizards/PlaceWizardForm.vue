@@ -133,7 +133,7 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from "vuex";
+import { mapState, mapGetters, mapActions} from "vuex";
 
 import SelectOrCreatePlaceForm from "@/components/forms/place/SelectOrCreatePlaceForm.vue";
 import PlaceInfoCard from "@/components/forms/place/PlaceInfoCard.vue";
@@ -170,7 +170,7 @@ export default {
     ...mapGetters("placenames", ["getRoleByLabel"]),
 
     wizardLabel() {
-      return "Date de lieu";
+      return "Lieux";
     },
     currentStep() {
       if (!this.initLoading) {
@@ -249,7 +249,9 @@ export default {
               attributes: {place: this.place},
             },
             footer: {
-              buttons: [{label: "Terminer", type: "is-primary", action: this.savePlace}],
+              buttons: this.place.label
+                  ? [{label: "Terminer", type: "is-primary", action: this.savePlace}]
+                  : [{label: "Terminer", type: "is-primary", disabled: true}],
             },
           },
         ]
@@ -326,10 +328,13 @@ export default {
     this.place = place;
     this.initLoading = false;
   },
-  mounted() {
+  async mounted() {
     this.$store.dispatch("placenames/setPageSize", 5);
+    await this.search("");
   },
   methods: {
+    ...mapActions("placenames", ["search"]),
+
     gotoStep(stepName) {
       const nextStepIndex = this.stepItems.findIndex((s) => s.name === stepName);
       if (nextStepIndex > -1) {
@@ -368,7 +373,12 @@ export default {
           };
           break;
         case "set-description":
-          this.place.description = data;
+          if (data.label || data.label === '') {
+            this.place.label = data.label;
+          }
+          if (data.description || data.description === '' || data.description === null) {
+            this.place.description = data.description === '' ? null : data.description;
+          }
           break;
         default:
           break;
@@ -410,7 +420,7 @@ export default {
 
         // when editing a document
         if (this.popupMode) {
-          console.log(this.place);
+          console.log("when editing a document : ", this.place);
           if (this.place.role && placeToSave.id) {
             // link the place to the document
             const role = this.getRoleByLabel(this.place.role);
@@ -501,9 +511,10 @@ export default {
 .root-container {
   overflow: hidden;
   width: 100% !important;
+  height: 100% !important;
   padding: 30px 60px !important;
+  margin-bottom: 0 !important;
   min-height: 720px;
-  height: inherit;
   background: transparent !important;
 
   @include on-tablet {
@@ -546,7 +557,7 @@ export default {
 
     ::v-deep {
       .table tr.is-selected,
-      .expanded-select dt.expanded-selection {
+      dt.expanded-selection {
         background-color: #CB2158;
       }
 
@@ -558,7 +569,7 @@ export default {
 
   ::v-deep {
     .place-wizard-center-form .expanded-select  {
-      max-height: 180px !important;
+      max-height: 175px !important;
 
       & dt.expanded-selection {
         background-color: #CB2158;
@@ -580,21 +591,43 @@ export default {
     grid-template-columns: auto;
     grid-template-rows: auto;
     grid-template-areas: "center-content";
+
+    @include on-tablet {
+      width: 100% !important;
+      height: 100% !important;
+      min-height: auto;
+    }
+
+    @include on-mobile {
+      width: 100% !important;
+      height: 100% !important;
+      padding-top: 0px;
+    }
   }
 
   .popup-mode {
-    margin: auto;
-    grid-template-columns: auto 320px;
-    grid-template-rows: 62px min(600px)  min(80px);
+    margin: 0;
+    grid-template-columns:  7fr 3fr;
+    grid-template-rows: 1fr 2fr 8fr;
     grid-template-areas:
       "leftbar-header leftbar-header"
       "center-content leftbar-content"
-      "leftbar-footer nav-footer";
+      "center-content nav-footer";
 
     @include on-tablet {
       margin: 0;
+      grid-template-columns: 7fr 3fr;
+      grid-template-rows: 62px auto auto auto;
+      grid-template-areas:
+      "leftbar-header"
+      "center-content"
+      "leftbar-content"
+      "nav-footer";
+    }
+    @include on-mobile {
+      margin: 0;
       grid-template-columns: 100%;
-      grid-template-rows: 62px auto auto min(80px);
+      grid-template-rows: 62px auto auto auto;
       grid-template-areas:
       "leftbar-header"
       "center-content"
@@ -629,6 +662,13 @@ export default {
         font-size: $font-size-title-mobile;
       }
     }
+
+    h2 {
+      padding-top: 0;
+      top: -12px;
+      position: relative;
+      left: 0;
+    }
   }
 
   .leftbar-content-area,
@@ -638,6 +678,11 @@ export default {
 
     @include on-tablet {
       margin-left: 0;
+      border-radius: 5px;
+    }
+    @include on-mobile {
+      margin-left: 0;
+      border-radius: 5px;
     }
   }
 
@@ -649,16 +694,35 @@ export default {
     @include on-tablet {
       margin-top: 10px;
       margin-bottom: 10px;
+      border-radius: 5px;
+    }
+
+    @include on-mobile {
+      margin-top: 10px;
+      margin-bottom: 10px;
+      border-radius: 5px;
     }
 
     .b-tabs {
+      height: 100%;
       ::v-deep {
-
         .tab-content {
+          border-top-left-radius: 5px;
+          border-top-right-radius: 5px;
           background-color: #CB2158;
           color: #FFF;
 
+          @include on-tablet {
+            height: 100%;
+            border-radius: 5px;
+          }
+          @include on-mobile {
+            height: 100%;
+            border-radius: 5px;
+          }
+
           .heading {
+            letter-spacing: 0px !important;
             text-transform: none !important;
           }
 
@@ -685,6 +749,9 @@ export default {
     @include on-tablet {
       display: none;
     }
+    @include on-mobile {
+      display: none;
+    }
 
     .buttons {
       margin-right: 20px;
@@ -699,8 +766,7 @@ export default {
     grid-area: center-content;
     height: 100%;
     background-color: #FFFFFF;
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
+    border-radius: 5px;
 
     & > .b-tabs {
       height: 100%;
@@ -725,6 +791,9 @@ export default {
 
         .tab-content {
           padding: 10px 0;
+          @include on-mobile {
+            padding: 0px;
+          }
         }
 
         .tab-content,
@@ -783,7 +852,6 @@ export default {
         }
 
         @include on-mobile {
-
           .searchbox-container {
             width: 100%;
           }
@@ -818,21 +886,37 @@ export default {
   }
 
   .nav-footer-area {
+    height: 100%;
     grid-area: nav-footer;
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
-    position: relative;
+    //position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    vertical-align: bottom;
+    padding-bottom: 10px;
+
+    @include on-tablet {
+      border-radius: 5px;
+    }
+    @include on-mobile {
+      border-radius: 5px;
+    }
 
     .buttons {
-      position: absolute;
-      bottom: 40px;
+      //position: absolute;
+      //bottom: 40px;
 
       display: flex;
+      @include desktop {
+        flex-direction: column;
+      }
       justify-content: center;
-      align-items: center;
+      align-items: flex-end;
 
       @include on-tablet {
-        bottom: 20px;
+        //bottom: 20px;
         width: 100%;
         padding: 0 20px;
         justify-content: flex-end;

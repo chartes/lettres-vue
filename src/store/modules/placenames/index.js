@@ -201,14 +201,20 @@ const actions = {
     },
 
     search({commit, rootState}, what) {
+    /** Gets Placenames ids, labels and refs (wikidate ids)
+     * @param {string}   what  search terms (label, id , etc.)
+     * @returns {object} API response data (data, jsonapi, meta - incl. total-count, links) and list of placenames objects ({"id": digit, "label": string, "ref": string})
+     * @returns {list} list of placenames objects as "placesSearchResults" in placenames state
+     */
         commit('SEARCH_RESULTS', [])
         const http = http_with_auth(rootState.user.jwt);
         return http.get(`/search?query=*${what}*&index=lettres__${process.env.NODE_ENV}__placenames&without-relationships&sort=label.keyword`)
             .then(response => {
-                const placenames = response.data.data.map(inst => {
-                    return {id: inst.id, ...inst}
+                const placenames = response.data.data.map(pl => {
+                    return {id: pl.id, ...pl.attributes}
                 });
                 commit('SEARCH_RESULTS', placenames)
+                return {response: response.data, placenames: placenames}
             });
     },
     searchOnWikidata({commit}, what) {
@@ -262,7 +268,7 @@ const actions = {
     },
     async checkIfRefExists({rootState}, ref) {
         const http = http_with_auth(rootState.user.jwt);
-        const response = await http.get(`search?query=ref:"${ref}"&=lettres__${process.env.NODE_ENV}__placenames&without-relationships&page[size]=1`)
+        const response = await http.get(`search?query=ref:${ref.split("/").pop()}&index=lettres__${process.env.NODE_ENV}__placenames&without-relationships&page[size]=1`)
         let existingPlace = {place: response.data.data[0], count: response.data.meta['total-count']}
         console.log("existingPlace", existingPlace)
         return existingPlace

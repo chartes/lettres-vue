@@ -1,42 +1,41 @@
 <template>
   <div class="person-list">
-    <div class="search-container">
+    <div>
       <section>
         <header />
-        <div class="searchbox-container">
-          <div class="searchbox-container">
+        <div>
+          <div class="search-container">
             <b-field
               label="Nom"
-              class="term-search"
             >
-              <div class="field has-addons">
-                <div class="control">
-                  <input
-                    v-model="inputTerm"
-                    class="input"
-                    type="text"
-                    placeholder="Catherine de Médicis"
-                    @focus="$event.target.select()"
-                    @keyup.enter="search"
-                  />
-                </div>
-                <div class="control">
-                  <a
-                    class="button pl-5 pr-5"
-                    @click="search"
-                  >
-                    <span class="icon">
-                      <i
-                        v-if="loadingStatus"
-                        class="fas fa-spinner fa-pulse"
-                      />
-                      <i
-                        v-else
-                        class="fas fa-search"
-                      />
-                    </span>
-                  </a>
-                </div>
+              <b-input
+                v-model="inputTerm"
+                class="search_input"
+                type="search"
+                icon-right="close-circle"
+                icon-right-clickable
+                @icon-right-click="inputTerm=''"
+                placeholder="Catherine de Médicis"
+                @focus="$event.target.select()"
+                @keyup.native.enter="search"
+              />
+              <div>
+                <a
+                  class="button pl-5 pr-5 search_button"
+                  :disabled="!inputTerm || inputTerm === ''"
+                  @click="search"
+                >
+                  <span class="icon">
+                    <i
+                      v-if="loadingStatus"
+                      class="fas fa-spinner fa-pulse"
+                    />
+                    <i
+                      v-else
+                      class="fas fa-search"
+                    />
+                  </span>
+                </a>
               </div>
             </b-field>
 
@@ -169,17 +168,6 @@
         </div>
       </div>
       <div class="result-container">
-        <!--<span class="pagination-goto">
-          <span> Page : </span>
-          <input
-            v-model="currentPage"
-            name="page"
-            class="input"
-            type="text"
-            placeholder="Page..."
-            @change.prevent="currentPage = parseInt(p)"
-          >
-        </span>-->
 
         <b-table
           ref="multiSortTable"
@@ -275,12 +263,12 @@
             :td-attrs="columnTdAttrs"
           >
             <span
-              class="tags is-flex-direction-column is-align-items-flex-start is-flex-wrap-wrap"
+              class="tags"
             >
               <span
                 v-for="func in props.row.functions"
                 :key="func"
-                class="tag is-light"
+                class="tag wizard is-light"
               >
                 {{ func }}
               </span>
@@ -535,6 +523,7 @@ export default {
       itemModification: false,
       selected: null,
       tableData: [],
+      p: 1,
       personCounts: {},
 
       inputTerm,
@@ -547,9 +536,7 @@ export default {
     };
   },
   computed: {
-    ...mapState("persons", {
-      persons: "documents",
-    }),
+    ...mapState("persons", {persons: "documents"}),
     ...mapState("persons", [
       "loadingStatus",
       "numPage",
@@ -581,8 +568,10 @@ export default {
       set: function (newValue, oldValue) {
         newValue = parseInt(newValue);
         if (newValue && newValue !== oldValue) {
-          this.setNumPage(newValue);
-          this.performSearch(this.sortingPriority);
+          this.setSorts(this.sortingPriority)
+          this.p = newValue
+          this.setNumPage(newValue)
+          this.performSearch();
           this.loadAsyncData();
         }
       },
@@ -598,8 +587,12 @@ export default {
     persons() {
       this.loadAsyncData();
     },
-    inputTerm() {
+    inputTerm(newVal, OldVal) {
       this.setSearchTerm(this.labeledInputTerm);
+      if (newVal === '') {
+        this.selected = null;
+        this.search()
+      }
     },
     /*
     sender() {
@@ -623,9 +616,14 @@ export default {
     */
 
     selected() {
-      if (this.selected) {
-        this.managePersonData({ action: { name: "set-person" }, data: this.selected });
-      }
+      //selection is enabled only in popupMode, not on route /places for now
+      if (this.popupMode) {
+        if (this.selected) {
+          this.managePersonData({action: {name: "set-person"}, data: this.selected});
+        } else {
+          this.managePersonData({action: {name: "set-person"}, data: {}});
+        }
+      } else this.selected = null
     },
     "$attrs.person"() {
       if (
@@ -683,8 +681,8 @@ export default {
     managePersonData(evt) {
       this.$emit("manage-person-data", evt);
     },
-
     search() {
+      this.setNumPage(1);
       this.performSearch();
       this.loadAsyncData();
     },
@@ -802,6 +800,7 @@ export default {
     },
 
     async loadAsyncData() {
+      this.selected = null;
       if (this.persons) {
         this.tableData = await Promise.all(
           this.persons.map(async (p) => {
@@ -833,25 +832,25 @@ export default {
       }
     },
     columnTdAttrs(row, column) {
-      if (column.label === "Titre") {
+      if (column.label === "Nom") {
         return {
-          class: "",
+          class: "nom",
           style: {
-            "max-width": "550px",
+            "min-width": "auto",
           },
         };
-      } else if (column.label === "Date de rédaction") {
+      } else if (column.label === "Identifiant de référence") {
         return {
-          class: "",
+          class: "refid",
           style: {
-            "max-width": "300px",
+            "min-width": this.popupMode ? "45%" : null,
           },
         };
       } else if (column.label === "Fonction occupée") {
         return {
-          class: "",
+          class: "function",
           style: {
-            "max-width": this.popupMode ? "120px" : null,
+            "min-width": this.popupMode ? "auto" : null,
           },
         };
       } else {
@@ -872,40 +871,93 @@ export default {
 @import "@/assets/sass/main.scss";
 
 .person-list {
-  .pagination-goto {
-    display: flex;
-    float: right;
-    position: relative;
-    width: 120px;
-    margin-left: 50px;
-    span {
-      width: 100px;
-      align-self: center;
-    }
-    input {
-      margin-left: 4px;
-      display: inline;
-    }
-  }
-  progress {
-    margin-top: 30px;
-  }
 
   .checkbox {
     display: inline-flex;
   }
   .search-container {
-    margin-bottom: 40px;
+    margin-bottom: 10px;
 
-    input[type="text"] {
+    @include on-tablet {
+      margin-bottom: 20px;
+    }
+
+    @include on-mobile {
+      margin-bottom: 10px;
+    }
+
+    /*input[type="text"] {
       height: 100%;
     }
 
     a.button {
       padding-top: 0;
       padding-bottom: 0;
+    }*/
+  }
+  .search-container input {
+    width: 100% !important;
+    vertical-align: center;
+  }
+  .control, .search_input {
+    width: 100% !important;
+    margin-right: 1px !important;
+    .icon {
+      padding: 0px !important;
+    }
+    input[type="search"] {
+      //border-right-color: #FFFFFF !important;
+      border-bottom-right-radius: 4px !important;
+      border-top-right-radius: 4px !important;
+      height: 100%;
+      padding-top: 2px;
+      padding-bottom: 2px;
+
+      font-family: $family-primary;
+      font-size: 18px;
+      font-weight: 400;
+      color: #343434;
+
+      @include on-mobile {
+        font-size: 15px;
+      }
+      &:hover,
+      &:focus {
+        border-bottom-right-radius: 4px !important;
+        border-top-right-radius: 4px !important;
+        //border-right-color: transparent !important;
+        box-shadow: none !important;
+      }
     }
   }
+  .search_button {
+    border-color: white !important;
+    outline: none !important;
+    box-shadow: none !important;
+    color: rgba(127, 0, 56) !important;
+    //border-bottom-left-radius: 0px !important;
+    //border-top-left-radius: 0px !important;
+
+    &.pl-5 {
+      @include on-mobile {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+      }
+    }
+
+    i.fa-search {
+      text-indent: -9999px;
+      display: inline-block;
+      width: 25px;
+      height: 25px;
+      background: url(../../assets/images/icons/loupe_header.svg) center / contain no-repeat;
+
+      @include on-mobile {
+        width: 20px;
+        height: 20px;
+      }
+    }
+ }
   .searchbox-container {
     display: flex;
 
@@ -919,11 +971,38 @@ export default {
   .section-title {
     background-color: $light;
   }
-  .result-container {
-    border-bottom-width: 1px;
-    border-bottom-style: solid;
-    border-bottom-color: #fdb3cc;
+  td {
+    &.nom {
+      display: flex;
+      padding: 15px 15px 15px 0px !important;
+      white-space: break-spaces;
+    }
+
+    &.function {
+      display: flex;
+      padding: 0px 15px 0px 0px !important;
+
+      span.tags {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        vertical-align: center;
+        margin: auto !important;
+        padding: 4px 4px 4px 4px !important;
+        text-align: center;
+
+        span {
+          display: flex;
+          height: auto !important;
+          margin: 4px 0px 4px 0px !important;
+          padding: 4px 4px 4px 4px !important;
+          text-align: center;
+          white-space: break-spaces;
+        }
+      }
+    }
   }
+
   .detail {
     td {
       padding: 0;

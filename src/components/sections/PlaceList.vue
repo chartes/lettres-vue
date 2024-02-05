@@ -1,37 +1,28 @@
 <template>
   <div class="place-list">
-    <div class="search-container">
+    <div>
       <section>
         <header />
-
-        <!--
-          <my-awesome-map
-            v-if="$attrs.place.lat && $attrs.place.long"
-            :key="$attrs.place.label"
-            :lat-lng="[$attrs.place.lat, $attrs.place.long]"
-            class="mt-2"
-          />
-          -->
-
-        <div class="searchbox-container">
-          <b-field
-            label="Lieu"
-            class="term-search"
-          >
-            <div class="field has-addons">
-              <div class="control">
-                <input
-                  v-model="inputTerm"
-                  class="input"
-                  type="text"
-                  placeholder="Paris"
-                  @focus="$event.target.select()"
-                  @keyup.enter="search"
-                />
-              </div>
-              <div class="control">
+        <div>
+          <div class="search-container">
+            <b-field
+              label="Lieu"
+            >
+              <b-input
+                v-model="inputTerm"
+                class="search_input"
+                type="search"
+                icon-right="close-circle"
+                icon-right-clickable
+                @icon-right-click="inputTerm=''"
+                placeholder="Paris"
+                @focus="$event.target.select()"
+                @keyup.native.enter="search"
+              />
+              <div>
                 <a
-                  class="button pl-5 pr-5"
+                  class="button pl-5 pr-5 search_button"
+                  :disabled="!inputTerm || inputTerm === ''"
                   @click="search"
                 >
                   <span class="icon">
@@ -46,69 +37,69 @@
                   </span>
                 </a>
               </div>
-            </div>
-          </b-field>
-
-          <b-field
-            v-if="false"
-            label="Dates de lieu"
-          >
-            <b-field>
-              <b-checkbox
-                v-model="fromPlace"
-                type="is-info"
-              >
-                Expédition
-              </b-checkbox>
-            </b-field>
-            <b-field>
-              <b-checkbox
-                v-model="toPlace"
-                type="is-info"
-              >
-                Réception
-              </b-checkbox>
-            </b-field>
-          </b-field>
-
-          <b-field
-            v-if="false"
-            label="Parties du document"
-          >
-            <b-field>
-              <b-checkbox
-                v-model="inAddress"
-                type="is-info"
-              >
-                Adresse
-              </b-checkbox>
             </b-field>
 
-            <b-field>
-              <b-checkbox
-                v-model="inTranscription"
-                type="is-info"
-              >
-                Transcription
-              </b-checkbox>
+            <b-field
+              v-if="false"
+              label="Dates de lieu"
+            >
+              <b-field>
+                <b-checkbox
+                  v-model="fromPlace"
+                  type="is-info"
+                >
+                  Expédition
+                </b-checkbox>
+              </b-field>
+              <b-field>
+                <b-checkbox
+                  v-model="toPlace"
+                  type="is-info"
+                >
+                  Réception
+                </b-checkbox>
+              </b-field>
             </b-field>
-            <b-field>
-              <b-checkbox
-                v-model="inArgument"
-                type="is-info"
-              >
-                Analyse
-              </b-checkbox>
+
+            <b-field
+              v-if="false"
+              label="Parties du document"
+            >
+              <b-field>
+                <b-checkbox
+                  v-model="inAddress"
+                  type="is-info"
+                >
+                  Adresse
+                </b-checkbox>
+              </b-field>
+
+              <b-field>
+                <b-checkbox
+                  v-model="inTranscription"
+                  type="is-info"
+                >
+                  Transcription
+                </b-checkbox>
+              </b-field>
+              <b-field>
+                <b-checkbox
+                  v-model="inArgument"
+                  type="is-info"
+                >
+                  Analyse
+                </b-checkbox>
+              </b-field>
+              <b-field>
+                <b-checkbox
+                  v-model="inNotes"
+                  type="is-info"
+                >
+                  Notes
+                </b-checkbox>
+              </b-field>
             </b-field>
-            <b-field>
-              <b-checkbox
-                v-model="inNotes"
-                type="is-info"
-              >
-                Notes
-              </b-checkbox>
-            </b-field>
-          </b-field>
+          </div>
         </div>
       </section>
 
@@ -177,17 +168,6 @@
         </div>
       </div>
       <div class="result-container">
-        <!--<span class="pagination-goto">
-          <span> Page : </span>
-          <input
-            v-model="currentPage"
-            name="page"
-            class="input"
-            type="text"
-            placeholder="Page..."
-            @change.prevent="currentPage = parseInt(p)"
-          >
-        </span>-->
 
         <b-table
           ref="multiSortTable"
@@ -531,13 +511,11 @@
 <script>
 import { mapState, mapActions, mapGetters } from "vuex";
 import DocumentTitleBar from "../forms/place/DocumentTitleBar.vue";
-// import MyAwesomeMap from "@/components/MyAwesomeMap.vue";
 
 export default {
   name: "PlaceList",
   components: {
-    DocumentTitleBar,
-    // MyAwesomeMap,
+    DocumentTitleBar
   },
   props: {
     popupMode: { type: Boolean, default: true },
@@ -550,6 +528,7 @@ export default {
       itemModification: false,
       selected: null,
       tableData: [],
+      p: 1,
       placenameCounts: {},
 
       inputTerm,
@@ -562,9 +541,7 @@ export default {
     };
   },
   computed: {
-    ...mapState("placenames", {
-      placenames: "documents",
-    }),
+    ...mapState("placenames", {placenames: "documents"}),
     ...mapState("placenames", [
       "loadingStatus",
       "numPage",
@@ -596,6 +573,8 @@ export default {
       set: function (newValue, oldValue) {
         newValue = parseInt(newValue);
         if (newValue && newValue !== oldValue) {
+          this.setSorts(this.sortingPriority)
+          this.p = newValue
           this.setNumPage(newValue);
           this.performSearch(this.sortingPriority);
           this.loadAsyncData();
@@ -613,8 +592,12 @@ export default {
     placenames() {
       this.loadAsyncData();
     },
-    inputTerm() {
+    inputTerm(newVal, OldVal) {
       this.setSearchTerm(this.labeledInputTerm);
+      if (newVal === '') {
+        this.selected = null;
+        this.search()
+      }
     },
     /*
     fromPlace() {
@@ -638,9 +621,14 @@ export default {
     */
 
     selected() {
-      if (this.selected) {
-        this.managePlaceData({ action: { name: "set-place" }, data: this.selected });
-      }
+      //selection is enabled only in popupMode, not on route /places for now
+      if (this.popupMode) {
+        if (this.selected) {
+          this.managePlaceData({action: {name: "set-place"}, data: this.selected});
+        } else {
+          this.managePlaceData({action: {name: "set-place"}, data: {}});
+        }
+      } else this.selected = null
     },
     "$attrs.place"() {
       if (
@@ -700,6 +688,7 @@ export default {
     },
 
     search() {
+      this.setNumPage(1);
       this.performSearch();
       this.loadAsyncData();
     },
@@ -817,6 +806,7 @@ export default {
     },
 
     async loadAsyncData() {
+      this.selected = null;
       if (this.placenames) {
         this.tableData = await Promise.all(
           this.placenames.map(async (p) => {
@@ -827,7 +817,7 @@ export default {
             return {
               //placeFunction: d.attributes.function,
               //placename: d.placename,
-              // placenameRole: d.role,
+              //placenameRole: d.role,
               documents: this.placenamesHavingRoles.documents[p.id] || [],
               fromPlace: this.placenamesHavingRoles.fromPlace[p.id] || [],
               toPlace: this.placenamesHavingRoles.toPlace[p.id] || [],
@@ -851,7 +841,30 @@ export default {
       }
     },
     columnTdAttrs(row, column) {
-      return null;
+      if (column.label === "Nom") {
+        return {
+          class: "nom",
+          style: {
+            "min-width": "auto",
+          },
+        };
+      } else if (column.label === "Identifiant de référence") {
+        return {
+          class: "refid",
+          style: {
+            "min-width": this.popupMode ? "45%" : null,
+          },
+        };
+      } else if (column.label === "Description") {
+        return {
+          class: "function",
+          style: {
+            "min-width": this.popupMode ? "auto" : null,
+          },
+        };
+      } else {
+        return null;
+      }
     },
     /*
      * Handle page-change event
@@ -863,37 +876,88 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
 @import "@/assets/sass/main.scss";
-@import "@/assets/sass/components/_search_results_table.scss";
-@import "@/assets/sass/components/_search_results_pagination.scss";
 
 .place-list {
-  /*.pagination-goto {
-    display: flex;
-    float: right;
-    position: relative;
-    width: 120px;
-    margin-left: 50px;
-    span {
-      width: 100px;
-      align-self: center;
-    }
-    input {
-      margin-left: 4px;
-      display: inline;
-    }
-  }*/
-  progress {
-    margin-top: 30px;
-  }
 
   .checkbox {
     display: inline-flex;
   }
   .search-container {
-    margin-bottom: 40px;
+    margin-bottom: 10px;
+
+    @include on-tablet {
+      margin-bottom: 20px;
+    }
+
+    @include on-mobile {
+      margin-bottom: 10px;
+    }
   }
+  .search-container input {
+    width: 100% !important;
+    vertical-align: center;
+  }
+  .control, .search_input {
+    width: 100% !important;
+    margin-right: 1px !important;
+    .icon {
+      padding: 0px !important;
+    }
+    input[type="search"] {
+      //border-right-color: #FFFFFF !important;
+      border-bottom-right-radius: 4px !important;
+      border-top-right-radius: 4px !important;
+      height: 100%;
+      padding-top: 2px;
+      padding-bottom: 2px;
+
+      font-family: $family-primary;
+      font-size: 18px;
+      font-weight: 400;
+      color: #343434;
+
+      @include on-mobile {
+        font-size: 15px;
+      }
+      &:hover,
+      &:focus {
+        border-bottom-right-radius: 4px !important;
+        border-top-right-radius: 4px !important;
+        //border-right-color: transparent !important;
+        box-shadow: none !important;
+      }
+    }
+  }
+  .search_button {
+    border-color: white !important;
+    outline: none !important;
+    box-shadow: none !important;
+    color: rgba(127, 0, 56) !important;
+    //border-bottom-left-radius: 0px !important;
+    //border-top-left-radius: 0px !important;
+
+    &.pl-5 {
+      @include on-mobile {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+      }
+    }
+
+    i.fa-search {
+      text-indent: -9999px;
+      display: inline-block;
+      width: 25px;
+      height: 25px;
+      background: url(../../assets/images/icons/loupe_header.svg) center / contain no-repeat;
+
+      @include on-mobile {
+        width: 20px;
+        height: 20px;
+      }
+    }
+ }
   .searchbox-container {
     display: flex;
 
@@ -907,10 +971,36 @@ export default {
   .section-title {
     background-color: $light;
   }
-  .result-container {
-    border-bottom-width: 1px;
-    border-bottom-style: solid;
-    border-bottom-color: #fdb3cc;
+  td {
+    &.nom {
+      display: flex;
+      padding: 15px 15px 15px 0px !important;
+      white-space: break-spaces;
+    }
+
+    &.description {
+      display: flex;
+      padding: 0px 15px 0px 0px !important;
+
+      span.tags {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        vertical-align: center;
+        margin: auto !important;
+        padding: 4px 4px 4px 4px !important;
+        text-align: center;
+
+        span {
+          display: flex;
+          height: auto !important;
+          margin: 4px 0px 4px 0px !important;
+          padding: 4px 4px 4px 4px !important;
+          text-align: center;
+          white-space: break-spaces;
+        }
+      }
+    }
   }
   .detail {
     td {

@@ -1,12 +1,15 @@
 <template>
   <div
-    v-if="$attrs.person && $attrs.person.label"
+    v-if="$attrs.person"
     class="person-info-card"
   >
     <div class="person-info-card-title">
       Données pour la sauvegarde :
     </div>
-    <div class="labels">
+    <div
+      v-if="$attrs.person && $attrs.person.label"
+      class="labels"
+    >
       <div class="heading is-size-5">
         {{ $attrs.person.label }}
       </div>

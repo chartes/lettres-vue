@@ -161,12 +161,18 @@ const actions = {
 
 
   search ({ rootState, commit }, what) {
-    commit('SEARCH_RESULTS', [])
+    /** Gets Persons ids, labels and refs (wikidate ids)
+     * @param {string}   what  search terms (label, id , etc.)
+     * @returns {object} API response data (data, jsonapi, meta - incl. total-count, links) and list of persons objects ({"id": digit, "label": string, "ref": string})
+     * @returns {list} list of persons objects as "personsSearchResults" in persons state
+     */
+    commit('SEARCH_RESULTS', []);
     const http = http_with_auth(rootState.user.jwt);
     return http.get(`/search?query=*${what}*&index=lettres__${process.env.NODE_ENV}__persons&without-relationships&sort=label.keyword`)
       .then( response => {
-        const persons = response.data.data.map(inst => { return { id: inst.id, ...inst.attributes}});
+        const persons = response.data.data.map(pers => { return { id: pers.id, ...pers.attributes}});
         commit('SEARCH_RESULTS', persons)
+        return {response: response.data, persons: persons}
       });
   },
   searchOnWikidata({commit}, what) {
@@ -327,9 +333,9 @@ const actions = {
 
   async checkIfRefExists({rootState}, ref) {
     const http = http_with_auth(rootState.user.jwt);
-    const response = await http.get(`search?query=ref:"${ref}"&=lettres__${process.env.NODE_ENV}__persons&without-relationships&page[size]=1`)
+    const response = await http.get(`search?query=ref:${ref.split("/").pop()}&index=lettres__${process.env.NODE_ENV}__persons&without-relationships&page[size]=1`)
     let existingPerson = {person: response.data.data[0], count: response.data.meta['total-count']}
-      return existingPerson
+    return existingPerson
   },
   async updateInlinedRole({state, rootState, dispatch}, {inlined}) {
     const http = http_with_auth(rootState.user.jwt);
@@ -508,6 +514,7 @@ const actions = {
 
         commit('UPDATE_ALL', {documents: data, totalCount: meta['total-count'] , links, included: included || []});
         //commit('SET_LOADING_STATUS', false);
+          return {documents: data, totalCount: meta['total-count'] , links, included: included || []}
       } catch (reason) {
         console.warn('cant search:', reason);
         //commit('SET_LOADING_STATUS', false);
