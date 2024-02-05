@@ -62,7 +62,7 @@ const TextFieldMixins = {
       if (this.status === 'success') {
         return IconSuccess;
       }
-      return IconPenEdit;
+      //return IconPenEdit;
     }
   }
 
