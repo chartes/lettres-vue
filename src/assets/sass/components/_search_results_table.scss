@@ -150,6 +150,9 @@
         border: none !important;
 
         tr {
+          &:last-of-type {
+            border-bottom: 1px solid #fdb3cc;
+          }
 
           &.is-selected {
             background-color: #CB2158;
@@ -322,9 +325,15 @@
 
               span {
                 font-size: 16px !important;
+                .wizard {
+                  font-size: 14px !important;
+                }
 
                 @include on-mobile {
                   font-size: 14px !important;
+                  .wizard {
+                    font-size: 12px !important;
+                  }
                 }
               }
             }
