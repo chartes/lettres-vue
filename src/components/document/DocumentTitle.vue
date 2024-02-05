@@ -21,7 +21,7 @@
           @on-keyup-escape="cancelInput($event)"
         />
       </header> -->
-      <header v-if="!preview"><!-- TODO Victor: if highlights (see above) change to v-else-if -->
+      <header v-if="!preview && titleContent"><!-- TODO Victor: if highlights (see above) change to v-else-if -->
         <title-field-in-place
           :tabulation-index="0"
           label="Titre"

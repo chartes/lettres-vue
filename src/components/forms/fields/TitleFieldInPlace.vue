@@ -16,7 +16,7 @@
           @change="inputChanged"
           @refresh-title="refreshTitle($event)"
           @save="saveTitle()"
-          @on-keyup-escape="cancelInput"
+          @on-keyup-escape="cancelInput($event)"
           @add-note="addNote($event)"
 
         ><!-- removing @on-keyup-enter="clickSave", since there is a save button, as it prevented key stroke on other editors -->
@@ -102,8 +102,17 @@ export default {
       default: () => [['close'], ["italic", "superscript", "note"]],
       type: Function,
     },
+    initialValue: {
+      default: null,
+      type: String,
+    }
   },
   emits: ["refresh-title", "save-title"],
+  mounted() {
+    console.log("TitleFieldInPlace mounted this.$props.initialValue", this.$props.initialValue)
+    this.value = this.$props.initialValue
+    console.log("TitleFieldInPlace mounted value", this.value)
+  },
   computed: {
     saveButtonClass() {
       switch (this.status) {
@@ -139,9 +148,6 @@ export default {
     },
   },
   watch: {
-    initialValue(val, oldVal) {
-      this.value = val;
-    },
     status(val) {
       if (val === "success") {
         this.exitEditMode(true);
