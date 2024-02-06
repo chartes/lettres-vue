@@ -7,7 +7,9 @@
       :class="buttonClass"
       :disabled="!active"
       @click="callback(format)"
-    />
+    >
+      <span class="tooltiptext">{{ setTitles(this.format) }}</span>
+    </button>
   </div>
 </template>
 
@@ -33,9 +35,25 @@ export default {
       return icons[this.format];
     },
   },
-  watch(format) {
-
-  }
+  methods: {
+    setTitles(format) {
+      let tooltips = {
+        "italic": "Italique",
+        "bold": "Gras",
+        "underline": "Souligné",
+        "cite": "Citation",
+        "superscript": "Exposant",
+        "page": "Page suivante",
+        "person": "Personne",
+        "location": "Lieu",
+        "note": "Note",
+        "link": "Lien",
+        "close": "Fermer",
+        "del": "Barré"
+      }
+      return tooltips[format]
+    },
+  },
 };
 </script>
 
@@ -44,6 +62,7 @@ export default {
 
   button {
     display: inline-block;
+    position: relative;
     width: 40px;
     height: 40px;
     background-color: #F2F2F2;
@@ -125,9 +144,33 @@ export default {
       background-size: 23px auto;
     }
 
-    & > * {
-      display: none !important;
+    & > *:not(.tooltiptext) {
+      display: none;
+    }
+    &:not(hover) > .tooltiptext {
+      font-size: 12px !important;
+      width: auto;
+      background-color: black !important;
+      color: #fff;
+      text-align: center;
+      border-radius: 6px;
+      padding: 5px 5px;
+      visibility: hidden;
+      /* Position the tooltip */
+      position: absolute;
+      z-index: 10;
+      bottom: 110%;
+      transform: translateX(-50%);
+    }
+    &:hover > .tooltiptext[disabled]{
+      visibility: visible;
+      background-color: #C3C3C3 !important;
+    }
+    &:hover > .tooltiptext {
+      visibility: visible;
+      background-color: black !important;
     }
   }
 }
+
 </style>

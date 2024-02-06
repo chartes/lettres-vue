@@ -503,7 +503,7 @@
         >
           <template #default="props">
             <note-form
-              title="Actions de notes"
+              header="Actions de notes"
               :input-data="noteInputData"
               @add-place="addPlace($event)"
               @add-person="addPerson($event)"
@@ -531,7 +531,7 @@
         >
           <template #default="props">
             <note-actions
-              title="Actions de notes"
+              header="Actions de notes"
               :input-data="noteInputData"
               :title-editor="titleEditor ? titleEditor : titleContent"
               :argument-editor="argumentEditor ? argumentEditor : argumentContent"
@@ -565,7 +565,7 @@
         >
           <template #default="props">
             <note-form
-              title="Actions de notes"
+              header="Actions de notes"
               :input-data="noteInputData"
               :input-list="notesListData"
               @add-note="addNote($event)"

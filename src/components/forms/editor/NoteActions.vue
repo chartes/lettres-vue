@@ -6,7 +6,7 @@
     <header class="is-uppercase is-size-2 mb-5">
       <h1
         :title="existingNote ? 'Choisir \'Editer :\' pour modifier le contenu de la note \nChoisir \'Supprimer :\' pour supprimer l\'appel de note' : ''"
-      >{{ $attrs.title }} : {{ existingNote ? 'édition de la sélection' : 'nouvel appel de note' }}</h1>
+      >{{ $attrs.header }} : {{ existingNote ? 'édition de la sélection' : 'nouvel appel de note' }}</h1>
     </header>
     <div class="note-actions__container">
       <div

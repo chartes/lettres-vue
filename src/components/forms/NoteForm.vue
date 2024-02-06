@@ -4,7 +4,7 @@
     class="modal-card note-form"
   >
     <header class="is-uppercase is-size-2 mb-5">
-      <h1>{{ $attrs.title }} : {{ inputData && inputData.note || inputData && inputData.formats.note ? "éditer la note" : "nouvelle note" }}</h1>
+      <h1>{{ $attrs.header }} : {{ inputData && inputData.note || inputData && inputData.formats.note ? "éditer la note" : "nouvelle note" }}</h1>
     </header>
     <div class="editor">
       <rich-text-editor
@@ -65,7 +65,7 @@
     class="modal-card note-form"
   >
     <header class="is-uppercase is-size-2 mb-5">
-      <h1>{{ $attrs.title }} : {{ existingNote ? "lier cet appel à une autre note" : "lier cet appel à une note"}}</h1>
+      <h1>{{ $attrs.header }} : {{ existingNote ? "lier cet appel à une autre note" : "lier cet appel à une note"}}</h1>
     </header>
     <div
       v-if="!existingNote"
