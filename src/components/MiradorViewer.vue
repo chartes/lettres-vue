@@ -9,34 +9,53 @@
 
 <script>
 import Mirador from "mirador";
+import {mapActions, mapState} from "vuex";
+import axios from "axios";
 
 export default {
   name: "MiradorViewer",
   components: {},
   props: {
     manifestUrl: { type: String, required: true },
-    canvasIndex: { type: Number, default: 0 },
+    //canvasIndex: { type: Number, default: 0 },
     windowId: {type: String, default: "document"}
   },
   data() {
     return {
       viewer: null,
+      defaultManifestUrl: null
     };
   },
-  computed: {},
+  computed: {
+    ...mapState("document", ["witnesses"]),
+    ...mapState("layout", ["canvasIndex", "viewerMode"]),
+  },
   watch: {
     manifestUrl() {
       this.setManifestUrl(this.manifestUrl);
     },
+    canvasIndex() {
+      //console.log("mirador watch canvasIndex", this.canvasIndex)
+      this.setCanvasId(this.canvasIndex)
+    },
+    viewerMode() {
+      //this.setCanvasId(this.canvasIndex)
+    }
   },
-  created() {
-    this.$parent.$on("refresh-viewer", this.updateCurrentWindow);
+  async created() {
+    this.$parent.$on("refresh-viewer", await this.updateCurrentWindow);
   },
   async mounted() {
+    this.defaultManifestUrl = this.witnesses[0]["manifest_url"] ? this.witnesses[0]["manifest_url"] : null;
     await this.initialize();
   },
   methods: {
+    ...mapActions("layout", ["setViewerMode", "setCanvasIndex"]),
     async initialize() {
+      if (this.viewerMode === "text-mode" || !this.viewerMode) {
+        this.setViewerMode("text-and-images-mode");
+      }
+
       const manifests = {};
       let url = this.manifestUrl;
       try {
@@ -51,6 +70,9 @@ export default {
         // metadata:
         // 'provider': ''
       };
+      const resp = await axios.get(this.manifestUrl);
+        let canvasId = resp.data.sequences[0]["canvases"][this.canvasIndex]["@id"];
+
       try {
         this.viewer = Mirador.viewer({
           id: `vue-mirador-container-${this.windowId}`,
@@ -59,7 +81,7 @@ export default {
             {
               id: this.windowId,
               loadedManifest: url,
-              canvasIndex: this.canvasIndex,
+              canvasId: canvasId,
             },
           ],
           window: {
@@ -68,7 +90,7 @@ export default {
             defaultSideBarPanel: "info",
             sideBarOpenByDefault: false,
             hideWindowTitle: true,
-            maximizedByDefault: true,
+            maximizedByDefault: true
           },
           workspace: {
             showZoomControls: true,
@@ -79,27 +101,34 @@ export default {
           },
         });
       } catch (e) {
-        console.warn("Mirrador viewer: ", e);
-      }
+        console.warn("Mirador viewer: ", e);
+      } this.setCanvasId(this.canvasIndex)
     },
-    dispatchAction(action) {
+    async dispatchAction(action) {
       if (this.viewer === null) {
-        this.initialize();
+        //console.log("dispatchAction", this.viewer, this.windowId)
+        await this.initialize();
       }
       this.viewer.store.dispatch(action);
     },
 
     setManifestUrl(newUrl) {
-      console.log("setManifestUrl", newUrl);
+      //console.log("setManifestUrl", newUrl);
       const action = Mirador.actions.updateWindow(this.windowId, {
         manifestId: this.manifestUrl,
       });
       this.dispatchAction(action);
     },
 
-    setCanvasId(canvasId) {
-      console.log("setCanvasId", canvasId);
+    async setCanvasId(canvasIndex) {
+      //console.log("setCanvasId", canvasIndex)
+      //console.log("this.manifestUrl", this.manifestUrl)
+      const resp = await axios.get(this.manifestUrl);
+      let canvasId = resp.data.sequences[0]["canvases"][canvasIndex]["@id"];
       const action = Mirador.actions.setCanvas(this.windowId, canvasId);
+      if (this.viewerMode === "text-mode" || !this.viewerMode) {
+        this.setViewerMode("text-and-images-mode");
+      }
       this.dispatchAction(action);
     },
 

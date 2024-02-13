@@ -142,12 +142,13 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import {mapActions, mapState} from "vuex";
 import RichTextEditor from "../forms/fields/RichTextEditor";
 import EditorSaveButton from "../forms/fields/EditorSaveButton";
 import DocumentNotes from "./DocumentNotes";
 import escapeRegExp from "lodash/escapeRegExp";
 import {removeContentEditableAttributesFromString} from "@/modules/document-helpers";
+import axios from "axios";
 
 export default {
   name: "DocumentTranscription",
@@ -176,7 +177,9 @@ export default {
       transcriptionContent: "",
       addressContent: "",
       editModeAddress: false,
-      editModeTranscription: false
+      editModeTranscription: false,
+      displayedWitness: null,
+      pageBreaksElements: null
     };
   },
   watch: {
@@ -192,8 +195,15 @@ export default {
     }
   },
   computed: {
-    ...mapState("document", ["document"]),
-    ...mapState("search", ["searchTerm", "documents"])
+    ...mapState("document", ["document", "witnesses"]),
+    ...mapState("search", ["searchTerm", "documents"]),
+  },
+  beforeDestroy() {
+    if (this.pageBreaksElements) {
+      for (let pb_element of this.pageBreaksElements) {
+        pb_element.removeEventListener('click', this.showCanvas)
+      }
+    }
   },
   mounted() {
     //console.log("this.documents.filter((doc) => doc.id == this.document.id)[0].transcription : ", this.documents.filter((doc) => doc.id == this.document.id)[0].transcription)
@@ -234,9 +244,24 @@ export default {
       //TODO Victor remove once attributes title have been added in database
       this.getPlacesLabel(this.transcriptionContent, "transcription");
       this.getPlacesLabel(this.addressContent, "address");
+
+      this.getPageBreaks(this.transcriptionContent, "transcription")
+        this.$nextTick(async () => {
+          let pb_elements = document.getElementsByClassName("pb");
+          this.pageBreaksElements = pb_elements;
+          for (let pb_element of pb_elements) {
+            const resp = await axios.get(this.witnesses[0]["manifest_url"]);
+            let canvasIndex = resp.data.sequences[0]["canvases"].findIndex(c => c.label === pb_element.getAttribute('name').toString());
+            pb_element.addEventListener('click', (e) => {
+              e.preventDefault();
+              this.showCanvas(canvasIndex);
+            })
+          }
+        })
     }
   },
   methods: {
+    ...mapActions("layout", ["setDisplayedManifestUrl", "setViewerMode", "setCanvasIndex"]),
     addPlace(evt, source) {
       this.$emit("add-place", {...evt, source});
     },
@@ -366,6 +391,33 @@ export default {
         }
       }
     },
+    showCanvas(index) {
+      let witness = this.witnesses[0];
+      console.log("transcription showCanvas this.displayedWitness / index", this.displayedWitness, index)
+      this.setCanvasIndex(index);
+      this.displayedWitness = witness;
+      this.setDisplayedManifestUrl(witness["manifest_url"]);
+      //this.setViewerMode("text-and-images-mode");
+    },
+
+    async getPageBreaks(content, type) {
+      const pbPattern = /(<a (?:class="pb"\s*|target="_blank"\s*|href="[^> ]*"\s*)*>)(.+?)(?:<\/a>)/gmi
+      if (content) {
+        let contentPrep = content
+        let inContent = pbPattern.test(contentPrep);
+        if (inContent) {
+          let contentMatch = content.match(pbPattern)
+          let contentMatches = [...content.matchAll(pbPattern)]
+          contentMatches.forEach((pb) => {
+            const pagePattern = /\[p\D+(\d+?)\]/gmi
+            let page = [...pb[2].matchAll(pagePattern)][0][1]
+            this.transcriptionContent = this.transcriptionContent.replace(pb[1], pb[1].replace(">", ' name="'+ page + '">'));
+          })
+          console.log(`getPageBreaks in${type} replaced`, this.transcriptionContent)
+        }
+      }
+    },
+
     //TODO Victor remove once attributes title have been added in database
     async getPersonsLabel(content, type) {
       const persPattern = /<a (?:class="persName"\s*|target="_blank"\s*|href="[^> ]*"\s*|id="(\d+)"\s*)*>.+?<\/a>/gmi

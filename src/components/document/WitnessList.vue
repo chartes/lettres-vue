@@ -183,6 +183,7 @@ export default {
   computed: {
     ...mapState("document", ["witnesses", "document"]),
     ...mapState("search", ["documents"]),
+    ...mapState("layout", ["displayedManifestUrl"]),
 
     dragOptions() {
       return {
@@ -211,6 +212,11 @@ export default {
       }
       //this.displayedWitness = this.witnessTmpList ? this.witnessTmpList[0] : null;
     },
+    displayedManifestUrl() {
+      if (this.displayedManifestUrl) {
+        this.displayedWitness = this.witnesses.filter(w => w["manifest_url"] === this.displayedManifestUrl)[0];
+      } else this.displayedWitness = null
+    }
   },
   created() {
     if (this.$route.name === 'search') {
@@ -269,13 +275,13 @@ export default {
       }
     },
     showWitness(witness) {
-      console.log("this.displayedWitness / witness / this.rowDocId", this.displayedWitness, witness, this.rowDocId)
+      //console.log("this.displayedWitness / witness / this.rowDocId", this.displayedWitness, witness, this.rowDocId)
       if (this.displayedWitness && witness.id === this.displayedWitness.id) {
         this.displayedWitness = null;
-        this.setDisplayedManifestUrl(undefined)
-        this.setViewerMode(undefined)
+        this.setDisplayedManifestUrl(null);
+        this.setViewerMode(null);
       } else {
-        console.log("new witness or manisfest : ", witness, witness["manifest_url"])
+        //console.log("new witness or manisfest : ", witness, witness["manifest_url"])
         this.displayedWitness = witness;
         this.setViewerMode("text-and-images-mode")
         this.setDisplayedManifestUrl(witness["manifest_url"]);
@@ -286,7 +292,7 @@ export default {
       this.recomputeOrder();
     },
     addNote(event) {
-      console.log('witness list')
+      //console.log('witness list')
       this.$emit('add-note', event)
     },
     cleanHTML(text) {

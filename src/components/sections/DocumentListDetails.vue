@@ -64,7 +64,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import {mapActions, mapState} from "vuex";
 import MiradorViewer from "@/components/MiradorViewer.vue";
 import escapeRegExp from "lodash/escapeRegExp";
 
@@ -103,14 +103,18 @@ export default {
   created() {
     console.log("this.witnesses ", this.$props.witnesses)
   },
+  beforeDestroy() {
+    this.setViewerMode("text-mode");
+  },
   computed: {
     ...mapState("search", ["searchTerm", "searchType"])
   },
   methods: {
+    ...mapActions("layout", ["setViewerMode"]),
     toggleMirador: function(newUrl) {
       console.log("toggleMirador newUrl", newUrl)
       if (this.displayedManifestUrl === newUrl) {
-        this.displayedManifestUrl = undefined
+        this.displayedManifestUrl = null
       } else {
         this.displayedManifestUrl = newUrl
       }

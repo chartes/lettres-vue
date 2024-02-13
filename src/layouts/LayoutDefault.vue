@@ -192,7 +192,7 @@ export default {
       }
     },
     "document.id"() {
-      this.setDisplayedManifestUrl(null);
+      this.setDisplayedManifestUrl(undefined);
     },
     witnesses() {
       this.$emit("refresh-viewer");
@@ -210,7 +210,7 @@ export default {
       "hideLeftSideBar",
       "toggleRightSideBar",
       "hideRightSideBar",
-      "setDisplayedManifestUrl",
+      "setDisplayedManifestUrl"
     ]),
   },
 };

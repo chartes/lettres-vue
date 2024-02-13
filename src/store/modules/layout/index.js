@@ -4,7 +4,8 @@ const state = {
   showRightSideBar: false,
   lastSeenDocId: null,
   displayedManifestUrl: null,
-  viewerMode: null
+  viewerMode: null,
+  canvasIndex: 0,
 };
 
 
@@ -23,6 +24,9 @@ const mutations = {
   },
   SET_VIEWER_MODE(state, m) {
     state.viewerMode = m;
+  },
+  SET_CANVAS_INDEX(state, i) {
+    state.canvasIndex = i;
   },
 };
 
@@ -51,10 +55,16 @@ const actions = {
   },
 
   setDisplayedManifestUrl({commit}, url) {
+    if (state.displayedManifestUrl && url !== state.displayedManifestUrl) {
+      commit('SET_CANVAS_INDEX', 0)
+    }
     commit('SET_DISPLAYED_MANIFEST_URL', url)
   },
   setViewerMode({commit}, mode) {
     commit('SET_VIEWER_MODE', mode)
+  },
+  setCanvasIndex({commit}, canvasIndex) {
+    commit('SET_CANVAS_INDEX', canvasIndex)
   }
 };
 

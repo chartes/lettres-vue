@@ -900,8 +900,8 @@ export default {
     displayedManifestUrl : function (val, oldVal)  {
       if (!this.displayedManifestUrl || val === oldVal) {
         this.type = "text-mode";
-        this.setDisplayedManifestUrl(undefined);
-        this.setViewerMode(undefined);
+        this.setDisplayedManifestUrl(null);
+        this.setViewerMode(null);
       } else if (val !== oldVal) {
         if (!this.preview) {
           this.type = "text-and-images-mode"
@@ -909,7 +909,7 @@ export default {
         } else {
           // Mode Preview : on conserve les marges
           this.type = "images-mode"
-          this.setViewerMode(undefined);
+          this.setViewerMode(null);
         }
         //this.$emit("refresh-viewer");
       }
@@ -919,11 +919,18 @@ export default {
         console.log("watch type", this.type)
       }
     },
+    viewerMode() {
+      this.type = this.viewerMode
+      if (this.type === "text-mode") {
+        this.setDisplayedManifestUrl(null);
+        this.setViewerMode(null);
+      }
+    },
     docId: async function () {
       if (!this.preview) {
         this.type = null;
-        this.setDisplayedManifestUrl(undefined);
-        this.setViewerMode(undefined);
+        this.setDisplayedManifestUrl(null);
+        this.setViewerMode(null);
       }
         await this.load(this.docId);
     },
@@ -932,8 +939,9 @@ export default {
     },
   },
   beforeDestroy() {
-    this.setViewerMode(undefined);
-    this.setDisplayedManifestUrl(undefined);
+    this.setViewerMode(null);
+    this.setDisplayedManifestUrl(null);
+    window.removeEventListener('scroll', this.updateMiradorTopPosition);
   },
   async mounted() {
     window.addEventListener('scroll', this.updateMiradorTopPosition);
@@ -943,9 +951,6 @@ export default {
       console.log("created this.currentLock.id", this.currentLock.id)
       this.fetchLockOwner(this.docId, this.currentLock.id);
     }*/
-  },
-  unmounted() {
-    window.removeEventListener('scroll', this.updateMiradorTopPosition);
   },
   methods: {
     ...mapActions("locks", ["fetchLockOwner"]),
