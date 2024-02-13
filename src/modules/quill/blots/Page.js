@@ -19,6 +19,9 @@ const getPageNum = txt => {
 let Inline = Quill.import('blots/inline');
 
 class PageBlot extends Inline {
+  deleteAt() {
+    return false
+  }
   static create(value) {
     console.log ("PageBlot create value : ", value)
     let node = super.create();
