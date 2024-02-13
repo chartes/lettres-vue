@@ -12,6 +12,13 @@
       <p>Matthieu Gellard (INSPE de Paris-Sorbonne Universités)</p>
     </div>
 
+    <!-- ### HENRI IV ID = 3 ### -->
+    <div
+      v-else-if="$props.collectionId === 3"
+      class="collection-section-content">
+      <p>Hugues Daussy (Affiliation à préciser)</p>
+    </div>
+
     <!-- ### AUTRES COLLECTIONS NON RENSEIGNEES ### -->
 
     <div
