@@ -57,6 +57,10 @@ const actions = {
   setDisplayedManifestUrl({commit}, url) {
     if (state.displayedManifestUrl && url !== state.displayedManifestUrl) {
       commit('SET_CANVAS_INDEX', 0)
+    } else if (url && !state.displayedManifestUrl) {
+      commit('SET_CANVAS_INDEX', 0)
+    } else if (!url) {
+      commit('SET_CANVAS_INDEX', null)
     }
     commit('SET_DISPLAYED_MANIFEST_URL', url)
   },

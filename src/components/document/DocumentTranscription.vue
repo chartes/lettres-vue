@@ -246,18 +246,18 @@ export default {
       this.getPlacesLabel(this.addressContent, "address");
 
       this.getPageBreaks(this.transcriptionContent, "transcription")
-        this.$nextTick(async () => {
-          let pb_elements = document.getElementsByClassName("pb");
-          this.pageBreaksElements = pb_elements;
-          for (let pb_element of pb_elements) {
-            const resp = await axios.get(this.witnesses[0]["manifest_url"]);
-            let canvasIndex = resp.data.sequences[0]["canvases"].findIndex(c => c.label === pb_element.getAttribute('name').toString());
-            pb_element.addEventListener('click', (e) => {
-              e.preventDefault();
-              this.showCanvas(canvasIndex);
-            })
-          }
-        })
+      this.$nextTick(async () => {
+        let pb_elements = document.getElementsByClassName("pb");
+        this.pageBreaksElements = pb_elements;
+        for (let pb_element of pb_elements) {
+          let canvasIndex = this.witnesses[0].manifest.sequences[0]["canvases"].findIndex(c => c['@id'].split("/").pop() === pb_element.getAttribute('name').toString());
+          console.log("canvasIndex promise", canvasIndex);
+          pb_element.addEventListener('click', (e) => {
+            e.preventDefault();
+            this.showCanvas(canvasIndex);
+          })
+        }
+      })
     }
   },
   methods: {
@@ -401,7 +401,7 @@ export default {
     },
 
     async getPageBreaks(content, type) {
-      const pbPattern = /(<a (?:class="pb"\s*|target="_blank"\s*|href="[^> ]*"\s*)*>)(.+?)(?:<\/a>)/gmi
+      const pbPattern = /(<a (?:class="pb"\s*|target="_blank"\s*|href="([^>]*)"\s*)*>).+?(?:<\/a>)/gmi
       if (content) {
         let contentPrep = content
         let inContent = pbPattern.test(contentPrep);
@@ -409,9 +409,9 @@ export default {
           let contentMatch = content.match(pbPattern)
           let contentMatches = [...content.matchAll(pbPattern)]
           contentMatches.forEach((pb) => {
-            const pagePattern = /\[p\D+(\d+?)\]/gmi
-            let page = [...pb[2].matchAll(pagePattern)][0][1]
-            this.transcriptionContent = this.transcriptionContent.replace(pb[1], pb[1].replace(">", ' name="'+ page + '">'));
+            const folioPattern = /\/(f\d+?)\//gmi
+            let folio = [...pb[2].matchAll(folioPattern)][0][1]
+            this.transcriptionContent = this.transcriptionContent.replace(pb[1], pb[1].replace(">", ' name="'+ folio + '">'));
           })
           console.log(`getPageBreaks in${type} replaced`, this.transcriptionContent)
         }

@@ -10,43 +10,47 @@
 <script>
 import Mirador from "mirador";
 import {mapActions, mapState} from "vuex";
-import axios from "axios";
 
 export default {
   name: "MiradorViewer",
   components: {},
   props: {
     manifestUrl: { type: String, required: true },
-    //canvasIndex: { type: Number, default: 0 },
     windowId: {type: String, default: "document"}
   },
   data() {
     return {
       viewer: null,
-      defaultManifestUrl: null
+      defaultManifestUrl: null,
+      canvasId: '',
     };
   },
   computed: {
     ...mapState("document", ["witnesses"]),
+    ...mapState("search", ["documents"]),
     ...mapState("layout", ["canvasIndex", "viewerMode"]),
   },
   watch: {
-    manifestUrl() {
+    manifestUrl(newValue, oldValue) {
+      console.log("Mirador watch manifestUrl newValue", newValue)
       this.setManifestUrl(this.manifestUrl);
     },
     canvasIndex() {
-      //console.log("mirador watch canvasIndex", this.canvasIndex)
+      console.log("Mirador watch canvasIndex", this.canvasIndex)
       this.setCanvasId(this.canvasIndex)
     },
-    viewerMode() {
-      //this.setCanvasId(this.canvasIndex)
+    viewerMode: {
+      immediate: true,
+      handler(newValue, oldValue) {
+        console.log("viewerMode newValue", newValue)
+        //this.setCanvasId(this.canvasIndex)
+      }
     }
   },
   async created() {
     this.$parent.$on("refresh-viewer", await this.updateCurrentWindow);
   },
   async mounted() {
-    this.defaultManifestUrl = this.witnesses[0]["manifest_url"] ? this.witnesses[0]["manifest_url"] : null;
     await this.initialize();
   },
   methods: {
@@ -70,8 +74,6 @@ export default {
         // metadata:
         // 'provider': ''
       };
-      const resp = await axios.get(this.manifestUrl);
-        let canvasId = resp.data.sequences[0]["canvases"][this.canvasIndex]["@id"];
 
       try {
         this.viewer = Mirador.viewer({
@@ -81,16 +83,18 @@ export default {
             {
               id: this.windowId,
               loadedManifest: url,
-              canvasId: canvasId,
+              canvasIndex: this.canvasIndex
             },
           ],
           window: {
             allowClose: false,
+            allowFullscreen: false,
             allowMaximize: false,
             defaultSideBarPanel: "info",
+            defaultView: 'single',
             sideBarOpenByDefault: false,
             hideWindowTitle: true,
-            maximizedByDefault: true
+            maximizedByDefault: false
           },
           workspace: {
             showZoomControls: true,
@@ -102,14 +106,16 @@ export default {
         });
       } catch (e) {
         console.warn("Mirador viewer: ", e);
-      } this.setCanvasId(this.canvasIndex)
+      }
     },
     async dispatchAction(action) {
       if (this.viewer === null) {
-        //console.log("dispatchAction", this.viewer, this.windowId)
+        console.log("dispatchAction initialise", this.viewer, this.windowId)
         await this.initialize();
       }
       this.viewer.store.dispatch(action);
+      /*let state = this.viewer.store.getState()
+      console.log("dispatchAction this.viewer", this.viewer.store.getState())*/
     },
 
     setManifestUrl(newUrl) {
@@ -121,11 +127,9 @@ export default {
     },
 
     async setCanvasId(canvasIndex) {
-      //console.log("setCanvasId", canvasIndex)
-      //console.log("this.manifestUrl", this.manifestUrl)
-      const resp = await axios.get(this.manifestUrl);
-      let canvasId = resp.data.sequences[0]["canvases"][canvasIndex]["@id"];
-      const action = Mirador.actions.setCanvas(this.windowId, canvasId);
+      console.log("setCanvasId", canvasIndex)
+      this.canvasId = this.witnesses[0].manifest.sequences[0]["canvases"][canvasIndex]["@id"];
+      const action = Mirador.actions.setCanvas(this.windowId, this.canvasId);
       if (this.viewerMode === "text-mode" || !this.viewerMode) {
         this.setViewerMode("text-and-images-mode");
       }
