@@ -52,8 +52,8 @@
             </div>
 
             <div class="collection-card__dates mb-2">
-              <u>Dates :</u> {{ collection.dateMin || "..." }} -
-              {{ collection.dateMax || "..." }}
+              <u>Dates :</u> {{ current_user ? collection.dateMin || "..." : collection.dateMinPub || "..." }} -
+              {{ current_user ? collection.dateMax || "..." : collection.dateMaxPub || "..." }}
             </div>
 
             <div class="columns">

@@ -278,8 +278,8 @@
 
           <!-- Date de la collection -->
           <div class="collection-dates">
-            <span>{{ collection.dateMin || "..." }}</span>
-            <span>{{ collection.dateMax || "..." }}</span>
+            <span>{{ current_user ? collection.dateMin || "..." : collection.dateMinPub || "..." }}</span>
+            <span>{{ current_user ? collection.dateMax || "..." : collection.dateMaxPub || "..." }}</span>
           </div>
 
           <!-- Description de la collection -->

@@ -23,8 +23,8 @@
       </div>
       <div class="collection-infos is-flex is-flex-direction-column">
         <div class="collection-dates is-flex">
-          <span>{{ collection.dateMin || "..." }}</span>
-          <span>{{ collection.dateMax || "..." }}</span>
+          <span>{{ current_user ? collection.dateMin || "..." : collection.dateMinPub || "..." }}</span>
+          <span>{{ current_user ? collection.dateMax || "..." : collection.dateMaxPub || "..." }}</span>
         </div>
         <div v-if="current_user">
           <span class="documents-count">
