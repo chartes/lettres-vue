@@ -192,8 +192,10 @@ export default {
       return this.$store.getters['collections/search'](this.searchTerm)
     },
     activeRootCollections(){
-      if (this.current_user) {
-          return this.rootCollections.filter(function(coll){
+      if (this.current_user && this.current_user.isAdmin) {
+          return this.rootCollections
+      } else if (this.current_user && !this.current_user.isAdmin) {
+        return this.rootCollections.filter(function(coll){
             if (coll.title !== "Hors collections") {
               return coll
             }

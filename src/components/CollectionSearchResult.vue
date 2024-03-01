@@ -48,7 +48,7 @@
       />
       <div class="collection-metadata is-flex">
         <p>
-          <label>Curateur :</label>&nbsp;<a>{{ collection.admin.username }}</a>
+          Curateur : {{ collection.admin.username }}
         </p>
       </div>
     </div>

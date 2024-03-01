@@ -5,7 +5,10 @@
       class="card-header is-flex is-align-items-center"
       :class="expandedById[collection.id] ? 'expanded': ''"
     >
-      <div class="collection-thumbnail">
+      <div
+        v-if="getImgUrl(collectionId)"
+        class="collection-thumbnail"
+      >
         <img
           id="card_image"
           class="card-img-left is-inline-block"
@@ -13,6 +16,11 @@
           alt="Card image cap"
         >
       </div>
+      <div
+        v-else
+        class="collection-thumbnail hide"
+      />
+
       <div class="collection-title-wrapper">
         <router-link
           :to="{ name: 'collection', params: { collectionId: collection.id } }"
@@ -49,7 +57,7 @@
       />
       <div class="collection-metadata is-flex">
         <p>
-          <label>Curateur :</label>&nbsp;<a>{{ collection.admin.username }}</a>
+          Curateur : {{ collection.admin.username }}
         </p>
       </div>
     </div>
@@ -111,6 +119,7 @@ export default {
   },
   data() {
     const collectionsTree =  this.$store.getters["collections/flattenedCollectionsTree"]([this.collectionId]);
+    console.log("const collectionsTree", collectionsTree)
     if (this.current_user) {
       const is_published_collectionsTree = collectionsTree.filter((item) => item.publishedCount > 0);
       return {
@@ -142,7 +151,7 @@ export default {
         return require('@/assets/images/collections/collection' + img + '.jpg')
       }   catch (e) {
         //console.log('mon erreur : ',e)
-        return require('@/assets/images/collections/default.jpg')
+        return
       }
     },
   },
@@ -152,4 +161,7 @@ export default {
 <style scoped lang="scss">
 @import "@/assets/sass/main.scss";
 @import "@/assets/sass/components/_collection.collection-list-item.scss";
+.hide {
+  visibility: hidden !important;
+}
 </style>
