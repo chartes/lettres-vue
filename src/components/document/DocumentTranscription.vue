@@ -394,9 +394,9 @@ export default {
     showCanvas(index) {
       let witness = this.witnesses[0];
       console.log("transcription showCanvas this.displayedWitness / index", this.displayedWitness, index)
-      this.setCanvasIndex(index);
       this.displayedWitness = witness;
       this.setDisplayedManifestUrl(witness["manifest_url"]);
+      this.setCanvasIndex(index);
       //this.setViewerMode("text-and-images-mode");
     },
 
