@@ -177,8 +177,12 @@ export default {
     columnsCssClass() {
       if (this.$route.name === 'search' && this.showLeftSideBar) {
         return 'with-side-bar';
-      } else if (this.$store.state.layout.viewerMode === "text-and-images-mode" || this.$route.name === 'documentation') {
-        return 'large-screen';
+      } else {
+        if (this.$store.state.layout.viewerMode === "text-and-images-mode" && this.$route.name === 'document') {
+          return 'large-screen';
+        } else if (this.$route.name === 'documentation') {
+          return 'large-screen';
+        }
       }
       return "";
     }
@@ -192,7 +196,7 @@ export default {
       }
     },
     "document.id"() {
-      this.setDisplayedManifestUrl(undefined);
+      this.setDisplayedManifestUrl(null);
     },
     witnesses() {
       this.$emit("refresh-viewer");
