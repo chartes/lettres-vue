@@ -3,6 +3,7 @@
     type="is-primary"
     :label="label"
     class="create-btn"
+    :loading="loading"
     @click="click"
   />
 </template>
@@ -12,6 +13,7 @@ export default {
   name: "CreateButton",
   props: {
     label: {type: String, required: true},
+    loading: {type: Boolean, required: false},
   },
   methods: {
     click(evt) {

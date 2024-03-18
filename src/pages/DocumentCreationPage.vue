@@ -10,8 +10,7 @@
           :options="{ placeholder: 'Ex. Français 3512, Ms. 564, K 35' }"
         />
       </b-field>
-      <b-button
-        type="is-primary"
+      <create-button
         label="Créer le document"
         :loading="loading"
         @click="createNewDocument"
@@ -24,12 +23,14 @@
 import RichTextEditor from "@/components/forms/fields/RichTextEditor.vue";
 import { mapState, mapActions } from "vuex";
 import PageTitle from "@/components/ui/PageTitle";
+import CreateButton from "@/components/ui/CreateButton.vue"
 
 export default {
   name: "DocumentCreationPage",
   components: {
     RichTextEditor,
     PageTitle,
+    CreateButton,
   },
   data() {
     return {
