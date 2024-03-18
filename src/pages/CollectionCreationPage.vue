@@ -1,9 +1,9 @@
 <template>
   <div v-if="current_user.isAdmin">
-    <page-title :title="'Créer une nouvelle collection'" />
+    <page-title :title="`Créer une nouvelle ${collectionType}`" />
     <section>
       <b-field
-        label="Renseigner le titre de la collection"
+        :label="`Renseigner le titre de la ${collectionType}`"
         :type="error.field === 'title' ? 'is-danger' : null"
         :message="error.field === 'title' ? error.title : null"
       >
@@ -11,15 +11,15 @@
           v-model="title"
           class="input"
           :multiline="false"
-          placeholder="Titre de la collection"
+          :placeholder="`Titre de la ${collectionType}`"
         >
       </b-field>
-      <b-field label="Renseigner la description de la collection">
+      <b-field :label="`Renseigner la description de la ${collectionType}`">
         <rich-text-editor
           v-model="description"
           :multiline="true"
           :formats="[['italic', 'superscript', 'note']]"
-          :options="{ placeholder: 'Description de la collection' }"
+          :options="{ placeholder: `Description de la ${collectionType}` }"
         />
       </b-field>
       <b-field
@@ -40,7 +40,7 @@
         </b-select>
       </b-field>
       <create-button
-        label="Créer la collection"
+        :label="`Créer la ${collectionType}`"
         class="create-button"
         :loading="loading"
         @click="createNewCollection"
@@ -75,11 +75,12 @@ export default {
   props: ["collectionId"],
   data() {
     return {
-      title: "Titre de la collection",
-      description: "Description de la collection",
+      title: this.collectionId ? "Titre de la sous-collection" : "Titre de la collection",
+      description: this.collectionId ? "Description de la sous-collection" : "Description de la collection",
       loading: false,
       curatorId: null,
       error: {},
+      collectionType: this.collectionId ? "sous-collection" : "collection"
     }
   },
   computed: {
