@@ -1,15 +1,20 @@
 <template>
   <div v-if="current_user.isAdmin">
+    <page-title :title="'Créer une nouvelle collection'" />
     <section>
-      <b-field>
+      <b-field
+        label="Renseigner le titre de la collection"
+        :type="error.field === 'title' ? 'is-danger' : null"
+        :message="error.field === 'title' ? error.title : null"
+      >
         <input
           v-model="title"
-          class="quill-editor ql-editor"
+          class="input"
           :multiline="false"
           placeholder="Titre de la collection"
         >
       </b-field>
-      <b-field>
+      <b-field label="Renseigner la description de la collection">
         <rich-text-editor
           v-model="description"
           :multiline="true"
@@ -17,8 +22,12 @@
           :options="{ placeholder: 'Description de la collection' }"
         />
       </b-field>
-      <b-field label="Curator">
-        <select
+      <b-field
+        label="Curator"
+        :type="error.field === 'curator' ? 'is-danger' : null"
+        :message="error.field === 'curator' ? error.title : null"
+      >
+        <b-select
           v-model="curatorId"
         >
           <option
@@ -28,17 +37,20 @@
           >
             {{ option.username }}
           </option>
-        </select>
+        </b-select>
       </b-field>
-      <div>
-        {{ error.title }}
-      </div>
-      <b-button
-        type="is-primary"
+      <create-button
         label="Créer la collection"
+        class="create-button"
         :loading="loading"
         @click="createNewCollection"
       />
+      <p
+        v-if="error.field === 'GLOBAL'"
+        class="global-error"
+      >
+        {{ error.title }}
+      </p>
     </section>
   </div>
   <div v-else>
@@ -50,15 +62,21 @@
 <script>
 import RichTextEditor from "@/components/forms/fields/RichTextEditor.vue";
 import { mapState, mapActions } from "vuex";
+import PageTitle from "@/components/ui/PageTitle";
+import CreateButton from "@/components/ui/CreateButton.vue"
 
 export default {
   name: "CollectionCreationPage",
-  components: { RichTextEditor },
+  components: {
+    RichTextEditor,
+    PageTitle,
+    CreateButton,
+  },
   props: ["collectionId"],
   data() {
     return {
-      title: "",
-      description: "",
+      title: "Titre de la collection",
+      description: "Description de la collection",
       loading: false,
       curatorId: null,
       error: {},
@@ -66,6 +84,22 @@ export default {
   },
   computed: {
     ...mapState("user", ["current_user", "users"]),
+  },
+  watch: {
+    title() {
+      if (this.title.length < 1) {
+        this.error = {"title": "Titre obligatoire", "field": "title"};
+      } else if (this.error.field === "title") {
+        this.error = {};
+      }
+    },
+    curatorId() {
+      if (this.curatorId === null) {
+        this.error = {"title": "Curator obligatoire", "field": "curator"};
+      } else if (this.error.field === "curator") {
+        this.error = {};
+      }
+    }
   },
   created() {
     this.fetchUsers()
@@ -75,12 +109,12 @@ export default {
     async createNewCollection() {
       this.loading = true;
       if (this.title.length < 1) {
-        this.error = {"title": "titre obligatoire"};
+        this.error = {"title": "Titre obligatoire", "field": "title"};
         this.loading = false;
         return;
       }
       if (this.curatorId === null) {
-        this.error = {"title": "curator obligatoire"};
+        this.error = {"title": "Curator obligatoire", field: "curator"};
         this.loading = false;
         return;
       }
@@ -94,10 +128,10 @@ export default {
       const newCollection = await this.$store.dispatch("collections/addCollection", collection);
       if (newCollection.error) {
         if (newCollection.error.response.data) {
-          this.error = {"title": newCollection.error.response.data["errors"]["title"]};
+          this.error = {"title": newCollection.error.response.data["errors"]["title"], field: "GLOBAL"};
         }
         else {
-          this.error = {"title": newCollection.error};
+          this.error = {"title": newCollection.error, field: "GLOBAL"};
         }
         this.loading = false;
         return;
@@ -114,4 +148,39 @@ export default {
 input:placeholder-shown {
    font-style: italic;
 }
+
+::v-deep .label {
+  padding-bottom: 10px;
+}
+
+.create-button {
+  margin-top: 30px;
+}
+
+::v-deep .input {
+  &:hover,
+  &:focus {
+    border-color: rgb(219, 219, 219) !important;
+    box-shadow: none !important;
+  }
+}
+
+.control, .search_input {
+  ::v-deep select {
+    &:hover,
+    &:focus {
+      border-color: rgb(219, 219, 219) !important;
+      box-shadow: none !important;
+    }
+  }
+  ::v-deep .select::after {
+      border-color: rgba(127, 0, 56) !important;
+  }
+}
+
+.global-error {
+  padding-top: 10px;
+  color: #f14668;
+}
+
 </style>
