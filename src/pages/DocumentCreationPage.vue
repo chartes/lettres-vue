@@ -1,7 +1,8 @@
 <template>
   <div>
+    <page-title :title="'Créer un nouveau document'" />
     <section>
-      <b-field>
+      <b-field :label="'Renseigner le titre du document'">
         <rich-text-editor
           v-model="title"
           :multiline="false"
@@ -22,10 +23,14 @@
 <script>
 import RichTextEditor from "@/components/forms/fields/RichTextEditor.vue";
 import { mapState, mapActions } from "vuex";
+import PageTitle from "@/components/ui/PageTitle";
 
 export default {
   name: "DocumentCreationPage",
-  components: { RichTextEditor },
+  components: {
+    RichTextEditor,
+    PageTitle,
+  },
   data() {
     return {
       title: "Ceci est le titre du nouveau document",
