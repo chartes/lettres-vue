@@ -12,6 +12,7 @@ import ReactDOM from "react-dom/client";
 import {Provider} from 'react-redux';
 import Mirador from "mirador";
 import MiradorApp from 'mirador/dist/es/src/components/App';
+import { miradorImageToolsPlugin } from 'mirador-image-tools';
 import createPluggableStore from 'mirador/dist/es/src/state/createPluggableStore';
 import {mapActions, mapState} from "vuex";
 
@@ -91,6 +92,8 @@ export default {
           manifests: manifests,
           windows: [
             {
+              imageToolsEnabled: true,
+              imageToolsOpen: false,
               id: this.windowId,
               loadedManifest: url,
               canvasIndex: this.canvasIndex
@@ -140,7 +143,7 @@ export default {
             {store: this.miradorStore},
             React.createElement(
               MiradorApp,
-              {plugins: []}
+              {plugins: [...miradorImageToolsPlugin]}
             )
           ),
         )
