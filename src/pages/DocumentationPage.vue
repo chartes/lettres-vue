@@ -25,6 +25,7 @@
               <a href="#search-api">API de recherche</a>
               <ul class="toc-lvl2">
                 <li><a href="#search-scope">Périmètre de la recherche</a></li>
+                <li><a href="#search-response">Format de réponse</a></li>
                 <li>
                   <a href="#search-syntax">Syntaxe des requêtes</a>
                   <ul class="toc-lvl3">
@@ -113,64 +114,102 @@
             </p>
             <api-call-dropdown
               method="GET"
-              description="La lettre 3488 avec la liste des personnes liées à cette lettre "
+              description="La lettre 3488 avec la liste des personnes liées à cette lettre"
               :url="`${API_URL}/documents/3488?without-relationships&include=persons`"
+            />
+            <api-call-dropdown
+              method="GET"
+              description="La lettre 3488 avec la liste des personnes liées à cette lettre et la liste des témoins"
+              :url="`${API_URL}/documents/3488?without-relationships&include=persons,witnesses`"
+            />
+            <p>
+              Des ressources reliées peuvent être incluses à partir du <em>endpoint</em> de la relation :
+            </p>
+            <api-call-dropdown
+              method="GET"
+              description="La liste des personnes liées à la lettre 3488 et leur rôle dans l’échange épistolaire (expéditeur, destinataire, personne citée)"
+              :url="`${API_URL}/documents/3488/persons-having-roles?include=person`"
+            />
+            <p>
+              Plusieurs ressources reliées peuvent être appelées dans une liste de valeurs séparées par une virgule.<br>
+              Il est par exemple possible d’accéder à cette même liste des personnes liées à la lettre 3488, leur rôle avec la description de chaque rôle :
+            </p>
+            <api-call-dropdown
+              method="GET"
+              description="La liste des personnes liées à la lettre 3488, leur rôle et la description de ces rôles"
+              :url="`${API_URL}/documents/3488/persons-having-roles?include=person,person-role`"
             />
           </section>
           <section class="section" id="sparse-fieldset">
             <h3>Sparse fieldset</h3>
             <p>
-              L’API de recherche utilise les requêtes de type
-              <a
-                href="https://www.elastic.co/guide/en/elasticsearch/reference/6.8/query-dsl-query-string-query.html#query-string-syntax"
-                target="_blank"
-                ><code>query_string</code></a
-              >.
+              Les <a href="https://jsonapi.org/format/1.0/#fetching-sparse-fieldsets" target="_blank">Sparse Fieldsets</a> ne sont pas implémentés : pour une ressource, l’API Ecco ne permet pas de retourner les seuls attributs spécifiés. Par exemple, pour une ressource de type <code>document</code> (une lettre), il est impossible de retourner sa seule transcription.
             </p>
           </section>
           <section class="section" id="custom-specs">
             <h3>Implémentation spécifiques</h3>
             <p>
-              L’API de recherche utilise les requêtes de type
-              <a
-                href="https://www.elastic.co/guide/en/elasticsearch/reference/6.8/query-dsl-query-string-query.html#query-string-syntax"
-                target="_blank"
-                ><code>query_string</code></a
-              >.
+              <b>Paramètre de requête <code>without-relationships</code></b><br>
+              Les <em>endpoints</em> de l’API Ecco implémentent le paramètre de requête without-relationships pour exclure de la réponse les relations des ressources requêtées. Dans le cas de collections volumineuses, la réponse s’en trouve allégée et plus lisible.
             </p>
+            <api-call-dropdown
+              method="GET"
+              description="La lettre 3488 sans ses relations"
+              :url="`${API_URL}/documents/3488?without-relationships`"
+            />
           </section>
           <section class="section" id="resources">
             <h2>Ressources exposées</h2>
             <p>
-              L’API de recherche est construite avec
-              <a
-                href="https://www.elastic.co/guide/en/elasticsearch/reference/6.8/index.html"
-                target="_blank"
-                >Elasticsearch 6.8</a
-              >.
+              Les ressources principales exposées sont du type suivant :
             </p>
+            <ul>
+              <li><code>document</code> : une lettre</li>
+              <li><code>persons</code> : les personnages identifiées associées aux lettres</li>
+              <li><code>placenames</code> : les villes associées aux lettres</li>
+            </ul>
           </section>
           <section class="section" id="persons">
             <h3>Personnes</h3>
             <p>
-              L’API de recherche utilise les requêtes de type
-              <a
-                href="https://www.elastic.co/guide/en/elasticsearch/reference/6.8/query-dsl-query-string-query.html#query-string-syntax"
-                target="_blank"
-                ><code>query_string</code></a
-              >.
+              TODO
             </p>
+            <api-call-dropdown
+              method="GET"
+              description="Accéder à la description d’Anne d'Autriche"
+              :url="`${API_URL}/persons/11?without-relationships`"
+            />
+            <api-call-dropdown
+              method="GET"
+              description="Lister les lettres liées à Anne d'Autriche"
+              :url="`${API_URL}/persons/11/relationships/documents`"
+            />
+            <api-call-dropdown
+              method="GET"
+              description="Accéder aux lettres liées à Anne d'Autriche, avec son statut (expéditeur, destinataire ou personne mentionnée)"
+              :url="`${API_URL}/persons/11/roles-within-documents?include=document`"
+            />
           </section>
           <section class="section" id="places">
             <h3>Lieux</h3>
             <p>
-              L’API de recherche utilise les requêtes de type
-              <a
-                href="https://www.elastic.co/guide/en/elasticsearch/reference/6.8/query-dsl-query-string-query.html#query-string-syntax"
-                target="_blank"
-                ><code>query_string</code></a
-              >.
+              TODO
             </p>
+            <api-call-dropdown
+              method="GET"
+              description="Accéder à la description d’Avignon"
+              :url="`${API_URL}/placenames/21?without-relationships`"
+            />
+            <api-call-dropdown
+              method="GET"
+              description="Lister les lettres liées à Avignon"
+              :url="`${API_URL}/placenames/21/relationships/documents`"
+            />
+            <api-call-dropdown
+              method="GET"
+              description="Accéder aux lettres liées à Avignon, avec le statut du lieu (lieu d’expédition, de destination ou lieu mentionné)"
+              :url="`${API_URL}/placenames/21/roles-within-documents?include=document`"
+            />
           </section>
           <section class="section" id="iiif-links">
             <h3>IIIF – TODO</h3>
@@ -181,40 +220,62 @@
           <section class="section" id="search-api">
             <h2>API de recherche</h2>
             <p>
-              L’API de recherche est construite avec
-              <a
-                href="https://www.elastic.co/guide/en/elasticsearch/reference/6.8/index.html"
-                target="_blank"
-                >Elasticsearch 6.8</a
-              >.
-            </p>
-            <p>La recherche peut porter sur :</p>
-            <ul>
-              <li>
-                les seules notices (catalogue) :
-                <code>search?query=metadata.{field_name}:{search_string}</code>
-              </li>
-              <li>
-                le corps du texte des positions (concordances) :
-                <code>search?query={search_string}</code>
-              </li>
-            </ul>
-            <p>
-              L’objectif est de combiner les possibilités d’une recherche catalographique
-              (retrouver un document) à celles de la recherche plein texte utiles au
-              chercheur, à l’historiographe notamment.
+              L’API de recherche est construite avec <a
+                href="https://www.elastic.co/guide/en/elasticsearch/reference/8.13/index.html" target="_blank">Elasticsearch 8.13</a>.
             </p>
           </section>
-          <section class="section" id="search-scope"></section>
+          <section class="section" id="search-scope">
+            <h3>Périmètre de la recherche</h3>
+            <p>
+              Grâce au paramètre de recherche <code>searchtype</code>, on peut lancer la requête soit dans les seules notices (<code>searchtype=paratext</code>), soit de la transcription des lettres (<code>searchtype=fulltext</code>).<br>
+              Dans les deux cas, le contenu des documents (les lettres) est disponible dans la réponse.
+            </p>
+            <api-call-dropdown
+              method="GET"
+              description="Lister les lettres dont la notice contient 'anne', avec leur description et leur contenu"
+              :url="`${API_URL}/search?query=(anne)&searchtype=paratext&without-relationships`"
+            />
+            <api-call-dropdown
+              method="GET"
+              description="Lister les lettres dont la transcription contient 'anne', avec leur description et leur contenu"
+              :url="`${API_URL}/search?query=(anne)&searchtype=fulltext&without-relationships`"
+            />
+            <p>
+              L’API permet de fouiller à la fois les notices et les transcriptions.
+            </p>
+            <api-call-dropdown
+              method="GET"
+              description="Toutes les lettres dont la notice ou la transcription contient 'anne'"
+              :url="`${API_URL}/search?query=(anne)&without-relationships`"
+            />
+          </section>
+          <section class="section" id="search-response">
+            <h3>Format de réponse</h3>
+            <p>
+              La réponse est un tableau des lettres. Pour chaque lettre, les
+              champs disponibles sont :
+            </p>
+            <ul>
+              <li><code>id</code> : l’identifiant de la lettre</li>
+              <li><code>argument</code> : une analyse (résumé) du contenu de son contenu</li>
+              <li><code>creation</code> : la date de rédaction de la lettre</li>
+              <li><code>transcription</code> : la transcription (HTML markup)</li>
+              <li><code>address</code> : le destinataire tel que transcrit dans la lettre</li>
+              <li><code>witenesses</code> : le tableau des témoins, avec le lien à son manifeste IIIF (si fourni)</li>
+              <li><code>senders</code> : la description standardisée des expéditeurs, avec liages Wikidata (si fourni)</li>
+              <li><code>recipients</code> : la description standardisée des destinataires, avec liages Wikidata (si fourni)</li>
+              <li><code>location_dates_from</code> et <code>location_dates_to</code> : dates de lieu (d’expédition et de réception)</li>
+            </ul>
+            <p>Pour chaque lettre, les relations peuvent être inscrites dans la réponse en omettant le paramètre de requête <code>without-relationships</code>.</p>
+          </section>
           <section class="section" id="search-syntax">
             <h3>Syntaxe des requêtes</h3>
             <p>
               L’API de recherche utilise les requêtes de type
               <a
-                href="https://www.elastic.co/guide/en/elasticsearch/reference/6.8/query-dsl-query-string-query.html#query-string-syntax"
+                href="https://www.elastic.co/guide/en/elasticsearch/reference/8.13/query-dsl-query-string-query.html#query-string-syntax"
                 target="_blank"
-                ><code>query_string</code></a
-              >.
+                ><code>query_string</code></a>.
             </p>
             <p>
               NB. La recherche est insensible à la casse et aux accents (diacritiques).
@@ -233,13 +294,13 @@
             </p>
             <api-call-dropdown
               method="GET"
-              description="La 1ère page de 2 résultats des positions dont le texte contient au moins une occurrence de 'cartulaire'"
-              :url="`${API_URL}/search?query=cartulaire&page[size]=2`"
+              description="La 1ère page de 2 résultats des lettres dont la notice ou la transcription contient au moins une occurrence de 'roy'"
+              :url="`${API_URL}/search?query=(roy)&without-relationships&page[size]=2`"
             />
             <api-call-dropdown
               method="GET"
-              description="La 10e page de 2 résultats des positions dont le texte contient au moins une occurrence de 'cartulaire'"
-              :url="`${API_URL}/search?query=cartulaire&page[size]=2&page[number]=10`"
+              description="La 10e page de 2 résultats des lettres dont la notice ou le texte contient au moins une occurrence de 'roy'"
+              :url="`${API_URL}/search?query=(roy)&without-relationships&page[size]=2&page[number]=10`"
             />
           </section>
           <section class="section" id="search-wildcards">
@@ -254,8 +315,8 @@
             </ul>
             <api-call-dropdown
               method="GET"
-              description="Wildcard operators, recherche 'gal*re?'"
-              :url="`${API_URL}/search?query=gal*re?&searchtype=fulltext&without-relationships`"
+              description="Wildcard operators, recherche 'ami*' (ami, amitié, amiral, Amiens, etc.)"
+              :url="`${API_URL}/search?query=ami*&searchtype=fulltext&without-relationships`"
             />
           </section>
           <section class="section" id="search-regex">
@@ -263,7 +324,7 @@
             <p>
               Dans une requête, une
               <a
-                href="https://www.elastic.co/guide/en/elasticsearch/reference/6.8/query-dsl-regexp-query.html#regexp-syntax"
+                href="https://www.elastic.co/guide/en/elasticsearch/reference/8.13/query-dsl-regexp-query.html#regexp-syntax"
                 target="_blank"
                 >expression régulière</a
               >
@@ -272,7 +333,7 @@
             <api-call-dropdown
               method="GET"
               description="'charte' (singulier/pluriel) et 'Chartres'…"
-              :url="`${API_URL}/search?query=/chartr?es?/&page[size]=3&page[number]=2`"
+              :url="`${API_URL}/search?query=/chartr?es?/&without-relationships&page[size]=2`"
             />
           </section>
           <section class="section" id="search-fuzzy">
@@ -280,7 +341,7 @@
             <p>
               Pour la
               <a
-                href="https://www.elastic.co/guide/en/elasticsearch/reference/6.8/common-options.html#fuzziness"
+                href="https://www.elastic.co/guide/en/elasticsearch/reference/8.13/common-options.html#fuzziness"
                 target="_blank"
                 >recherche floue</a
               >, il est possile de passer en suffixe de la chaîne de caractère recherchée
@@ -296,179 +357,152 @@
             </p>
             <api-call-dropdown
               method="GET"
-              description="La recherche floue sur 'Clacy' retourne par exemple 'Flacy' ou 'Clécy'"
-              :url="`${API_URL}/search?query=clacy~1`"
+              description="Recherche très floue pour 'amitié' (retourne les occurences d’amytié, amitiez, etc.)"
+              :url="`${API_URL}/search?query=(amitié~2)&searchtype=fulltext&without-relationships`"
             />
-          </section>
-          <section class="section" id="search-response">
-            <h3>Format de réponse</h3>
-            <p>
-              La réponse est le tableau des notices des positions. Pour chaque notice, les
-              champs disponibles sont :
-            </p>
-            <ul>
-              <li><code>title_rich</code> : le titre de la position</li>
-              <li><code>author_firstname</code> : le prénom de l’auteur</li>
-              <li><code>author_name</code> : le nom de l’auteur</li>
-              <li>
-                <code>author_gender</code> : genre de l’auteur (<code>1</code>: homme ou
-                <code>2</code>: femme)
-              </li>
-              <li>
-                <code>enc_teacher</code> : <code>1</code> si l’auteur est enseignant à
-                l’ENC, sinon <code>null</code>
-              </li>
-              <li><code>promotion_year</code> : l’année de publication</li>
-              <li>
-                <code>topic_notBefore</code> : borne chronologique de début du sujet
-              </li>
-              <li><code>topic_notAfter</code> : borne chronologique de fin du sujet</li>
-            </ul>
-            <p><code>dts_url</code> : permet d’accéder à la position.</p>
           </section>
           <section class="section" id="search-filters-sort">
             <h3>Filtres et tris</h3>
             <p>
-              Les champs de la notice sont tous disponibles comme
-              <a
-                href="https://www.elastic.co/guide/en/elasticsearch/reference/6.8/query-dsl-query-string-query.html?baymax=rec&rogue=pop-1&elektra=docs#_field_names"
-                target="_blank"
-                >champ de la requête</a
-              >.
-            </p>
-            <pre>/search?query=metadata.{field_name}:{search_string}</pre>
-            <p>
-              Par défaut, les résultats sont triés selon le score de pertinence calculé
-              par Elastic Search. Le paramètre de requête <code>sort</code> permet de
-              trier les résultats selon un champ choisi. Le préfixe optionnel
-              <code>-</code> du nom du champ spécifie l’odre décroissant : par ex.
-              <code>&sort=-metadata.promotion_year</code> pour un tri décroissant par date
-              de publication.
+              Différents champs sont indexés et disponibles pour la définition de tris et de filtres.<br>
+              Il est possible de ne pas passer de valeur au paramètre query de manière à filtrer l’intégralité du corpus selon la facette choisie.
             </p>
           </section>
           <section class="section" id="search-filter-dates">
             <h4>Dates</h4>
-            <p>
-              Pour la
-              <a
-                href="https://www.elastic.co/guide/en/elasticsearch/reference/6.8/common-options.html#fuzziness"
-                target="_blank"
-                >recherche floue</a
-              >, il est possile de passer en suffixe de la chaîne de caractère recherchée
-              un paramètre (<em>fuzziness parameter</em>) définissant la
-              <a
-                href="https://fr.wikipedia.org/wiki/Distance_de_Levenshtein"
-                target="_blank"
-                >distance d'édition Levenshtein</a
-              >
-              maximale autorisée (ou le nombre d'éditions) : <code>~0</code> (recherche
-              exacte), <code>~1</code> (recherche floue), <code>~2</code> (recherche très
-              floue).
-            </p>
             <api-call-dropdown
               method="GET"
-              description="La recherche floue sur 'Clacy' retourne par exemple 'Flacy' ou 'Clécy'"
-              :url="`${API_URL}/search?query=clacy~1`"
+              description="Les lettres datées entre 1420 et 1422 (pas de valeur passée à query)"
+              :url="`${API_URL}/search?query=&without-relationships&range[creation_range]=gte:1420,lt:1422`"
+            />
+            <api-call-dropdown
+              method="GET"
+              description="Les lettres datées entre 1600 et 1602 mentionnant le 'duc de Guise'"
+              :url="`${API_URL}?query=(duc de Guise)&searchtype=fulltext&without-relationships&range[creation_range]=gte:1600,lt:1602`"
             />
           </section>
           <section class="section" id="search-filter-places">
             <h4>Lieux</h4>
             <p>
-              Pour la
-              <a
-                href="https://www.elastic.co/guide/en/elasticsearch/reference/6.8/common-options.html#fuzziness"
-                target="_blank"
-                >recherche floue</a
-              >, il est possile de passer en suffixe de la chaîne de caractère recherchée
-              un paramètre (<em>fuzziness parameter</em>) définissant la
-              <a
-                href="https://fr.wikipedia.org/wiki/Distance_de_Levenshtein"
-                target="_blank"
-                >distance d'édition Levenshtein</a
-              >
-              maximale autorisée (ou le nombre d'éditions) : <code>~0</code> (recherche
-              exacte), <code>~1</code> (recherche floue), <code>~2</code> (recherche très
-              floue).
+              TODO. Expliquer la syntaxe <code>###</code>, les buckets et les valeurs ci-dessous.
             </p>
+            <ul>
+              <li><code>location_dates_from</code></li>
+              <li><code>location_dates_to</code></li>
+              <li><code>locations_inlined</code></li>
+            </ul>
             <api-call-dropdown
               method="GET"
-              description="La recherche floue sur 'Clacy' retourne par exemple 'Flacy' ou 'Clécy'"
-              :url="`${API_URL}/search?query=clacy~1`"
+              description="Les lettres expédiées depuis Lyon"
+              :url="`${API_URL}/search?query=&without-relationships&location_dates_from=44%23%23%23Lyon`"
+            />
+            <api-call-dropdown
+              method="GET"
+              description="Les lettres expédiées à Lyon"
+              :url='`${API_URL}/search?query=&without-relationships&location_dates_to=["44%23%23%23Lyon"]`'
+            />
+            <api-call-dropdown
+              method="GET"
+              description="Les lettres mentionnant Lyon'"
+              :url='`${API_URL}/search?query=&without-relationships&location_inlined=["44%23%23%23Lyon"]`'
             />
           </section>
           <section class="section" id="search-filter-persons">
             <h4>Personnes</h4>
             <p>
-              Pour la
-              <a
-                href="https://www.elastic.co/guide/en/elasticsearch/reference/6.8/common-options.html#fuzziness"
-                target="_blank"
-                >recherche floue</a
-              >, il est possile de passer en suffixe de la chaîne de caractère recherchée
-              un paramètre (<em>fuzziness parameter</em>) définissant la
-              <a
-                href="https://fr.wikipedia.org/wiki/Distance_de_Levenshtein"
-                target="_blank"
-                >distance d'édition Levenshtein</a
-              >
-              maximale autorisée (ou le nombre d'éditions) : <code>~0</code> (recherche
-              exacte), <code>~1</code> (recherche floue), <code>~2</code> (recherche très
-              floue).
+              TODO. Expliquer la syntaxe <code>###</code>, les buckets et les valeurs ci-dessous.
             </p>
+            <ul>
+              <li><code>senders</code></li>
+              <li><code>recipients</code></li>
+              <li><code>persons_inlined</code></li>
+            </ul>
             <api-call-dropdown
               method="GET"
-              description="La recherche floue sur 'Clacy' retourne par exemple 'Flacy' ou 'Clécy'"
-              :url="`${API_URL}/search?query=clacy~1`"
+              description="les lettres expédiées par Henri de Bourbon (5 résultats/page)"
+              :url="`${API_URL}/search?query=&page[size]=5&page[number]=1&without-relationships&senders=77%23%23%23Henri de Bourbon (1553-1610)`"
+            />
+            <api-call-dropdown
+              method="GET"
+              description="Les lettres expédiées à François Ier de Médicis"
+              :url='`${API_URL}/search?query=&without-relationships&recipients=["99%23%23%23François Ier de Médicis (1541-1587)"]`'
+            />
+            <api-call-dropdown
+              method="GET"
+              description="Les lettres où Charles IX est mentionné'"
+              :url='`${API_URL}/search?query=&without-relationships&persons_inlined=["7%23%23%23Charles IX"]`'
             />
           </section>
           <section class="section" id="search-filter-multiple">
             <h4>Combiner les filtres</h4>
             <p>
-              Pour la
-              <a
-                href="https://www.elastic.co/guide/en/elasticsearch/reference/6.8/common-options.html#fuzziness"
-                target="_blank"
-                >recherche floue</a
-              >, il est possile de passer en suffixe de la chaîne de caractère recherchée
-              un paramètre (<em>fuzziness parameter</em>) définissant la
-              <a
-                href="https://fr.wikipedia.org/wiki/Distance_de_Levenshtein"
-                target="_blank"
-                >distance d'édition Levenshtein</a
-              >
-              maximale autorisée (ou le nombre d'éditions) : <code>~0</code> (recherche
-              exacte), <code>~1</code> (recherche floue), <code>~2</code> (recherche très
-              floue).
+              TODO
             </p>
             <api-call-dropdown
               method="GET"
-              description="La recherche floue sur 'Clacy' retourne par exemple 'Flacy' ou 'Clécy'"
-              :url="`${API_URL}/search?query=clacy~1`"
+              description="Les lettres de Catherine de Médicis à Pomponne de Bellièvre envoyée à Cracovie mentionnant Charles IX"
+              :url='`${API_URL}/search?query=&searchtype=paratext&highlight=&page[size]=50&page[number]=1&without-relationships&senders=1%23%23%23Catherine de Médicis&recipients=["340%23%23%23Pomponne de Bellièvre (1529-1607)"]&persons_inlined=["7%23%23%23Charles IX"]&location_dates_to=["16%23%23%23Cracovie"]`'
+            />
+            <api-call-dropdown
+              method="GET"
+              description="La lettre de Catherine de Médicis à Pomponne de Bellièvre envoyée à Cracovie mentionnant Charles IX et contenant le mot 'fils'"
+              :url='`${API_URL}/search?query=(fils)&searchtype=fulltext&without-relationships&senders=1%23%23%23Catherine de Médicis&recipients=["340%23%23%23Pomponne de Bellièvre (1529-1607)"]&persons_inlined=["7%23%23%23Charles IX"]&location_dates_to=["16%23%23%23Cracovie"]`'
+            />
+            <api-call-dropdown
+              method="GET"
+              description="La lettre de Catherine de Médicis à Pomponne de Bellièvre daté de 1574"
+              :url='`${API_URL}/search?query=&searchtype=paratext&highlight=&page[size]=50&page[number]=1&without-relationships&senders=1%23%23%23Catherine de Médicis&recipients=["340%23%23%23Pomponne de Bellièvre (1529-1607)"]&location_dates_to=["16%23%23%23Cracovie"]&range[creation_range]=gte:1574,lt:1575`'
+            />
+            <api-call-dropdown
+              method="GET"
+              description="Les lettres de Catherine de Médicis à Pomponne de Bellièvre daté entre 1574 et 1575 dont la notice mentionne le 'roi de Pologne'"
+              :url='`${API_URL}/search?query=(roi de pologne)&searchtype=paratext&without-relationships&senders=1%23%23%23Catherine de Médicis&recipients=["340%23%23%23Pomponne de Bellièvre (1529-1607)"]&range[creation_range]=gte:1574,lt:1575`'
             />
           </section>
           <section class="section" id="search-sort">
             <h4>Tris</h4>
             <p>
-              Pour la
-              <a
-                href="https://www.elastic.co/guide/en/elasticsearch/reference/6.8/common-options.html#fuzziness"
-                target="_blank"
-                >recherche floue</a
-              >, il est possile de passer en suffixe de la chaîne de caractère recherchée
-              un paramètre (<em>fuzziness parameter</em>) définissant la
-              <a
-                href="https://fr.wikipedia.org/wiki/Distance_de_Levenshtein"
-                target="_blank"
-                >distance d'édition Levenshtein</a
-              >
-              maximale autorisée (ou le nombre d'éditions) : <code>~0</code> (recherche
-              exacte), <code>~1</code> (recherche floue), <code>~2</code> (recherche très
-              floue).
+              Le paramètre de requête sort permet de trier les résultats selon un ou plusieurs champs.<br>
+              Le préfixe optionnel - du nom du champ spécifie l’odre décroissant.
+            </p>
+            <ul>
+              <li><code>creation</code></li>
+              <li><code>senders.label.keyword_sort</code></li>
+              <li><code>recipients.label.keyword_sort</code></li>
+              <li><code>id</code></li>
+            </ul>
+            <api-call-dropdown
+              method="GET"
+              description="Les lettres mentionnant Charles IX triées par date de rédaction (ordre chronologique)"
+              :url='`${API_URL}/search?query=&without-relationships&persons_inlined=["7%23%23%23Charles IX"]&sort=creation`'
+            />
+            <api-call-dropdown
+              method="GET"
+              description="Les lettres mentionnant Charles IX triées par date de rédaction (ordre antéchronologique)"
+              :url='`${API_URL}/search?query=&without-relationships&persons_inlined=["7%23%23%23Charles IX"]&sort=-creation`'
+            />
+            <api-call-dropdown
+              method="GET"
+              description="Les lettres mentionnant Charles IX triées par expéditeur (ordre alphabétique)"
+              :url='`${API_URL}/search?query=&without-relationships&persons_inlined=["7%23%23%23Charles IX"]&sort=senders.label.keyword_sort`'
+            />
+            <api-call-dropdown
+              method="GET"
+              description="Les lettres mentionnant Charles IX triées par destinataire (ordre anti alphabétique)"
+              :url='`${API_URL}/search?query=&without-relationships&persons_inlined=["7%23%23%23Charles IX"]&sort=-recipients.label.keyword_sort`'
+            />
+            <api-call-dropdown
+              method="GET"
+              description="Les lettres mentionnant Charles IX triées par id de la lettre"
+              :url='`${API_URL}/search?query=&without-relationships&persons_inlined=["7%23%23%23Charles IX"]&sort=id`'
+            />
+            <p>
+              Il est possible de spécifier plusieurs critères de tri :
             </p>
             <api-call-dropdown
               method="GET"
-              description="La recherche floue sur 'Clacy' retourne par exemple 'Flacy' ou 'Clécy'"
-              :url="`${API_URL}/search?query=clacy~1`"
+              description="Les lettres mentionnant Charles IX triées par date de rédaction (ordre chronologique)"
+              :url='`${API_URL}/search?query=&without-relationships&persons_inlined=["7%23%23%23Charles IX"]&sort=creation,recipients.label.keyword_sort`'
             />
           </section>
         </section>
