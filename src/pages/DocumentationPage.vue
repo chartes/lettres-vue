@@ -3,57 +3,57 @@
     <div class="documentation-content">
       <div class="is-flex layout-main">
         <section class="toc" :class="menuCsscClass">
-            <ul class="toc-lvl1">
-              <li><a href="#ids-pattern">Structure éditoriale</a></li>
-              <li>
-                <a href="#dts-api">API Texte (DTS)</a>
-                <ul class="toc-lvl2">
-                  <li><a href="#dts-collections">Collections</a></li>
-                  <li><a href="#dts-document">dts-document</a></li>
-                </ul>
-              </li>
-              <li>
-                <a href="#iiif-api">API Image (IIIF)</a>
-                <ul class="toc-lvl2">
-                  <li><a href="#iiif-presentation">Métadonnées</a></li>
-                  <li><a href="#iiif-image">Images</a></li>
-                  <li><a href="#dts-iiif-links">Lien texte/image</a></li>
-                </ul>
-              </li>
-              <li>
-                <a href="#search-api">API de recherche (Elastic)</a>
-                <ul class="toc-lvl2">
-                  <li>
-                    <a href="#search-syntax">Syntaxe des requêtes</a>
-                    <ul class="toc-lvl3">
-                      <li><a href="#search-pagination">Pagination</a></li>
-                      <li><a href="#search-wildcards">Wildcard query</a></li>
-                      <li><a href="#search-regex">Regex</a></li>
-                      <li><a href="#search-fuzzy">Recherche floue</a></li>
-                    </ul>
-                  </li>
-                  <li>
-                    <a href="#search-response">Format de réponse</a>
-                  </li>
-                  <li>
-                    <a href="#search-modes">Catalogue et concordances</a>
-                    <ul class="toc-lvl3">
-                      <li><a href="#search-filters-sort">Filtres et tris</a></li>
-                      <li><a href="#search-catalogue">Catalogue</a></li>
-                      <li><a href="#search-full-text">Concordances</a></li>
-                      <li><a href="#search-both-modes">Concordances filtrées</a></li>
-                    </ul>
-                  </li>
-                </ul>
-              </li>
-            </ul>
-          </section>
+          <ul class="toc-lvl1">
+            <li>
+              <a href="#json-api">API JSON</a>
+              <ul class="toc-lvl2">
+                <li><a href="#json-api-pagination">Pagination</a></li>
+                <li><a href="#compound-documents">Compound Documents</a></li>
+                <li><a href="#sparse-fieldset">Sparse Fieldset</a></li>
+                <li><a href="#custom-specs">Implémentations spécifiques</a></li>
+              </ul>
+            </li>
+            <li>
+              <a href="#resources">Ressources exposées</a>
+              <ul class="toc-lvl2">
+                <li><a href="#persons">Personnes</a></li>
+                <li><a href="#places">Lieux</a></li>
+                <li><a href="#iiif-links">Lien texte/image</a></li>
+              </ul>
+            </li>
+            <li>
+              <a href="#search-api">API de recherche</a>
+              <ul class="toc-lvl2">
+                <li><a href="#search-scope">Périmètre de la recherche</a></li>
+                <li>
+                  <a href="#search-syntax">Syntaxe des requêtes</a>
+                  <ul class="toc-lvl3">
+                    <li><a href="#search-pagination">Pagination</a></li>
+                    <li><a href="#search-wildcards">Wildcard query</a></li>
+                    <li><a href="#search-regex">Regex</a></li>
+                    <li><a href="#search-fuzzy">Recherche floue</a></li>
+                  </ul>
+                </li>
+                <li>
+                  <a href="#search-filters-sort">Filtres et tris</a>
+                  <ul class="toc-lvl3">
+                    <li><a href="#search-filter-dates">Dates</a></li>
+                    <li><a href="#search-filter-places">Lieux</a></li>
+                    <li><a href="#search-filter-persons">Personnes</a></li>
+                    <li><a href="#search-filter-multiple">Combiner les filtres</a></li>
+                    <li><a href="#search-sort">Tris</a></li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </section>
         <a href="#" @click="toggleMenu($event)" class="toggle-menu-btn">
           <i class="fas fa-bars"/>
         </a>
         <section class="main container content">
-          <section class="section" id="search-api">
-            <h2>Service de recherche</h2>
+          <section class="section" id="json-api">
+            <h2>API JSON</h2>
             <p>
               L’API de recherche est construite avec
               <a
@@ -79,6 +79,117 @@
               chercheur, à l’historiographe notamment.
             </p>
           </section>
+          <section class="section" id="json-api-pagination">
+            <h3>Pagination</h3>
+            <p>
+              L’API de recherche utilise les requêtes de type
+              <a
+                href="https://www.elastic.co/guide/en/elasticsearch/reference/6.8/query-dsl-query-string-query.html#query-string-syntax"
+                target="_blank"
+                ><code>query_string</code></a
+              >.
+            </p>
+          </section>
+          <section class="section" id="compound-documents">
+            <h3>Compound Documents</h3>
+            <p>
+              L’API de recherche utilise les requêtes de type
+              <a
+                href="https://www.elastic.co/guide/en/elasticsearch/reference/6.8/query-dsl-query-string-query.html#query-string-syntax"
+                target="_blank"
+                ><code>query_string</code></a
+              >.
+            </p>
+          </section>
+          <section class="section" id="sparse-fieldset">
+            <h3>Sparse fieldset</h3>
+            <p>
+              L’API de recherche utilise les requêtes de type
+              <a
+                href="https://www.elastic.co/guide/en/elasticsearch/reference/6.8/query-dsl-query-string-query.html#query-string-syntax"
+                target="_blank"
+                ><code>query_string</code></a
+              >.
+            </p>
+          </section>
+          <section class="section" id="custom-specs">
+            <h3>Implémentation spécifiques</h3>
+            <p>
+              L’API de recherche utilise les requêtes de type
+              <a
+                href="https://www.elastic.co/guide/en/elasticsearch/reference/6.8/query-dsl-query-string-query.html#query-string-syntax"
+                target="_blank"
+                ><code>query_string</code></a
+              >.
+            </p>
+          </section>
+          <section class="section" id="resources">
+            <h2>Ressources exposées</h2>
+            <p>
+              L’API de recherche est construite avec
+              <a
+                href="https://www.elastic.co/guide/en/elasticsearch/reference/6.8/index.html"
+                target="_blank"
+                >Elasticsearch 6.8</a
+              >.
+            </p>
+          </section>
+          <section class="section" id="persons">
+            <h3>Personnes</h3>
+            <p>
+              L’API de recherche utilise les requêtes de type
+              <a
+                href="https://www.elastic.co/guide/en/elasticsearch/reference/6.8/query-dsl-query-string-query.html#query-string-syntax"
+                target="_blank"
+                ><code>query_string</code></a
+              >.
+            </p>
+          </section>
+          <section class="section" id="places">
+            <h3>Lieux</h3>
+            <p>
+              L’API de recherche utilise les requêtes de type
+              <a
+                href="https://www.elastic.co/guide/en/elasticsearch/reference/6.8/query-dsl-query-string-query.html#query-string-syntax"
+                target="_blank"
+                ><code>query_string</code></a
+              >.
+            </p>
+          </section>
+          <section class="section" id="iiif-links">
+            <h3>IIIF – TODO</h3>
+            <p>
+              TODO
+            </p>
+          </section>
+          <section class="section" id="search-api">
+            <h2>API de recherche</h2>
+            <p>
+              L’API de recherche est construite avec
+              <a
+                href="https://www.elastic.co/guide/en/elasticsearch/reference/6.8/index.html"
+                target="_blank"
+                >Elasticsearch 6.8</a
+              >.
+            </p>
+            <p>La recherche peut porter sur :</p>
+            <ul>
+              <li>
+                les seules notices (catalogue) :
+                <code>search?query=metadata.{field_name}:{search_string}</code>
+              </li>
+              <li>
+                le corps du texte des positions (concordances) :
+                <code>search?query={search_string}</code>
+              </li>
+            </ul>
+            <p>
+              L’objectif est de combiner les possibilités d’une recherche catalographique
+              (retrouver un document) à celles de la recherche plein texte utiles au
+              chercheur, à l’historiographe notamment.
+            </p>
+          </section>
+          <section class="section" id="search-scope"></section>
           <section class="section" id="search-syntax">
             <h3>Syntaxe des requêtes</h3>
             <p>
@@ -199,11 +310,8 @@
             </ul>
             <p><code>dts_url</code> : permet d’accéder à la position.</p>
           </section>
-          <section class="section" id="search-modes">
-            <h3>Catalogue et concordances</h3>
-          </section>
           <section class="section" id="search-filters-sort">
-            <h4>Filtres et tris</h4>
+            <h3>Filtres et tris</h3>
             <p>
               Les champs de la notice sont tous disponibles comme
               <a
@@ -222,142 +330,130 @@
               de publication.
             </p>
           </section>
-          <section class="section" id="search-catalogue">
-            <h4>Catalogue</h4>
-            <p>La recherche sur le catalogue repose sur l’utilisation de ces champs.</p>
-            <api-call-dropdown
-              method="GET"
-              description="Les positions dont l’auteur porte le nom 'Pastoureau'"
-              :url="`${API_URL}/search?query=metadata.author_name:Pastoureau`"
-            />
-            <api-call-dropdown
-              method="GET"
-              description="Les positions dont l’auteur porte le prénom 'Michelle'"
-              :url="`${API_URL}/search?query=metadata.author_firstname:Michelle`"
-            />
-            <api-call-dropdown
-              method="GET"
-              description="Les positions dont le titre contient le mot 'bestiaire'"
-              :url="`${API_URL}/search?query=metadata.title_rich:bestiaire`"
-            />
-            <api-call-dropdown
-              method="GET"
-              description="Les 5 dernières positions (ordre antéchronologique de publication) dont le titre contient 'cartulaire'"
-              :url="`${API_URL}/search?query=metadata.title_rich:cartulaire&sort=-metadata.promotion_year&page[size]=5`"
-            />
-            <api-call-dropdown
-              method="GET"
-              description="Les positions rédigées par de futurs enseignants de l’École"
-              :url="`${API_URL}/search?query=metadata.enc_teacher:1`"
-            />
-            <api-call-dropdown
-              method="GET"
-              description="Les positions publiées avant 1851"
-              :url="`${API_URL}/search?query=metadata.promotion_year:<1851`"
-            />
-            <api-call-dropdown
-              method="GET"
-              description="Les positions dont le sujet se déroule après 1968"
-              :url="`${API_URL}/search?query=metadata.topic_notBefore:>1968`"
-            />
-            <api-call-dropdown
-              method="GET"
-              description="Les positions publiées en 1850 et en 1851"
-              :url="`${API_URL}/search?query=metadata.promotion_year:(1850 OR 1851)`"
-            />
+          <section class="section" id="search-filter-dates">
+            <h4>Dates</h4>
             <p>
-              NB. Les bornes chronologiques du sujet ne sont pas toujours renseignées et
-              sont parfois fautives.
-            </p>
-            <p>Il est possible de combiner la recherche sur différents champs.</p>
-            <api-call-dropdown
-              method="GET"
-              description="Les positions dont le sujet se déroule entre 1939 et 1945"
-              :url="`${API_URL}/search?query=metadata.topic_notBefore:>=1939 AND metadata.topic_notAfter:<=1945`"
-            />
-            <p>
-              Pour filtrer une requête par intervalle chronologique (bornes chronologiques
-              sujet ou période de soutenance), il est aussi possible d’utiliser une
-              requête de type
+              Pour la
               <a
-                href="https://www.elastic.co/guide/en/elasticsearch/reference/6.8/query-dsl-range-query.html"
+                href="https://www.elastic.co/guide/en/elasticsearch/reference/6.8/common-options.html#fuzziness"
                 target="_blank"
-                ><code>range</code></a
-              >.
+                >recherche floue</a
+              >, il est possile de passer en suffixe de la chaîne de caractère recherchée
+              un paramètre (<em>fuzziness parameter</em>) définissant la
+              <a
+                href="https://fr.wikipedia.org/wiki/Distance_de_Levenshtein"
+                target="_blank"
+                >distance d'édition Levenshtein</a
+              >
+              maximale autorisée (ou le nombre d'éditions) : <code>~0</code> (recherche
+              exacte), <code>~1</code> (recherche floue), <code>~2</code> (recherche très
+              floue).
             </p>
-            <p>Pour définir l’intervalle, on utilise :</p>
-            <ul>
-              <li><code>gt</code> : plus grand que</li>
-              <li><code>gte</code> : plus grand ou égal</li>
-              <li><code>lt</code> : plus petit</li>
-              <li><code>lte</code> : plus petit ou égal</li>
-            </ul>
             <api-call-dropdown
               method="GET"
-              description="Recherche sur les titres relatifs à la musique, pendant la période baroque"
-              :url="`${API_URL}/search?query=metadata.title_rich:musi*&range[metadata.topic_notBefore]=gte:1600&range[metadata.topic_notAfter]=lte:1750`"
+              description="La recherche floue sur 'Clacy' retourne par exemple 'Flacy' ou 'Clécy'"
+              :url="`${API_URL}/search?query=clacy~1`"
             />
           </section>
-          <section class="section" id="search-full-text">
-            <h4>Concordances</h4>
+          <section class="section" id="search-filter-places">
+            <h4>Lieux</h4>
             <p>
-              Il est possible de lister toutes les occurrences d’un motif dans le corps de
-              texte des positions.
+              Pour la
+              <a
+                href="https://www.elastic.co/guide/en/elasticsearch/reference/6.8/common-options.html#fuzziness"
+                target="_blank"
+                >recherche floue</a
+              >, il est possile de passer en suffixe de la chaîne de caractère recherchée
+              un paramètre (<em>fuzziness parameter</em>) définissant la
+              <a
+                href="https://fr.wikipedia.org/wiki/Distance_de_Levenshtein"
+                target="_blank"
+                >distance d'édition Levenshtein</a
+              >
+              maximale autorisée (ou le nombre d'éditions) : <code>~0</code> (recherche
+              exacte), <code>~1</code> (recherche floue), <code>~2</code> (recherche très
+              floue).
             </p>
-            <pre>/search?query={search_string}</pre>
-            <p>
-              Dans la réponse, <code>highlight</code> liste alors les 100 premières
-              concordances pour le motif recherché.
-            </p>
             <api-call-dropdown
               method="GET"
-              description="Les positions contenant le mot 'bestaire'"
-              :url="`${API_URL}/search?query=bestiaire`"
-            />
-            <p>Les requêtes de type <code>range</code> sont également possibles :</p>
-            <api-call-dropdown
-              method="GET"
-              description="Recherche plein texte relative à la musique, pendant la période baroque"
-              :url="`${API_URL}/search?query=musi*&range[metadata.topic_notBefore]=gte:1600&range[metadata.topic_notAfter]=lte:1750`"
-            />
-            <api-call-dropdown
-              method="GET"
-              description="Recherche plein texte relative à la musique, pendant la période baroque, pour les positions rédigées à partir de 2000"
-              :url="`${API_URL}/search?query=musi*&range[metadata.topic_notBefore]=gte:1600&range[metadata.topic_notAfter]=lte:1750&range[metadata.promotion_year]=gte:2000`"
+              description="La recherche floue sur 'Clacy' retourne par exemple 'Flacy' ou 'Clécy'"
+              :url="`${API_URL}/search?query=clacy~1`"
             />
           </section>
-          <section class="section" id="search-both-modes">
-            <h4>Filtrer les concordances par notice</h4>
+          <section class="section" id="search-filter-persons">
+            <h4>Personnes</h4>
             <p>
-              Il est possible de combiner recherche plein texte et recherche
-              catalographique. Cela revient à filtrer le recherche plein texte grâce aux
-              champs des notices.
+              Pour la
+              <a
+                href="https://www.elastic.co/guide/en/elasticsearch/reference/6.8/common-options.html#fuzziness"
+                target="_blank"
+                >recherche floue</a
+              >, il est possile de passer en suffixe de la chaîne de caractère recherchée
+              un paramètre (<em>fuzziness parameter</em>) définissant la
+              <a
+                href="https://fr.wikipedia.org/wiki/Distance_de_Levenshtein"
+                target="_blank"
+                >distance d'édition Levenshtein</a
+              >
+              maximale autorisée (ou le nombre d'éditions) : <code>~0</code> (recherche
+              exacte), <code>~1</code> (recherche floue), <code>~2</code> (recherche très
+              floue).
             </p>
-            <pre>
-/search?query={search_string} AND metadata.{field_name}:{search_string}</pre
-            >
             <api-call-dropdown
               method="GET"
-              description="La position contenant le mot 'bestiaire' publiée en 1972…"
-              :url="`${API_URL}/search?query=bestiaire AND metadata.promotion_year:1972`"
+              description="La recherche floue sur 'Clacy' retourne par exemple 'Flacy' ou 'Clécy'"
+              :url="`${API_URL}/search?query=clacy~1`"
             />
-            <api-call-dropdown
-              method="GET"
-              description="Les positions contenant le mot 'football' rédigées par une femme"
-              :url="`${API_URL}/search?query=football AND metadata.author_gender:2`"
-            />
-            <api-call-dropdown
-              method="GET"
-              description="Recherche des occurrences 'Pastoureau' uniquement dans le corps du texte (d’un autre auteur)"
-              :url="`${API_URL}/search?query=Pastoureau AND _exists_:metadata.author_name AND metadata.author_name:(NOT Pastoureau)`"
-            />
+          </section>
+          <section class="section" id="search-filter-multiple">
+            <h4>Combiner les filtres</h4>
             <p>
-              Dans cette requête <code>_exists_</code> permet d’exclure du résultat les
-              documents qui n‘ont pas d’auteur (le paratexte introductif et conclusif) ;
-              le filtre <code>metadata.author_name:(NOT Pastoureau)</code> exclut du
-              résultat les positions rédigées par les auteurs nommés Pastoureau. On liste
-              ainsi les seules occurrences de 'Pastoureau' citées par d’autres auteurs.
+              Pour la
+              <a
+                href="https://www.elastic.co/guide/en/elasticsearch/reference/6.8/common-options.html#fuzziness"
+                target="_blank"
+                >recherche floue</a
+              >, il est possile de passer en suffixe de la chaîne de caractère recherchée
+              un paramètre (<em>fuzziness parameter</em>) définissant la
+              <a
+                href="https://fr.wikipedia.org/wiki/Distance_de_Levenshtein"
+                target="_blank"
+                >distance d'édition Levenshtein</a
+              >
+              maximale autorisée (ou le nombre d'éditions) : <code>~0</code> (recherche
+              exacte), <code>~1</code> (recherche floue), <code>~2</code> (recherche très
+              floue).
             </p>
+            <api-call-dropdown
+              method="GET"
+              description="La recherche floue sur 'Clacy' retourne par exemple 'Flacy' ou 'Clécy'"
+              :url="`${API_URL}/search?query=clacy~1`"
+            />
+          </section>
+          <section class="section" id="search-sort">
+            <h4>Tris</h4>
+            <p>
+              Pour la
+              <a
+                href="https://www.elastic.co/guide/en/elasticsearch/reference/6.8/common-options.html#fuzziness"
+                target="_blank"
+                >recherche floue</a
+              >, il est possile de passer en suffixe de la chaîne de caractère recherchée
+              un paramètre (<em>fuzziness parameter</em>) définissant la
+              <a
+                href="https://fr.wikipedia.org/wiki/Distance_de_Levenshtein"
+                target="_blank"
+                >distance d'édition Levenshtein</a
+              >
+              maximale autorisée (ou le nombre d'éditions) : <code>~0</code> (recherche
+              exacte), <code>~1</code> (recherche floue), <code>~2</code> (recherche très
+              floue).
+            </p>
+            <api-call-dropdown
+              method="GET"
+              description="La recherche floue sur 'Clacy' retourne par exemple 'Flacy' ou 'Clécy'"
+              :url="`${API_URL}/search?query=clacy~1`"
+            />
           </section>
         </section>
       </div>
