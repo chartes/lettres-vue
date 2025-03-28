@@ -30,7 +30,7 @@ WHERE
   ?item wdt:P17 ?pays.
   ?item wdt:P625 ?coords.
   ?item p:P31 ?statement0.
-  ?statement0 (ps:P31/(wdt:P279*)) wd:Q515.
+  ?statement0 (ps:P31/(wdt:P279*)) wd:Q484170.
   ?pays wdt:P30 wd:Q46;
 
   FILTER(LANG(?label) = "fr")
