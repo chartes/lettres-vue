@@ -52,54 +52,70 @@
           <i class="fas fa-bars"/>
         </a>
         <section class="main container content">
+          <section class="section" id="documentation-top">
+            <h1>Documentation</h1>
+            <p>
+              Documentation de référence de l’API 1.0 de ecco.chartes.psl.eu.<br>
+            </p>
+            <p>
+              Cette application entend répondre aux exigences éditoriales de l’accès libre
+              et aux attentes scientifiques combinées de l’ouverture des données.
+            </p>
+            <p>
+              Cette documentation met l’accent sur les requêtes <code>GET</code> : elle
+              est conçue pour guider les chercheurs désireux de récupérer les données
+              brutes à des fins d’analyse et les développeurs qui souhaiteraient fournir
+              de nouveaux outils ou services.
+            </p>
+            <p>Pourquoi des API pour le partage de données ?</p>
+            <ul>
+              <li>
+                Rendre les données FAIR (Findable, Accessible, Interoperable and
+                Reusable).
+              </li>
+              <li>
+                Favoriser leur republication et améliorer leur citabilité.
+              </li>
+              <li>
+                Accéder aux données brutes et pouvoir les valider : s’affranchir de la
+                médiation d’une interface graphique.
+              </li>
+              <li>
+                Constituer librement des corpus sur mesure pour les analyses.
+              </li>
+              <li>
+                Favoriser le développement d'interfaces utilisateur, d'outils et de
+                services.
+              </li>
+              <li>
+                Améliorer la pérennité des développements.
+              </li>
+            </ul>
+          </section>
           <section class="section" id="json-api">
             <h2>API JSON</h2>
             <p>
-              L’API de recherche est construite avec
-              <a
-                href="https://www.elastic.co/guide/en/elasticsearch/reference/6.8/index.html"
-                target="_blank"
-                >Elasticsearch 6.8</a
-              >.
-            </p>
-            <p>La recherche peut porter sur :</p>
-            <ul>
-              <li>
-                les seules notices (catalogue) :
-                <code>search?query=metadata.{field_name}:{search_string}</code>
-              </li>
-              <li>
-                le corps du texte des positions (concordances) :
-                <code>search?query={search_string}</code>
-              </li>
-            </ul>
-            <p>
-              L’objectif est de combiner les possibilités d’une recherche catalographique
-              (retrouver un document) à celles de la recherche plein texte utiles au
-              chercheur, à l’historiographe notamment.
+              Les ressources sont renvoyées suivant le standard <a href="https://jsonapi.org/format/" target="_blank">JSON:API 1.0</a>.<br>
+              Les fonctionnalités optionnelles de JSON:API 1.0 ne sont pas toutes implémentées.
             </p>
           </section>
           <section class="section" id="json-api-pagination">
             <h3>Pagination</h3>
             <p>
-              L’API de recherche utilise les requêtes de type
-              <a
-                href="https://www.elastic.co/guide/en/elasticsearch/reference/6.8/query-dsl-query-string-query.html#query-string-syntax"
-                target="_blank"
-                ><code>query_string</code></a
-              >.
+              La recherche ainsi que l’accès aux collections de ressources renvoient des résultats <a href="https://jsonapi.org/format/1.0/#fetching-pagination" target="_blank">paginés</a>.<br>
+              L’objet <code>links</code> contient les liens de navigation permettant de se rendre sur les différentes pages du résultat (<code>first</code>, <code>last</code>, <code>prev</code>, <code>next</code>).
             </p>
           </section>
           <section class="section" id="compound-documents">
             <h3>Compound Documents</h3>
             <p>
-              L’API de recherche utilise les requêtes de type
-              <a
-                href="https://www.elastic.co/guide/en/elasticsearch/reference/6.8/query-dsl-query-string-query.html#query-string-syntax"
-                target="_blank"
-                ><code>query_string</code></a
-              >.
+              <a href="https://jsonapi.org/format/1.0/#document-compound-documents" target="_blank">Compound Documents</a> (documents composites) : le paramètre de requête <a href="https://jsonapi.org/format/#fetching-includes" target="_blank"><code>include</code></a> permet d’inclure dans la réponse des ressources reliées à la source primaire. Les ressources sont incluses dans le tableau de premier niveau <code>included</code>.
             </p>
+            <api-call-dropdown
+              method="GET"
+              description="La lettre 3488 avec la liste des personnes liées à cette lettre "
+              :url="`${API_URL}/documents/3488?without-relationships&include=persons`"
+            />
           </section>
           <section class="section" id="sparse-fieldset">
             <h3>Sparse fieldset</h3>
