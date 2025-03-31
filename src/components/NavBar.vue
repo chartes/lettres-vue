@@ -44,7 +44,6 @@
           </li>
           <li class="navbar-start-item">
             <router-link
-              :event="''"
               :to="{ name: 'documentation' }"
             >
               Documentation
