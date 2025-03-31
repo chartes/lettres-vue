@@ -50,7 +50,7 @@
         </div>
       </div>
       <div
-        v-else-if="$route.name === 'search' || $route.name === 'document' || $route.name === 'documentation'"
+        v-else-if="$route.name === 'search' || $route.name === 'document' || $route.name === 'documentation' || $route.name === 'mentions'"
       >
         <div
           id="intro_search"
@@ -68,12 +68,17 @@
             </div>
           </div>
           <div
-            v-else-if="$route.name === 'documentation'"
+            v-else-if="$route.name === 'documentation' || $route.name === 'mentions'"
             class="row search_page_search_row"
           >
-            <div class="column">
+            <div v-if="$route.name === 'documentation'" class="column">
               <p class="documentation_title">
                 Documentation de l'API
+              </p>
+            </div>
+            <div v-else-if="$route.name === 'mentions'" class="column">
+              <p class="documentation_title">
+                Mentions légales
               </p>
             </div>
           </div>
@@ -140,6 +145,28 @@
           </li>
         </ul>
       </nav>
+      <div class="row links">
+        <ul class="footer-links">
+          <li>
+            <a target="_blank" href="https://www.chartes.psl.eu/contact">
+              Contact
+            </a>
+          </li>
+          <li>
+            <router-link
+              :to="{ name: 'mentions'}"
+              active-class="active"
+            >
+              Mentions légales
+            </router-link>
+          </li>
+          <li>
+            <a target="_blank" href="https://www.huma-num.fr/">
+              Huma-Num
+            </a>
+          </li>
+        </ul>
+      </div>
     </footer>
   </section>
 </template>
@@ -318,14 +345,24 @@ export default {
   }
 }
 footer {
+  display: flex;
+  flex-direction: column;
   background-color: $footer-background-color !important;
   border-top: solid 6px #7F0038;
-  padding: 90px 0 !important;
+  width: 100%;
+  padding: 90px 40px !important;
   z-index: 100;
 
+
   @include on-mobile {
-    padding: 40px 0 30px !important;
+    padding-left: $container-mobile-margin;
+    padding-right: $container-mobile-margin;
   }
+
+  /*@include on-mobile {
+    flex-direction: row;
+    padding: 40px 0 30px !important;
+  }*/
 
   nav {
     width: $container-max-width;
@@ -350,7 +387,7 @@ footer {
         transition: transform ease-in-out 0.35s;
       }
       img:hover {
-        transform: scale(1.25);
+        transform: scale(1.10);
       }
 
       @include on-mobile {
@@ -375,7 +412,62 @@ footer {
         }
       }
     }
+  }
+  .row.links {
+    width: 100%;
+    margin: 50px auto auto;
 
+    & > .footer-links {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      vertical-align: top;
+      height: max-content;
+      width: 100%;
+
+      & > li {
+        padding-left: 0.75rem;
+
+        @include on-mobile {
+          padding-left: 0.4rem;
+        }
+      }
+
+      & > li:not(:last-child)::after {
+        content: "|";
+        display: inline-block;
+        color: $white;
+        padding-left: 12px;
+        padding-right: 2px;
+        transform: scale(1 , 2) translateY(-2px);
+
+        @include on-small-tablet {
+          transform: scale(1, 1.1) translateY(-3px);
+        }
+
+        @include on-mobile {
+          padding-left: 0.4rem;
+        }
+      }
+      & > li > a {
+        padding-bottom: 3px;
+        font-family: $family-secondary;
+        font-size: 18px;
+        font-weight: 200;
+        text-transform: uppercase;
+        color: $white !important;
+
+        &:hover, :focus {
+          border-bottom: solid 4px #FF0052;
+          color: $white !important;
+          background-color: transparent !important;
+        }
+
+        @include on-small-tablet {
+          font-size: 15px;
+        }
+      }
+    }
   }
 }
 #intro_home {

@@ -19,6 +19,7 @@ const BookmarksPage = () => import('@/pages/BookmarksPage.vue')
 const HistoryPage = () => import('@/pages/HistoryPage.vue')
 
 const DocumentationPage = () => import('@/pages/DocumentationPage.vue')
+const MentionsLegalesPage = () => import('@/pages/MentionsLegalesPage.vue')
 const AboutPage = () => import('@/pages/AboutPage.vue')
 const PersonsPage = () => import('@/pages/PersonsPage.vue')
 const PlacesPage = () => import('@/pages/PlacesPage.vue')
@@ -156,6 +157,11 @@ const router = new VueRouter({
       path: '/documentation',
       component: DocumentationPage,
       name: 'documentation'
+    },
+    {
+      path: '/mentions',
+      component: MentionsLegalesPage,
+      name: 'mentions'
     },
     {
       path: '/users',
