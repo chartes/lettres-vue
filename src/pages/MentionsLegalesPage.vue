@@ -44,7 +44,7 @@
               <p>Sauf mention contraire, les contenus du site ({{ websiteURL }}) et les données accessibles via ses API sont partagés sous licence ouverte Creative Commons <a target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a>.
               </p>
 
-              <h2>Crédits photographiques</h2>
+              <!--<h2>Crédits photographiques</h2>-->
               <!--
               <p>Les sources des bannières des pages du site eNDP (endp.chartes.psl.eu) sont les
                 suivantes :</p>

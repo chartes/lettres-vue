@@ -54,10 +54,11 @@
         </a>
         <section class="main container content">
           <section class="section" id="documentation-top">
-            <h1>Documentation</h1>
+            <!--<h1>Documentation</h1>
             <p>
               Documentation de référence de l’API 1.0 de ecco.chartes.psl.eu.<br>
-            </p>
+            </p>-->
+            <h1>Documentation de référence de l’API 1.0 de {{ websiteURL }}.</h1>
             <p>
               Cette application entend répondre aux exigences éditoriales de l’accès libre
               et aux attentes scientifiques combinées de l’ouverture des données.
@@ -525,6 +526,7 @@ export default {
     return {
       isMenuOpened: false,
       API_URL: baseApiURL,
+      websiteURL: `${process.env.VUE_APP_APP_URL}`,
       IIIF_SERVER_URL: `${process.env.VUE_APP_IIIF_SERVER_URL}`,
       IIIF_URL: `${process.env.VUE_APP_IIIF_URL}`,
       IIIF_IMAGES_URL: `${process.env.VUE_APP_IIIF_IMAGES_URL}`,
