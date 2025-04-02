@@ -17,13 +17,15 @@ export default {
   },
   async created() {
     await this.getDocumentsTotal();
-    await this.fetchAll();
-    await this.fetch();
+    await this.fetchCollections();
+    await this.fetchLanguages();
+    await this.fetchInstitutions();
   },
   methods: {
     ...mapActions("search", ["getDocumentsTotal"]),
-    ...mapActions("collections", ["fetchAll"]),
-    ...mapActions("languages", ["fetch"])
+    ...mapActions("collections", {fetchCollections: "fetchAll"}),
+    ...mapActions("languages", {fetchLanguages: "fetch"}),
+    ...mapActions("institutions", {fetchInstitutions: "fetch"})
   },
 };
 </script>
