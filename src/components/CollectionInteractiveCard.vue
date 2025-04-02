@@ -212,8 +212,8 @@
               alt="Card image cap"
             >
           </div>
-          <div class="collection-thumbnail-caption">
-            Légende (TEST)
+          <div class="collection-thumbnail-caption" v-html="collection.legende_img">
+            <!--Légende (TEST)-->
           </div>
         </div>
 

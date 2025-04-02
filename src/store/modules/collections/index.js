@@ -103,7 +103,7 @@ const actions = {
       // Convert JSON to collections
       const collections = collectionsJSON.map(({
         id,
-        attributes: {title, description, nb_docs, nb_pub_docs,date_min, date_max, date_min_pub, date_max_pub},
+        attributes: {title, description, legende_img, nb_docs, nb_pub_docs,date_min, date_max, date_min_pub, date_max_pub},
         relationships: {children, parents, admin}
       }) => ({
         id,
@@ -115,6 +115,7 @@ const actions = {
         dateMinPub: date_min_pub,
         dateMaxPub: date_max_pub,
         description,
+        legende_img,
         children: children.data.map((child) => child.id),
         parent: parents.data[0] !== undefined ? parents.data[0].id : null,
         admin: {
@@ -153,6 +154,7 @@ const actions = {
       titleWithCount: c.parents && c.parents.length === 0 ? c.attributes.title : `${c.attributes.title} (${c.attributes.nb_docs})`,
 
       description: c.attributes.description,
+      legende_img: c.attributes.legende_img,
       documentCount: c.attributes.nb_docs,
       publishedCount: c.attributes.nb_pub_docs,
       dateMin: c.attributes.date_min,

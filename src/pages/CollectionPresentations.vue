@@ -78,6 +78,82 @@
     </b-collapse>
   </div>
 
+  <!-- ### HENRI IV ID = 3 ### -->
+
+  <!-- Historique -->
+  <div
+    v-else-if="$props.collectionId === 3"
+  >
+    <div
+      class="heading is-uppercase"
+      :class="isHistoryOpen ? 'is-closed' : ''"
+    >
+      <span class="heading-content">Historique</span>
+      <span
+        class="icon"
+        :aria-expanded="isHistoryOpen"
+        aria-controls="historySection"
+        @click="isHistoryOpen = !isHistoryOpen"
+      >
+      </span>
+    </div>
+    <b-collapse
+      :class="isHistoryOpen? '' : 'hiddendiv'"
+      aria-id="historySection"
+    >
+      <div class="collection-section-content">
+        <p>Henri de Bourbon (1553-1610) est le fils d’Antoine de Bourbon et de Jeanne d’Albret, roi et reine de Navarre. Chef du parti protestant, après un bref passage à la religion catholique entre 1572 et 1575 à la faveur de son mariage avec Marguerite de Valois, il été l’un des acteurs majeurs des Guerres de Religion qui ont déchiré le royaume de France durant les années 1570-1580. Héritier de la couronne de France en vertu des lois successorales françaises, il succède au roi Henri III assassiné en 1589 et se convertit nouveau au catholicisme en 1593. Le long règne de Henri IV se partage entre une phase de reconquête du royaume, sanctionnés en 1598 par la paix de Vervins avec l’Espagne et l’édit de tolérance de Nantes, et une phase de restauration interrompue par son propre assassinat en 1610.</p>
+        <p>Sa correspondance active restitue près d’un demi-siècle d’histoire de France, au plan intérieur comme extérieur, et se signale par une prédilection pour l’écriture de lettres autographes qui restituent le volontarisme et le style direct du premier roi de la dynastie des Bourbon, demeuré dans l’imaginaire collectif comme un souverain ayant refermé provisoirement les guerres civiles et religieuses et posé les bases d’un gouvernement monarchique moderne.</p>
+      </div>
+    </b-collapse>
+    <!-- Contributeurs & partenariats -->
+    <div
+      class="heading is-uppercase"
+      :class="isCreditsOpen ? 'is-closed' : ''"
+    >
+      <span class="heading-content">Contributeurs & partenariats</span>
+      <span
+        class="icon"
+        :aria-expanded="isCreditsOpen"
+        aria-controls="creditsSection"
+        @click="isCreditsOpen = !isCreditsOpen"
+      >
+      </span>
+    </div>
+    <b-collapse
+      :class="isCreditsOpen? '' : 'hiddendiv'"
+      aria-id="creditsSection"
+    >
+      <div class="collection-section-content">
+        <p>L’édition publiée au XIXe siècle par le Comité des travaux historiques et scientifiques a été rétroconvertie avec le soutien de l’université de Besançon (Centre Lucien-Febvre), sous la direction scientifique de Hugues Daussy, professeur d’histoire moderne, qui assure la direction de sa reprise et de son complément scientifiques.</p>
+      </div>
+    </b-collapse>
+    <!-- Bibliographie -->
+    <div
+      class="heading is-uppercase"
+      :class="isBiblioOpen ? 'is-closed' : ''"
+    >
+      <span class="heading-content">Bibliographie sélective</span>
+      <span
+        class="icon"
+        :aria-expanded="isBiblioOpen"
+        aria-controls="biblioSection"
+        @click="isBiblioOpen = !isBiblioOpen"
+      >
+      </span>
+    </div>
+    <b-collapse
+      :class="isBiblioOpen? '' : 'hiddendiv'"
+      aria-id="biblioSection"
+    >
+      <div class="collection-section-content">
+        <ul class="mt-2 mb-2">
+          <li><em>Recueil des lettre missives de Henri IV</em>, éd. Jules Berger de Xivrey et Joseph Guadet, 9 volumes, Paris, Imprimerie nationale, 1843-1876 (Documents inédits sur l’histoire de France).</li>
+          <li><em>Lettres de Henri IV concernant les relations du Saint-Siège et de la France, 1595-1609</em>, éd. Bernard Barbiche, Cité du Vatican, Biblioteca Apostolica Vaticana, 1968 (Studi e testi, 250).</li>
+        </ul>
+      </div>
+    </b-collapse>
+  </div>
 
   <!-- ### AUTRES COLLECTIONS ### -->
 

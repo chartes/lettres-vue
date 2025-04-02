@@ -16,7 +16,7 @@
     <div
       v-else-if="$props.collectionId === 3"
       class="collection-section-content">
-      <p>Hugues Daussy (Affiliation à préciser)</p>
+      <p>Hugues Daussy (Université de Franche-Comté, Centre Lucien-Febvre)</p>
     </div>
 
     <!-- ### AUTRES COLLECTIONS NON RENSEIGNEES ### -->
