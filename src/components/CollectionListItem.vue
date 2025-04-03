@@ -57,7 +57,7 @@
       />
       <div class="collection-metadata is-flex">
         <p>
-          Curateur : {{ collection.admin.username }}
+          Administrateur : {{ collection.admin.username }}
         </p>
       </div>
     </div>

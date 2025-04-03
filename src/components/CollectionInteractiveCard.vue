@@ -325,13 +325,13 @@
             v-if="collection.title !== 'Hors collections' && !collection.parent"
             :collection-id="collection.id"
           />
-          <!-- Curateur de la collection -->
+          <!-- Administrateur de la collection -->
           <div
             v-if="!editModeEnabled || !editMode || collection.title === 'Hors collections'"
             class="collection-user-roles"
           >
             <p>
-              Curateur :
+              Administrateur :
             </p>
             <div class="collection-user-roles-value">
               <a>{{ collection.admin.username }}</a>
@@ -342,7 +342,7 @@
             class="collection-user-roles control"
           >
             <p>
-              Curateur :
+              Administrateur :
             </p>
             <div class="is-inline-block">
               <b-field>
@@ -1072,6 +1072,7 @@ export default {
       font-size: 18px;
       font-weight: 400;
       color: #4A4A4A;
+      pointer-events: none;
 
       @include on-mobile {
         font-size: 15px;
