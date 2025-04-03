@@ -48,6 +48,14 @@
     >
       <div class="collection-section-content">
         <p>L’édition publiée au XIXe siècle par le Comité des travaux historiques et scientifiques a été partiellement, revue, associée à des métadonnées et complétée par l’édition de de nouvelles lettres par Aurélie Massie, Olivier Poncet et Julien Wilmart.</p>
+        <div class="credit_logos">
+          <a target="_blank" href="https://www.chartes.psl.eu/recherche/le-centre-jean-mabillon">
+            <img
+              src="@/assets/images/logos/logo-CMJ-couleur.png"
+              alt="Logo CJM"
+            />
+          </a>
+        </div>
       </div>
     </b-collapse>
     <!-- Bibliographie -->
@@ -125,7 +133,15 @@
       aria-id="creditsSection"
     >
       <div class="collection-section-content">
-        <p>L’édition publiée au XIXe siècle par le Comité des travaux historiques et scientifiques a été rétroconvertie avec le soutien de l’université de Besançon (Centre Lucien-Febvre), sous la direction scientifique de Hugues Daussy, professeur d’histoire moderne, qui assure la direction de sa reprise et de son complément scientifiques.</p>
+        <p>L’édition publiée au XIXe siècle par le Comité des travaux historiques et scientifiques a été rétroconvertie avec le soutien de l’université de Besançon (Centre Lucien Febvre), sous la direction scientifique de Hugues Daussy, professeur d’histoire moderne, qui assure la direction de sa reprise et de son complément scientifiques.</p>
+        <div class="credit_logos">
+          <a target="_blank" href="https://centre-lucien-febvre.univ-fcomte.fr/">
+            <img
+              src="@/assets/images/logos/logo-clf-umlp.png"
+              alt="Logo CLF-UMLP"
+            />
+          </a>
+        </div>
       </div>
     </b-collapse>
     <!-- Bibliographie -->
@@ -148,7 +164,7 @@
     >
       <div class="collection-section-content">
         <ul class="mt-2 mb-2">
-          <li><em>Recueil des lettre missives de Henri IV</em>, éd. Jules Berger de Xivrey et Joseph Guadet, 9 volumes, Paris, Imprimerie nationale, 1843-1876 (Documents inédits sur l’histoire de France).</li>
+          <li><em>Recueil des lettres missives de Henri IV</em>, éd. Jules Berger de Xivrey et Joseph Guadet, 9 volumes, Paris, Imprimerie nationale, 1843-1876 (Documents inédits sur l’histoire de France).</li>
           <li><em>Lettres de Henri IV concernant les relations du Saint-Siège et de la France, 1595-1609</em>, éd. Bernard Barbiche, Cité du Vatican, Biblioteca Apostolica Vaticana, 1968 (Studi e testi, 250).</li>
         </ul>
       </div>
@@ -333,6 +349,25 @@ export default {
         text-decoration: underline;
         text-decoration-style: dotted;
         text-underline-offset: 2px;
+      }
+    }
+    .credit_logos {
+      display: flex;
+      justify-content: center;
+      flex-flow: row wrap;
+      align-content: center;
+      margin: 20px;
+      height: 100%;
+      width: 100%;
+
+      & > a > img {
+        margin: 20px;
+        height: 60px;
+
+        @include on-mobile {
+          height: 50px;
+          max-width: 80%;
+        }
       }
     }
   }
