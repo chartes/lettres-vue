@@ -397,7 +397,7 @@ footer {
       }
 
       .enc-logo {
-        height: 100px;
+        height: 80px;
 
         @include on-mobile {
           height: 60px;
@@ -405,7 +405,7 @@ footer {
       }
 
       .cths-logo {
-        height: 100px;
+        height: 80px;
 
         @include on-mobile {
           height: 60px;
