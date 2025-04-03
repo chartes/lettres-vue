@@ -7,26 +7,28 @@
     <!-- ### CATHERINE DE MEDICIS ID = 1 ### -->
     <div
       v-if="$props.collectionId === 1"
-      class="collection-section-content">
-      <p>Olivier Poncet  (École nationale des Chartes - EHESS)</p>
+      class="collection-section-content"
+    >
+      <p>Olivier Poncet  (École nationale des chartes - Centre Jean-Mabillon - EHESS - Centre de recherches historiques)</p>
       <p>Matthieu Gellard (INSPE de Paris-Sorbonne Universités)</p>
     </div>
 
     <!-- ### HENRI IV ID = 3 ### -->
     <div
       v-else-if="$props.collectionId === 3"
-      class="collection-section-content">
-      <p>Hugues Daussy (Université de Franche-Comté, Centre Lucien-Febvre)</p>
+      class="collection-section-content"
+    >
+      <p>Hugues Daussy (Université Marie et Louis Pasteur, Centre Lucien Febvre)</p>
     </div>
 
     <!-- ### AUTRES COLLECTIONS NON RENSEIGNEES ### -->
 
     <div
       v-else
-      class="collection-section-content">
+      class="collection-section-content"
+    >
       <p>Non renseigné</p>
     </div>
-
   </div>
 </template>
 <script>
