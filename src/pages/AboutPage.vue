@@ -91,7 +91,7 @@ export default {
     }
   },
   computed: {
-    menuCsscClass () {
+    menuCssClass () {
       return this.isMenuOpened ? 'true' : ''
     }
   },
