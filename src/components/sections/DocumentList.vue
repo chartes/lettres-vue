@@ -702,7 +702,7 @@
 
         <template #detail="props">
           <document-list-details
-            :transcription-hightlight="props.row.transcriptionHightlight"
+            :transcription-hightlight="props.row.transcriptionHighlight"
             :argument="props.row.argument"
             :witnesses="props.row.witnesses"
             :document-id="props.row.id"
@@ -1082,8 +1082,8 @@ export default {
             recipients: d.recipients.length > 0 ? d.recipients.map(p => p.label).filter(Boolean).join(", ") : '',
             origins: d.origin.length > 0 ? d.origin.map(o => o.label).filter(Boolean).join(", ") : '',
             destinations: d.destinations.length > 0 ? d.destinations.map(d => d.label).filter(Boolean).join(", ") : '',
-            argument: d.argument && d.argument.raw ? d.argument.raw : d.argument,
-            transcriptionHightlight: d.transcription ? d.transcription.highlight : undefined,
+            argument: d.argument && d.argument.highlight ? d.argument.highlight[0] : d.argument && d.argument.raw ? d.argument.raw : undefined,
+            transcriptionHighlight: d.transcription ? d.transcription.highlight : undefined,
             witnesses: d.witnesses,
           }
         }));
@@ -1099,7 +1099,7 @@ export default {
             origins: d.origin.length > 0 ? d.origin.map(o => o.label).filter(Boolean).join(", ") : '',
             destinations: d.destinations.length > 0 ? d.destinations.map(d => d.label).filter(Boolean).join(", ") : '',
             argument: d.argument,
-            transcriptionHightlight: d.transcription ? d.transcription.highlight : undefined,
+            transcriptionHighlight: d.transcription ? d.transcription.highlight : undefined,
             witnesses: d.witnesses,
           }
         }));
