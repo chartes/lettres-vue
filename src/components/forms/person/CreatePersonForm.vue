@@ -123,7 +123,7 @@
       type="is-warning is-small"
       has-icon
     >
-      Une personne possédant l'identifiant <b>{{ this.refId }}</b> }} existe déjà dans
+      Une personne possédant l'identifiant <b>{{ this.refId }}</b> existe déjà dans
       l'application.
     </b-message>
     <b-message
