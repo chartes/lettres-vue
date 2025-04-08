@@ -2,7 +2,7 @@
   <article class="documentation">
     <div class="documentation-content">
       <div class="is-flex layout-main">
-        <section class="toc" :class="menuCsscClass">
+        <section class="toc" :class="menuCssClass">
           <ul class="toc-lvl1">
             <li>
               <a href="#json-api">API JSON</a>
@@ -16,9 +16,10 @@
             <li>
               <a href="#resources">Ressources exposées</a>
               <ul class="toc-lvl2">
+                <li><a href="#document">Documents</a></li>
                 <li><a href="#persons">Personnes</a></li>
                 <li><a href="#places">Lieux</a></li>
-                <li><a href="#iiif-links">Lien texte/image</a></li>
+                <!--<li><a href="#iiif-links">Lien texte/image</a></li>-->
               </ul>
             </li>
             <li>
@@ -54,12 +55,9 @@
         </a>
         <section class="main container content">
           <section class="section" id="documentation-top">
-            <!--<h1>Documentation</h1>
+            <h1>Documentation</h1>
             <p>
-              Documentation de référence de l’API 1.0 de ecco.chartes.psl.eu.<br>
-            </p>-->
-            <h1>Documentation de référence de l’API 1.0 de {{ websiteURL }}.</h1>
-            <p>
+              Documentation de référence de l’API de {{ websiteURL }}.<br>
               Cette application entend répondre aux exigences éditoriales de l’accès libre
               et aux attentes scientifiques combinées de l’ouverture des données.
             </p>
@@ -133,7 +131,7 @@
             />
             <p>
               Plusieurs ressources reliées peuvent être appelées dans une liste de valeurs séparées par une virgule.<br>
-              Il est par exemple possible d’accéder à cette même liste des personnes liées à la lettre 3488, leur rôle avec la description de chaque rôle :
+              Il est par exemple possible d’accéder à cette même liste des personnes liées à la lettre 3488, avec leur rôle mais aussi la description de chaque rôle :
             </p>
             <api-call-dropdown
               method="GET"
@@ -141,7 +139,10 @@
               :url="`${API_URL}/documents/3488/persons-having-roles?include=person,person-role`"
             />
           </section>
-          <section class="section" id="sparse-fieldset">
+          <section
+            id="sparse-fieldset"
+            class="section"
+          >
             <h3>Sparse fieldset</h3>
             <p>
               Les <a href="https://jsonapi.org/format/1.0/#fetching-sparse-fieldsets" target="_blank">Sparse Fieldsets</a> ne sont pas implémentés : pour une ressource, l’API Ecco ne permet pas de retourner les seuls attributs spécifiés. Par exemple, pour une ressource de type <code>document</code> (une lettre), il est impossible de retourner sa seule transcription.
@@ -155,8 +156,8 @@
             </p>
             <api-call-dropdown
               method="GET"
-              description="La lettre 3488 sans ses relations"
-              :url="`${API_URL}/documents/3488?without-relationships`"
+              description="La lettre 3020 sans ses relations"
+              :url="`${API_URL}/documents/3020?without-relationships`"
             />
           </section>
           <section class="section" id="resources">
@@ -165,16 +166,27 @@
               Les ressources principales exposées sont du type suivant :
             </p>
             <ul>
-              <li><code>document</code> : une lettre</li>
-              <li><code>persons</code> : les personnages identifiées associées aux lettres</li>
+              <li><code>documents</code> : les lettres</li>
+              <li><code>persons</code> : les personnages identifiés associés aux lettres</li>
               <li><code>placenames</code> : les villes associées aux lettres</li>
             </ul>
           </section>
+          <section class="section" id="document">
+            <h3>Documents (lettres)</h3>
+            <!--<p>
+              TODO
+            </p>-->
+            <api-call-dropdown
+              method="GET"
+              description="Accéder à la lettre 3488"
+              :url="`${API_URL}/documents/3488?without-relationships`"
+            />
+          </section>
           <section class="section" id="persons">
             <h3>Personnes</h3>
-            <p>
+            <!--<p>
               TODO
-            </p>
+            </p>-->
             <api-call-dropdown
               method="GET"
               description="Accéder à la description d’Anne d'Autriche"
@@ -193,9 +205,9 @@
           </section>
           <section class="section" id="places">
             <h3>Lieux</h3>
-            <p>
+            <!--<p>
               TODO
-            </p>
+            </p>-->
             <api-call-dropdown
               method="GET"
               description="Accéder à la description d’Avignon"
@@ -212,12 +224,12 @@
               :url="`${API_URL}/placenames/21/roles-within-documents?include=document`"
             />
           </section>
-          <section class="section" id="iiif-links">
+          <!--<section class="section" id="iiif-links">
             <h3>IIIF – TODO</h3>
             <p>
               TODO
             </p>
-          </section>
+          </section>-->
           <section class="section" id="search-api">
             <h2>API de recherche</h2>
             <p>
@@ -258,16 +270,16 @@
             </p>
             <ul>
               <li><code>id</code> : l’identifiant de la lettre</li>
-              <li><code>argument</code> : une analyse (résumé) du contenu de son contenu</li>
+              <li><code>argument</code> : une analyse (résumé) du contenu de la lettre</li>
               <li><code>creation</code> : la date de rédaction de la lettre</li>
               <li><code>transcription</code> : la transcription (HTML markup)</li>
               <li><code>address</code> : le destinataire tel que transcrit dans la lettre</li>
-              <li><code>witenesses</code> : le tableau des témoins, avec le lien à son manifeste IIIF (si fourni)</li>
-              <li><code>senders</code> : la description standardisée des expéditeurs, avec liages Wikidata (si fourni)</li>
+              <li><code>witnesses</code> : le tableau des témoins, dont les liens à leur manifeste IIIF (si fourni)</li>
+              <li><code>senders</code> : la description standardisée de l'expéditeur, avec liages Wikidata (si fourni)</li>
               <li><code>recipients</code> : la description standardisée des destinataires, avec liages Wikidata (si fourni)</li>
               <li><code>location_dates_from</code> et <code>location_dates_to</code> : dates de lieu (d’expédition et de réception)</li>
             </ul>
-            <p>Pour chaque lettre, les relations peuvent être inscrites dans la réponse en omettant le paramètre de requête <code>without-relationships</code>.</p>
+            <p>Pour chaque lettre, les relations peuvent être incluses dans la réponse en omettant le paramètre de requête <code>without-relationships</code>.</p>
           </section>
           <section class="section" id="search-syntax">
             <h3>Syntaxe des requêtes</h3>
@@ -276,7 +288,9 @@
               <a
                 href="https://www.elastic.co/guide/en/elasticsearch/reference/8.13/query-dsl-query-string-query.html#query-string-syntax"
                 target="_blank"
-                ><code>query_string</code></a>.
+              >
+                <code>query_string</code>
+              </a>.
             </p>
             <p>
               NB. La recherche est insensible à la casse et aux accents (diacritiques).
@@ -287,11 +301,11 @@
             <p>Pagination : les résultats sont paginés.</p>
             <p>
               Le paramètre <code>page[size]</code> permet de définir le nombre de
-              résultats par page, c’est-à-dire le nombre de notices retournées qui
-              correspondent à la requête. Le paramètre <code>page[number]</code> permet
+              résultats par page, c’est-à-dire le nombre de notices retournées en réponse à la requête.
+              Le paramètre <code>page[number]</code> permet
               d’accéder à une page spécifique du résultat. Le champ
-              <code>total-count</code> de la réponse indique le nombre de notices total
-              correspondant à la requête, indépendemment de la pagination.
+              <code>total-count</code> de la réponse indique le nombre total de notices
+              correspondant à la requête, indépendamment de la pagination.
             </p>
             <api-call-dropdown
               method="GET"
@@ -304,7 +318,10 @@
               :url="`${API_URL}/search?query=(roy)&without-relationships&page[size]=2&page[number]=10`"
             />
           </section>
-          <section class="section" id="search-wildcards">
+          <section
+            id="search-wildcards"
+            class="section"
+          >
             <h4>Jokers (<em>Wildcard query</em>)</h4>
             <p>
               Dans une requête, les caractères joker (<em>wildcard operators</em>)
@@ -320,16 +337,20 @@
               :url="`${API_URL}/search?query=ami*&searchtype=fulltext&without-relationships`"
             />
           </section>
-          <section class="section" id="search-regex">
+          <section
+            id="search-regex"
+            class="section"
+          >
             <h4>Expressions régulières</h4>
             <p>
               Dans une requête, une
               <a
                 href="https://www.elastic.co/guide/en/elasticsearch/reference/8.13/query-dsl-regexp-query.html#regexp-syntax"
                 target="_blank"
-                >expression régulière</a
               >
-              peut être intégrée entre 2 barres obliques (<code>/</code>).
+                expression régulière
+              </a>
+                peut être intégrée entre 2 barres obliques (<code>/</code>).
             </p>
             <api-call-dropdown
               method="GET"
@@ -337,21 +358,23 @@
               :url="`${API_URL}/search?query=/chartr?es?/&without-relationships&page[size]=2`"
             />
           </section>
-          <section class="section" id="search-fuzzy">
+          <section
+            id="search-fuzzy"
+            class="section"
+          >
             <h4>Recherche floue</h4>
             <p>
               Pour la
               <a
                 href="https://www.elastic.co/guide/en/elasticsearch/reference/8.13/common-options.html#fuzziness"
                 target="_blank"
-                >recherche floue</a
-              >, il est possile de passer en suffixe de la chaîne de caractère recherchée
+              >recherche floue
+              </a>, il est possile de passer en suffixe de la chaîne de caractère recherchée
               un paramètre (<em>fuzziness parameter</em>) définissant la
               <a
                 href="https://fr.wikipedia.org/wiki/Distance_de_Levenshtein"
                 target="_blank"
-                >distance d'édition Levenshtein</a
-              >
+              >distance d'édition Levenshtein</a>
               maximale autorisée (ou le nombre d'éditions) : <code>~0</code> (recherche
               exacte), <code>~1</code> (recherche floue), <code>~2</code> (recherche très
               floue).
@@ -362,109 +385,133 @@
               :url="`${API_URL}/search?query=(amitié~2)&searchtype=fulltext&without-relationships`"
             />
           </section>
-          <section class="section" id="search-filters-sort">
+          <section
+            id="search-filters-sort"
+            class="section"
+          >
             <h3>Filtres et tris</h3>
             <p>
               Différents champs sont indexés et disponibles pour la définition de tris et de filtres.<br>
               Il est possible de ne pas passer de valeur au paramètre query de manière à filtrer l’intégralité du corpus selon la facette choisie.
             </p>
           </section>
-          <section class="section" id="search-filter-dates">
+          <section
+            id="search-filter-dates"
+            class="section"
+          >
             <h4>Dates</h4>
             <api-call-dropdown
               method="GET"
-              description="Les lettres datées entre 1420 et 1422 (pas de valeur passée à query)"
+              description="Les lettres datées entre 1420 et 1422 (sans valeur passée à query)"
               :url="`${API_URL}/search?query=&without-relationships&range[creation_range]=gte:1420,lt:1422`"
             />
             <api-call-dropdown
               method="GET"
               description="Les lettres datées entre 1600 et 1602 mentionnant le 'duc de Guise'"
-              :url="`${API_URL}?query=(duc de Guise)&searchtype=fulltext&without-relationships&range[creation_range]=gte:1600,lt:1602`"
+              :url='`${API_URL}/search?query=("duc de Guise")&searchtype=fulltext&without-relationships&range[creation_range]=gte:1600,lt:1602`'
             />
           </section>
-          <section class="section" id="search-filter-places">
+          <section
+            id="search-filter-places"
+            class="section"
+          >
             <h4>Lieux</h4>
             <p>
-              TODO. Expliquer la syntaxe <code>###</code>, les buckets et les valeurs ci-dessous.
+              L'API permet de filtrer par facette de lieux, par leurs identifiants <code>id</code> ou leurs noms <code>label</code>, pour respectivement :
             </p>
             <ul>
-              <li><code>location_dates_from</code></li>
-              <li><code>location_dates_to</code></li>
-              <li><code>locations_inlined</code></li>
+              <li><code>location_dates_from.id</code> : les lieux d'expédition par id</li>
+              <li><code>location_dates_from.label</code> : les lieux d'expédition par nom</li>
+              <li><code>location_dates_to.id</code> : les lieux de destination par id</li>
+              <li><code>location_dates_to.label</code> : les lieux de destination par nom</li>
+              <li><code>locations_inlined.id</code> : les lieux mentionnés dans les lettres par id (non inclus dans la réponse)</li>
+              <li><code>locations_inlined.label</code> : les lieux mentionnés dans les lettres par nom (non inclus dans la réponse)</li>
             </ul>
             <api-call-dropdown
               method="GET"
-              description="Les lettres expédiées depuis Lyon"
-              :url="`${API_URL}/search?query=&without-relationships&location_dates_from=44%23%23%23Lyon`"
+              description="Les lettres expédiées depuis Lyon (en utilisant le nom)"
+              :url="`${API_URL}/search?query=location_dates_from.label:Lyon&without-relationships`"
             />
             <api-call-dropdown
               method="GET"
-              description="Les lettres expédiées à Lyon"
-              :url='`${API_URL}/search?query=&without-relationships&location_dates_to=["44%23%23%23Lyon"]`'
+              description="Les lettres expédiées à Lyon (en utilisant l'identifiant)"
+              :url="`${API_URL}/search?query=location_dates_to.id:44&without-relationships`"
             />
             <api-call-dropdown
               method="GET"
-              description="Les lettres mentionnant Lyon'"
-              :url='`${API_URL}/search?query=&without-relationships&location_inlined=["44%23%23%23Lyon"]`'
+              description="Les lettres mentionnant Lyon (en utilisant le nom)"
+              :url="`${API_URL}/search?query=location_inlined.label:Lyon&without-relationships`"
             />
           </section>
-          <section class="section" id="search-filter-persons">
+          <section
+            id="search-filter-persons"
+            class="section"
+          >
             <h4>Personnes</h4>
             <p>
-              TODO. Expliquer la syntaxe <code>###</code>, les buckets et les valeurs ci-dessous.
+              L'API permet de filtrer par facette de personnes, par leurs identifiants <code>id</code> ou leurs noms <code>label</code>, pour respectivement :
             </p>
             <ul>
-              <li><code>senders</code></li>
-              <li><code>recipients</code></li>
-              <li><code>persons_inlined</code></li>
+              <li><code>senders.id</code> : l'expéditeur par id</li>
+              <li><code>senders.label</code> : l'expéditeur par nom</li>
+              <li><code>recipients.id</code> : les destinataires par id</li>
+              <li><code>recipients.label</code> : les destinataires par nom</li>
+              <li><code>persons_inlined.id</code> : les personnes mentionnées dans les lettres par id (non incluses dans la réponse)</li>
+              <li><code>persons_inlined.label</code> : les personnes mentionnées dans les lettres par nom </li>
             </ul>
             <api-call-dropdown
               method="GET"
-              description="les lettres expédiées par Henri de Bourbon (5 résultats/page)"
-              :url="`${API_URL}/search?query=&page[size]=5&page[number]=1&without-relationships&senders=77%23%23%23Henri de Bourbon (1553-1610)`"
+              description="Les lettres expédiées par Henri de Bourbon (en utilisant son nom et avec 5 résultats/page)"
+              :url="`${API_URL}/search?query=senders.label:Henri de Bourbon (1553-1610)&page[size]=5&page[number]=1&without-relationships`"
             />
             <api-call-dropdown
               method="GET"
-              description="Les lettres expédiées à François Ier de Médicis"
-              :url='`${API_URL}/search?query=&without-relationships&recipients=["99%23%23%23François Ier de Médicis (1541-1587)"]`'
+              description="Les lettres expédiées à François Ier de Médicis (en utilisant son identifiant)"
+              :url="`${API_URL}/search?query=recipients.id:99&without-relationships`"
             />
             <api-call-dropdown
               method="GET"
-              description="Les lettres où Charles IX est mentionné'"
-              :url='`${API_URL}/search?query=&without-relationships&persons_inlined=["7%23%23%23Charles IX"]`'
+              description="Les lettres où Charles IX est mentionné"
+              :url="`${API_URL}/search?query=persons_inlined.id:7&without-relationships`"
             />
           </section>
-          <section class="section" id="search-filter-multiple">
+          <section
+            id="search-filter-multiple"
+            class="section"
+          >
             <h4>Combiner les filtres</h4>
-            <p>
+            <!--<p>
               TODO
-            </p>
+            </p>-->
             <api-call-dropdown
               method="GET"
-              description="Les lettres de Catherine de Médicis à Pomponne de Bellièvre envoyée à Cracovie mentionnant Charles IX"
-              :url='`${API_URL}/search?query=&searchtype=paratext&highlight=&page[size]=50&page[number]=1&without-relationships&senders=1%23%23%23Catherine de Médicis&recipients=["340%23%23%23Pomponne de Bellièvre (1529-1607)"]&persons_inlined=["7%23%23%23Charles IX"]&location_dates_to=["16%23%23%23Cracovie"]`'
+              description="Les lettres de Catherine de Médicis à Pomponne de Bellièvre envoyées à Cracovie mentionnant Charles IX (en utilisant les noms)"
+              :url="`${API_URL}/search?query=(senders.label:Catherine de Médicis AND recipients.label:Pomponne de Bellièvre (1529-1607) AND persons_inlined.label:Charles IX AND location_dates_to.label:Cracovie)&page[size]=50&page[number]=1&without-relationships`"
             />
             <api-call-dropdown
               method="GET"
-              description="La lettre de Catherine de Médicis à Pomponne de Bellièvre envoyée à Cracovie mentionnant Charles IX et contenant le mot 'fils'"
-              :url='`${API_URL}/search?query=(fils)&searchtype=fulltext&without-relationships&senders=1%23%23%23Catherine de Médicis&recipients=["340%23%23%23Pomponne de Bellièvre (1529-1607)"]&persons_inlined=["7%23%23%23Charles IX"]&location_dates_to=["16%23%23%23Cracovie"]`'
+              description="La lettre de Catherine de Médicis à Pomponne de Bellièvre envoyée à Cracovie mentionnant Charles IX et contenant le mot 'fils' (en utilisant les identifiants)"
+              :url="`${API_URL}/search?query=(fils AND senders.id:1 AND recipients.id:340 AND persons_inlined.id:7 AND location_dates_to.id:16)&without-relationships`"
             />
             <api-call-dropdown
               method="GET"
-              description="La lettre de Catherine de Médicis à Pomponne de Bellièvre daté de 1574"
-              :url='`${API_URL}/search?query=&searchtype=paratext&highlight=&page[size]=50&page[number]=1&without-relationships&senders=1%23%23%23Catherine de Médicis&recipients=["340%23%23%23Pomponne de Bellièvre (1529-1607)"]&location_dates_to=["16%23%23%23Cracovie"]&range[creation_range]=gte:1574,lt:1575`'
+              description="Les lettres de Catherine de Médicis à Pomponne de Bellièvre datées de 1574 (en utilisant les noms)"
+              :url="`${API_URL}/search?query=(senders.label:Catherine de Médicis AND recipients.label:Pomponne de Bellièvre*)&without-relationships&range[creation_range]=gte:1574,lt:1575`"
             />
             <api-call-dropdown
               method="GET"
-              description="Les lettres de Catherine de Médicis à Pomponne de Bellièvre daté entre 1574 et 1575 dont la notice mentionne le 'roi de Pologne'"
-              :url='`${API_URL}/search?query=(roi de pologne)&searchtype=paratext&without-relationships&senders=1%23%23%23Catherine de Médicis&recipients=["340%23%23%23Pomponne de Bellièvre (1529-1607)"]&range[creation_range]=gte:1574,lt:1575`'
+              description="Les lettres de Catherine de Médicis à Pomponne de Bellièvre datées entre 1574 et 1575 dont la notice mentionne le 'roi de Pologne' (en utilisant les identifiants)"
+              :url='`${API_URL}/search?query=("roi de pologne" AND senders.id:1 AND recipients.id:340)&without-relationships&range[creation_range]=gte:1574,lt:1575`'
             />
           </section>
-          <section class="section" id="search-sort">
+          <section
+            id="search-sort"
+            class="section"
+          >
             <h4>Tris</h4>
             <p>
-              Le paramètre de requête sort permet de trier les résultats selon un ou plusieurs champs.<br>
-              Le préfixe optionnel - du nom du champ spécifie l’odre décroissant.
+              Le paramètre de requête <code>sort</code> permet de trier les résultats selon un ou plusieurs champs.<br>
+              Le préfixe optionnel <code>-</code> du nom du champ spécifie l’odre décroissant.
             </p>
             <ul>
               <li><code>creation</code></li>
@@ -474,36 +521,36 @@
             </ul>
             <api-call-dropdown
               method="GET"
-              description="Les lettres mentionnant Charles IX triées par date de rédaction (ordre chronologique)"
-              :url='`${API_URL}/search?query=&without-relationships&persons_inlined=["7%23%23%23Charles IX"]&sort=creation`'
+              description="Les lettres mentionnant Charles IX (en utilisant son nom) triées par date de rédaction (ordre chronologique)"
+              :url="`${API_URL}/search?query=persons_inlined.label:Charles IX&without-relationships&sort=creation`"
             />
             <api-call-dropdown
               method="GET"
-              description="Les lettres mentionnant Charles IX triées par date de rédaction (ordre antéchronologique)"
-              :url='`${API_URL}/search?query=&without-relationships&persons_inlined=["7%23%23%23Charles IX"]&sort=-creation`'
+              description="Les lettres mentionnant Charles IX (en utilisant son identifiant) triées par date de rédaction (ordre antéchronologique)"
+              :url="`${API_URL}/search?query=persons_inlined.id:7&without-relationships&sort=-creation`"
             />
             <api-call-dropdown
               method="GET"
-              description="Les lettres mentionnant Charles IX triées par expéditeur (ordre alphabétique)"
-              :url='`${API_URL}/search?query=&without-relationships&persons_inlined=["7%23%23%23Charles IX"]&sort=senders.label.keyword_sort`'
+              description="Les lettres mentionnant Charles IX (en utilisant son nom) triées par expéditeur (ordre alphabétique)"
+              :url="`${API_URL}/search?query=persons_inlined.label:Charles IX&without-relationships&sort=senders.label.keyword_sort`"
             />
             <api-call-dropdown
               method="GET"
-              description="Les lettres mentionnant Charles IX triées par destinataire (ordre anti alphabétique)"
-              :url='`${API_URL}/search?query=&without-relationships&persons_inlined=["7%23%23%23Charles IX"]&sort=-recipients.label.keyword_sort`'
+              description="Les lettres mentionnant Charles IX (en utilisant son nom) triées par destinataire (ordre anti-alphabétique)"
+              :url="`${API_URL}/search?query=persons_inlined.label:Charles IX&without-relationships&sort=-recipients.label.keyword_sort`"
             />
             <api-call-dropdown
               method="GET"
-              description="Les lettres mentionnant Charles IX triées par id de la lettre"
-              :url='`${API_URL}/search?query=&without-relationships&persons_inlined=["7%23%23%23Charles IX"]&sort=id`'
+              description="Les lettres mentionnant Charles IX (en utilisant son nom) triées par id de la lettre"
+              :url="`${API_URL}/search?query=persons_inlined.label:Charles IX&without-relationships&sort=id`"
             />
             <p>
               Il est possible de spécifier plusieurs critères de tri :
             </p>
             <api-call-dropdown
               method="GET"
-              description="Les lettres mentionnant Charles IX triées par date de rédaction (ordre chronologique)"
-              :url='`${API_URL}/search?query=&without-relationships&persons_inlined=["7%23%23%23Charles IX"]&sort=creation,recipients.label.keyword_sort`'
+              description="Les lettres mentionnant Charles IX (en utilisant son nom) triées par date de rédaction (ordre chronologique)"
+              :url="`${API_URL}/search?query=persons_inlined.label:Charles IX&without-relationships&sort=creation,recipients.label.keyword_sort`"
             />
           </section>
         </section>
@@ -533,7 +580,7 @@ export default {
     }
   },
   computed: {
-  menuCsscClass() {
+  menuCssClass() {
       return this.isMenuOpened ? "opened" : "";
     },
   },
