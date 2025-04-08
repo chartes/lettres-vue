@@ -8,7 +8,7 @@
       <div class="example">
         <div class="description">{{ description }}</div>
         <div class="url">
-          <a :href="url" target="_blank">{{ url }}</a>
+          <a :href="url" target="_blank">{{ decodeURIComponent(url) }}</a>
         </div>
       </div>
       <div class="show">
@@ -80,6 +80,9 @@ export default {
 }
 .example {
   grid-area: example;
+  & > .description {
+    word-break: break-word;
+  }
 }
 .url {
   padding-top: 4px;
@@ -102,6 +105,7 @@ export default {
   grid-area: icon;
 }
 pre {
+  font-size: 12px;
   white-space: pre-wrap;
   word-break: keep-all;
   padding: 0;
