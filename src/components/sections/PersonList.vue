@@ -536,7 +536,7 @@ export default {
     };
   },
   computed: {
-    ...mapState("persons", {statePersons: "documents"}),
+    ...mapState("persons", {statePersons: "documents", stateRoles: "roles"}),
     ...mapState("persons", [
       "loadingStatus",
       "numPage",
@@ -651,7 +651,9 @@ export default {
 
     console.log("WIZARD CREATION", this.inputTerm, this.$attrs.person);
 
-    await this.$store.dispatch("persons/fetchRoles");
+    if (!this.stateRoles || !this.stateRoles.length) {
+      await this.$store.dispatch("persons/fetchRoles")
+    }
     this.setSearchTerm(this.labeledInputTerm);
     this.search();
   },
