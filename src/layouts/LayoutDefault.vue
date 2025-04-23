@@ -118,7 +118,7 @@
     </section>
     <footer class="footer footer-logos">
       <nav>
-        <ul class="is-flex is-justify-content-space-between">
+        <ul class="is-flex is-justify-content-space-around">
           <li>
             <a
               target="_blank"
