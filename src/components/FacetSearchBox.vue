@@ -295,4 +295,7 @@ i {
 .suggestions-remove-all > img {
   height: 18px
 }
+.has-icons-left {
+  padding-left: 15px;
+}
 </style>
