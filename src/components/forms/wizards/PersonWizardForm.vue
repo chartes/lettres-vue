@@ -263,7 +263,7 @@ export default {
   },
   async created() {
     this.initLoading = true;
-    await this.$store.dispatch("persons/fetchAllPersons");
+    await this.$store.dispatch("persons/fetchAllPersonsNames");
     await this.$store.dispatch("persons/fetchRoles");
     let person = {};
 

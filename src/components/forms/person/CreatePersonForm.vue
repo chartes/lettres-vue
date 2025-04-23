@@ -171,7 +171,7 @@ export default {
     };
   },
   computed: {
-    ...mapState("persons", { allPersonsLabels: "persons"}),
+    ...mapState("persons", { allPersonsLabels: "persons_names"}),
 
     newPerson() {
       if (this.selected) {
