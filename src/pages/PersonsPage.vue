@@ -5,6 +5,7 @@
 </template>
 
 <script>
+import {mapState, mapActions} from "vuex";
 import PersonWizardForm from "@/components/forms/wizards/PersonWizardForm.vue";
 
 export default {
@@ -18,12 +19,20 @@ export default {
     };
   },
   computed: {
-   
+    ...mapState("persons", {statePersons: "documents", stateRoles: "roles"})
   },
-  mounted() {
+  async mounted() {
     this.$store.dispatch("persons/setPageSize", 20);
+    if (!this.statePersons || !this.statePersons.length) {
+      await this.performSearch
+    }
+    if (!this.stateRoles || !this.stateRoles.length) {
+      await this.$store.dispatch("persons/fetchRoles")
+    }
   },
-  methods: {},
+  methods: {
+    ...mapActions("persons", ["performSearch"]),
+  },
 };
 </script>
 
