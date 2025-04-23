@@ -828,7 +828,7 @@ export default {
                   : null,
               functions,
             };
-          })
+          }).splice(0, this.pageSize)
         );
         //this.recomputeCounts();
       }

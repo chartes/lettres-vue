@@ -167,6 +167,7 @@ export default {
   },
   computed: {
     ...mapState("document", ["document"]),
+    ...mapState("persons", {stateRoles: "roles"}),
     ...mapGetters("persons", ["getRoleByLabel"]),
 
     wizardLabel() {
@@ -263,8 +264,13 @@ export default {
   },
   async created() {
     this.initLoading = true;
+    if (this.popupMode) {
+      this.$store.dispatch("persons/setPageSize", 5);
+    }
     await this.$store.dispatch("persons/fetchAllPersonsNames");
-    await this.$store.dispatch("persons/fetchRoles");
+    if (!this.stateRoles || !this.stateRoles.length) {
+      await this.$store.dispatch("persons/fetchRoles")
+    }
     let person = {};
 
     if (this.$props.inputData) {
@@ -324,10 +330,6 @@ export default {
 
     this.person = person;
     this.initLoading = false;
-  },
-  async mounted() {
-    await this.$store.dispatch("persons/setPageSize", 5);
-    await this.search("");
   },
   methods: {
   ...mapActions("persons", ["search"]),
