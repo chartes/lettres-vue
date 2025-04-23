@@ -440,7 +440,7 @@
             <api-call-dropdown
               method="GET"
               description="Les lettres mentionnant Lyon (en utilisant le nom)"
-              :url="`${API_URL}/search?query=location_inlined.label:Lyon&without-relationships`"
+              :url="`${API_URL}/search?query=locations_inlined.label:Lyon&without-relationships`"
             />
           </section>
           <section
