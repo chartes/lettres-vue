@@ -541,7 +541,7 @@ export default {
     };
   },
   computed: {
-    ...mapState("placenames", {placenames: "documents"}),
+    ...mapState("placenames", {placenames: "documents", stateRoles: "roles"}),
     ...mapState("placenames", [
       "loadingStatus",
       "numPage",
@@ -656,7 +656,9 @@ export default {
 
     console.log("WIZARD CREATION", this.inputTerm, this.$attrs.place);
 
-    await this.$store.dispatch("placenames/fetchRoles");
+    if (!this.stateRoles || !this.stateRoles.length) {
+      await this.$store.dispatch("placenames/fetchRoles")
+    }
     this.setSearchTerm(this.labeledInputTerm);
     this.search();
   },
@@ -835,7 +837,7 @@ export default {
                   : null,
               functions,
             };
-          })
+          }).splice(0, this.pageSize)
         );
         //this.recomputeCounts();
       }

@@ -5,6 +5,7 @@
 </template>
 
 <script>
+import {mapState, mapActions} from "vuex";
 import PlaceWizardForm from "@/components/forms/wizards/PlaceWizardForm.vue";
 
 export default {
@@ -18,12 +19,20 @@ export default {
     };
   },
   computed: {
-   
+    ...mapState("placenames", {statePlaces: "documents", stateRoles: "roles"})
   },
-  mounted() {
+  async mounted() {
     this.$store.dispatch("placenames/setPageSize", 20);
+    if (!this.statePlaces || !this.statePlaces.length) {
+      await this.performSearch
+    }
+    if (!this.stateRoles || !this.stateRoles.length) {
+      await this.$store.dispatch("placenames/fetchRoles")
+    }
   },
-  methods: {},
+  methods: {
+    ...mapActions("placenames", ["performSearch"])
+  },
 };
 </script>
 

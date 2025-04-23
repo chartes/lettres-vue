@@ -167,6 +167,7 @@ export default {
   },
   computed: {
     ...mapState("document", ["document"]),
+    ...mapState("placenames", {stateRoles: "roles"}),
     ...mapGetters("placenames", ["getRoleByLabel"]),
 
     wizardLabel() {
@@ -262,8 +263,13 @@ export default {
   },
   async created() {
     this.initLoading = true;
+    if (this.popupMode) {
+      this.$store.dispatch("placenames/setPageSize", 5);
+    }
     await this.$store.dispatch("placenames/fetchAllPlacenames");
-    await this.$store.dispatch("placenames/fetchRoles");
+    if (!this.stateRoles || !this.stateRoles.length) {
+      await this.$store.dispatch("placenames/fetchRoles");
+    }
     let place = {};
 
     if (this.$props.inputData) {
@@ -327,10 +333,6 @@ export default {
 
     this.place = place;
     this.initLoading = false;
-  },
-  async mounted() {
-    this.$store.dispatch("placenames/setPageSize", 5);
-    await this.search("");
   },
   methods: {
     ...mapActions("placenames", ["search"]),
