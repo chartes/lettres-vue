@@ -536,7 +536,7 @@ export default {
     };
   },
   computed: {
-    ...mapState("persons", {persons: "documents"}),
+    ...mapState("persons", {statePersons: "documents"}),
     ...mapState("persons", [
       "loadingStatus",
       "numPage",
@@ -584,7 +584,7 @@ export default {
     },
   },
   watch: {
-    persons() {
+    statePersons() {
       this.loadAsyncData();
     },
     inputTerm(newVal, OldVal) {
@@ -801,9 +801,9 @@ export default {
 
     async loadAsyncData() {
       this.selected = null;
-      if (this.persons) {
+      if (this.statePersons) {
         this.tableData = await Promise.all(
-          this.persons.map(async (p) => {
+          this.statePersons.map(async (p) => {
             const functions = this.functionsByPerson[p.id]
               ? [...new Set(this.functionsByPerson[p.id].map((item) => item.function))]
               : [];
