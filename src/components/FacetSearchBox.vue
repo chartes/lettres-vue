@@ -9,7 +9,7 @@
           {{ title }}
         </span>
         <router-link
-          :to="{ name: 'persons' }"
+          :to="{ name: type }"
           active-class="is-active"
           class="advanced_search_router my-2"
         >
