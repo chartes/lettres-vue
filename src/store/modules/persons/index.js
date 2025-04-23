@@ -421,7 +421,7 @@ const actions = {
   },
 
   performSearch: debounce(async ({commit, state, rootState}) => {
-      //commit('SET_LOADING_STATUS', true);
+      commit('SET_LOADING_STATUS', true);
 
       /* =========== filters =========== */
       let published = '';
@@ -513,11 +513,11 @@ const actions = {
         // (ex: remplacer state.document par state.items)
 
         commit('UPDATE_ALL', {documents: data, totalCount: meta['total-count'] , links, included: included || []});
-        //commit('SET_LOADING_STATUS', false);
+        commit('SET_LOADING_STATUS', false);
           return {documents: data, totalCount: meta['total-count'] , links, included: included || []}
       } catch (reason) {
         console.warn('cant search:', reason);
-        //commit('SET_LOADING_STATUS', false);
+        commit('SET_LOADING_STATUS', false);
       }
     
     }, 500),
