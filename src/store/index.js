@@ -15,10 +15,10 @@ import bookmarks from './modules/bookmarks';
 import notes from './modules/notes';
 import search from './modules/search';
 import layout from './modules/layout';
+import VueInputMask from '@/plugins/vue-Inputmask';
 
 Vue.use(Vuex);
 
-const VueInputMask = require('vue-inputmask').default
 Vue.use(VueInputMask)
 
 

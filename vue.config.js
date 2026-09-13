@@ -1,41 +1,43 @@
 const path = require("path");
 
+const imagesIconsDir = path.resolve(__dirname, 'src/assets/images/icons/');
+const quillIconsDir = path.resolve(__dirname, 'src/assets/icons/');
+
 module.exports = {
   "transpileDependencies": [
-  
+
   ],
   configureWebpack: {
+    resolve: {
+      // node core modules only required outside the browser
+      // (normalize-url via mirador, wikibase-sdk)
+      fallback: {
+        url: false,
+        querystring: false,
+      },
+    },
     module: {
       rules: [
         {
+          // inlined as base64 data URIs, like url-loader did under webpack 4
           test: /\.(svg)(\?.*)?$/,
-          include: [
-              path.resolve(__dirname, 'src/assets/images/icons/'),
-              path.resolve(__dirname, 'src/assets/images/icons/'),
-          ],
-          use: ['url-loader'],
+          include: [ imagesIconsDir ],
+          type: 'asset/inline',
         },
         {
           test: /\.(svg)(\?.*)?$/,
-          include: [ path.resolve(__dirname, 'src/assets/icons/')  ],
-          use:
-          [
-            {
-              loader: 'svg-inline-loader',
-              options: {
-                limit: 10000,
-                name: 'assets/img/[name].[hash:7].[ext]'
-              }
-            }
-          ]
+          include: [ quillIconsDir ],
+          use: [ 'svg-inline-loader' ],
         }
       ]
     }
   },
   chainWebpack: config => {
+    // keep the default svg rule away from the icons handled above
     config.module
       .rule('svg')
-      .test(() => false)
-      .use('file-loader')
+      .exclude
+        .add(imagesIconsDir)
+        .add(quillIconsDir)
   }
 }

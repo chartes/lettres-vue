@@ -1,7 +1,16 @@
-import Vue from 'vue'
+import Inputmask from 'inputmask'
 
-const VueInputmask = require('vue-inputmask').default;
-Vue.use(VueInputmask);
+// v-mask directive, formerly provided by vue-inputmask whose eval-based
+// dist bundle breaks under webpack 5 ("exports is not defined")
+export default {
+  install(Vue) {
+    Vue.directive('mask', {
+      bind(el, binding) {
+        Inputmask(binding.value).mask(el);
+      }
+    });
+  }
+};
 /*
 export default new Vuetify({
   iconfont: 'md',

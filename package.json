@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve --port 9090",
-    "build": "vue-cli-service build",
+    "build": "vue-cli-service build --no-module",
     "lint": "vue-cli-service lint",
     "eslint-fix": "npm run lint -- --fix",
     "test": "jest --no-cache"
@@ -22,6 +22,7 @@
     "axios-auth-refresh": "^3.1.0",
     "buefy": "^0.9.27",
     "core-js": "^3.1.2",
+    "inputmask": "~3.3.11",
     "leaflet": "^1.7.1",
     "lodash": "^4.17.15",
     "mirador": "^3.2.0",
@@ -32,7 +33,6 @@
     "react-dom": "^18.0.0",
     "vue": "^2.6.12",
     "vue-click-outside": "^1.1.0",
-    "vue-inputmask": "^0.2.1",
     "vue-router": "^3.5.1",
     "vue-slider-component": "^3.2.24",
     "vue2-leaflet": "^2.7.1",
@@ -41,10 +41,11 @@
     "wikidata-entity-lookup": "^2.1.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.26.0",
     "@babel/preset-env": "^7.6.3",
-    "@vue/cli-plugin-babel": "^4.0.5",
-    "@vue/cli-plugin-eslint": "^4.0.5",
-    "@vue/cli-service": "^4.3.1",
+    "@vue/cli-plugin-babel": "~5.0.8",
+    "@vue/cli-plugin-eslint": "~5.0.8",
+    "@vue/cli-service": "~5.0.8",
     "@vue/server-test-utils": "^1.0.0-beta.29",
     "@vue/test-utils": "^1.0.0-beta.29",
     "babel-core": "^7.0.0-bridge.0",
@@ -66,7 +67,7 @@
     "sass-loader": "^10.1.1",
     "svg-inline-loader": "^0.8.2",
     "vue-jest": "^3.0.5",
-    "vue-loader": "^15.7.1",
+    "vue-loader": "^15.11.1",
     "vue-server-renderer": "^2.6.12",
     "vue-template-compiler": "^2.6.12"
   },
