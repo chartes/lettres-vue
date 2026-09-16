@@ -103,7 +103,7 @@
                         <p class="control">
                           <button
                             rounded
-                            :disabled="!witness.manifest_url"
+                            :disabled="isManifestDisabled(witness)"
                             class="button is-small display-manifest-button eye-btn"
                             :class="
                               displayedWitness && displayedWitness.id === witness.id
@@ -230,6 +230,22 @@ export default {
   },
   methods: {
     ...mapActions("layout", ["setDisplayedManifestUrl", "setViewerMode"]),
+    isManifestDisabled(witness) {
+      const m = witness && witness.manifest;
+
+      // pas de manifest_url
+      if (!witness || !witness.manifest_url) return true;
+
+      // pas de manifest ou sequences vide
+      if (!m || !m.sequences || m.sequences.length === 0) return true;
+
+      // pas de canvases
+      const canvases = m.sequences[0].canvases;
+      if (!canvases || canvases.length === 0) return true;
+
+      // sinon bouton actif
+      return false;
+    },
     async recomputeOrder() {
       this.witnessTmpList.forEach((element, i) => {
         element.num = i + 1;
