@@ -231,20 +231,10 @@ export default {
   methods: {
     ...mapActions("layout", ["setDisplayedManifestUrl", "setViewerMode"]),
     isManifestDisabled(witness) {
-      const m = witness && witness.manifest;
-
-      // pas de manifest_url
-      if (!witness || !witness.manifest_url) return true;
-
-      // pas de manifest ou sequences vide
-      if (!m || !m.sequences || m.sequences.length === 0) return true;
-
-      // pas de canvases
-      const canvases = m.sequences[0].canvases;
-      if (!canvases || canvases.length === 0) return true;
-
-      // sinon bouton actif
-      return false;
+      // the API only returns a manifest_url when the witness has images;
+      // the embedded manifest is not checked: it depends on a live fetch from the image
+      // provider (Gallica) and Mirador loads the manifest from manifest_url anyway
+      return !witness || !witness.manifest_url;
     },
     async recomputeOrder() {
       this.witnessTmpList.forEach((element, i) => {
