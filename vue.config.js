@@ -3,7 +3,11 @@ const path = require("path");
 const imagesIconsDir = path.resolve(__dirname, 'src/assets/images/icons/');
 const quillIconsDir = path.resolve(__dirname, 'src/assets/icons/');
 
+const appRootUrl = process.env.VUE_APP_APP_ROOT_URL || '/';
+
 module.exports = {
+  // assets are served under the app root url (/ in production, /ecco on staging)
+  publicPath: appRootUrl.endsWith('/') ? appRootUrl : `${appRootUrl}/`,
   "transpileDependencies": [
 
   ],
