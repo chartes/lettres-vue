@@ -95,7 +95,7 @@ const actions = {
         commit('SET_LOADING', true)
         const http = http_with_auth(rootState.user.jwt);
         try {
-            const response = await http.get(`/search?query=*&index=lettres__${process.env.NODE_ENV}__placenames&without-relationships`)
+            const response = await http.get(`/search?query=*&index=placenames&without-relationships`)
             const {data:placesJSON, included} = response.data;
             // Convert JSON to places
             //const roles_within = "roles-within-documents"
@@ -208,7 +208,7 @@ const actions = {
      */
         commit('SEARCH_RESULTS', [])
         const http = http_with_auth(rootState.user.jwt);
-        return http.get(`/search?query=*${what}*&index=lettres__${process.env.NODE_ENV}__placenames&without-relationships&sort=label.keyword`)
+        return http.get(`/search?query=*${what}*&index=placenames&without-relationships&sort=label.keyword`)
             .then(response => {
                 const placenames = response.data.data.map(pl => {
                     return {id: pl.id, ...pl.attributes}
@@ -268,7 +268,7 @@ const actions = {
     },
     async checkIfRefExists({rootState}, ref) {
         const http = http_with_auth(rootState.user.jwt);
-        const response = await http.get(`search?query=ref:${ref.split("/").pop()}&index=lettres__${process.env.NODE_ENV}__placenames&without-relationships&page[size]=1`)
+        const response = await http.get(`search?query=ref:${ref.split("/").pop()}&index=placenames&without-relationships&page[size]=1`)
         let existingPlace = {place: response.data.data[0], count: response.data.meta['total-count']}
         console.log("existingPlace", existingPlace)
         return existingPlace
@@ -538,7 +538,7 @@ const actions = {
           const includes = toInclude.length ? `&include=${[toInclude].join(',')}` : ''; 
           
           const http = http_with_auth(rootState.user.jwt);
-          const response = await http.get(`/search?query=${query}&published=${published}${filters}${includes}&index=lettres__${process.env.NODE_ENV}__placenames&sort=${sorts}&page[size]=${state.pageSize}&page[number]=${state.numPage}`);
+          const response = await http.get(`/search?query=${query}&published=${published}${filters}${includes}&index=placenames&sort=${sorts}&page[size]=${state.pageSize}&page[number]=${state.numPage}`);
           const {data, links, meta, included} = response.data
 
     

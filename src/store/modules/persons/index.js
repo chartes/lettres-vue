@@ -168,7 +168,7 @@ const actions = {
      */
     commit('SEARCH_RESULTS', []);
     const http = http_with_auth(rootState.user.jwt);
-    return http.get(`/search?query=*${what}*&index=lettres__${process.env.NODE_ENV}__persons&without-relationships&sort=label.keyword`)
+    return http.get(`/search?query=*${what}*&index=persons&without-relationships&sort=label.keyword`)
       .then( response => {
         const persons = response.data.data.map(pers => { return { id: pers.id, ...pers.attributes}});
         commit('SEARCH_RESULTS', persons)
@@ -333,7 +333,7 @@ const actions = {
 
   async checkIfRefExists({rootState}, ref) {
     const http = http_with_auth(rootState.user.jwt);
-    const response = await http.get(`search?query=ref:${ref.split("/").pop()}&index=lettres__${process.env.NODE_ENV}__persons&without-relationships&page[size]=1`)
+    const response = await http.get(`search?query=ref:${ref.split("/").pop()}&index=persons&without-relationships&page[size]=1`)
     let existingPerson = {person: response.data.data[0], count: response.data.meta['total-count']}
     return existingPerson
   },
@@ -503,7 +503,7 @@ const actions = {
         const includes = toInclude.length ? `&include=${[toInclude].join(',')}` : ''; 
         
         const http = http_with_auth(rootState.user.jwt);
-        const response = await http.get(`/search?query=${query}&published=${published}${filters}${includes}&index=lettres__${process.env.NODE_ENV}__persons&sort=${sorts}&page[size]=${state.pageSize}&page[number]=${state.numPage}`);
+        const response = await http.get(`/search?query=${query}&published=${published}${filters}${includes}&index=persons&sort=${sorts}&page[size]=${state.pageSize}&page[number]=${state.numPage}`);
         const {data, links, meta, included} = response.data
 
         // TODO :  par exemple

@@ -142,7 +142,7 @@ const actions = {
     console.log('user search', what);
     commit('SEARCH_RESULTS', {users: [], included: []});
     const http = http_with_auth(state.jwt);
-    http.get(`/search?query=*${what}*&index=lettres__${process.env.NODE_ENV}__users&include=roles`).then(response => {
+    http.get(`/search?query=*${what}*&index=users&include=roles`).then(response => {
       commit('SEARCH_RESULTS', {users: response.data.data, included: response.data.included});
     });
   }
