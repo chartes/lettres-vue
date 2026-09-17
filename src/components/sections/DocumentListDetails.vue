@@ -59,6 +59,7 @@
       class="mirador-container"
       :manifest-url="displayedManifestUrl"
       :window-id="documentId.toString()"
+      fit-height-on-mobile
     />
   </div>
 </template>

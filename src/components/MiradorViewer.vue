@@ -17,13 +17,20 @@ import createPluggableStore from 'mirador/dist/es/src/state/createPluggableStore
 import {mapActions, mapState} from "vuex";
 
 let NEXT_MUI_CLASSES_SEED = 0;
+// same breakpoint as the on-mobile sass mixin
+const MOBILE_MAX_WIDTH = 640;
+// heights of the mirador window top bar and of the zoom/page controls overlaid on the image
+const TOP_BAR_HEIGHT = 48;
+const CONTROLS_HEIGHT = 80;
 
 export default {
   name: "MiradorViewer",
   components: {},
   props: {
     manifestUrl: { type: String, required: true },
-    windowId: {type: String, default: "document"}
+    windowId: {type: String, default: "document"},
+    // on mobile, size the viewer on the displayed image instead of the full screen height
+    fitHeightOnMobile: { type: Boolean, default: false }
   },
   data() {
     return {
@@ -31,6 +38,7 @@ export default {
       miradorStore: null,
       defaultManifestUrl: null,
       canvasId: '',
+      unsubscribeFitHeight: null,
     };
   },
   computed: {
@@ -59,6 +67,10 @@ export default {
     await this.initialize();
   },
   beforeDestroy() {
+    if (this.unsubscribeFitHeight) {
+      this.unsubscribeFitHeight();
+      window.removeEventListener("resize", this.fitHeight);
+    }
     this.reactRoot.unmount()
   },
   async created() {
@@ -147,8 +159,28 @@ export default {
             )
           ),
         )
+        if (this.fitHeightOnMobile) {
+          this.unsubscribeFitHeight = this.miradorStore.subscribe(this.fitHeight);
+          window.addEventListener("resize", this.fitHeight);
+        }
       } catch (e) {
         console.warn("Mirador viewer: ", e);
+      }
+    },
+    fitHeight() {
+      const container = document.getElementById(`vue-mirador-container-${this.windowId}`);
+      if (!container) return;
+      if (window.innerWidth > MOBILE_MAX_WIDTH) {
+        container.style.height = "";
+        return;
+      }
+      const canvas = Mirador.selectors.getCurrentCanvas(this.miradorStore.getState(), { windowId: this.windowId });
+      if (!canvas || !canvas.getWidth() || !canvas.getHeight()) return;
+      // top bar + image fitted to the viewer width + room for the overlaid controls above and below the image
+      const imageHeight = container.clientWidth * canvas.getHeight() / canvas.getWidth();
+      const height = Math.round(Math.min(TOP_BAR_HEIGHT + imageHeight + 2 * CONTROLS_HEIGHT, window.innerHeight));
+      if (container.style.height !== `${height}px`) {
+        container.style.height = `${height}px`;
       }
     },
     async dispatchMiradorAction(action) {
