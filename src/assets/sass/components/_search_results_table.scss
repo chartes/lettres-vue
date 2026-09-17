@@ -690,7 +690,16 @@
 
     @include on-small-tablet {
 
+      // rows are flex/grid boxes here: table and tbody must not stay table boxes,
+      // otherwise WebKit (Safari, Chrome on iOS) breaks the layout when a detail row is closed
+      table,
+      tbody {
+        display: block !important;
+      }
+
       thead {
+        display: block;
+
         tr {
           display: flex !important;
           border-bottom: 1px solid #fdb3cc;
@@ -773,8 +782,14 @@
         }
 
         tr.detail {
+          display: block;
           width: 100%;
           box-shadow: none !important;
+
+          & > td {
+            display: block;
+            width: 100%;
+          }
         }
       }
     }
@@ -797,6 +812,12 @@
 
   /* Version déplié */
   .is-inactive .table-wrapper {
+
+    // rows are grid boxes here: see the WebKit note in the table version above
+    table,
+    tbody {
+      display: block !important;
+    }
 
     thead {
       display: none;
@@ -1044,8 +1065,14 @@
       }
 
       tr.detail {
+        display: block;
         width: 100%;
         box-shadow: none !important;
+
+        & > td {
+          display: block;
+          width: 100%;
+        }
       }
     }
   }
