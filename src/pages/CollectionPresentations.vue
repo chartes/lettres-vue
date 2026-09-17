@@ -51,8 +51,9 @@
         <div class="credit_logos">
           <a target="_blank" href="https://www.chartes.psl.eu/recherche/le-centre-jean-mabillon">
             <img
-              src="@/assets/images/logos/logo-CMJ-couleur.png"
-              alt="Logo CJM"
+              class="cjm-logo"
+              src="@/assets/images/logos/logo-cjm-color-light.svg"
+              alt="Logo Centre Jean Mabillon"
             />
           </a>
         </div>
@@ -356,17 +357,32 @@ export default {
       justify-content: center;
       flex-flow: row wrap;
       align-content: center;
-      margin: 20px;
+      // no horizontal margin: with width 100% it made the block overflow on the right
+      margin: 20px 0;
       height: 100%;
       width: 100%;
+
+      & > a {
+        max-width: 100%;
+      }
 
       & > a > img {
         margin: 20px;
         height: 60px;
+        max-width: calc(100% - 40px);
+        object-fit: contain;
+
+        // the cjm logo has small text lines next to its monogram
+        &.cjm-logo {
+          height: 120px;
+        }
 
         @include on-mobile {
           height: 50px;
-          max-width: 80%;
+
+          &.cjm-logo {
+            height: 100px;
+          }
         }
       }
     }

@@ -118,7 +118,7 @@
     </section>
     <footer class="footer footer-logos">
       <nav>
-        <ul class="is-flex is-justify-content-space-around">
+        <ul class="is-flex is-justify-content-space-around is-align-items-center">
           <li>
             <a
               target="_blank"
@@ -126,7 +126,7 @@
             >
               <img
                 class="enc-logo"
-                src="@/assets/images/logos/logo-enc-white-enhanced.png"
+                src="@/assets/images/logos/logo-enc-white.svg"
                 alt="Logo École nationale des chartes"
               >
             </a>
@@ -138,7 +138,7 @@
             >
               <img
                 class="cths-logo"
-                src="@/assets/images/logos/logo-cths-white-enhanced.png"
+                src="@/assets/images/logos/logo-cths-white-light.svg"
                 alt="Logo Comité des travaux historiques et scientifiques"
               >
             </a>
@@ -377,12 +377,19 @@ footer {
       padding: 0 $container-tablet-margin;
     }
 
+    // more room for the logos side by side
+    @include on-small-tablet {
+      padding: 0;
+    }
+
     @include on-mobile {
       padding: 0 $container-mobile-margin;
     }
 
     ul {
       img {
+        // block: no baseline gap under the logos, so they are really centered
+        display: block;
         transform-origin: 50% 50%;
         transition: transform ease-in-out 0.35s;
       }
@@ -393,22 +400,31 @@ footer {
       @include on-mobile {
         flex-direction: column;
         align-items: center;
-        gap: 30px;
+        gap: 70px;
       }
 
       .enc-logo {
-        height: 80px;
+        width: 340px;
+        max-width: 100%;
+
+        @include on-small-tablet {
+          width: 270px;
+        }
 
         @include on-mobile {
-          height: 60px;
+          width: 250px;
         }
       }
 
       .cths-logo {
-        height: 80px;
+        height: 160px;
+
+        @include on-small-tablet {
+          height: 130px;
+        }
 
         @include on-mobile {
-          height: 60px;
+          height: 120px;
         }
       }
     }
